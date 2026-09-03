@@ -1,0 +1,38 @@
+# Xcode
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+DerivedData/
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# macOS
+.DS_Store
+
+# Local proof-of-concept test artifacts
+.playwright-cli/
+default.profraw
+
+# Lucid
+# Converted Core ML models: ~1.9 GB, and nothing reads them since the learned
+# engine was removed.
+Model/
+# Test clips are large and re-encodable from public sources; see TestSite/README.
+TestSite/*.mp4
+TestSite/*.webm
+TestSite/*.mov
+# Bench and capture output.
+output/
+.build/
+*.profraw

@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Video Enhancer Lab</title>
+<style>
+  :root { color-scheme: dark; --bg:#0b0e14; --panel:#141923; --line:#232a38; --text:#e6ebf5; --muted:#8b94a7; --accent:#5b8cff; --ok:#3ddc84; --bad:#ff5c5c; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:var(--bg); color:var(--text); font: 14px/1.45 -apple-system, "SF Pro Text", sans-serif; }
+  header { position: sticky; top:0; z-index: 5; height:52px; display:flex; flex-wrap:nowrap; gap:14px 22px; align-items:center; padding:0 18px; background:rgba(11,14,20,.92); backdrop-filter: blur(12px); border-bottom:1px solid var(--line); overflow:hidden; }
+  header > * { flex: 0 0 auto; }
+  header h1 { font-size:15px; margin:0 12px 0 0; font-weight:600; letter-spacing:.2px; }
+  .dot { display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--bad); margin-right:6px; vertical-align:middle; }
+  .dot.on { background:var(--ok); }
+  .switch { display:inline-flex; align-items:center; gap:8px; cursor:pointer; user-select:none; }
+  .switch input { appearance:none; width:40px; height:22px; border-radius:11px; background:#3a4356; position:relative; transition:.15s; cursor:pointer; }
+  .switch input:checked { background:var(--accent); }
+  .switch input::after { content:""; position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:50%; background:white; transition:.15s; }
+  .switch input:checked::after { left:21px; }
+  .group { display:inline-flex; gap:4px; align-items:center; }
+  .group label { padding:4px 9px; border:1px solid var(--line); border-radius:7px; cursor:pointer; color:var(--muted); }
+  .group input { display:none; }
+  .group input:checked + label { color:var(--text); border-color:var(--accent); background:rgba(91,140,255,.12); }
+  .status { color:var(--muted); font-variant-numeric: tabular-nums; white-space:nowrap; }
+  #stats { flex: 1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+  .status b { color:var(--text); font-weight:500; }
+  .hint { color:var(--muted); font-size:12px; margin-left:auto; white-space:nowrap; }
+  main { display:grid; grid-template-columns: 300px 1fr; gap:18px; padding:18px; align-items:start; }
+  aside { background:var(--panel); max-height:calc(100vh - 88px); overflow:auto; border:1px solid var(--line); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:12px; position:sticky; top:64px; }
+  aside h2 { font-size:12px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin:6px 0 2px; font-weight:600; }
+  .clips { display:flex; flex-direction:column; gap:4px; }
+  .clips button { text-align:left; background:#1b2230; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:7px 10px; font:inherit; font-size:12.5px; cursor:pointer; }
+  .clips button:hover { border-color:var(--accent); }
+  .group-name { color:var(--muted); font-size:10.5px; text-transform:uppercase; letter-spacing:.6px; margin:9px 0 2px; }
+  .clips button.active { border-color:var(--accent); background:rgba(91,140,255,.14); }
+  .row { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .row button.active { border-color:var(--accent); background:rgba(91,140,255,.14); color:var(--text); }
+  .row select, .row button { background:#1b2230; color:var(--text); border:1px solid var(--line); border-radius:7px; padding:5px 9px; font:inherit; font-size:12.5px; cursor:pointer; }
+  .stage { display:flex; flex-direction:column; gap:10px; align-items:center; }
+  .meta { min-height:18px; }
+  .frame { position:relative; display:flex; justify-content:center; width:100%; background:#000; border-radius:10px; overflow:hidden; }
+  video { display:block; max-width:100%; aspect-ratio:16/9; background:#000; }
+  .meta { color:var(--muted); font-size:12.5px; font-variant-numeric: tabular-nums; }
+  footer { padding: 10px 18px 24px; color:var(--muted); font-size:12px; }
+  .tune label { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); margin:5px 0; }
+  .tune label span { width:66px; }
+  .tune label input { flex:1; accent-color: var(--accent); }
+  .tune label b { width:42px; text-align:right; color:var(--text); font-weight:500; font-variant-numeric:tabular-nums; }
+  .scrollpad { height:900px; margin:18px; padding:18px; border:1px dashed var(--line); border-radius:12px; color:var(--muted); font-size:12.5px; }
+  kbd { background:#1b2230; border:1px solid var(--line); border-radius:4px; padding:1px 5px; font-family: ui-monospace, monospace; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Video Enhancer Lab</h1>
+  <span class="status"><span class="dot" id="dot"></span><span id="conn">connecting to app…</span></span>
+  <label class="switch"><input type="checkbox" id="enabled" checked> Enhancement</label>
+  <span class="group" id="engine"></span>
+  <span class="status" id="stats"></span>
+  <span class="hint"><kbd>Space</kbd> A/B · <kbd>↑</kbd><kbd>↓</kbd> clip · <kbd>1</kbd> Apple only · <kbd>2</kbd> Lucid</span>
+</header>
+<main>
+  <aside>
+    <h2>Clip</h2>
+    <div class="clips" id="clips"></div>
+    <h2>Display width</h2>
+    <div class="row"><select id="size"></select></div>
+    <h2>Player</h2>
+    <div class="row"><button id="fs">Fullscreen</button></div>
+    <h2>Enhancement</h2>
+    <div class="row" id="presets"></div>
+    <div class="row"><button id="advancedToggle">Show advanced</button><button id="reset">Reset to tuned</button></div>
+    <div class="tune" id="tune" hidden></div>
+    <h2>Stages</h2>
+    <div class="meta">Each is independent. Turn them on one at a time to see what each one buys.</div>
+    <div id="stages"></div>
+
+    <h2>Comparison</h2>
+    <div class="row"><button id="shoot">Capture all engines</button></div>
+    <div class="meta" id="shootStatus">Pauses the clip and captures the same frame once per engine.</div>
+    <h2>Notes</h2>
+    <div class="meta">The enhancer follows the one video that is playing here. Choose a display width larger than the clip's decoded size; on a Retina display 640 px wide shows a 360p clip at 1280 physical pixels.</div>
+  </aside>
+  <section class="stage">
+    <div class="frame"><video id="video" controls muted loop playsinline autoplay preload="auto"></video></div>
+    <div class="meta" id="meta"></div>
+  </section>
+</main>
+<section class="scrollpad">Scroll test area. Scroll the page while a clip plays: the enhanced image should stay glued to the video with no flicker, lag or jump.</section>
+<footer>
+  Clips: Big Buck Bunny and the Sintel trailer at low bitrates from 240p to 1080p60, plus a synthetic test pattern. Sizes are display widths in CSS px; on a Retina display 640 px shows a 360p clip at 1280 physical pixels, which is the 2× case the enhancer targets.
+</footer>
+<script>
+const CLIPS = [
+  { id: 'bbb-360-3m',  group: 'Feature length (3 min)', label: 'Big Buck Bunny 640×360 · 450 kbps', src: 'bbb-360p-450k-3min.mp4' },
+  { id: 'bbb-240-3m',  group: 'Feature length (3 min)', label: 'Big Buck Bunny 426×240 · 220 kbps', src: 'bbb-240p-220k-3min.mp4' },
+  { id: 'bbb-480-3m',  group: 'Feature length (3 min)', label: 'Big Buck Bunny 854×480 · 800 kbps', src: 'bbb-480p-800k-3min.mp4' },
+  { id: 'sintel-360',  group: 'Live action (52s)', label: 'Sintel 640×360 · 400 kbps', src: 'sintel-360p-400k.mp4' },
+  { id: 'sintel-240',  group: 'Live action (52s)', label: 'Sintel 426×240 · 200 kbps', src: 'sintel-240p-200k.mp4' },
+  { id: 'sintel-480',  group: 'Live action (52s)', label: 'Sintel 854×480 · 800 kbps', src: 'sintel-480p-800k.mp4' },
+  { id: 'sintel-scene',group: 'Detail & texture (10s)', label: 'Sintel scene 640×360 · 300 kbps', src: 'sintel-scene-360p-300k.mp4' },
+  { id: 'jellyfish',   group: 'Detail & texture (10s)', label: 'Jellyfish 640×360 · 350 kbps · fine texture', src: 'jellyfish-360p-350k.mp4' },
+  { id: 'bbb-360-low', group: 'Detail & texture (10s)', label: 'Big Buck Bunny 640×360 · 350 kbps', src: 'bbb-360p-350k.mp4' },
+  { id: 'bbb-720',     group: 'Higher resolution (10s)', label: 'Big Buck Bunny 1280×720 · 770 kbps', src: 'bbb-720p-770k.mp4' },
+  { id: 'pattern-360', group: 'Synthetic', label: 'Test pattern 640×360 · 230 kbps', src: 'low-bitrate-test.mp4' },
+  { id: 'pattern-240', group: 'Synthetic', label: 'Test pattern 424×240 · 120 kbps', src: 'pattern-240p-120k.mp4' },
+];
+const SIZES = [424, 480, 640, 800, 854, 960, 1280, 1600, 'fit'];
+const video = document.getElementById('video');
+const clipsEl = document.getElementById('clips'), sizeSel = document.getElementById('size'), meta = document.getElementById('meta');
+const fs = document.getElementById('fs');
+for (const s of SIZES) { const o = document.createElement('option'); o.value = s; o.textContent = s === 'fit' ? 'Fit window' : `${s} px`; if (s === 1280) o.selected = true; sizeSel.append(o); }
+let currentClip = null;
+function selectClip(id) {
+  const clip = CLIPS.find(c => c.id === id) || CLIPS[0];
+  currentClip = clip.id;
+  for (const b of clipsEl.children) b.classList.toggle('active', b.dataset.id === clip.id);
+  if (video.dataset.clip !== clip.id) { video.dataset.clip = clip.id; video.src = clip.src; video.play().catch(() => {}); }
+  localStorage.setItem('lab.clip', clip.id);
+}
+let lastGroup = null;
+for (const c of CLIPS) {
+  if (c.group !== lastGroup) {
+    const heading = document.createElement('div');
+    heading.className = 'group-name'; heading.textContent = c.group;
+    clipsEl.append(heading); lastGroup = c.group;
+  }
+  const b = document.createElement('button');
+  b.textContent = c.label; b.dataset.id = c.id; b.onclick = () => selectClip(c.id);
+  clipsEl.append(b);
+}
+function applySize() {
+  const s = sizeSel.value;
+  video.style.width = s === 'fit' ? '100%' : `${s}px`;
+  localStorage.setItem('lab.size', s);
+}
+sizeSel.onchange = applySize;
+
+
+
+
+fs.onclick = () => (video.requestFullscreen ? video.requestFullscreen() : video.webkitEnterFullscreen && video.webkitEnterFullscreen());
+video.onerror = () => { meta.textContent = 'clip missing: ' + video.dataset.clip; };
+function updateMeta() {
+  const r = video.getBoundingClientRect();
+  if (!video.videoWidth) return;
+  meta.textContent = `${video.videoWidth}×${video.videoHeight} decoded → ${Math.round(r.width * devicePixelRatio)}×${Math.round(r.height * devicePixelRatio)} physical px (${(r.width * devicePixelRatio / video.videoWidth).toFixed(2)}× · devicePixelRatio ${devicePixelRatio})`;
+}
+video.addEventListener('loadedmetadata', updateMeta);
+new ResizeObserver(updateMeta).observe(video);
+if (localStorage.getItem('lab.size')) sizeSel.value = localStorage.getItem('lab.size');
+applySize();
+selectClip(localStorage.getItem('lab.clip') || 'bbb-360-3m');
+
+// ---- app control channel ----------------------------------------------------
+const dot = document.getElementById('dot'), conn = document.getElementById('conn'), stats = document.getElementById('stats');
+const enabledBox = document.getElementById('enabled');
+let control = null, appEnabled = true;
+function openControl() {
+  control = new WebSocket('ws://127.0.0.1:47811');
+  control.onopen = () => { dot.classList.add('on'); conn.textContent = 'app connected'; };
+  control.onclose = () => { dot.classList.remove('on'); conn.textContent = 'app not running'; stats.textContent = ''; setTimeout(openControl, 1500); };
+  control.onerror = () => {};
+  control.onmessage = (e) => {
+    let m; try { m = JSON.parse(e.data); } catch { return; }
+    if (m.type !== 'status') return;
+    appEnabled = m.enabled; enabledBox.checked = m.enabled;
+    buildEngines(m);
+    showTuning(m.tuning);
+    stats.innerHTML = `<b>${m.status}</b>` + (m.enhancing ? ` · ${m.sourceFPS.toFixed(0)} → ${m.outputFPS.toFixed(0)} fps · ${m.processingMilliseconds.toFixed(1)} ms · ${m.tileCount} tile${m.tileCount === 1 ? '' : 's'} · ${m.outputWidth}×${m.outputHeight}` : '') + (m.error ? ` · <span style="color:var(--bad)">${m.error}</span>` : '');
+  };
+}
+function sendControl(obj) { if (control && control.readyState === 1) control.send(JSON.stringify({ type: 'control', ...obj })); }
+// Engine picker, populated from whatever the app reports it supports.
+let engineBuilt = false;
+function buildEngines(m) {
+  const box = document.getElementById('engine');
+  if (!engineBuilt && m.engines && m.engines.length) {
+    box.innerHTML = '';
+    m.engines.forEach((id, i) => {
+      const input = document.createElement('input');
+      input.type = 'radio'; input.name = 'eng'; input.id = 'eng-' + id; input.value = id;
+      const label = document.createElement('label');
+      label.htmlFor = 'eng-' + id; label.textContent = (m.engineLabels && m.engineLabels[i]) || id;
+      input.onchange = () => sendControl({ engine: id });
+      box.append(input, label);
+    });
+    engineBuilt = true;
+  }
+  const current = document.getElementById('eng-' + m.engine);
+  if (current) current.checked = true;
+}
+enabledBox.onchange = () => sendControl({ enabled: enabledBox.checked });
+addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space') { e.preventDefault(); enabledBox.checked = !enabledBox.checked; sendControl({ enabled: enabledBox.checked }); }
+  if (e.key >= '1' && e.key <= '9') {
+    const box = document.querySelectorAll('#engine input')[parseInt(e.key,10)-1];
+    if (box) { box.checked = true; sendControl({ engine: box.value }); }
+  }
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    const i = CLIPS.findIndex(c => c.id === currentClip); selectClip(CLIPS[(i + (e.key === 'ArrowDown' ? 1 : CLIPS.length - 1)) % CLIPS.length].id);
+  }
+});
+// Freeze the clip, then have the app shoot every engine on that one frame.
+document.getElementById('shoot').onclick = async () => {
+  const status = document.getElementById('shootStatus');
+  video.pause();
+  video.currentTime = parseFloat(new URLSearchParams(location.search).get('t') || '4');
+  await new Promise(r => setTimeout(r, 600));
+  const name = (currentClip || 'clip') + '-' + Math.round(video.currentTime * 10);
+  status.textContent = 'capturing ' + name + '…';
+  sendControl({ shoot: name });
+  setTimeout(() => { status.textContent = 'written to .build/shots/' + name; }, 9000);
+};
+
+// Live grade and sharpening controls. These are the same values the offline
+// tuner searches, so anything found by eye here can be pinned in Tools/tuning.json.
+const KNOBS = [
+  ['sharpness', 'Sharpen', 0, 1.6, 0.05],
+  ['fine',      'Detail',  0, 2.0, 0.05],
+  ['blackPoint','Black',   0, 0.08, 0.002],
+  ['contrast',  'Contrast',0, 0.5, 0.01],
+  ['saturation','Colour',  0.8, 1.4, 0.01],
+  ['sourceDeblock','Deblock',0, 0.06, 0.002],
+  // How tight the sharpening lobe runs relative to the detail scale. Measured
+  // against ground truth, halving it cuts coarse-band overshoot (the halos)
+  // from 15% to 7% while the fine detail it keeps matches the truth better.
+  ['lobeScale', 'Lobe',   0.25, 1.0, 0.05],
+  // Gain on the true one-pixel band. Above zero this mostly amplifies scaler
+  // noise: correlation with ground truth falls as it rises. Kept for tuning.
+  ['micro',     'Micro',  0, 2.0, 0.05],
+];
+// What ships to a person using this: one control, four positions.
+const PRESETS = {
+  Off:      { sharpness: 0, fine: 0, blackPoint: 0, contrast: 0, saturation: 1, sourceDeblock: 0, micro: 0 },
+  Subtle:   { sharpness: 0.55, fine: 0.25, blackPoint: 0.020, contrast: 0.12, saturation: 1.04, sourceDeblock: 0.030, lobeScale: 0.5, micro: 0 },
+  Standard: null,   // whatever the tuner settled on
+  Strong:   { sharpness: 1.15, fine: 0.60, blackPoint: 0.070, contrast: 0.40, saturation: 1.16, sourceDeblock: 0.050, lobeScale: 0.5, micro: 0 },
+};
+let tunedDefaults = null;
+const presetBox = document.getElementById('presets');
+for (const name of Object.keys(PRESETS)) {
+  const button = document.createElement('button');
+  button.textContent = name;
+  button.onclick = () => {
+    const values = PRESETS[name] || tunedDefaults;
+    if (values) sendControl({ tuning: values });
+    for (const b of presetBox.children) b.classList.toggle('active', b === button);
+  };
+  presetBox.append(button);
+}
+const advancedToggle = document.getElementById('advancedToggle');
+advancedToggle.onclick = () => {
+  const box = document.getElementById('tune');
+  box.hidden = !box.hidden;
+  advancedToggle.textContent = box.hidden ? 'Show advanced' : 'Hide advanced';
+};
+
+const inputs = {};
+const inputsExtra = inputs;
+// The researched stages, each behind its own switch, with the knob that
+// matters most for it so a stage can be judged at more than one strength.
+const STAGES = [
+  ['stageSiting',     'Chroma siting (left-sited 4:2:0)', null],
+  ['stageDeband',     'Debanding + grain',                ['debandThreshold', 'Threshold', 0, 0.03, 0.001]],
+  ['stageOklab',      'Oklab saturation',                 ['skinProtect', 'Skin protect', 0, 1, 0.05]],
+  ['stageLoopFilter', 'Blind H.264 loop filter',          ['loopFilterQuant', 'Quant', 25, 50, 1]],
+  ['stageTaa',        'Temporal (neighbourhood clip)',    ['taaFeedback', 'History', 0.5, 0.97, 0.01]],
+  ['stageCdef',       'CDEF dering',                      ['cdefPrimary', 'Strength', 0, 15, 1]],
+];
+const stageBox = document.getElementById('stages');
+const stageInputs = {};
+for (const [key, label, knob] of STAGES) {
+  const row = document.createElement('label');
+  row.className = 'switch';
+  const box = document.createElement('input');
+  box.type = 'checkbox';
+  box.onchange = () => sendControl({ tuning: { [key]: box.checked ? 1 : 0 } });
+  row.append(box, document.createTextNode(' ' + label));
+  stageBox.append(row);
+  stageInputs[key] = box;
+  if (knob) {
+    const [nk, nlabel, min, max, step] = knob;
+    const sub = document.createElement('label');
+    sub.style.paddingLeft = '22px';
+    const name = document.createElement('span'); name.textContent = nlabel;
+    const input = document.createElement('input');
+    input.type = 'range'; input.min = min; input.max = max; input.step = step;
+    const value = document.createElement('b');
+    input.oninput = () => { value.textContent = (+input.value).toFixed(3).replace(/0+$/,'').replace(/\.$/,''); };
+    input.onchange = () => sendControl({ tuning: { [nk]: +input.value } });
+    sub.append(name, input, value); stageBox.append(sub);
+    inputsExtra[nk] = { input, value };
+  }
+}
+
+const tuneBox = document.getElementById('tune');
+for (const [key, label, min, max, step] of KNOBS) {
+  const row = document.createElement('label');
+  const name = document.createElement('span'); name.textContent = label;
+  const input = document.createElement('input');
+  input.type = 'range'; input.min = min; input.max = max; input.step = step;
+  const value = document.createElement('b');
+  input.oninput = () => { value.textContent = (+input.value).toFixed(3).replace(/0+$/,'').replace(/\.$/,''); };
+  input.onchange = () => sendControl({ tuning: { [key]: +input.value } });
+  row.append(name, input, value); tuneBox.append(row);
+  inputs[key] = { input, value };
+}
+document.getElementById('reset').onclick = () => sendControl({ resetTuning: true });
+function showTuning(t) {
+  if (!t) return;
+  if (!tunedDefaults) tunedDefaults = { ...t };
+  for (const [key] of STAGES) {
+    if (t[key] !== undefined) stageInputs[key].checked = t[key] > 0.5;
+  }
+  for (const key of Object.keys(inputs)) {
+    if (t[key] === undefined) continue;
+    inputs[key].input.value = t[key];
+    inputs[key].value.textContent = (+t[key]).toFixed(3).replace(/0+$/,'').replace(/\.$/,'');
+  }
+}
+
+// Some encodes end a hair short of their declared duration, so `loop` alone can
+// leave the last frame on screen. Restart explicitly as a backstop.
+video.addEventListener('ended', () => { video.currentTime = 0; video.play().catch(() => {}); });
+
+openControl();
+</script>
+<!-- Geometry reporter: the same script the browser extension injects, in direct mode. -->
+<script>document.write('<script src="../BrowserExtension/content.js?v=' + Date.now() + '"><\/script>');</script>
+</body>
+</html>

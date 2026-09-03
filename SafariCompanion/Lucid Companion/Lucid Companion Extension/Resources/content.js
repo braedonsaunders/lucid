@@ -1,0 +1,470 @@
+// Lucid browser companion — content script.
+//
+// Reports the geometry and state of the most prominent <video> on the page to
+// the native enhancer. It never draws anything and never touches the video.
+// Runs as an extension content script (Chrome, Edge, Safari) or, when loaded
+// directly by a page, talks to the native app over its loopback WebSocket.
+(() => {
+  if (window.top !== window) return;            // top frame only (v1)
+  // One reporter per document: the extension's content script and a page that
+  // embeds this script directly live in different JS worlds but share the DOM.
+  const marker = 'data-video-enhancer-reporter';
+  if (document.documentElement.hasAttribute(marker)) return;
+  document.documentElement.setAttribute(marker, '1');
+
+  const runtime = (globalThis.browser && browser.runtime && browser.runtime.id) ? browser.runtime
+                : (globalThis.chrome && chrome.runtime && chrome.runtime.id) ? chrome.runtime : null;
+  const BRIDGE_URL = 'ws://127.0.0.1:47811';
+  const FRAME_MAGIC = 0x4c554346; // 'LUCF' decoded frame, page -> app
+  const ENHANCED_MAGIC = 0x4c554345; // 'LUCE' enhanced frame, app -> page
+  const HEARTBEAT_MS = 500;
+  const CUTOUT_HOVER_MS = 150;
+  const CUTOUT_IDLE_MS = 500;
+  const HOVER_TIMEOUT_MS = 3000;
+
+  const session = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2));
+  const ua = navigator.userAgent;
+  const browserName = /Edg\//.test(ua) ? 'edge' : /Chrome\//.test(ua) ? 'chrome' : /Safari\//.test(ua) ? 'safari' : 'unknown';
+
+  // ---- transport -----------------------------------------------------------
+  let send;
+  if (runtime) {
+    let port = null;
+    const connect = () => {
+      try {
+        port = runtime.connect({ name: 'lucid' });
+        port.onDisconnect.addListener(() => { port = null; setTimeout(connect, 1000); });
+      } catch (e) { port = null; setTimeout(connect, 2000); }
+    };
+    connect();
+    send = (message) => { if (port) { try { port.postMessage(message); } catch (e) { port = null; connect(); } } };
+  } else {
+    let socket = null, backoff = 1000;
+    const connect = () => {
+      try {
+        socket = new WebSocket(BRIDGE_URL);
+        socket.onopen = () => { backoff = 1000; };
+        socket.onclose = () => { socket = null; setTimeout(connect, backoff); backoff = Math.min(backoff * 2, 10000); };
+        socket.onerror = () => {};
+      } catch (e) { socket = null; setTimeout(connect, backoff); }
+    };
+    connect();
+    send = (message) => { if (socket && socket.readyState === 1) socket.send(JSON.stringify(message)); };
+  }
+
+  // ---- drawing the enhanced frame back into the page -----------------------
+  //
+  // The result is drawn by the page, into a canvas that sits in the document
+  // right where the video is. That way it inherits the page's scrolling,
+  // clipping and stacking for free, which is the only way to make it behave
+  // like part of the page rather than something pasted over the top. It never
+  // takes pointer events, so the video's own controls keep working.
+  let surface = null, surfaceCtx = null, surfaceFor = null, imageData = null;
+  let drawing = false, lastDraw = 0;
+
+  function ensureSurface(video) {
+    if (surface && surfaceFor === video && surface.isConnected) return surface;
+    removeSurface();
+    const canvas = document.createElement('canvas');
+    canvas.dataset.lucid = 'surface';
+    canvas.style.cssText = 'position:absolute; pointer-events:none; margin:0; padding:0; border:0;';
+    const host = video.parentElement || document.body;
+    if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+    host.appendChild(canvas);
+    surface = canvas;
+    surfaceCtx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+    surfaceFor = video;
+    return canvas;
+  }
+
+  function removeSurface() {
+    if (surface && surface.parentElement) surface.parentElement.removeChild(surface);
+    surface = null; surfaceCtx = null; surfaceFor = null; imageData = null; drawing = false;
+  }
+
+  // Keep the canvas exactly over the video's rendered content box, in the
+  // video's own coordinate space, so scrolling moves both together.
+  function positionSurface(video) {
+    if (!surface) return;
+    const host = surface.parentElement;
+    const hostRect = host.getBoundingClientRect();
+    const box = viewportRect(video);
+    const content = contentBox(video, box);
+    const style = getComputedStyle(video);
+    surface.style.left = (content.x - hostRect.left + host.scrollLeft) + 'px';
+    surface.style.top = (content.y - hostRect.top + host.scrollTop) + 'px';
+    surface.style.width = content.w + 'px';
+    surface.style.height = content.h + 'px';
+    surface.style.zIndex = style.zIndex === 'auto' ? '0' : style.zIndex;
+    surface.style.borderRadius = style.borderRadius;
+    surface.style.display = (drawing && content.w > 1) ? 'block' : 'none';
+  }
+
+  function drawEnhanced(width, height, pixels) {
+    if (!current) return;
+    const canvas = ensureSurface(current);
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width; canvas.height = height; imageData = null;
+    }
+    if (!imageData || imageData.width !== width || imageData.height !== height) {
+      imageData = new ImageData(new Uint8ClampedArray(width * height * 4), width, height);
+    }
+    imageData.data.set(pixels);
+    surfaceCtx.putImageData(imageData, 0, 0);
+    drawing = true; lastDraw = performance.now();
+    positionSurface(current);
+  }
+
+  // ---- video discovery -----------------------------------------------------
+  function collectVideos(root, out, depth) {
+    if (depth > 4) return;
+    let nodes;
+    try { nodes = root.querySelectorAll('video, iframe, *'); } catch (e) { return; }
+    for (const node of nodes) {
+      if (node.tagName === 'VIDEO') out.push(node);
+      else if (node.tagName === 'IFRAME') {
+        try { if (node.contentDocument) collectVideos(node.contentDocument, out, depth + 1); } catch (e) {}
+      } else if (node.shadowRoot) collectVideos(node.shadowRoot, out, depth + 1);
+    }
+  }
+
+  function viewportRect(el) {
+    // Bounding rect in the top viewport, walking up through same-origin iframes.
+    let rect = el.getBoundingClientRect();
+    let x = rect.left, y = rect.top, w = rect.width, h = rect.height;
+    let win = el.ownerDocument.defaultView;
+    while (win && win !== window && win.frameElement) {
+      const fr = win.frameElement.getBoundingClientRect();
+      x += fr.left + win.frameElement.clientLeft; y += fr.top + win.frameElement.clientTop;
+      win = win.parent;
+    }
+    return { x, y, w, h };
+  }
+
+  function visibleArea(r) {
+    const w = Math.max(0, Math.min(r.x + r.w, innerWidth) - Math.max(r.x, 0));
+    const h = Math.max(0, Math.min(r.y + r.h, innerHeight) - Math.max(r.y, 0));
+    return w * h;
+  }
+
+  function contentBox(video, box) {
+    // Rendered content box after object-fit (video default is 'contain').
+    const iw = video.videoWidth, ih = video.videoHeight;
+    if (!iw || !ih || !box.w || !box.h) return box;
+    const fit = getComputedStyle(video).objectFit || 'contain';
+    let w = box.w, h = box.h;
+    if (fit === 'contain' || fit === 'scale-down') { const s = Math.min(box.w / iw, box.h / ih); w = iw * s; h = ih * s; }
+    else if (fit === 'cover') { const s = Math.max(box.w / iw, box.h / ih); w = iw * s; h = ih * s; }
+    else if (fit === 'none') { w = iw; h = ih; }
+    const x = box.x + (box.w - w) / 2, y = box.y + (box.h - h) / 2;
+    // Clip 'cover'/'none' overflow to the element box.
+    const cx = Math.max(x, box.x), cy = Math.max(y, box.y);
+    return { x: cx, y: cy, w: Math.min(x + w, box.x + box.w) - cx, h: Math.min(y + h, box.y + box.h) - cy };
+  }
+
+  function pickVideo() {
+    const videos = [];
+    collectVideos(document, videos, 0);
+    let best = null, bestScore = 0;
+    for (const v of videos) {
+      if (!v.videoWidth || !v.videoHeight) continue;
+      const cs = getComputedStyle(v);
+      if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) < 0.5) continue;
+      const r = viewportRect(v);
+      let score = visibleArea(r);
+      if (v.paused) score *= 0.25;
+      if (score > bestScore) { best = v; bestScore = score; }
+    }
+    return bestScore > 0 ? best : null;
+  }
+
+  // ---- cutouts (page elements drawn over the video) ------------------------
+  function isPainted(el) {
+    const cs = getComputedStyle(el);
+    if (cs.visibility !== 'visible' || parseFloat(cs.opacity) < 0.05 || cs.display === 'none') return false;
+    if (cs.pointerEvents === 'none' && !el.textContent.trim()) return false;
+    const bg = cs.backgroundColor;
+    const hasBg = bg && !/rgba\(\s*\d+,\s*\d+,\s*\d+,\s*0\)/.test(bg) && bg !== 'transparent';
+    const tag = el.tagName;
+    return hasBg || cs.backgroundImage !== 'none' || /^(IMG|SVG|CANVAS|BUTTON|INPUT|SELECT|TEXTAREA|PROGRESS)$/.test(tag)
+      || (el.childElementCount === 0 && el.textContent.trim().length > 0);
+  }
+
+  function computeCutouts(video, box) {
+    const cols = 12, rows = 7, found = new Map();
+    const round = (n) => Math.round(n * 10) / 10;
+    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+      const px = box.x + (i + 0.5) * box.w / cols, py = box.y + (j + 0.5) * box.h / rows;
+      if (px < 0 || py < 0 || px >= innerWidth || py >= innerHeight) continue;
+      let stack;
+      try { stack = document.elementsFromPoint(px, py); } catch (e) { continue; }
+      for (const el of stack) {
+        if (el === video) break;                       // everything after is below the video
+        if (el.contains(video)) continue;              // containers / wrappers
+        if (found.has(el)) continue;
+        if (el.tagName === 'HTML' || el.tagName === 'BODY') continue;
+        if (!isPainted(el)) continue;
+        const r = el.getBoundingClientRect();
+        if (r.width * r.height >= box.w * box.h * 0.9) continue;   // full-size overlays are not controls
+        if (r.width < 4 || r.height < 4) continue;
+        found.set(el, { x: round(r.left), y: round(r.top), w: round(r.width), h: round(r.height) });
+      }
+    }
+    // Merge overlapping rects, cap the count.
+    const rects = [...found.values()];
+    let merged = true;
+    while (merged && rects.length > 1) {
+      merged = false;
+      outer: for (let a = 0; a < rects.length; a++) for (let b = a + 1; b < rects.length; b++) {
+        const A = rects[a], B = rects[b];
+        if (A.x < B.x + B.w && B.x < A.x + A.w && A.y < B.y + B.h && B.y < A.y + A.h) {
+          const x = Math.min(A.x, B.x), y = Math.min(A.y, B.y);
+          rects[a] = { x, y, w: Math.max(A.x + A.w, B.x + B.w) - x, h: Math.max(A.y + A.h, B.y + B.h) - y };
+          rects.splice(b, 1); merged = true; break outer;
+        }
+      }
+    }
+    return rects.slice(0, 16);
+  }
+
+  // ---- decoded frame streaming ----------------------------------------------
+  //
+  // The whole point: hand the app the frame as the decoder produced it, at its
+  // own resolution, before the page stretches it to fit the player. Reading it
+  // back off the screen would mean enhancing something the browser has already
+  // upscaled and resampled, which throws away most of what there is to work
+  // with.
+  let frameSocket = null, frameBackoff = 500, framesInFlight = 0, frameSeq = 0;
+  const stats = { sent: 0, errors: 0, last: '', socket: 'none', streaming: false, fps: 0, cb: 0, copyMs: 0, buffered: 0 };
+  let fpsWindow = [], cbWindow = [];
+  const publishStats = () => {
+    document.documentElement.dataset.lucidFrames =
+      `${stats.socket} sent=${stats.sent} fps=${stats.fps} drawn=${stats.drawn||0} cb=${stats.cb} inflight=${framesInFlight} copy=${stats.copyMs}ms buf=${Math.round(stats.buffered/1024)}kB err=${stats.errors} ${stats.last}`;
+  };
+  let canvas = null, canvasCtx = null;
+  let streaming = false, rvfcHandle = 0;
+
+  function openFrameSocket() {
+    if (frameSocket && (frameSocket.readyState === 0 || frameSocket.readyState === 1)) return;
+    try { frameSocket = new WebSocket(BRIDGE_URL); } catch (e) { frameSocket = null; return; }
+    frameSocket.binaryType = 'arraybuffer';
+    frameSocket.onopen = () => { frameBackoff = 500; stats.socket = 'open'; publishStats(); };
+    frameSocket.onclose = () => {
+      frameSocket = null; framesInFlight = 0; stats.socket = 'closed'; publishStats();
+      setTimeout(openFrameSocket, frameBackoff);
+      frameBackoff = Math.min(frameBackoff * 2, 8000);
+    };
+    frameSocket.onerror = () => {};
+    // The app asks for a frame when it needs one re-rendered, which is how a
+    // paused video keeps up with a settings change.
+    frameSocket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        if (message && message.type === 'nudge' && current) sendFrame(current);
+      } catch (e) {}
+    };
+  }
+
+  function header(width, height, format, planes, timestamp) {
+    const meta = JSON.stringify({ session, w: width, h: height, format, planes, seq: ++frameSeq, ts: timestamp });
+    const metaBytes = new TextEncoder().encode(meta);
+    const head = new ArrayBuffer(8 + metaBytes.length);
+    const view = new DataView(head);
+    view.setUint32(0, FRAME_MAGIC, false);
+    view.setUint32(4, metaBytes.length, false);
+    new Uint8Array(head, 8).set(metaBytes);
+    return head;
+  }
+
+  async function sendFrame(video) {
+    if (!frameSocket || frameSocket.readyState !== 1) return;
+    // Allow a couple of copies in flight: the copy resolves on a microtask, so
+    // a limit of one refuses the very next frame callback and halves the rate.
+    // The socket buffer is what actually bounds latency.
+    stats.buffered = frameSocket.bufferedAmount;
+    if (framesInFlight > 2 || frameSocket.bufferedAmount > 6 << 20) return;
+    const width = video.videoWidth, height = video.videoHeight;
+    if (!width || !height) return;
+    framesInFlight++;
+    try {
+      if (typeof VideoFrame === 'function') {
+        let frame = null;
+        try { frame = new VideoFrame(video); } catch (e) { frame = null; }
+        if (frame) {
+          try {
+            const size = frame.allocationSize();
+            const buffer = new ArrayBuffer(size);
+            const t0 = performance.now();
+            const layout = await frame.copyTo(buffer);
+            stats.copyMs = (stats.copyMs * 0.8 + (performance.now() - t0) * 0.2).toFixed(1);
+            const planes = layout.map(p => ({ offset: p.offset, stride: p.stride }));
+            const head = header(frame.codedWidth, frame.codedHeight, frame.format, planes, frame.timestamp);
+            const packet = new Uint8Array(head.byteLength + size);
+            packet.set(new Uint8Array(head), 0);
+            packet.set(new Uint8Array(buffer), head.byteLength);
+            frameSocket.send(packet);
+            stats.sent++; stats.last = `${frame.format} ${frame.codedWidth}x${frame.codedHeight}`;
+            const now = performance.now();
+            fpsWindow.push(now); while (fpsWindow.length && now - fpsWindow[0] > 1000) fpsWindow.shift();
+            stats.fps = fpsWindow.length;
+            if (stats.sent % 15 === 1) publishStats();
+            return;
+          } finally { frame.close(); }
+        }
+      }
+      // Fallback: read the decoded pixels through a canvas at native size.
+      if (!canvas || canvas.width !== width || canvas.height !== height) {
+        canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvasCtx = canvas.getContext('2d', { willReadFrequently: true, alpha: false });
+      }
+      canvasCtx.drawImage(video, 0, 0, width, height);
+      const data = canvasCtx.getImageData(0, 0, width, height).data;
+      const head = header(width, height, 'RGBA', [{ offset: 0, stride: width * 4 }], performance.now() * 1000);
+      const packet = new Uint8Array(head.byteLength + data.byteLength);
+      packet.set(new Uint8Array(head), 0);
+      packet.set(data, head.byteLength);
+      frameSocket.send(packet);
+      stats.sent++; stats.last = `RGBA ${width}x${height}`;
+      if (stats.sent % 30 === 1) publishStats();
+    } catch (e) {
+      stats.errors++; stats.last = 'ERR ' + (e && e.message || e); publishStats();
+      // Cross-origin video without CORS cannot be read; let the app fall back
+      // to screen capture.
+      if (stats.errors > 5) streaming = false;
+    } finally {
+      framesInFlight--;
+    }
+  }
+
+  function pump(video) {
+    if (!('requestVideoFrameCallback' in HTMLVideoElement.prototype)) return;
+    const step = () => {
+      if (!streaming || video !== current) return;
+      const now = performance.now();
+      cbWindow.push(now); while (cbWindow.length && now - cbWindow[0] > 1000) cbWindow.shift();
+      stats.cb = cbWindow.length;
+      sendFrame(video);
+      rvfcHandle = video.requestVideoFrameCallback(step);
+    };
+    rvfcHandle = video.requestVideoFrameCallback(step);
+  }
+
+  // A paused video presents no new frames, so the frame callback stops firing.
+  // Keep feeding the current one slowly: a paused video should stay enhanced,
+  // and it lets the enhancement be switched while the picture is held still.
+  let idleTimer = 0;
+  function pumpIdle(video) {
+    clearInterval(idleTimer);
+    idleTimer = setInterval(() => {
+      if (!current || document.visibilityState !== 'visible') return;
+      if (!current.paused && !current.ended) return;   // the frame callback has it
+      if (current.readyState < 2) return;
+      if (!streaming) { streaming = true; stats.streaming = true; openFrameSocket(); }
+      sendFrame(current);
+    }, 250);
+  }
+
+  function startStreaming(video) {
+    if (streaming) return;
+    streaming = true; stats.streaming = true; publishStats();
+    openFrameSocket();
+    pump(video);
+  }
+
+  function stopStreaming() { streaming = false; stats.streaming = false; publishStats(); }
+
+  // ---- reporting loop -------------------------------------------------------
+  let current = null, lastKey = '', lastSent = 0, lastCutoutAt = 0, cutouts = [];
+  let hoverUntil = 0, movingFrames = 0, lastRectKey = '';
+
+  function snapshot(video) {
+    const box = viewportRect(video);
+    const rect = contentBox(video, box);
+    const fs = document.fullscreenElement || document.webkitFullscreenElement;
+    const radius = parseFloat(getComputedStyle(video).borderTopLeftRadius) || 0;
+    return {
+      rect: { x: +rect.x.toFixed(2), y: +rect.y.toFixed(2), w: +rect.w.toFixed(2), h: +rect.h.toFixed(2) },
+      iw: video.videoWidth, ih: video.videoHeight,
+      paused: video.paused, ended: video.ended,
+      fullscreen: !!fs, pip: document.pictureInPictureElement === video || (video.webkitPresentationMode === 'picture-in-picture'),
+      radius: +radius.toFixed(2)
+    };
+  }
+
+  function tick() {
+    const now = performance.now();
+    if (document.visibilityState !== 'visible') { sendGone(); requestAnimationFrame(tick); return; }
+    const video = pickVideo();
+    if (!video) { sendGone(); requestAnimationFrame(tick); return; }
+    if (video !== current) { current = video; cutouts = []; lastCutoutAt = 0; stopStreaming(); removeSurface(); }
+
+    const v = snapshot(video);
+    const rectKey = `${v.rect.x},${v.rect.y},${v.rect.w},${v.rect.h}`;
+    if (rectKey !== lastRectKey) { movingFrames = 3; lastRectKey = rectKey; } else if (movingFrames > 0) movingFrames--;
+    const moving = movingFrames > 0;
+    const hover = now < hoverUntil;
+
+    const cutoutInterval = hover ? CUTOUT_HOVER_MS : CUTOUT_IDLE_MS;
+    if (!moving && now - lastCutoutAt > cutoutInterval) { cutouts = computeCutouts(video, v.rect); lastCutoutAt = now; }
+
+    if (!v.paused && !v.ended) startStreaming(video);
+    // The canvas has to follow the video every frame, not on a timer, or it
+    // slides behind during a scroll.
+    if (drawing) {
+      if (performance.now() - lastDraw > 400) { drawing = false; }
+      positionSurface(video);
+    }
+
+    const message = {
+      type: 'video', browser: browserName, session, title: document.title, url: location.href.slice(0, 512),
+      frames: streaming,
+      draws: drawing,
+      visible: true,
+      screenX: window.screenX, screenY: window.screenY, outerWidth: window.outerWidth, outerHeight: window.outerHeight,
+      innerWidth: window.innerWidth, innerHeight: window.innerHeight, dpr: window.devicePixelRatio,
+      video: v, moving, hover, cutouts, ts: now
+    };
+    const key = JSON.stringify([message.title, message.screenX, message.screenY, message.outerWidth, message.outerHeight,
+      message.innerWidth, message.innerHeight, message.dpr, v, moving, hover, cutouts]);
+    if (key !== lastKey || now - lastSent > HEARTBEAT_MS) { send(message); lastKey = key; lastSent = now; }
+    requestAnimationFrame(tick);
+  }
+
+  function sendGone() {
+    stopStreaming();
+    removeSurface();
+    if (lastKey === 'gone') return;
+    send({ type: 'gone', browser: browserName, session, title: document.title, visible: false,
+      screenX: 0, screenY: 0, outerWidth: 0, outerHeight: 0, innerWidth: 0, innerHeight: 0, dpr: 1,
+      video: null, moving: false, hover: false, cutouts: [], ts: performance.now() });
+    lastKey = 'gone'; current = null;
+  }
+
+  // A looping video fires ended/seeked/play as it wraps; each one must put the
+  // frame pump back to work, or the overlay is left holding the last frame of
+  // the previous pass while the video plays on underneath.
+  for (const type of ['play', 'playing', 'seeked', 'ended', 'loadeddata', 'timeupdate']) {
+    document.addEventListener(type, (event) => {
+      const video = event.target;
+      if (!(video instanceof HTMLVideoElement)) return;
+      if (video !== current) return;
+      if (!video.paused && !video.ended) startStreaming(video);
+      else if (streaming && video.readyState >= 2) sendFrame(video);
+    }, true);
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    if (!current) return;
+    const r = viewportRect(current);
+    if (e.clientX >= r.x && e.clientX <= r.x + r.w && e.clientY >= r.y && e.clientY <= r.y + r.h) hoverUntil = performance.now() + HOVER_TIMEOUT_MS;
+  }, { passive: true, capture: true });
+  document.addEventListener('mouseleave', () => { hoverUntil = 0; }, { capture: true });
+  addEventListener('scroll', () => { movingFrames = 3; }, { passive: true, capture: true });
+  addEventListener('resize', () => { movingFrames = 3; });
+  addEventListener('pagehide', sendGone);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState !== 'visible') sendGone(); });
+
+  pumpIdle();
+  requestAnimationFrame(tick);
+})();

@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Lucid Companion",
+  "version": "0.2.0",
+  "description": "Tells the Lucid native video enhancer where the page's video is. Draws nothing, changes nothing.",
+  "minimum_chrome_version": "116",
+  "permissions": ["alarms"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}

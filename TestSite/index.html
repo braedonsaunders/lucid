@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Lucid Test</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; margin: 0; background: #05070b; }
+    body { display: grid; place-items: center; align-content: start; min-height: 100vh; font-family: -apple-system, sans-serif; color: white; }
+    main { width: min(96vw, 1280px); }
+    video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+    .label { position: fixed; left: 18px; bottom: 14px; color: #9aa7bd; font-size: 13px; }
+    .spacer { height: 60vh; }
+  </style>
+</head>
+<body>
+  <div class="top" style="display:none;height:180px"></div>
+  <main>
+    <video autoplay muted loop playsinline controls></video>
+  </main>
+  <div class="label"></div>
+  <div class="spacer"></div>
+  <script>
+    const video = document.querySelector('video');
+    const params = new URLSearchParams(location.search);
+    const use1080p = params.get('source') === '1080';
+    video.src = use1080p ? 'low-bitrate-1080p.mp4' : 'low-bitrate-720p.mp4';
+    if (params.get('controls') === '0') video.removeAttribute('controls');
+    if (params.get('top') === '1') document.querySelector('.top').style.display = 'block';
+    if (params.get('auto') === 'scroll') {
+      setTimeout(() => window.scrollTo({ top: 120, behavior: 'smooth' }), 6000);
+      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 12000);
+    }
+    document.querySelector('.label').textContent = use1080p
+      ? 'Lucid Test · 1920×1080 low-bitrate source'
+      : 'Lucid Test · 1280×720 low-bitrate source';
+  </script>
+  <!-- Direct mode: the same reporter the extension injects, talking to the app itself. -->
+  <script src="/BrowserExtension/content.js"></script>
+</body>
+</html>

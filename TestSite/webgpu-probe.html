@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>WGPU|starting</title>
+<style>html,body{margin:0;background:#05070b;color:#ddd;font:13px -apple-system}main{display:grid;place-items:center;height:100vh}
+.box{position:relative;width:min(96vw,1280px);aspect-ratio:16/9}video,canvas{position:absolute;inset:0;width:100%;height:100%}pre{position:fixed;left:12px;bottom:8px;margin:0;white-space:pre-wrap}</style></head>
+<body><main><div class="box"><video autoplay muted loop playsinline src="low-bitrate-720p.mp4"></video><canvas></canvas></div></main><pre id="log"></pre>
+<script type="module">
+const log = m => { document.getElementById('log').textContent += m + '\n'; };
+const report = s => { document.title = 'WGPU|' + s; };
+const video = document.querySelector('video'); const canvas = document.querySelector('canvas');
+const results = [];
+try {
+  const src = new URLSearchParams(location.search).get('source'); if (src === '1080') video.src = 'low-bitrate-1080p.mp4';
+  await new Promise(r => video.addEventListener('loadeddata', r, { once: true })); await video.play().catch(()=>{});
+  if (!navigator.gpu) throw new Error('no navigator.gpu');
+  const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
+  if (!adapter) throw new Error('no adapter');
+  const f16 = adapter.features.has('shader-f16');
+  const device = await adapter.requestDevice({ requiredFeatures: f16 ? ['shader-f16'] : [] });
+  const info = adapter.info || {}; results.push(`f16=${f16?1:0}`);
+  const W = video.videoWidth * 2, H = video.videoHeight * 2; canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('webgpu'); const fmt = navigator.gpu.getPreferredCanvasFormat();
+  ctx.configure({ device, format: fmt, alphaMode: 'opaque' });
+  const sampler = device.createSampler({ magFilter: 'linear', minFilter: 'linear' });
+  const quad = `struct VO{@builtin(position) p:vec4f,@location(0) uv:vec2f}; @vertex fn vs(@builtin(vertex_index) i:u32)->VO{var P=array(vec2f(-1,-1),vec2f(3,-1),vec2f(-1,3));var o:VO;o.p=vec4f(P[i],0,1);o.uv=vec2f(P[i].x*0.5+0.5,0.5-P[i].y*0.5);return o;}`;
+  // pass 0: external video -> rgba16float at 2x (bicubic-ish 4x4 tap)
+  const p0 = device.createRenderPipeline({ layout: 'auto', vertex: { module: device.createShaderModule({ code: quad }), entryPoint: 'vs' },
+    fragment: { module: device.createShaderModule({ code: `@group(0)@binding(0) var s:sampler; @group(0)@binding(1) var t:texture_external;
+      @fragment fn fs(@location(0) uv:vec2f)->@location(0) vec4f{ var acc=vec4f(0); let d=vec2f(1.0/${video.videoWidth}.0,1.0/${video.videoHeight}.0);
+      for(var y=-1;y<=2;y++){for(var x=-1;x<=2;x++){acc+=textureSampleBaseClampToEdge(t,s,uv+vec2f(f32(x),f32(y))*d);}} return acc/16.0; }` }), entryPoint: 'fs', targets: [{ format: 'rgba16float' }] } });
+  // pass k: 3x3 "conv" over rgba16float, ping-pong (proxy for one thin CNN layer at output resolution)
+  const conv = device.createRenderPipeline({ layout: 'auto', vertex: { module: device.createShaderModule({ code: quad }), entryPoint: 'vs' },
+    fragment: { module: device.createShaderModule({ code: `@group(0)@binding(0) var s:sampler; @group(0)@binding(1) var t:texture_2d<f32>;
+      @fragment fn fs(@location(0) uv:vec2f)->@location(0) vec4f{ var acc=vec4f(0); let d=vec2f(1.0/${W}.0,1.0/${H}.0); let k=array(0.0625,0.125,0.0625,0.125,0.25,0.125,0.0625,0.125,0.0625); var i=0;
+      for(var y=-1;y<=1;y++){for(var x=-1;x<=1;x++){acc+=textureSample(t,s,uv+vec2f(f32(x),f32(y))*d)*k[i];i++;}} return max(acc*1.02-0.01, vec4f(0)); }` }), entryPoint: 'fs', targets: [{ format: 'rgba16float' }] } });
+  const blit = device.createRenderPipeline({ layout: 'auto', vertex: { module: device.createShaderModule({ code: quad }), entryPoint: 'vs' },
+    fragment: { module: device.createShaderModule({ code: `@group(0)@binding(0) var s:sampler; @group(0)@binding(1) var t:texture_2d<f32>; @fragment fn fs(@location(0) uv:vec2f)->@location(0) vec4f{return textureSample(t,s,uv);}` }), entryPoint: 'fs', targets: [{ format: fmt }] } });
+  const tex = [0, 1].map(() => device.createTexture({ size: [W, H], format: 'rgba16float', usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING }));
+  const bgConv = [0, 1].map(i => device.createBindGroup({ layout: conv.getBindGroupLayout(0), entries: [{ binding: 0, resource: sampler }, { binding: 1, resource: tex[i].createView() }] }));
+  const bgBlit = [0, 1].map(i => device.createBindGroup({ layout: blit.getBindGroupLayout(0), entries: [{ binding: 0, resource: sampler }, { binding: 1, resource: tex[i].createView() }] }));
+  const useRVFC = 'requestVideoFrameCallback' in HTMLVideoElement.prototype; results.push(`rvfc=${useRVFC?1:0}`);
+  async function bench(layers, seconds) {
+    let frames = 0, videoFrames = 0, lastMedia = -1; const t0 = performance.now();
+    return new Promise(res => {
+      function tick() {
+        if (performance.now() - t0 > seconds * 1000) return res({ layers, fps: frames / seconds, vfps: videoFrames / seconds });
+        try {
+          const ext = device.importExternalTexture({ source: video }); if (frames===0 && 'isZeroCopy' in ext) results.push(`zc=${ext.isZeroCopy?1:0}`);
+          const bg0 = device.createBindGroup({ layout: p0.getBindGroupLayout(0), entries: [{ binding: 0, resource: sampler }, { binding: 1, resource: ext }] });
+          const enc = device.createCommandEncoder(); let cur = 0;
+          let pass = enc.beginRenderPass({ colorAttachments: [{ view: tex[cur].createView(), loadOp: 'clear', storeOp: 'store' }] }); pass.setPipeline(p0); pass.setBindGroup(0, bg0); pass.draw(3); pass.end();
+          for (let i = 0; i < layers; i++) { const nxt = 1 - cur; pass = enc.beginRenderPass({ colorAttachments: [{ view: tex[nxt].createView(), loadOp: 'clear', storeOp: 'store' }] }); pass.setPipeline(conv); pass.setBindGroup(0, bgConv[cur]); pass.draw(3); pass.end(); cur = nxt; }
+          pass = enc.beginRenderPass({ colorAttachments: [{ view: ctx.getCurrentTexture().createView(), loadOp: 'clear', storeOp: 'store' }] }); pass.setPipeline(blit); pass.setBindGroup(0, bgBlit[cur]); pass.draw(3); pass.end();
+          device.queue.submit([enc.finish()]); frames++;
+          if (video.currentTime !== lastMedia) { videoFrames++; lastMedia = video.currentTime; }
+        } catch (e) { return res({ layers, error: String(e) }); }
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+  for (const layers of [0, 8, 32, 64, 128, 256]) { const r = await bench(layers, 4); results.push(r.error ? `L${layers}:ERR` : `L${layers}:${r.fps.toFixed(0)}`); log(results.at(-1)); report(results.join(' ')); }
+  report('DONE ' + results.join(' '));
+} catch (e) { results.push('ERR ' + (e && e.message || e)); report('DONE ' + results.join(' ')); log(String(e)); }
+</script></body></html>
