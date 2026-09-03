@@ -403,7 +403,16 @@
     if (frameSocket && (frameSocket.readyState === 0 || frameSocket.readyState === 1)) return;
     try { frameSocket = new WebSocket(BRIDGE_URL); } catch (e) { frameSocket = null; return; }
     frameSocket.binaryType = 'arraybuffer';
-    frameSocket.onopen = () => { frameBackoff = 500; stats.socket = 'open'; publishStats(); };
+    frameSocket.onopen = () => {
+      frameBackoff = 500; stats.socket = 'open';
+      // Say which video's frames belong to this socket. Reports travel on a
+      // different connection, and the app learns the session from those, so
+      // without this it sends every frame to the report socket - which has no
+      // onmessage handler and never reads a byte of it. The surface iframe
+      // sends the same message for the same reason.
+      try { frameSocket.send(JSON.stringify({ type: 'attach', session })); } catch (e) {}
+      publishStats();
+    };
     frameSocket.onclose = () => {
       frameSocket = null; framesInFlight = 0; stats.socket = 'closed'; publishStats();
       setTimeout(openFrameSocket, frameBackoff);

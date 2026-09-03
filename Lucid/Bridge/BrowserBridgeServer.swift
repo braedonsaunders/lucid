@@ -25,6 +25,11 @@ final class BrowserBridgeServer: @unchecked Sendable {
     private let onDisconnect: @Sendable (Set<String>) -> Void
     private let onControl: @Sendable (BridgeControl) -> Void
     private var sessionsByConnection: [ObjectIdentifier: Set<String>] = [:]
+    /// Connections that said "attach" - they exist to receive frames and they
+    /// read them. A connection that merely sent a report also gets listed in
+    /// `sessionsByConnection`, but it may be a socket that only carries reports
+    /// and never reads binary at all, so an attached connection always wins.
+    private var attachedByConnection: [ObjectIdentifier: Set<String>] = [:]
     /// Frame sends still outstanding per connection. An enhanced frame is
     /// megabytes; queueing them faster than the socket drains grows
     /// Network.framework's write list without bound, which shows up first as
@@ -87,10 +92,20 @@ final class BrowserBridgeServer: @unchecked Sendable {
             // healthy pipeline: everything upstream reports 30fps and the page
             // never receives a pixel.
             self.offeredFrames += 1
+            // Prefer connections that asked for this session's frames. Falling
+            // back to every connection that merely mentioned the session sends
+            // megabytes to sockets that never read them - which looks like
+            // perfect delivery and draws nothing.
+            let attached = self.connections.filter {
+                $0.value.state == .ready && self.attachedByConnection[$0.key]?.contains(session) == true
+            }
+            let targets = attached.isEmpty
+                ? self.connections.filter {
+                    $0.value.state == .ready && self.sessionsByConnection[$0.key]?.contains(session) == true
+                }
+                : attached
             var matched = 0
-            for (id, connection) in self.connections where connection.state == .ready {
-                guard self.sessionsByConnection[id]?.contains(session) == true else { continue }
-                matched += 1
+            for (id, connection) in targets {
                 guard self.framesInFlight[id, default: 0] < Self.maximumFramesInFlight else {
                     self.droppedFrames += 1
                     continue
@@ -197,6 +212,7 @@ final class BrowserBridgeServer: @unchecked Sendable {
     private func drop(_ key: ObjectIdentifier) {
         guard connections.removeValue(forKey: key) != nil else { return }
         framesInFlight.removeValue(forKey: key)
+        attachedByConnection.removeValue(forKey: key)
         print("   🔌 Bridge: browser disconnected (\(connections.count) open)")
         if let sessions = sessionsByConnection.removeValue(forKey: key), !sessions.isEmpty {
             onDisconnect(sessions)
@@ -255,6 +271,7 @@ final class BrowserBridgeServer: @unchecked Sendable {
             // frames belong to it. Nothing else identifies that connection.
             if probe.type == "attach", let session = probe.session, !session.isEmpty {
                 sessionsByConnection[key, default: []].insert(session)
+                attachedByConnection[key, default: []].insert(session)
                 if AppCoordinator.debugLogging {
                     print("   🖼 surface attached for session \(session.prefix(8))")
                 }
