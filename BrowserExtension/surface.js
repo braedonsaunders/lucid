@@ -15,11 +15,13 @@
   let socket = null;
   let backoff = 400;
   let lastFrameAt = 0;
+  let frozen = false;
   // Height, in device pixels, of the strip at the bottom left clear so the
   // browser's own video controls show through. The content script measures it.
   let gap = 0;
 
   function connect() {
+    if (frozen) return;
     if (socket && (socket.readyState === 0 || socket.readyState === 1)) return;
     try { socket = new WebSocket(BRIDGE_URL); } catch (e) { socket = null; retry(); return; }
     socket.binaryType = 'arraybuffer';
@@ -46,6 +48,7 @@
   }
 
   function retry() {
+    if (frozen) return;
     setTimeout(connect, backoff);
     backoff = Math.min(backoff * 2, 6000);
   }
@@ -93,6 +96,20 @@
       lastFrameAt = 0;
     }
   }, 200);
+
+  // An open WebSocket makes a page ineligible for the back/forward cache, and
+  // this frame is inside someone else's page - so let go of the socket while
+  // the page is frozen rather than making their navigation slower.
+  addEventListener('pagehide', (event) => {
+    if (!event.persisted) return;
+    frozen = true;
+    if (socket) { try { socket.close(); } catch (e) {} socket = null; }
+  });
+  addEventListener('pageshow', (event) => {
+    if (!event.persisted) return;
+    frozen = false;
+    connect();
+  });
 
   connect();
 })();

@@ -34,8 +34,13 @@
   // are running as an extension every byte - reports and video frames alike -
   // goes through the worker. Only a page that loads this file directly (the
   // test lab) opens its own socket.
+  // True while the document is in the back/forward cache. A frozen page must
+  // not hold an extension port open or try to reopen one.
+  let frozen = false;
   let send;                       // JSON messages, app-bound
   let sendBinary = () => false;   // video frames, app-bound
+  let releasePort = () => {};     // let go of the port before the page freezes
+  let reconnectPort = () => {};   // and take it again when the page comes back
   let onBinary = null;            // set further down, once the decoder exists
   let transportReady = () => false;
   if (runtime) {
@@ -51,7 +56,15 @@
           // instead, so nothing binary is expected in this direction.
           if (message.type === 'nudge' && current) sendFrame(current);
         });
-        port.onDisconnect.addListener(() => { port = null; setTimeout(connect, 1000); });
+        port.onDisconnect.addListener(() => {
+          // Reading lastError acknowledges it. Chrome severs extension ports
+          // when a page enters the back/forward cache, and without this the
+          // browser logs "Unchecked runtime.lastError" every time that happens.
+          void (runtime.lastError && runtime.lastError.message);
+          port = null;
+          // Do not reconnect from a frozen page; pageshow does that instead.
+          if (!frozen) setTimeout(connect, 1000);
+        });
       } catch (e) { port = null; setTimeout(connect, 2000); }
     };
     connect();
@@ -60,6 +73,8 @@
     // trip - it arrives as {}. Decoded frames are small (a 640x360 NV12 frame
     // is ~340 kB) so base64 is an acceptable price for being able to reach the
     // app at all on a site whose CSP blocks a direct socket.
+    releasePort = () => { try { if (port) port.disconnect(); } catch (e) {} port = null; };
+    reconnectPort = () => { if (!port) connect(); };
     sendBinary = (buffer) => {
       if (!port) return false;
       try {
@@ -645,7 +660,18 @@
   document.addEventListener('mouseleave', () => { hoverUntil = 0; }, { capture: true });
   addEventListener('scroll', () => { movingFrames = 3; }, { passive: true, capture: true });
   addEventListener('resize', () => { movingFrames = 3; });
-  addEventListener('pagehide', sendGone);
+  // A page put into the back/forward cache keeps running its listeners but has
+  // its extension ports cut. Let go of ours deliberately, and pick it back up
+  // if the page is restored, rather than being severed and logging an error.
+  addEventListener('pagehide', (event) => {
+    sendGone();
+    if (event.persisted) { frozen = true; releasePort(); }
+  });
+  addEventListener('pageshow', (event) => {
+    if (!event.persisted) return;
+    frozen = false;
+    reconnectPort();
+  });
   document.addEventListener('visibilitychange', () => { if (document.visibilityState !== 'visible') sendGone(); });
 
   pumpIdle();

@@ -92,6 +92,9 @@ runtime.onConnect.addListener((port) => {
     deliver(message);
   });
   port.onDisconnect.addListener(() => {
+    // Acknowledge the disconnect reason so Chrome does not log it as unchecked;
+    // a page entering the back/forward cache is a normal way for this to happen.
+    void (runtime.lastError && runtime.lastError.message);
     const sessions = portSessions.get(port) || new Set();
     portSessions.delete(port);
     for (const session of sessions) {
