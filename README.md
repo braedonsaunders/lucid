@@ -89,13 +89,18 @@ every build — makes the system ask again each time you rebuild. If it still na
 
 ## Using it
 
-Everything lives in the menu bar item and the Dock menu:
+Click the aperture in the menu bar. The panel stays open while you adjust it,
+and everything takes effect on the next frame:
 
-- **Enhance Browser Video** — on/off.
-- **Quality** — Off, Subtle, Standard, Strong.
+- **On/off**, and a line saying what it is doing.
+- **Quality** — Off, Subtle, Standard, Strong. This is the control that matters.
+- **Adjustments** and **Stages**, collapsed, for when you want them.
 
-That is the whole interface. The developer controls (about thirty parameters and
-the six stage switches) live in the test lab at `TestSite/lab.html`, not in the app.
+Right-click the menu bar item for a plain menu instead.
+
+Lucid has no Dock icon on purpose. A Dock icon would make it a regular app, and
+activating a regular app while you are watching something full screen throws you
+out of that Space — the menu bar hides again and the panel never appears.
 
 ## Status, honestly
 

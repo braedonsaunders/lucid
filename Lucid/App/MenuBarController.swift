@@ -13,12 +13,17 @@ import Foundation
 import SwiftUI
 
 @MainActor
-final class MenuBarController: NSObject, NSMenuDelegate {
+final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
     private var statusItem: NSStatusItem?
     /// The menu bar item opens a panel rather than a menu. A menu dismisses
     /// itself the moment you choose anything, which makes it useless for
     /// adjusting a picture while you watch it.
     private var popover: NSPopover?
+    /// A transient popover is dismissed by any click outside it, including the
+    /// click on the very item that opens it. Without noting when that happened,
+    /// clicking the icon to close the panel would close and immediately reopen
+    /// it, so it could never be dismissed that way.
+    private var panelClosedAt: Date = .distantPast
     let panel = ControlPanelModel()
     private let appState: AppState
     /// One menu per host. An NSMenu cannot be attached in two places at once.
@@ -48,7 +53,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         item.button?.image = NSImage(systemSymbolName: "camera.aperture", accessibilityDescription: "Lucid")
         item.button?.image?.isTemplate = true
         item.button?.target = self
-        item.button?.action = #selector(togglePanel)
+        item.button?.action = #selector(statusItemClicked)
         item.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
         statusItem = item
 
@@ -76,6 +81,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         }
 
         let popover = NSPopover()
+        popover.delegate = self
         popover.behavior = .transient
         popover.animates = true
         popover.contentViewController = NSHostingController(rootView: ControlPanel(model: panel))
@@ -87,23 +93,46 @@ final class MenuBarController: NSObject, NSMenuDelegate {
     var onTuningChanged: ((EnhancementSession.Tuning) -> Void)?
     var onResetTuning: (() -> Void)?
 
-    @objc private func togglePanel() {
-        guard let popover, let button = statusItem?.button else { return }
-        if popover.isShown {
-            popover.performClose(nil)
+    @objc private func statusItemClicked() {
+        guard let button = statusItem?.button else { return }
+        let event = NSApp.currentEvent
+        if AppCoordinator.debugLogging {
+            print("   🖱 status item clicked: event=\(event?.type.rawValue.description ?? "nil") popoverShown=\(popover?.isShown == true)")
+        }
+        let wantsMenu = event?.type == .rightMouseUp
+            || event?.modifierFlags.contains(.control) == true
+
+        if wantsMenu {
+            // Pop the menu directly. Assigning statusItem.menu hands click
+            // handling to AppKit permanently, which left the item dead to
+            // every click afterwards.
+            let menu = makeMenu(retained: false)
+            menu.popUp(positioning: nil,
+                       at: NSPoint(x: 0, y: button.bounds.height + 5),
+                       in: button)
             return
         }
-        // A right-click still gets the plain menu, for the people who expect one.
-        if NSApp.currentEvent?.type == .rightMouseUp {
-            let menu = makeMenu()
-            statusItem?.menu = menu
-            button.performClick(nil)
-            statusItem?.menu = nil
+
+        if popover?.isShown == true {
+            popover?.performClose(nil)
             return
         }
+        if Date().timeIntervalSince(panelClosedAt) < 0.3 { return }
+        showPanel(from: button)
+    }
+
+    private func showPanel(from button: NSStatusBarButton) {
+        guard let popover else { return }
         syncPanel()
+        // Deliberately does NOT activate the app. Lucid is used over full-screen
+        // video, and activating pulls you out of that Space - the menu bar just
+        // hides again and the panel never appears. The popover is shown without
+        // taking activation, and closes itself on the next click elsewhere.
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         popover.contentViewController?.view.window?.makeKey()
+        if AppCoordinator.debugLogging {
+            print("   🖱 panel shown=\(popover.isShown) window=\(popover.contentViewController?.view.window != nil)")
+        }
     }
 
     private func syncPanel() {
@@ -117,7 +146,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
     /// Builds a fresh copy of the menu. Called once for the menu bar and again
     /// each time the Dock asks for one.
-    func makeMenu() -> NSMenu {
+    func makeMenu(retained: Bool = true) -> NSMenu {
         let menu = NSMenu()
         menu.delegate = self
         menu.autoenablesItems = false
@@ -163,7 +192,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         quit.target = self
         menu.addItem(quit)
 
-        menus.append(menu)
+        if retained { menus.append(menu) }
         update(menu)
         return menu
     }
@@ -202,6 +231,14 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
     func menuNeedsUpdate(_ menu: NSMenu) {
         update(menu)
+    }
+
+    func menuDidClose(_ menu: NSMenu) {
+        menus.removeAll { $0 === menu }
+    }
+
+    nonisolated func popoverDidClose(_ notification: Notification) {
+        Task { @MainActor in self.panelClosedAt = Date() }
     }
 
     @objc private func toggleEnabled() {

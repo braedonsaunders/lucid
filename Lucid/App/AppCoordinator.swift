@@ -268,7 +268,7 @@ final class AppCoordinator {
     }
 
     /// A fresh menu for the Dock; AppKit asks each time it is opened.
-    func dockMenu() -> NSMenu? { menuBar?.makeMenu() }
+    func dockMenu() -> NSMenu? { menuBar?.makeMenu(retained: false) }
 
     private func broadcastStatus() {
         bridge?.broadcast(BridgeStatus(
@@ -511,16 +511,17 @@ final class EnhancementSession {
 
     enum Failure: Error { case noVideo, tooSmall }
 
-    /// How many chained 2× passes to run. The goal is an output at least as
-    /// large as the video box in physical pixels: if the enhanced image is
-    /// smaller than the box, the display layer stretches it again and the
-    /// reconstruction is wasted. Downscaling a larger image stays sharp.
+    /// How many chained 2× passes to run. Picks the power of two nearest the
+    /// stretch, not the next one up: with the detail gains normalised across
+    /// radii an oversized render is no longer harmful, only wasteful (a 5x
+    /// stretch rendered at 8x draws ~2.7x the pixels the box needs), so
+    /// rendering past the box buys nothing. This is a performance and cost
+    /// fix, not a quality one: the output lands within half a pass of the
+    /// box either way, and downscaling a slightly smaller image stays sharp.
     nonisolated static func stageCount(for report: BrowserVideoReport) -> Int {
         guard let video = report.video, video.iw > 0 else { return 1 }
-        let physicalWidth = video.rect.w * report.dpr
-        var stages = 1
-        while stages < 3, Double(video.iw) * pow(2, Double(stages)) < physicalWidth * 0.98 { stages += 1 }
-        return stages
+        let stretch = video.rect.w * report.dpr / Double(video.iw)
+        return min(max(Int(log2(max(stretch, 1)).rounded()), 1), 3)
     }
 
     /// Width, in physical pixels, at which enhanced frames are handed back to

@@ -36,9 +36,11 @@ struct LucidApp: App {
 
     init() {
         if ProcessInfo.processInfo.environment["LUCID_DEBUG"] == "1" { setvbuf(stdout, nil, _IOLBF, 0) }
-        // A Dock icon is what makes a Dock menu possible at all. Set this back
-        // to .accessory for a menu-bar-only build.
-        NSApp.setActivationPolicy(.regular)
+        // Menu bar only. A Dock icon would let us offer a Dock menu, but it
+        // also makes Lucid a regular app, and activating a regular app while
+        // you are watching something full screen throws you out of that Space.
+        // Being unobtrusive matters more here than having a second menu.
+        NSApp.setActivationPolicy(.accessory)
     }
 
     var body: some Scene {

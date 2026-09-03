@@ -67,13 +67,17 @@ struct SessionPolicyTests {
         #expect(AppCoordinator.isEnhanceable(yt) == true)
     }
 
-    @Test func stageCountCoversTheBox() {
-        // 640-wide source in a 1280-physical box: one 2x pass reaches exactly.
+    @Test func stageCountPicksNearestPowerOfTwo() {
+        // 640-wide source in a 1280-physical box: exactly 2x, one pass.
         #expect(EnhancementSession.stageCount(for: report()) == 1)
-        // 426-wide source in a 2080-physical box: 426*4 = 1704 < 2038 asks for 3,
-        // 426*2 = 852 is far short, so it must ask for more than one pass.
-        #expect(EnhancementSession.stageCount(for: report(dpr: 2, iw: 426, ih: 240, rectX: 0, rectY: 0, rectW: 1040, rectH: 585)) >= 2)
-        // Missing video never crashes the factory choice.
+        // 426-wide source in a 2080-physical box: stretch ~4.9, nearest is 4x.
+        #expect(EnhancementSession.stageCount(for: report(dpr: 2, iw: 426, ih: 240, rectX: 0, rectY: 0, rectW: 1040, rectH: 585)) == 2)
+        // Stretch 5.5x renders at 4x, not 8x: overshooting is waste, not quality.
+        #expect(EnhancementSession.stageCount(for: report(dpr: 2, iw: 400, ih: 225, rectX: 0, rectY: 0, rectW: 1100, rectH: 619)) == 2)
+        // Stretch 7x still rounds up to 8x: the boundary sits at ~5.66x.
+        #expect(EnhancementSession.stageCount(for: report(dpr: 2, iw: 400, ih: 225, rectX: 0, rectY: 0, rectW: 1400, rectH: 788)) == 3)
+        // Below 1x clamps to one pass; missing video never crashes the factory choice.
+        #expect(EnhancementSession.stageCount(for: report(dpr: 1, iw: 640, ih: 360)) == 1)
         var gone = report(); gone.video = nil
         #expect(EnhancementSession.stageCount(for: gone) == 1)
     }
