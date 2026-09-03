@@ -49,7 +49,12 @@ CLEAN_SOURCES = [
     os.path.join(ROOT,
                  ".build/corpus-sources/bbb_sunflower_2160p_60fps_normal.mp4"),
     os.path.join(ROOT, ".build/corpus-sources/Sintel.2010.4k.mkv"),
-] + sorted(glob.glob(os.path.join(ROOT, ".build/corpus-sources/netflix-*.webm")))
+] + sorted(glob.glob(os.path.join(ROOT, ".build/corpus-sources/fast-netflix-*.mp4")))
+# The Chimera clips ship with a single keyframe in 20 seconds - they are
+# research encodes tuned for compression, not for seeking - so every -ss had to
+# decode up to 1200 frames of 4K VP9 and pair generation collapsed to 1.2 per
+# minute. They are transcoded once to CRF 12 with a 25-frame GOP, which is
+# visually lossless at these crop sizes and makes every seek cheap.
 FETCH_DIR = os.path.join(ROOT, ".build/corpus-sources")
 FETCH_URLS = {
     # (zip member name, download URL): Blender ships 2160p as a zip.
@@ -75,7 +80,7 @@ LR_TIERS = [
 CODECS = ["libx264", "libvpx-vp9"]
 BITRATE_LO, BITRATE_HI = 90_000, 1_500_000
 GOPS = [30, 60, 120, 250]
-SEG_SECS = 2.0  # LR segment length; the pair is taken from inside it.
+# Segment length is now derived per source from its frame rate; see `seg`.
 # Which frame of the decoded segment becomes the pair. Counted from the first
 # decoded frame, so it means the same thing for both halves regardless of the
 # source's frame rate or GOP. Far enough in that the codec has stopped coasting
@@ -93,15 +98,23 @@ def sh(cmd, **kw):
 
 
 def probe_dims(path):
+    # Parsed by key, not by position: ffprobe emits these fields in its own
+    # order regardless of the order they are requested in, which silently
+    # swapped duration and frame rate.
     r = sh(["ffprobe", "-v", "error", "-select_streams", "v:0",
-            "-show_entries", "stream=width,height,duration",
-            "-of", "csv=p=0", path])
-    w, h, d = r.stdout.strip().split(",")
+            "-show_entries", "stream=width,height,duration,r_frame_rate",
+            "-of", "default=noprint_wrappers=1", path])
+    fields = dict(line.split("=", 1) for line in r.stdout.strip().splitlines()
+                  if "=" in line)
+    w, h = fields["width"], fields["height"]
+    d, rate = fields.get("duration", "N/A"), fields.get("r_frame_rate", "30/1")
     if d == "N/A":  # some masters omit stream duration; use container.
         d = sh(["ffprobe", "-v", "error",
                 "-show_entries", "format=duration",
                 "-of", "csv=p=0", path]).stdout.strip()
-    return int(w), int(h), float(d)
+    num, _, den = rate.partition("/")
+    fps = float(num) / float(den or 1)
+    return int(w), int(h), float(d), fps
 
 
 def fetch_sources():
@@ -183,7 +196,7 @@ def main():
     # HR crop it is asked for. Anything that cannot is named here.
     dims = {}
     for s in srcs:
-        sw, sh_, dur = probe_dims(s)
+        sw, sh_, dur, fps = probe_dims(s)
         if sw < max(t[0] for t in LR_TIERS) * SCALE or \
                 sh_ < max(t[1] for t in LR_TIERS) * SCALE:
             capped = [f"{t[0]}x{t[1]}" for t in LR_TIERS
@@ -196,7 +209,7 @@ def main():
                 continue
             print(f"LIMITED {s}: {sw}x{sh_} can only supply tiers "
                   f"{','.join(capped)}")
-        dims[s] = (sw, sh_, dur)
+        dims[s] = (sw, sh_, dur, fps)
     srcs = list(dims)
     if not srcs:
         sys.exit("no source can supply any HR crop")
@@ -239,8 +252,15 @@ def main():
                   f"{cw}x{ch} - skipped")
             continue
         src = rng.choice(fit_srcs)
-        sw, sh_, dur = dims[src]
-        t0 = rng.uniform(0, max(0.1, dur - SEG_SECS - 0.5))
+        sw, sh_, dur, fps = dims[src]
+        # Decode only what the pair needs. A fixed 2s window is 48 frames on a
+        # 24fps source and 120 on a 60fps one, and exactly one frame is kept -
+        # which collapsed generation to 1.2 pairs a minute once 60fps 4K sources
+        # were added. Sizing the window by frame rate keeps the codec's
+        # inter-frame behaviour (the pair frame still sits deep inside the GOP)
+        # while decoding a third as much on the 60fps sources.
+        seg = max(0.35, (PAIR_FRAME + 8) / max(fps, 1.0))
+        t0 = rng.uniform(0, max(0.1, dur - seg - 0.5))
         cx = rng.randint(0, (sw - cw) // 2) * 2 if sw > cw else 0
         cy = rng.randint(0, (sh_ - ch) // 2) * 2 if sh_ > ch else 0
         codec = rng.choice(CODECS)
@@ -276,7 +296,7 @@ def main():
             # and GOP, which is exactly what the residual mismatches measured:
             # 14.5% for both x264 and VP9, flat across every GOP length.
             ["ffmpeg", "-v", "error", "-ss", str(t0), "-i", src,
-             "-t", str(SEG_SECS),
+             "-t", str(seg),
              "-vf", f"crop={cw}:{ch}:{cx}:{cy},scale={ew}:{eh}",
              "-fps_mode", "passthrough",
              "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
