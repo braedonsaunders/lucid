@@ -69,7 +69,12 @@ LR_TIERS = [
 CODECS = ["libx264", "libvpx-vp9"]
 BITRATE_LO, BITRATE_HI = 90_000, 1_500_000
 GOPS = [30, 60, 120, 250]
-SEG_SECS = 2.0  # LR segment length; decoded frame taken from the middle.
+SEG_SECS = 2.0  # LR segment length; the pair is taken from inside it.
+# Which frame of the decoded segment becomes the pair. Counted from the first
+# decoded frame, so it means the same thing for both halves regardless of the
+# source's frame rate or GOP. Far enough in that the codec has stopped coasting
+# off the opening keyframe, and inside 2s at both 30 and 60fps.
+PAIR_FRAME = 30
 SCALE = 4  # HR is 4x the LR: the fine-tune target is a 4x model.
 
 
@@ -239,10 +244,18 @@ def main():
 
         hr_path = os.path.join(hr_dir, f"{made:06d}.png")
         lr_path = os.path.join(lr_dir, f"{made:06d}.png")
-        # HR: clean crop of the segment's middle frame.
-        sh(["ffmpeg", "-y", "-v", "error", "-ss", str(t0 + SEG_SECS / 2),
-            "-i", src, "-frames:v", "1",
-            "-vf", f"crop={cw}:{ch}:{cx}:{cy}", hr_path])
+        # HR and LR must be the SAME frame, and that is harder than it looks.
+        # This used to seek three times - once for HR at t0+1s, once for the
+        # raw pipe at t0, and once into the encoded segment - and `-ss` before
+        # `-i` is a keyframe seek, so the 4K source and the re-encoded segment
+        # landed on different frames. 57% of the resulting pairs showed the
+        # same shot at a different moment: a model trained on those learns to
+        # invent motion. Both halves now decode from the same start and pick
+        # the same frame index, and nothing seeks into the encoded file.
+        sh(["ffmpeg", "-y", "-v", "error", "-ss", str(t0),
+            "-i", src, "-vf",
+            f"crop={cw}:{ch}:{cx}:{cy},select=eq(n\\,{PAIR_FRAME})",
+            "-frames:v", "1", "-fps_mode", "passthrough", hr_path])
         # LR: same segment downscaled to the ENCODE size for a real
         # codec round-trip, then resized to the MODEL size. The two
         # differ only for 240p (426 encode -> 432 model); the resize
@@ -262,9 +275,14 @@ def main():
                                  tmp)
             vf = (f"scale={mw}:{mh}" if (mw, mh) != (ew, eh)
                   else "null")
-            sh(["ffmpeg", "-y", "-v", "error", "-ss",
-                str(SEG_SECS / 2), "-i", seg, "-frames:v", "1",
-                "-vf", vf, lr_path])
+            # No -ss: decode the segment from its start and take the same
+            # frame index HR took, so the two are the same instant by
+            # construction rather than by luck.
+            select = f"select=eq(n\\,{PAIR_FRAME})"
+            chain = select if vf == "null" else f"{select},{vf}"
+            sh(["ffmpeg", "-y", "-v", "error", "-i", seg,
+                "-vf", chain, "-frames:v", "1",
+                "-fps_mode", "passthrough", lr_path])
         except RuntimeError as e:
             print(f"  pair {made} skipped: {e}")
             continue

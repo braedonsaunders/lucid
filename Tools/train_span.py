@@ -67,7 +67,21 @@ def charbonnier(a, b, eps=1e-3):
 
 # ---- patch bank -------------------------------------------------------------
 
-def build_bank(corpus, out, per_pair=8, seed=0):
+def pair_correlation(lr, hr):
+    """How well a downscaled HR matches its LR, in luma. ~0.99 for a true pair;
+    a pair from a different frame of the same shot lands near 0.5, and static
+    scenes are the only ones that survive by accident."""
+    from PIL import Image
+    a = (0.299 * lr[..., 0] + 0.587 * lr[..., 1] + 0.114 * lr[..., 2]).astype(np.float64)
+    small = Image.fromarray(hr).convert("L").resize((lr.shape[1], lr.shape[0]), Image.LANCZOS)
+    b = np.asarray(small, dtype=np.float64)
+    if a.std() < 1e-6 or b.std() < 1e-6:
+        return 0.0            # a flat patch carries no signal either way
+    x, y = a.ravel() - a.mean(), b.ravel() - b.mean()
+    return float((x * y).mean() / np.sqrt((x * x).mean() * (y * y).mean()))
+
+
+def build_bank(corpus, out, per_pair=8, seed=0, min_correlation=0.85):
     """Pre-cuts training patches into a memory-mapped array.
 
     Decoding a 2560x1440 PNG per sample costs more than the training step does.
@@ -89,6 +103,7 @@ def build_bank(corpus, out, per_pair=8, seed=0):
         shape=(total, HR_PATCH, HR_PATCH, 3))
 
     written = 0
+    rejected = []
     for index, name in enumerate(pairs):
         lr_path = os.path.join(corpus, "lr", name)
         hr_path = os.path.join(corpus, "hr", name)
@@ -105,6 +120,19 @@ def build_bank(corpus, out, per_pair=8, seed=0):
                 f"lr {lr.shape[1]}x{lr.shape[0]}")
         if lr.shape[0] < LR_PATCH or lr.shape[1] < LR_PATCH:
             continue
+        # Matching sizes prove nothing about matching content. The first corpus
+        # passed the size check and was still 57% junk: HR and LR were decoded
+        # by separate seeks and landed on different frames, so more than half
+        # the pairs were the same shot at a different moment. Training on those
+        # teaches the model to invent motion, and the only symptom was a
+        # validation PSNR that looked merely disappointing.
+        #
+        # A real pair survives a round trip: downscale HR and it should look
+        # like LR. Anything that does not correlate is dropped here rather than
+        # quietly averaged into the weights.
+        if pair_correlation(lr, hr) < min_correlation:
+            rejected.append(name)
+            continue
         for _ in range(per_pair):
             y = rng.randrange(0, lr.shape[0] - LR_PATCH + 1)
             x = rng.randrange(0, lr.shape[1] - LR_PATCH + 1)
@@ -115,6 +143,13 @@ def build_bank(corpus, out, per_pair=8, seed=0):
         if index % 200 == 0:
             print(f"  {index}/{len(pairs)} pairs, {written} patches", flush=True)
 
+    if rejected:
+        print(f"rejected {len(rejected)} of {len(pairs)} pairs as mismatched "
+              f"(first few: {', '.join(rejected[:4])})")
+        if len(rejected) > len(pairs) // 10:
+            raise SystemExit(
+                f"{100*len(rejected)/len(pairs):.0f}% of the corpus is mismatched - "
+                "fix the generator rather than training on what is left")
     lr_bank.flush(); hr_bank.flush()
     with open(os.path.join(out, "bank.json"), "w") as fh:
         json.dump({"count": written, "lr_patch": LR_PATCH, "scale": SCALE}, fh)
@@ -161,6 +196,8 @@ def main():
     parser.add_argument("--bank-dir", default=".build/bank")
     parser.add_argument("--bank", action="store_true", help="build the patch bank and stop")
     parser.add_argument("--per-pair", type=int, default=8)
+    parser.add_argument("--min-correlation", type=float, default=0.85,
+                        help="reject pairs whose HR and LR are not the same frame")
     parser.add_argument("--channels", type=int, default=32)
     parser.add_argument("--steps", type=int, default=60000)
     parser.add_argument("--batch", type=int, default=32)
@@ -170,7 +207,8 @@ def main():
     args = parser.parse_args()
 
     if args.bank:
-        build_bank(args.corpus, args.bank_dir, args.per_pair)
+        build_bank(args.corpus, args.bank_dir, args.per_pair,
+                   min_correlation=args.min_correlation)
         return
 
     lr_bank, hr_bank = load_bank(args.bank_dir)
