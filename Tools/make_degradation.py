@@ -195,6 +195,8 @@ def main():
     # older compressed clips living there (720p AVI, 2048 Sintel) would
     # otherwise leak back in as HR for the low tiers - the exact dirty-
     # target bug the 720p floor existed to prevent.
+    # Positional sources replace the training set entirely, which is how an
+    # eval corpus gets built from footage the model has never seen.
     srcs = list(args.sources or CLEAN_SOURCES)
     if args.fetch:
         srcs += fetch_sources()
