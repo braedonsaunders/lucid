@@ -230,6 +230,7 @@ final class AppCoordinator {
                 case "lobeScale": t.lobeScale = value
                 case "mid": t.mid = value
                 case "presharpen": t.presharpen = value
+                case "adaptive": t.adaptive = value
                 case "skinProtect": t.skinProtect = value
                 case "taaFeedback": t.taaFeedback = value
                 case "taaGamma": t.taaGamma = value
@@ -560,6 +561,8 @@ final class EnhancementSession {
         var lobeScale: Float = 0.5
         var mid: Float = 0.0
         var presharpen: Float = 0.0
+        /// Lets the deblocker read the frame and set its own strength.
+        var adaptive: Float = 1.0
         // Stage toggles, 0 or 1, so each can be judged on its own.
         var stageSiting: Float = 1
         var stageDeband: Float = 0
@@ -602,6 +605,7 @@ final class EnhancementSession {
             lobeScale = try f(.lobeScale, lobeScale)
             mid = try f(.mid, mid)
             presharpen = try f(.presharpen, presharpen)
+            adaptive = try f(.adaptive, adaptive)
             skinProtect = try f(.skinProtect, skinProtect)
             taaFeedback = try f(.taaFeedback, taaFeedback)
             taaGamma = try f(.taaGamma, taaGamma)
@@ -680,6 +684,7 @@ final class EnhancementSession {
             t.lobeScale = f("LUCID_LOBE", t.lobeScale)
             t.mid = f("LUCID_MID", t.mid)
             t.presharpen = f("LUCID_PRESHARP", t.presharpen)
+            t.adaptive = f("LUCID_ADAPTIVE", t.adaptive)
             t.skinProtect = f("LUCID_SKINPROTECT", t.skinProtect)
             t.taaFeedback = f("LUCID_TAAFEEDBACK", t.taaFeedback)
             t.taaGamma = f("LUCID_TAAGAMMA", t.taaGamma)
@@ -708,7 +713,7 @@ final class EnhancementSession {
                 "blackPoint": t.blackPoint, "whitePoint": t.whitePoint,
                 "contrast": t.contrast, "saturation": t.saturation,
                 "micro": t.micro, "lobeScale": t.lobeScale, "mid": t.mid,
-                "presharpen": t.presharpen,
+                "presharpen": t.presharpen, "adaptive": t.adaptive,
                 "stageSiting": t.stageSiting, "stageDeband": t.stageDeband, "stageOklab": t.stageOklab,
                 "stageLoopFilter": t.stageLoopFilter, "stageTaa": t.stageTaa, "stageCdef": t.stageCdef,
                 "loopFilterQuant": t.loopFilterQuant, "cdefPrimary": t.cdefPrimary, "cdefSecondary": t.cdefSecondary,
@@ -738,6 +743,7 @@ final class EnhancementSession {
             sourceDeblock: t.sourceDeblock,
             sourceDeblockRadius: 1.6,
             presharpen: t.presharpen,
+            adaptive: t.adaptive,
             temporal: t.temporal,
             motionLow: 0.02,
             motionHigh: 0.08,

@@ -118,7 +118,7 @@ enum EngineBench {
             micro: t.micro, lobeScale: t.lobeScale, mid: t.mid,
             flatThreshold: 0.004, edgeThreshold: 0.030, deblock: t.deblock,
             backProjection: 0, backProjectionPasses: 0,
-            sourceDeblock: t.sourceDeblock, sourceDeblockRadius: 1.6, presharpen: t.presharpen,
+            sourceDeblock: t.sourceDeblock, sourceDeblockRadius: 1.6, presharpen: t.presharpen, adaptive: t.adaptive,
             temporal: t.temporal, motionLow: 0.02, motionHigh: 0.08,
             radius: ProcessInfo.processInfo.environment["LUCID_RADIUS"].flatMap(Int.init) ?? 4,
             blackPoint: t.blackPoint, whitePoint: t.whitePoint,

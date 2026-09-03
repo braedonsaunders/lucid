@@ -38,6 +38,11 @@ struct DetailSettings: Equatable, Sendable {
     var sourceDeblockRadius: Float = 1.6
     /// Unsharp gain applied at source resolution, before the scaler runs.
     var presharpen: Float = 0.0
+    /// How much the deblocker is allowed to set its own strength from the
+    /// picture. 0 uses `sourceDeblock` literally; 1 scales it entirely by how
+    /// much blocking the frame actually has. This is what removes the need for
+    /// a per-site setting.
+    var adaptive: Float = 1.0
     /// Gated temporal accumulation at source resolution. 0 disables.
     var temporal: Float = 0.5
     var motionLow: Float = 0.02
@@ -45,6 +50,11 @@ struct DetailSettings: Equatable, Sendable {
     /// How many pixels one decoded video pixel spans in the frame being
     /// filtered. Sets the scale every kernel works at.
     var radius: Int = 1
+    /// The radius the gains below were chosen at. A wider kernel amplifies
+    /// lower frequencies, which carry more energy, so the same number produces
+    /// a stronger picture at a bigger upscale - which is why a setting tuned on
+    /// one site looked wrong on the next. The gains are normalised to this.
+    var referenceRadius: Int = 4
     /// Tone grade. Compression lifts blacks and flattens contrast; these put
     /// them back. Points are in normalised video-range luma.
     var blackPoint: Float = 0.02
@@ -247,6 +257,7 @@ kernel void detail_enhance_luma(texture2d<float, access::read>  source      [[te
 // tight range, run once at the small source size where it is nearly free.
 struct DeblockParams {
     float presharpen;       // unsharp gain applied before the scaler sees the frame
+    float adaptive;         // 0 = use `range` as given, 1 = scale it by the measurement
     int radius;         // one source pixel spans this many pixels here
     float range;        // luma difference (0-1) treated as compression noise
     float spatial;      // spatial falloff in pixels
@@ -264,8 +275,19 @@ kernel void deblock_luma(texture2d<float, access::read>  source      [[texture(0
                          texture2d<float, access::write> destination [[texture(2)]],
                          texture2d<float, access::write> historyOut  [[texture(3)]],
                          constant DeblockParams&         params      [[buffer(0)]],
+                         device const uint*              stats       [[buffer(1)]],
                          uint2                           gid         [[thread_position_in_grid]])
 {
+    // How much more step energy sits on the transform grid than off it. Around
+    // zero means a clean stream and the filter should stay out of the way;
+    // a large excess means visible blocking and it should work.
+    float damage = 1.0f;
+    if (params.adaptive > 0.0f && stats[2] > 0u && stats[3] > 0u) {
+        const float onGrid  = float(stats[0]) / float(stats[2]);
+        const float offGrid = float(stats[1]) / float(stats[3]);
+        const float excess = (onGrid - offGrid) / max(offGrid, 1.0f);
+        damage = mix(1.0f, clamp(excess * 6.0f, 0.0f, 2.0f), params.adaptive);
+    }
     const int width = int(source.get_width());
     const int height = int(source.get_height());
     if (int(gid.x) >= width || int(gid.y) >= height) { return; }
@@ -273,8 +295,9 @@ kernel void deblock_luma(texture2d<float, access::read>  source      [[texture(0
     const float center = source.read(gid).r;
     const int step = max(params.radius, 1);
     float spatialResult = center;
-    if (params.range > 0.0f) {
-        const float rangeK = -0.5f / max(params.range * params.range, 1e-6f);
+    const float range = params.range * damage;
+    if (range > 0.0f) {
+        const float rangeK = -0.5f / max(range * range, 1e-6f);
         const float spatialK = -0.5f / max(params.spatial * params.spatial, 1e-6f);
         float sum = 0.0f, weight = 0.0f;
         for (int dy = -2; dy <= 2; ++dy) {
@@ -839,10 +862,44 @@ kernel void apply_luma_gain(texture2d<float, access::read>  source      [[textur
     destination.write(float4(clamp(y * g * range + lo, lo, lo + range), 0, 0, 1), gid);
 }
 
+// ---------------------------------------------------------------------------
+// Frame analysis. The point of this is that nobody should have to tell Lucid
+// how damaged a stream is. A 200 kbps 240p stream and a 2 Mbps 720p stream need
+// very different amounts of deblocking, and the frame itself says which it is:
+// compression puts steps on the transform grid that are not there off it.
+// ---------------------------------------------------------------------------
+
+// stats[0] = second differences across grid-aligned columns and rows
+// stats[1] = the same measured off the grid, as the control
+// stats[2] = how many samples went into each
+kernel void measure_frame(texture2d<float, access::read> source [[texture(0)]],
+                          device atomic_uint*            stats  [[buffer(0)]],
+                          uint2                          gid    [[thread_position_in_grid]])
+{
+    const int width = int(source.get_width()), height = int(source.get_height());
+    // One sample per 4x4 tile is plenty to characterise a whole frame.
+    const int x = int(gid.x) * 4, y = int(gid.y) * 4;
+    if (x < 2 || y < 2 || x >= width - 2 || y >= height - 2) { return; }
+
+    // A block edge is a step: the second difference across it is large while the
+    // pixels either side of it are flat. Real detail does not respect the grid,
+    // so the same measurement taken off the grid is the baseline to compare to.
+    const float left  = source.read(uint2(uint(x - 1), uint(y))).r;
+    const float here  = source.read(uint2(uint(x),     uint(y))).r;
+    const float right = source.read(uint2(uint(x + 1), uint(y))).r;
+    const float step = abs(2.0f * here - left - right);
+
+    const bool onGrid = (x % 8) == 0 || (y % 8) == 0;
+    atomic_fetch_add_explicit(&stats[onGrid ? 0 : 1],
+                              uint(step * 8192.0f), memory_order_relaxed);
+    atomic_fetch_add_explicit(&stats[onGrid ? 2 : 3], 1u, memory_order_relaxed);
+}
+
 """
 
 private struct DeblockParams {
     var presharpen: Float
+    var adaptive: Float
     var radius: Int32
     var range: Float
     var spatial: Float
@@ -886,6 +943,10 @@ final class DetailEnhancer: @unchecked Sendable {
     private let cdefDirectionPipeline: MTLComputePipelineState
     private let cdefFilterPipeline: MTLComputePipelineState
     private let debandPipeline: MTLComputePipelineState
+    private let measurePipeline: MTLComputePipelineState
+    /// Four counters the analysis pass fills in and the deblocker reads, so the
+    /// measurement never has to make a round trip through the CPU.
+    private var frameStats: MTLBuffer?
     private let taaPipeline: MTLComputePipelineState
     private let oklabPipeline: MTLComputePipelineState
     private let lumaGainPipeline: MTLComputePipelineState
@@ -945,6 +1006,7 @@ final class DetailEnhancer: @unchecked Sendable {
         cdefDirectionPipeline = try makeStage("cdef_direction")
         cdefFilterPipeline = try makeStage("cdef_filter")
         debandPipeline = try makeStage("deband_plane")
+        measurePipeline = try makeStage("measure_frame")
         taaPipeline = try makeStage("taa_luma")
         oklabPipeline = try makeStage("oklab_chroma")
         lumaGainPipeline = try makeStage("apply_luma_gain")
@@ -958,6 +1020,14 @@ final class DetailEnhancer: @unchecked Sendable {
         guard CVMetalTextureCacheCreate(kCFAllocatorDefault, nil, device, nil, &cache) == kCVReturnSuccess,
               let cache else { throw Failure.textureCache }
         textureCache = cache
+    }
+
+    /// The factor that makes a gain mean the same thing at any upscale.
+    /// `2 - log2(r)/2`, normalised so it is 1 at the reference radius.
+    static func gainNormalisation(radius: Int, reference: Int) -> Float {
+        func curve(_ r: Int) -> Float { 2 - log2(Float(max(r, 1))) / 2 }
+        let value = curve(radius) / max(curve(reference), 0.0001)
+        return min(max(value, 0.25), 2.0)
     }
 
     /// Cleans compression damage out of a source frame before it is scaled.
@@ -1010,9 +1080,30 @@ final class DetailEnhancer: @unchecked Sendable {
         }
 
         frameIndex += 1
+        if frameStats == nil {
+            frameStats = device.makeBuffer(length: MemoryLayout<UInt32>.stride * 4,
+                                           options: .storageModePrivate)
+        }
         let threads = MTLSize(width: 16, height: 16, depth: 1)
         func grid(_ w: Int, _ h: Int) -> MTLSize {
             MTLSize(width: (w + 15) / 16, height: (h + 15) / 16, depth: 1)
+        }
+
+        // Measure the frame before anything touches it, so the stages that
+        // follow can set their own strength from what is actually there.
+        if settings.adaptive > 0, let stats = frameStats {
+            if let blit = commandBuffer.makeBlitCommandEncoder() {
+                blit.fill(buffer: stats, range: 0..<stats.length, value: 0)
+                blit.endEncoding()
+            }
+            if let e = commandBuffer.makeComputeCommandEncoder() {
+                e.setComputePipelineState(measurePipeline)
+                e.setTexture(inLuma, index: 0)
+                e.setBuffer(stats, offset: 0, index: 0)
+                e.dispatchThreadgroups(grid((width + 3) / 4, (height + 3) / 4),
+                                       threadsPerThreadgroup: threads)
+                e.endEncoding()
+            }
         }
 
         // Each stage is one pass over the plane; the list decides the order and
@@ -1089,6 +1180,7 @@ final class DetailEnhancer: @unchecked Sendable {
         if runsBilateral {
             let params = DeblockParams(
                 presharpen: settings.presharpen,
+                adaptive: settings.adaptive,
                 radius: Int32(max(1, radius)),
                 range: settings.sourceDeblock, spatial: settings.sourceDeblockRadius,
                 temporal: (historyValid && !settings.stageTaa) ? settings.temporal : 0,
@@ -1097,6 +1189,7 @@ final class DetailEnhancer: @unchecked Sendable {
             passes.append { src, dst in
                 guard let e = commandBuffer.makeComputeCommandEncoder() else { return }
                 e.setComputePipelineState(self.deblockPipeline)
+                e.setBuffer(self.frameStats, offset: 0, index: 1)
                 e.setTexture(src, index: 0)
                 e.setTexture(self.history[self.historyIndex], index: 1)
                 e.setTexture(dst, index: 2)
@@ -1239,10 +1332,26 @@ final class DetailEnhancer: @unchecked Sendable {
             encoder.setComputePipelineState(pipeline)
             encoder.setTexture(currentLuma, index: 0)
             encoder.setTexture(outLuma, index: 1)
+            // Measured, not guessed: holding the settings fixed and sweeping
+            // the gain at each radius, the multipliers that reproduce the
+            // reference radius's band energy are 1.5, 1.0 and 0.5 at radius
+            // 2, 4 and 8 - exactly linear in log2(radius).
+            let scale = Self.gainNormalisation(radius: settings.radius,
+                                               reference: settings.referenceRadius)
+            // The lobe is what produces crispness, and crispness is a property
+            // of the display grid, not of the source. Hold it at a fixed pixel
+            // spacing instead of letting it widen with the upscale.
+            let lobeSpacing = settings.lobeScale * Float(settings.referenceRadius)
+            let lobe = min(max(lobeSpacing / Float(max(settings.radius, 1)), 0.12), 1.0)
             var params = DetailParams(
                 radius: Int32(max(1, settings.radius)),
-                sharpness: settings.sharpness, fine: settings.fine,
-                micro: settings.micro, lobeScale: settings.lobeScale, mid: settings.mid,
+                // Only the radius-scaled terms are normalised. `micro` works at
+                // a fixed one-pixel spacing, so it is already scale-free and
+                // normalising it would make the fine band drift the other way -
+                // it is the term that holds fine detail steady across scales.
+                sharpness: settings.sharpness * scale, fine: settings.fine * scale,
+                micro: settings.micro, lobeScale: lobe,
+                mid: settings.mid * scale,
                 flatThreshold: settings.flatThreshold, edgeThreshold: settings.edgeThreshold,
                 deblock: settings.deblock
             )
