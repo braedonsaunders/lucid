@@ -120,6 +120,12 @@ enum EngineBench {
         var previousSource: CVPixelBuffer?
         var previousOutput: CVPixelBuffer?
         let t = EnhancementSession.Tuning.load()
+        // Chroma siting lives on a static that only AppCoordinator sets, so the
+        // bench used to ignore stageSiting completely and report it as having
+        // exactly zero effect - a broken measurement that reads like a result.
+        // It does apply on the learned path: LearnedUpscaler's colour
+        // conversion goes through ensureColorDescription.
+        TiledVideoToolboxUpscaler.chromaSitingLeft = t.stageSiting > 0.5
         let detail = try DetailEnhancer(device: compositor.device, settings: DetailSettings(
             sharpness: t.sharpness, fine: t.fine,
             micro: t.micro, lobeScale: t.lobeScale, mid: t.mid,
