@@ -64,15 +64,28 @@ stacks like the video does. One path, every site.
 
 ## Install
 
+Download the latest `Lucid-x.y.z.dmg` from
+[Releases](https://github.com/braedonsaunders/lucid/releases), drag Lucid to
+Applications, and open it. It asks for Screen Recording the first time — it needs
+that to place the enhanced picture over the video, and it records nothing.
+
+Then load the browser companion: open `chrome://extensions`, turn on Developer
+mode, choose **Load unpacked**, and pick the `BrowserExtension` folder from a
+checkout of this repository. (It is not on the Chrome Web Store yet.)
+
+### Building it yourself
+
 ```bash
 git clone https://github.com/braedonsaunders/lucid.git
 cd lucid
-Tools/run-poc.sh          # builds, signs and launches
+Tools/run-poc.sh        # builds, signs and launches for development
+Tools/release.sh 0.3.0  # builds a signed .dmg
 ```
 
-Then load `BrowserExtension/` as an unpacked extension (`chrome://extensions` →
-Developer mode → Load unpacked). Sign the app with a stable identity; an ad-hoc
-signature changes every build and macOS re-asks for Screen Recording each time.
+`run-poc.sh` signs with a stable identity on purpose. macOS ties the Screen
+Recording grant to the code signature, so an ad-hoc signature — which changes on
+every build — makes the system ask again each time you rebuild. If it still nags,
+`tccutil reset ScreenCapture com.braedonsaunders.lucid` and grant it once more.
 
 ## Using it
 
