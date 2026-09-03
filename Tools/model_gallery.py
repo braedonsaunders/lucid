@@ -75,6 +75,7 @@ def main():
         print(f"no bench frames in {BENCH}; run --bench first"); return
 
     candidates = [
+        ("ch32u (trained on our codec corpus)", "Model/SPAN_x4_ch32u_480x270.mlpackage", 4),
         ("SPAN ch28 (ships)",  "Model/SPAN_x4_ch28_480x270.mlpackage", 4),
         ("SPAN ch48",          "Model/SPAN_x4_ch48_480x270.mlpackage", 4),
         ("RealESRGAN x4v3",    "Model/RealESRGAN_x4v3_480x270.mlpackage", 4),

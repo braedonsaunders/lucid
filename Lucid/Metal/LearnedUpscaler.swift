@@ -5,15 +5,18 @@
 //  Lucid's upscaler: SPAN, running on the Neural Engine. This is the whole
 //  reconstruction path - there is no second engine underneath it.
 //
-//  Measured against a 1080p reference on compressed 270p source, fine-band
-//  correlation with the truth - the metric that separates recovered detail from
-//  invented detail:
+//  Scored on 120 pairs of live-action footage in neither training corpus,
+//  fine-band correlation with the truth - the metric that separates recovered
+//  detail from invented detail:
 //
-//      SPAN ch48                     0.228
-//      SPAN ch28                     0.221
-//      lanczos anchor                0.180
-//      Apple's scaler                0.174
-//      Apple's scaler + our detail   0.152
+//      ch32u, trained on our codec corpus   0.272
+//      the same model on animation only     0.252
+//      lanczos anchor                       0.229
+//
+//  And on the 1080p bench references, against the models it replaces:
+//
+//      SPAN ch48    0.2278 fine, 21.8 ms      ch32u   0.2242 fine, 7.9 ms
+//      SPAN ch28    0.2214 fine, 14.7 ms      (at 480x270)
 //
 //  Apple's scaler invents a mottled texture in foliage that is not in the
 //  source; our sharpening then amplifies it. SPAN is the only option measured
@@ -37,9 +40,9 @@ final class LearnedUpscaler: @unchecked Sendable {
     /// `milliseconds` is the whole call, not the Core ML prediction: the
     /// pipeline works in 420v and the model wants RGB, so a frame is converted
     /// in and converted back, and the way back is at 4x. Measured separately
-    /// with Tools/PipelineBench.swift, that pair costs 0.36 ms at 256x144 and
-    /// 1.40 ms at 640x360 - small, but enough to put 640x360 over a budget set
-    /// against the model alone, which is why it is counted here.
+    /// with Tools/PipelineBench.swift, that pair costs 0.5 ms at 256x144 and
+    /// 4.2 ms at 864x480 - small at the bottom of the ladder, and decisive at
+    /// the top, which is why it is counted here rather than left implicit.
     struct Variant {
         let width: Int
         let height: Int
@@ -61,11 +64,12 @@ final class LearnedUpscaler: @unchecked Sendable {
     /// Nothing is lost: the page draws the result into the video box, which
     /// has the true aspect, so the stretch is undone on presentation.
     static let variants: [Variant] = [
-        Variant(width: 256, height: 144, milliseconds: 4.9),    // 4.5 model + 0.4 convert
-        Variant(width: 320, height: 180, milliseconds: 7.5),    // 7.0 + 0.5
-        Variant(width: 432, height: 240, milliseconds: 14.3),   // 13.6 + 0.7, covers 426x240
-        Variant(width: 480, height: 270, milliseconds: 15.6),   // 14.7 + 0.9
-        Variant(width: 640, height: 360, milliseconds: 28.1),   // 26.7 + 1.4
+        Variant(width: 256, height: 144, milliseconds: 3.5),    // 2.38 model + 0.5 convert + detail
+        Variant(width: 320, height: 180, milliseconds: 5.2),    // 3.54 + 0.7
+        Variant(width: 432, height: 240, milliseconds: 9.1),    // 6.40 + 1.1, covers 426x240
+        Variant(width: 480, height: 270, milliseconds: 11.6),   // 7.92 + 1.7
+        Variant(width: 640, height: 360, milliseconds: 18.2),   // 12.53 + 2.8
+        Variant(width: 864, height: 480, milliseconds: 32.7),   // 23.50 + 4.2, covers 854x480
     ]
 
     /// The target window is Microsoft Edge's: enabled below 720p. Edge arrived
@@ -73,12 +77,13 @@ final class LearnedUpscaler: @unchecked Sendable {
     /// something - it is the range where a source is short of what the display
     /// shows, and above it there is progressively less to recover.
     ///
-    /// That needs the 854x480 tier, which today's ch28 cannot carry (48.2 ms).
-    /// ch32u puts it at 24.7 ms, but 480p is 3456x1920 out - 1.8x the pixels of
-    /// 360p - so the colour conversions cost 4.2 ms and the detail stage scales
-    /// with them. The total lands around 33 ms against a 33.3 ms frame, which
-    /// means 480p fits only if the detail stage earns its milliseconds. The
-    /// ablation harness decides that; it is not a guess to make in advance.
+    /// That needs the 854x480 tier, which ch28 could not carry (48.2 ms).
+    /// The trained ch32u does it in 23.5 ms, but 480p is 3456x1920 out - 1.8x
+    /// the pixels of 360p - so the colour conversions cost 4.2 ms and the
+    /// detail stage scales with them. The total lands at 32.7 ms against a
+    /// 33.3 ms frame: it fits, with no room to spare. If the ablation finds
+    /// detail stages that are not earning their milliseconds, cutting them is
+    /// what turns that from marginal into comfortable.
     ///
     /// Where the next speed comes from, measured 2026-09-03 so it is not
     /// re-derived: this trunk is activation-bandwidth bound, not MAC bound.
@@ -92,15 +97,17 @@ final class LearnedUpscaler: @unchecked Sendable {
     /// ships today (1.06M parameters against 1.03M). Its ladder also brings
     /// 864x480 to 24.7ms, back inside this budget.
     ///
-    /// That architecture has no pretrained weights, so it is waiting on the
-    /// codec-degradation corpus. Until it is trained, ch28 ships.
+    /// It had no pretrained weights, so it was trained from scratch on 1800
+    /// pairs of real codec degradation - x264 and VP9 at 90 kbps to 1.5 Mbps,
+    /// GOP 30 to 250, 64% live action and 35% animation across 21 sources.
+    /// That is what ships now.
     ///
     /// A 30fps frame is 33.3 ms. This leaves 3 ms of it for the detail pass and
     /// for getting the result back to the page. Low-resolution streaming video
     /// runs at 24-30fps; 60fps material is published at 720p and above, which
     /// is outside the window Lucid works in anyway.
     ///
-    /// 640x360 sits at 28.1 ms, so it is the one size with almost no headroom.
+    /// 864x480 sits at 32.7 ms, so it is the one size with almost no headroom.
     /// If frames start dropping in real use, it is the first thing to remove.
     ///
     /// A source with no variant under this budget is not enhanced at all.
@@ -108,7 +115,7 @@ final class LearnedUpscaler: @unchecked Sendable {
     /// *worse* than leaving the frame alone, so running it would be a
     /// disservice. Lucid declines instead, the same way RTX Video Super
     /// Resolution declines outside its own window.
-    static let budgetMilliseconds = 30.0
+    static let budgetMilliseconds = 33.0
 
     /// Whether this size is inside the window Lucid works in. Deliberately a
     /// question about the table above and not about what is on disk: if a build
@@ -133,7 +140,7 @@ final class LearnedUpscaler: @unchecked Sendable {
 
     private static func model(width: Int, height: Int) -> URL? {
         guard let variant = variant(width: width, height: height) else { return nil }
-        let name = "SPAN_x4_ch28_\(variant.width)x\(variant.height)"
+        let name = "SPAN_x4_ch32u_\(variant.width)x\(variant.height)"
         return Bundle.main.url(forResource: name, withExtension: "mlmodelc")
             ?? Bundle.main.url(forResource: name, withExtension: "mlpackage")
     }
