@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lucid — model comparison</title>
+<style>
+  :root { --bg:#0b0e14; --panel:#141923; --line:#232a38; --text:#e6ebf5; --muted:#8b94a7;
+          --accent:#5b8cff; --good:#3ddc84; --bad:#ff6b6b; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--text);
+    font:14px/1.5 -apple-system,"SF Pro Text",system-ui,sans-serif; overflow:hidden; }
+  header { height:46px; display:flex; align-items:center; gap:16px; padding:0 16px;
+    background:rgba(11,14,20,.94); border-bottom:1px solid var(--line); }
+  h1 { font-size:14px; margin:0; font-weight:640; letter-spacing:-.01em; }
+  .hint { color:var(--muted); font-size:11.5px; margin-left:auto; }
+  kbd { background:#1b2230; border:1px solid var(--line); border-radius:4px; padding:1px 5px;
+    font-family:ui-monospace,monospace; font-size:10.5px; }
+  main { display:grid; grid-template-columns:230px 1fr; height:calc(100% - 46px); }
+  aside { background:var(--panel); border-right:1px solid var(--line); overflow:auto; padding:10px; }
+  .group { color:var(--muted); font-size:10px; letter-spacing:.7px; text-transform:uppercase;
+    margin:12px 0 5px; font-weight:600; }
+  .variant { display:flex; align-items:baseline; gap:7px; width:100%; text-align:left;
+    background:transparent; color:var(--text); border:1px solid transparent; border-radius:7px;
+    padding:6px 8px; font:inherit; font-size:12.5px; cursor:pointer; }
+  .variant:hover { background:#1b2230; }
+  .variant.on { background:rgba(91,140,255,.16); border-color:var(--accent); }
+  .variant .n { color:var(--muted); font-size:10px; font-variant-numeric:tabular-nums; width:11px; }
+  .variant .fine { margin-left:auto; font-size:10.5px; font-variant-numeric:tabular-nums; color:var(--muted); }
+  .variant.win .fine { color:var(--good); }
+  .stage { position:relative; overflow:hidden; background:#07090d; cursor:grab; }
+  .stage.drag { cursor:grabbing; }
+  .stage img { position:absolute; image-rendering:pixelated; transform-origin:0 0;
+    user-select:none; -webkit-user-drag:none; }
+  .stage img.hide { visibility:hidden; }
+  .bar { position:absolute; left:0; right:0; bottom:0; display:flex; align-items:center; gap:14px;
+    padding:9px 14px; background:linear-gradient(transparent,rgba(7,9,13,.92)); font-size:12px; }
+  .bar b { font-weight:600; }
+  .bar .m { color:var(--muted); font-variant-numeric:tabular-nums; font-size:11.5px; }
+  .bar .good { color:var(--good); } .bar .bad { color:var(--bad); }
+  .zoom { position:absolute; top:10px; right:12px; display:flex; gap:5px; }
+  .zoom button { background:rgba(20,25,35,.9); color:var(--text); border:1px solid var(--line);
+    border-radius:6px; padding:3px 9px; font:inherit; font-size:11.5px; cursor:pointer; }
+  .zoom button.on { border-color:var(--accent); background:rgba(91,140,255,.2); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Model comparison</h1>
+  <span class="m" id="frameLabel"></span>
+  <span class="hint">
+    <kbd>1</kbd>–<kbd>9</kbd> variant · <kbd>←</kbd><kbd>→</kbd> frame · <kbd>Space</kbd> flip to anchor · drag to pan
+  </span>
+</header>
+<main>
+  <aside id="list"></aside>
+  <div class="stage" id="stage">
+    <div class="zoom" id="zoom"></div>
+    <div class="bar" id="bar"></div>
+  </div>
+</main>
+<script>
+const stage = document.getElementById('stage');
+const list = document.getElementById('list');
+const bar = document.getElementById('bar');
+const zoomBox = document.getElementById('zoom');
+const frameLabel = document.getElementById('frameLabel');
+
+let manifest = null, frame = 0, variant = 0, previous = 0;
+let zoom = 1, panX = 0, panY = 0;
+const images = new Map();
+
+// Order the list so the things being judged sit next to what they must beat.
+const GROUPS = [
+  ['Truth and source', ['reference', 'source']],
+  ['Anchors',          ['lanczos', 'Apple scaler', 'Apple + Lucid']],
+  ['Candidates',       null],
+];
+
+function currentFrame() { return manifest.frames[frame]; }
+function variants() { return currentFrame().variants; }
+
+function anchorIndex() {
+  const i = variants().findIndex(v => v.name === 'lanczos');
+  return i < 0 ? 0 : i;
+}
+
+function preload() {
+  for (const v of variants()) {
+    const key = currentFrame().id + v.file;
+    if (images.has(key)) continue;
+    const img = new Image();
+    img.src = '../output/gallery/' + v.file;
+    img.className = 'hide';
+    img.draggable = false;
+    stage.insertBefore(img, zoomBox);
+    images.set(key, img);
+  }
+}
+
+function layout() {
+  const v = variants()[variant];
+  const img = images.get(currentFrame().id + v.file);
+  if (!img || !img.naturalWidth) return;
+  for (const other of images.values()) other.classList.add('hide');
+  img.classList.remove('hide');
+  // Every variant is the same size, so one transform keeps them registered:
+  // switching must not move the picture, or the eye tracks the jump instead of
+  // the difference.
+  const scale = zoom === 0
+    ? Math.min(stage.clientWidth / img.naturalWidth, stage.clientHeight / img.naturalHeight)
+    : zoom;
+  for (const other of images.values()) {
+    other.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+  }
+}
+
+function renderList() {
+  list.innerHTML = '';
+  const all = variants();
+  const used = new Set();
+  const anchor = all[anchorIndex()];
+  const add = (title, names) => {
+    const picks = names
+      ? names.map(n => all.findIndex(v => v.name === n)).filter(i => i >= 0)
+      : all.map((_, i) => i).filter(i => !used.has(i));
+    if (!picks.length) return;
+    const heading = document.createElement('div');
+    heading.className = 'group'; heading.textContent = title;
+    list.append(heading);
+    for (const i of picks) {
+      used.add(i);
+      const v = all[i];
+      const button = document.createElement('button');
+      button.className = 'variant' + (i === variant ? ' on' : '')
+        + (v.fine > anchor.fine && v.name !== 'reference' ? ' win' : '');
+      button.innerHTML = `<span class="n">${i + 1}</span><span>${v.name}</span>`
+        + `<span class="fine">${v.fine.toFixed(3)}</span>`;
+      button.onclick = () => select(i);
+      list.append(button);
+    }
+  };
+  for (const [title, names] of GROUPS) add(title, names);
+}
+
+function renderBar() {
+  const v = variants()[variant];
+  const anchor = variants()[anchorIndex()];
+  const delta = v.fine - anchor.fine;
+  const verdict = v.name === 'reference' || v.name === 'lanczos' ? ''
+    : `<span class="${delta > 0 ? 'good' : 'bad'}">${delta > 0 ? '+' : ''}${(delta * 100).toFixed(1)}% fine vs lanczos</span>`;
+  bar.innerHTML = `<b>${v.name}</b>`
+    + `<span class="m">fine ${v.fine.toFixed(3)} · mid ${v.mid.toFixed(3)} · coarse ${v.coarse.toFixed(3)} · PSNR ${v.psnr}</span>`
+    + (v.ms ? `<span class="m">${v.ms} ms</span>` : '')
+    + (v.note ? `<span class="m">${v.note}</span>` : '')
+    + verdict;
+}
+
+function select(i) {
+  if (i === variant) return;
+  previous = variant;
+  variant = i;
+  renderList(); renderBar(); layout();
+}
+
+function setFrame(i) {
+  frame = (i + manifest.frames.length) % manifest.frames.length;
+  variant = Math.min(variant, variants().length - 1);
+  for (const img of images.values()) img.remove();
+  images.clear();
+  preload();
+  frameLabel.textContent = `frame ${currentFrame().id} · source ${currentFrame().source}`;
+  renderList(); renderBar();
+  setTimeout(layout, 60);
+}
+
+function setZoom(z) {
+  zoom = z;
+  for (const b of zoomBox.children) b.classList.toggle('on', +b.dataset.z === z);
+  layout();
+}
+
+for (const [label, value] of [['Fit', 0], ['100%', 1], ['200%', 2], ['400%', 4]]) {
+  const b = document.createElement('button');
+  b.textContent = label; b.dataset.z = value;
+  b.onclick = () => setZoom(value);
+  zoomBox.append(b);
+}
+
+let dragging = false, startX = 0, startY = 0;
+stage.addEventListener('mousedown', e => {
+  dragging = true; startX = e.clientX - panX; startY = e.clientY - panY;
+  stage.classList.add('drag');
+});
+addEventListener('mousemove', e => {
+  if (!dragging) return;
+  panX = e.clientX - startX; panY = e.clientY - startY; layout();
+});
+addEventListener('mouseup', () => { dragging = false; stage.classList.remove('drag'); });
+
+addEventListener('keydown', e => {
+  if (e.key >= '1' && e.key <= '9') { const i = +e.key - 1; if (i < variants().length) select(i); }
+  else if (e.key === 'ArrowRight') setFrame(frame + 1);
+  else if (e.key === 'ArrowLeft') setFrame(frame - 1);
+  else if (e.code === 'Space') { e.preventDefault(); select(variant === previous ? anchorIndex() : previous); }
+  else return;
+});
+
+addEventListener('resize', layout);
+
+fetch('../output/gallery/manifest.json?v=' + Date.now())
+  .then(r => r.json())
+  .then(data => { manifest = data; setZoom(0); setFrame(0); })
+  .catch(() => { bar.textContent = 'No gallery yet — run Tools/model_gallery.py'; });
+</script>
+</body>
+</html>

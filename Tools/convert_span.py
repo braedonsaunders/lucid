@@ -59,10 +59,27 @@ def load():
     return model
 
 
-def convert(model, width, height):
+# SPAN scales its input by img_range=255 internally, which pushes activations
+# out of fp16 range: converted at FLOAT16 the output mean comes back 12.3 where
+# torch says 92.0. FLOAT32 reproduces torch exactly. Precision here is therefore
+# a correctness setting, not a speed one.
+class ImageRange(torch.nn.Module):
+    """SPAN takes and returns 0-1, but a Core ML image output has to be 0-255 or
+    it arrives essentially black. This puts the scaling inside the graph so the
+    conversion stays a single image-in, image-out model."""
+    def __init__(self, inner):
+        super().__init__()
+        self.inner = inner
+
+    def forward(self, x):
+        return torch.clamp(self.inner(x) * 255.0, 0.0, 255.0)
+
+
+def convert(model, width, height, precision=ct.precision.FLOAT32, suffix=""):
+    wrapped = ImageRange(model).eval()
     example = torch.rand(1, 3, height, width)
     with torch.no_grad():
-        traced = torch.jit.trace(model, example)
+        traced = torch.jit.trace(wrapped, example)
     # Image in, image out: Core ML then owns the colour conversion and can keep
     # it next to the compute instead of us round-tripping through float arrays.
     mlmodel = ct.convert(
@@ -71,10 +88,10 @@ def convert(model, width, height):
                              color_layout=ct.colorlayout.RGB, scale=1 / 255.0)],
         outputs=[ct.ImageType(name="output", color_layout=ct.colorlayout.RGB)],
         convert_to="mlprogram",
-        compute_precision=ct.precision.FLOAT16,
+        compute_precision=precision,
         minimum_deployment_target=ct.target.macOS15,
     )
-    path = f"Model/SPAN_x{SCALE}_ch{CHANNELS}_{width}x{height}.mlpackage"
+    path = f"Model/SPAN_x{SCALE}_ch{CHANNELS}_{width}x{height}{suffix}.mlpackage"
     mlmodel.save(path)
     return path
 
