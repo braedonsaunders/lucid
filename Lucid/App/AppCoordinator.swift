@@ -557,14 +557,14 @@ final class EnhancementSession {
         // truth. Mirrors Tools/tuning.json, which the offline tuner writes.
         // Higher than it would be on its own: the temporal stage takes the
         // edge off, so what reads as over-sharpened without it is right with it.
-        var sharpness: Float = 0.80
-        var fine: Float = 0.40
+        var sharpness: Float = 0.70
+        var fine: Float = 0.60
         var deblock: Float = 0.35
-        var sourceDeblock: Float = 0.042
+        var sourceDeblock: Float = 0.040
         var temporal: Float = 0.50
         var blackPoint: Float = 0.050
         var whitePoint: Float = 0.975
-        var contrast: Float = 0.290
+        var contrast: Float = 0.300
         var saturation: Float = 1.100
         /// 2 runs the scaler twice, 4 runs it once at its native 4x factor.
         var scalerFactor: Float = 2
@@ -666,13 +666,13 @@ final class EnhancementSession {
                 sharpness = 0; fine = 0; blackPoint = 0; whitePoint = 1
                 contrast = 0; saturation = 1; sourceDeblock = 0; micro = 0
             case .subtle:
-                sharpness = 0.55; fine = 0.25; blackPoint = 0.020; whitePoint = 0.985
-                contrast = 0.12; saturation = 1.04; sourceDeblock = 0.030; micro = 0
+                sharpness = 0.45; fine = 0.35; blackPoint = 0.025; whitePoint = 0.985
+                contrast = 0.15; saturation = 1.05; sourceDeblock = 0.030; micro = 0
             case .standard:
-                sharpness = 0.80; fine = 0.40; blackPoint = 0.050; whitePoint = 0.975
-                contrast = 0.29; saturation = 1.10; sourceDeblock = 0.042; micro = 0
+                sharpness = 0.70; fine = 0.60; blackPoint = 0.050; whitePoint = 0.975
+                contrast = 0.30; saturation = 1.10; sourceDeblock = 0.040; micro = 0
             case .strong:
-                sharpness = 1.15; fine = 0.60; blackPoint = 0.070; whitePoint = 0.970
+                sharpness = 1.00; fine = 0.85; blackPoint = 0.070; whitePoint = 0.970
                 contrast = 0.40; saturation = 1.16; sourceDeblock = 0.050; micro = 0
             }
         }
