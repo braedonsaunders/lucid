@@ -123,7 +123,7 @@ function selectClip(id) {
 }
 // LearnedUpscaler.variants, mirrored. A source is enhanced when a variant
 // covers it in both dimensions without being more than 1.5x its area.
-const VARIANTS = [[256,144],[320,180],[432,240],[480,270],[640,360]];
+const VARIANTS = [[256,144],[320,180],[432,240],[480,270],[640,360],[864,480]];
 function insideWindow(label) {
   const m = label.match(/(\d+)\s*[×x]\s*(\d+)/);
   if (!m) return true;
@@ -197,7 +197,7 @@ function buildEngines(m) {
   const box = document.getElementById('pipeline');
   const size = m.outputWidth ? ` → ${m.outputWidth}×${m.outputHeight}` : '';
   const ms = m.processingMilliseconds ? ` · ${m.processingMilliseconds.toFixed(1)} ms` : '';
-  box.textContent = m.enhancing ? `SPAN ×4 on the Neural Engine${size}${ms}` : '';
+  box.textContent = m.enhancing ? `ch32u ×4 on the Neural Engine${size}${ms}` : '';
 }
 enabledBox.onchange = () => sendControl({ enabled: enabledBox.checked });
 addEventListener('keydown', (e) => {

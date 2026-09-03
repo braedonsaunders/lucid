@@ -561,7 +561,13 @@ final class EnhancementSession {
         var sharpness: Float = 0.0
         var fine: Float = 0.0
         var deblock: Float = 0.35
-        var sourceDeblock: Float = 0.040
+        // Off since the model was trained on real codec degradation. Measured
+        // on the trained base, turning it off *improves* fine-band correlation
+        // by 0.0011 and mid by 0.0038: the network now removes compression
+        // damage itself, so cleaning the input first only softens what it is
+        // about to reconstruct from. On the old bicubic-trained ch28 the same
+        // stage cost 0.0049 fine, so this was always harmful - just less so now.
+        var sourceDeblock: Float = 0.0
         var temporal: Float = 0.50
         var blackPoint: Float = 0.020
         var whitePoint: Float = 0.975
