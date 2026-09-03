@@ -100,6 +100,9 @@
     };
     connect();
     send = (message) => { if (socket && socket.readyState === 1) socket.send(JSON.stringify(message)); };
+    // This socket carries reports. Frames arrive on frameSocket, opened further
+    // down, so that is the one that decides whether the page can draw.
+    transportReady = () => !!(frameSocket && frameSocket.readyState === 1);
   }
 
   // ---- drawing the enhanced frame back into the page -----------------------
@@ -111,6 +114,9 @@
   // takes pointer events, so the video's own controls keep working.
   let surface = null, surfaceCtx = null, surfaceFor = null, imageData = null;
   let drawing = false, lastDraw = 0, controlsUntil = 0;
+  // Whether a frame has ever been painted, so the stale-frame teardown below
+  // cannot fire before the first one arrives.
+  let everDrew = false;
 
   /// Paints the last decoded frame and, only while the browser's own controls
   /// are actually on screen, clears the strip they occupy so they show through.
@@ -201,7 +207,7 @@
 
   function removeSurface() {
     if (surface && surface.parentElement) surface.parentElement.removeChild(surface);
-    surface = null; surfaceCtx = null; surfaceFor = null; imageData = null; drawing = false;
+    surface = null; surfaceCtx = null; surfaceFor = null; imageData = null; drawing = false; everDrew = false;
   }
 
   // Keep the canvas exactly over the video's rendered content box, in the
@@ -240,7 +246,7 @@
     }
     imageData.data.set(pixels);
     composite();
-    drawing = true; lastDraw = performance.now();
+    drawing = true; everDrew = true; lastDraw = performance.now();
     positionSurface(current);
   }
 
@@ -593,12 +599,24 @@
       // actually on screen is a separate question, handled by the opacity.
       drawing = !!surface;
       positionSurface(video);
-    } else if (drawing) {
-      // Canvas path only. If frames stop - the app quit, or the bridge fell
-      // behind - take the canvas away rather than leave a stale image, and
-      // especially rather than leave a punched control gap, over playing video.
-      if (performance.now() - lastDraw > 400) {
-        drawing = false;
+    } else if (!drawing) {
+      // Canvas path: a page that loads this script directly, like the lab.
+      // The canvas is only created when the first frame arrives, so the page
+      // cannot wait for a frame before claiming to draw - the app will not
+      // send one until it does. That is exactly the deadlock the iframe path
+      // above avoids, and it left the lab showing an untouched video while
+      // every number in the app read healthy. Claim as soon as frames have
+      // somewhere to arrive.
+      drawing = transportReady();
+      if (drawing) lastDraw = performance.now();
+    } else {
+      // If frames stop - the app quit, or the bridge fell behind - take the
+      // canvas away rather than leave a stale image, and especially rather
+      // than leave a punched control gap, over playing video. Only once
+      // something has actually been drawn: tearing down before the first
+      // frame would just re-enter the branch above and oscillate.
+      if (everDrew && performance.now() - lastDraw > 400) {
+        drawing = false; everDrew = false;
         removeSurface();
       } else {
         // Close the control gap as soon as the controls fade, without waiting

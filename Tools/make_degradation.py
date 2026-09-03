@@ -158,12 +158,11 @@ def main():
     ap.add_argument("sources", nargs="*")
     args = ap.parse_args()
 
-    srcs = (args.sources or list(CLEAN_SOURCES)
-            + sorted(f for f in
-                     ([os.path.join(FETCH_DIR, f)
-                       for f in sorted(os.listdir(FETCH_DIR))]
-                      if os.path.isdir(FETCH_DIR) else [])
-                     if f.endswith((".mp4", ".avi", ".mkv", ".mov"))))
+    # Sources are the 4K masters only. The fetch dir is NOT globbed:
+    # older compressed clips living there (720p AVI, 2048 Sintel) would
+    # otherwise leak back in as HR for the low tiers - the exact dirty-
+    # target bug the 720p floor existed to prevent.
+    srcs = list(args.sources or CLEAN_SOURCES)
     if args.fetch:
         srcs += fetch_sources()
     srcs = [s for s in srcs if os.path.exists(s)]

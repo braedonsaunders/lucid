@@ -41,6 +41,8 @@ final class BrowserBridgeServer: @unchecked Sendable {
     /// changing while every number in the app still looks healthy.
     private var deliveredFrames = 0
     private var deliveredBytes = 0
+    private var offeredFrames = 0
+    private var unmatchedFrames = 0
     private var windowStart = Date()
 
     init(
@@ -80,8 +82,15 @@ final class BrowserBridgeServer: @unchecked Sendable {
         )
         queue.async { [weak self] in
             guard let self else { return }
+            // Counted before the guards, not after. A frame that reaches no
+            // connection at all is the failure that looks exactly like a
+            // healthy pipeline: everything upstream reports 30fps and the page
+            // never receives a pixel.
+            self.offeredFrames += 1
+            var matched = 0
             for (id, connection) in self.connections where connection.state == .ready {
                 guard self.sessionsByConnection[id]?.contains(session) == true else { continue }
+                matched += 1
                 guard self.framesInFlight[id, default: 0] < Self.maximumFramesInFlight else {
                     self.droppedFrames += 1
                     continue
@@ -89,7 +98,6 @@ final class BrowserBridgeServer: @unchecked Sendable {
                 self.framesInFlight[id, default: 0] += 1
                 self.deliveredFrames += 1
                 self.deliveredBytes += data.count
-                self.reportDelivery()
                 connection.send(
                     content: data, contentContext: context, isComplete: true,
                     completion: .contentProcessed { [weak self] error in
@@ -103,6 +111,8 @@ final class BrowserBridgeServer: @unchecked Sendable {
                     }
                 )
             }
+            if matched == 0 { self.unmatchedFrames += 1 }
+            self.reportDelivery()
         }
     }
 
@@ -110,12 +120,14 @@ final class BrowserBridgeServer: @unchecked Sendable {
     /// which owns all three counters.
     private func reportDelivery() {
         let elapsed = Date().timeIntervalSince(windowStart)
-        guard elapsed >= 1 else { return }
+        guard elapsed >= 1, offeredFrames > 0 else { return }
         let megabytes = Double(deliveredBytes) / 1_048_576
         let perFrame = deliveredFrames > 0 ? megabytes / Double(deliveredFrames) : 0
-        print(String(format: "   📤 delivered %.0f fps · dropped %d · %.1f MB/frame · %.0f MB/s",
-                     Double(deliveredFrames) / elapsed, droppedFrames, perFrame, megabytes / elapsed))
-        deliveredFrames = 0; deliveredBytes = 0; droppedFrames = 0; windowStart = Date()
+        print(String(format: "   📤 offered %.0f fps · delivered %.0f · dropped %d · NO CONNECTION %d · %.1f MB/frame · %.0f MB/s",
+                     Double(offeredFrames) / elapsed, Double(deliveredFrames) / elapsed,
+                     droppedFrames, unmatchedFrames, perFrame, megabytes / elapsed))
+        deliveredFrames = 0; deliveredBytes = 0; droppedFrames = 0
+        offeredFrames = 0; unmatchedFrames = 0; windowStart = Date()
     }
 
     /// Sends any encodable message to every connected page.
