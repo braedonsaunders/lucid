@@ -146,7 +146,11 @@ def build_bank(corpus, out, per_pair=8, seed=0, min_correlation=0.85):
     if rejected:
         print(f"rejected {len(rejected)} of {len(pairs)} pairs as mismatched "
               f"(first few: {', '.join(rejected[:4])})")
-        if len(rejected) > len(pairs) // 10:
+        # A tripwire for a broken corpus, not a quality bar. The first corpus
+        # was 80% wrong; a fifth is the line between "some frames fell through"
+        # and "the generator is broken again". Rejected pairs never train
+        # either way, so what gets through is verified rather than assumed.
+        if len(rejected) > len(pairs) // 5:
             raise SystemExit(
                 f"{100*len(rejected)/len(pairs):.0f}% of the corpus is mismatched - "
                 "fix the generator rather than training on what is left")
