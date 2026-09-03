@@ -8,12 +8,15 @@
   <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-8b5cf6?style=flat-square"></a>
 </p>
 
+**Video super-resolution for Apple silicon — the thing RTX Video Super Resolution
+does for NVIDIA cards, for Macs.**
+
 Lucid makes low-bitrate video in your browser look better, and it does it where the
 video already is. There is no separate window, no player to switch to and nothing
 pasted over the top of the page: the enhanced picture is drawn into the page's own
 video box, so it scrolls, clips and stacks exactly like the video did.
 
-It is built for the ordinary case that makes streaming look bad — a 240p to 480p
+It is built for the ordinary case that makes streaming look bad — a 144p to 480p
 stream stretched across a large Retina window — and it runs on Apple's hardware
 video scaler plus a small Metal pipeline, at source frame rate.
 
@@ -55,6 +58,41 @@ stacks like the video does. One path, every site.
 | Blind H.264 loop filter | off | The normative deblocking filter, run without a bitstream. |
 | CDEF dering | off | AV1's directional deringer. Picks its own strength from decoded-pixel variance. |
 | Debanding + grain | off | Stochastic debander for flat-gradient banding, plus dither to cover the residual. |
+
+## How this compares to RTX Video Super Resolution
+
+The goal is the same and the approach has to be different.
+
+|  | RTX VSR | Lucid |
+|---|---|---|
+| Where it runs | Inside the GPU driver and the browser's video compositor | A separate app, plus a companion extension |
+| What does the upscaling | An NVIDIA-trained model | Apple's `VTLowLatencySuperResolutionScaler`, then a Metal pipeline |
+| Controls | Quality 1–4 | Quality: Off, Subtle, Standard, Strong |
+| Declines when | The video already matches or exceeds what is displayed | Same — above 1080p source, or under 1.15× stretch |
+
+The important difference is the first row. NVIDIA works with Chrome and Edge, so
+VSR sits inside the browser's own compositing path and has nothing to reach
+around. macOS offers no equivalent hook, so Lucid takes the page's decoded frames
+through an extension, enhances them, and draws the result back into the page from
+an iframe at the extension's origin. Getting that to behave like part of the page
+— scrolling, clipping and stacking correctly, on sites whose security policy
+blocks the obvious route — is most of what this project is.
+
+Lucid is not affiliated with or endorsed by NVIDIA; RTX Video Super Resolution is
+their trademark, named here only to say plainly what this is.
+
+## When it runs
+
+| Source | |
+|---|---|
+| Below 128×72 | left alone — too little to reconstruct from |
+| **144p to 1080p** | **enhanced** |
+| Above 1080p | left alone — already more detail than most windows show |
+
+It also stays out of the way unless the video is actually being stretched: the
+player has to be at least 1.15× the decoded width in real pixels before Lucid
+starts, and it keeps going down to 1.0× once running so it does not flicker on
+and off as a window is resized.
 
 ## Requirements
 

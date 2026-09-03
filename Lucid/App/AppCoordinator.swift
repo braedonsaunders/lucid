@@ -351,7 +351,19 @@ final class AppCoordinator {
     static func isEnhanceable(_ report: BrowserVideoReport, keeping: Bool = false) -> Bool {
         guard report.type == .video, report.visible, let video = report.video else { return false }
         guard !video.ended, !video.pip else { return false }
-        guard video.iw >= 320, video.ih >= 180, video.iw <= 1920, video.ih <= 1080 else { return false }
+        // The window Lucid works in, and the reasons for each end of it.
+        //
+        // The floor is low on purpose: 144p is the case that needs help most,
+        // and the old 320x180 floor rejected it outright. Below about 128 wide
+        // there is not enough left to reconstruct from and the scaler's tiling
+        // gets awkward.
+        //
+        // The ceiling is where this stops being worth doing rather than where
+        // it stops working. Above 1080p a source already carries more detail
+        // than most windows show, so there is nothing to recover - the same
+        // reason NVIDIA's RTX Video Super Resolution declines to run when a
+        // video already matches or exceeds what is being displayed.
+        guard video.iw >= 128, video.ih >= 72, video.iw <= 1920, video.ih <= 1080 else { return false }
         guard video.rect.w >= 200, video.rect.h >= 100 else { return false }
         let physicalWidth = video.rect.w * report.dpr
         // Hysteresis: start above 1.15×, but keep a running session down to 1.0×.

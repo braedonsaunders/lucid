@@ -53,8 +53,12 @@ struct SessionPolicyTests {
     }
 
     @Test @MainActor func enhanceableRejectsWrongSizesAndStates() {
-        #expect(AppCoordinator.isEnhanceable(report(iw: 200, ih: 120)) == false) // below 320x180
+        #expect(AppCoordinator.isEnhanceable(report(iw: 100, ih: 56)) == false)   // below 128x72
         #expect(AppCoordinator.isEnhanceable(report(iw: 3840, ih: 2160)) == false) // above 1080p
+        // 144p is the case that needs the most help, so it has to be inside the
+        // window rather than rejected for being small.
+        let tiny = report(dpr: 2, iw: 256, ih: 144, rectX: 0, rectY: 0, rectW: 1040, rectH: 585)
+        #expect(AppCoordinator.isEnhanceable(tiny) == true)
         #expect(AppCoordinator.isEnhanceable(report(rectX: 0, rectY: 0, rectW: 100, rectH: 60)) == false) // tiny box
         var pip = report(); pip.video?.pip = true
         #expect(AppCoordinator.isEnhanceable(pip) == false)
