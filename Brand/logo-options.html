@@ -46,229 +46,223 @@
 </header>
 <main>
 
-<!-- ══════════════════════  1. FOCUS  ══════════════════════ -->
 <section class="card">
   <header>
     <h2>1 · Focus</h2><span class="tag">the concept one</span>
-    <p class="why">A ghosted second copy of the word sits out of register, then slides in and
-       sharpens until the two become one crisp line — the product performing itself, the way
-       bunkhouse's roof only spans “house”. The mark is a focus reticle that closes onto the lens.</p>
+    <p class="why">A ghosted second copy of the word sits out of register, then slides in and sharpens until the two become one crisp line — the product performing itself, the way bunkhouse&rsquo;s roof spans only &ldquo;house&rdquo;. The mark is a focus reticle: ring, four ticks outside it, lens at the centre.</p>
   </header>
   <div class="beds">
     <div class="bed dark"><div class="sizes">
       <figure>
-        <svg viewBox="0 0 470 116" width="352" role="img" aria-label="Lucid">
+        <svg viewBox="0 0 320 116" width="320" role="img" aria-label="Lucid">
           <style>
             #f1 .ink{stroke:#e6ebf5} #f1 .acc{stroke:#5bd1ff} #f1 .accf{fill:#5bd1ff}
             @keyframes f1draw{from{stroke-dashoffset:1}}
-            @keyframes f1ghost{
-              0%{opacity:0;transform:translate(7px,3px)}
-              12%{opacity:.55}
-              46%{opacity:.5;transform:translate(7px,3px)}
-              68%{opacity:0;transform:translate(0,0)}
-              100%{opacity:0;transform:translate(0,0)}}
             @keyframes f1cycle{
               0%{stroke-dashoffset:0;opacity:1}
               2%{stroke-dashoffset:0;opacity:0}
               2.05%{stroke-dashoffset:1;opacity:1;animation-timing-function:cubic-bezier(.4,0,.2,1)}
               8%{stroke-dashoffset:0}
               100%{stroke-dashoffset:0}}
-            @keyframes f1ring{0%,100%{opacity:.30}50%{opacity:.75}}
             #f1 .s{stroke-dasharray:1;
-              animation:f1draw .55s cubic-bezier(.4,0,.2,1) var(--bd,0s) backwards,
+              animation:f1draw .52s cubic-bezier(.4,0,.2,1) var(--bd,0s) backwards,
                         f1cycle 12s linear calc(var(--bd,0s) + 12s) infinite}
+            @keyframes f1ghost{
+              0%{opacity:0;transform:translate(8px,3px)}
+              14%{opacity:.5}
+              44%{opacity:.45;transform:translate(8px,3px)}
+              66%{opacity:0;transform:translate(0,0)}
+              100%{opacity:0;transform:translate(0,0)}}
+            @keyframes f1ring{0%,100%{opacity:.35}50%{opacity:.8}}
             #f1 .ghost{transform-box:fill-box;transform-origin:center;
-              animation:f1ghost 12s cubic-bezier(.4,0,.2,1) 1.1s infinite backwards}
+              animation:f1ghost 12s cubic-bezier(.4,0,.2,1) 1.05s infinite backwards}
             #f1 .ring{animation:f1ring 3.4s ease-in-out 1.6s infinite}
-            @media (prefers-reduced-motion:reduce){#f1 .s,#f1 .ghost,#f1 .ring{animation:none}#f1 .ghost{opacity:0}}
+            @media (prefers-reduced-motion:reduce){#f1 *{animation:none!important}}
           </style>
           <g id="f1">
-            <!-- reticle mark: outer ring, then four ticks closing inward, then the lens -->
             <g fill="none" stroke-width="5" stroke-linecap="round" class="ink">
-              <circle class="s ring" style="--bd:.05s" pathLength="1" cx="46" cy="58" r="34"/>
+              <circle class="s ring" style="--bd:.05s" pathLength="1" cx="46" cy="58" r="30"/>
             </g>
             <g fill="none" stroke-width="5" stroke-linecap="round" class="acc">
-              <path class="s" style="--bd:.30s" pathLength="1" d="M46 12L46 27"/>
-              <path class="s" style="--bd:.36s" pathLength="1" d="M92 58L77 58"/>
-              <path class="s" style="--bd:.42s" pathLength="1" d="M46 104L46 89"/>
-              <path class="s" style="--bd:.48s" pathLength="1" d="M0 58L15 58"/>
+              <path class="s" style="--bd:0.30s" pathLength="1" d="M46 23L46 14"/>
+              <path class="s" style="--bd:0.36s" pathLength="1" d="M81 58L90 58"/>
+              <path class="s" style="--bd:0.42s" pathLength="1" d="M46 93L46 102"/>
+              <path class="s" style="--bd:0.48s" pathLength="1" d="M11 58L2 58"/>
             </g>
-            <circle class="accf" cx="46" cy="58" r="9"/>
-
-            <!-- monoline wordmark, drawn on a 100-unit letter grid -->
-            <g transform="translate(120 30) scale(.44)" fill="none" stroke-width="20"
+            <circle class="accf" cx="46" cy="58" r="8.5"/>
+            <g class="ghost" opacity="0" transform="translate(118 46) scale(.44)" fill="none"
+               stroke="#5bd1ff" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+              <g transform="translate(0 0)"><path  pathLength="1" d="M10 -46L10 100"/></g>
+              <g transform="translate(44 0)"><path  pathLength="1" d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path  pathLength="1" d="M90 60L90 100"/></g>
+              <g transform="translate(168 0)"><path  pathLength="1" d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
+              <g transform="translate(282 0)"><path  pathLength="1" d="M10 20L10 100"/></g>
+              <g transform="translate(326 0)"><circle  pathLength="1" cx="50" cy="60" r="40"/><path  pathLength="1" d="M90 -46L90 100"/></g>
+            </g>
+            <g transform="translate(118 46) scale(.44)" fill="none" stroke-width="20"
                stroke-linecap="round" stroke-linejoin="round">
-              <g class="ghost" opacity="0" stroke="#5bd1ff">
-                <g transform="translate(0 0)"><path pathLength="1" d="M10 -46L10 100"/></g>
-                <g transform="translate(96 0)"><path pathLength="1" d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path pathLength="1" d="M90 60L90 100"/></g>
-                <g transform="translate(210 0)"><path pathLength="1" d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
-                <g transform="translate(324 0)"><path pathLength="1" d="M10 20L10 100"/><circle cx="10" cy="-14" r="10" fill="#5bd1ff" stroke="none"/></g>
-                <g transform="translate(390 0)"><circle pathLength="1" cx="50" cy="60" r="40"/><path pathLength="1" d="M90 -46L90 100"/></g>
-              </g>
               <g class="ink">
-                <g transform="translate(0 0)"><path class="s" style="--bd:.62s" pathLength="1" d="M10 -46L10 100"/></g>
-                <g transform="translate(96 0)"><path class="s" style="--bd:.70s" pathLength="1" d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path class="s" style="--bd:.70s" pathLength="1" d="M90 60L90 100"/></g>
-                <g transform="translate(210 0)"><path class="s" style="--bd:.78s" pathLength="1" d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
-                <g transform="translate(324 0)"><path class="s" style="--bd:.86s" pathLength="1" d="M10 20L10 100"/></g>
-                <g transform="translate(390 0)"><circle class="s" style="--bd:.94s" pathLength="1" cx="50" cy="60" r="40"/><path class="s" style="--bd:.94s" pathLength="1" d="M90 -46L90 100"/></g>
+              <g transform="translate(0 0)"><path class="s" style="--bd:0.62s" pathLength="1" d="M10 -46L10 100"/></g>
+              <g transform="translate(44 0)"><path class="s" style="--bd:0.69s" pathLength="1" d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path class="s" style="--bd:0.69s" pathLength="1" d="M90 60L90 100"/></g>
+              <g transform="translate(168 0)"><path class="s" style="--bd:0.76s" pathLength="1" d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
+              <g transform="translate(282 0)"><path class="s" style="--bd:0.83s" pathLength="1" d="M10 20L10 100"/></g>
+              <g transform="translate(326 0)"><circle class="s" style="--bd:0.90s" pathLength="1" cx="50" cy="60" r="40"/><path class="s" style="--bd:0.90s" pathLength="1" d="M90 -46L90 100"/></g>
               </g>
-              <circle class="accf" cx="334" cy="-14" r="10"/>
+              <circle class="accf" cx="292" cy="-14" r="10"/>
             </g>
           </g>
         </svg>
-        <figcaption>lockup</figcaption>
+        <figcaption>lockup · 320 px</figcaption>
       </figure>
       <figure>
-        <svg viewBox="0 0 92 116" width="52" aria-hidden="true">
-          <g fill="none" stroke="#e6ebf5" stroke-width="5" stroke-linecap="round">
-            <circle cx="46" cy="58" r="34" opacity=".55"/></g>
-          <g fill="none" stroke="#5bd1ff" stroke-width="5" stroke-linecap="round">
-            <path d="M46 12L46 27"/><path d="M92 58L77 58"/><path d="M46 104L46 89"/><path d="M0 58L15 58"/></g>
-          <circle fill="#5bd1ff" cx="46" cy="58" r="9"/>
-        </svg>
+        <svg viewBox="0 0 92 116" width="46" aria-hidden="true"><circle fill="none" stroke="#e6ebf5" stroke-width="5" cx="46" cy="58" r="30" opacity=".6"/><g fill="none" stroke="#5bd1ff" stroke-width="5" stroke-linecap="round"><path d="M46 23L46 14"/><path d="M81 58L90 58"/><path d="M46 93L46 102"/><path d="M11 58L2 58"/></g><circle fill="#5bd1ff" cx="46" cy="58" r="8.5"/></svg>
         <figcaption>48</figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 92 116" width="26" aria-hidden="true"><circle fill="none" stroke="#e6ebf5" stroke-width="5" cx="46" cy="58" r="30" opacity=".6"/><g fill="none" stroke="#5bd1ff" stroke-width="5" stroke-linecap="round"><path d="M46 23L46 14"/><path d="M81 58L90 58"/><path d="M46 93L46 102"/><path d="M11 58L2 58"/></g><circle fill="#5bd1ff" cx="46" cy="58" r="8.5"/></svg>
+        <figcaption>26</figcaption>
       </figure>
     </div></div>
     <div class="bed light">
-      <svg viewBox="0 0 470 116" width="352" aria-hidden="true">
-        <g fill="none" stroke="#18233b" stroke-width="5" stroke-linecap="round">
-          <circle cx="46" cy="58" r="34" opacity=".6"/></g>
+      <svg viewBox="0 0 320 116" width="320" aria-hidden="true">
+        <circle fill="none" stroke="#18233b" stroke-width="5" cx="46" cy="58" r="30" opacity=".65"/>
         <g fill="none" stroke="#0284c7" stroke-width="5" stroke-linecap="round">
-          <path d="M46 12L46 27"/><path d="M92 58L77 58"/><path d="M46 104L46 89"/><path d="M0 58L15 58"/></g>
-        <circle fill="#0284c7" cx="46" cy="58" r="9"/>
-        <g transform="translate(120 30) scale(.44)" fill="none" stroke="#18233b" stroke-width="20"
+          <path d="M46 23L46 14"/>
+          <path d="M81 58L90 58"/>
+          <path d="M46 93L46 102"/>
+          <path d="M11 58L2 58"/>
+        </g>
+        <circle fill="#0284c7" cx="46" cy="58" r="8.5"/>
+        <g transform="translate(118 46) scale(.44)" fill="none" stroke="#18233b" stroke-width="20"
            stroke-linecap="round" stroke-linejoin="round">
-          <g transform="translate(0 0)"><path d="M10 -46L10 100"/></g>
-          <g transform="translate(96 0)"><path d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path d="M90 60L90 100"/></g>
-          <g transform="translate(210 0)"><path d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
-          <g transform="translate(324 0)"><path d="M10 20L10 100"/></g>
-          <g transform="translate(390 0)"><circle cx="50" cy="60" r="40"/><path d="M90 -46L90 100"/></g>
-          <circle fill="#0284c7" stroke="none" cx="334" cy="-14" r="10"/>
+              <g transform="translate(0 0)"><path  pathLength="1" d="M10 -46L10 100"/></g>
+              <g transform="translate(44 0)"><path  pathLength="1" d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path  pathLength="1" d="M90 60L90 100"/></g>
+              <g transform="translate(168 0)"><path  pathLength="1" d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
+              <g transform="translate(282 0)"><path  pathLength="1" d="M10 20L10 100"/></g>
+              <g transform="translate(326 0)"><circle  pathLength="1" cx="50" cy="60" r="40"/><path  pathLength="1" d="M90 -46L90 100"/></g>
+          <circle fill="#0284c7" stroke="none" cx="292" cy="-14" r="10"/>
         </g>
       </svg>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════  2. APERTURE  ══════════════════════ -->
 <section class="card">
   <header>
     <h2>2 · Aperture</h2><span class="tag">strongest small</span>
-    <p class="why">Five iris blades draw inward from the rim and settle open, then the lens
-       catch-light ignites and the word writes itself — the same build grammar as beaconhs's
-       lighthouse. Reads cleanly at 16&nbsp;px because it is a ring and a dot at that size.</p>
+    <p class="why">Five iris blades draw in as chords of the rim — every endpoint sits exactly on a circle inside the ring, so nothing can poke out — then the lens ignites and the word writes. Same build grammar as beaconhs&rsquo;s lighthouse, and at 26&nbsp;px it is still a ring and a dot.</p>
   </header>
   <div class="beds">
     <div class="bed dark"><div class="sizes">
       <figure>
-        <svg viewBox="0 0 470 116" width="352" role="img" aria-label="Lucid">
+        <svg viewBox="0 0 320 116" width="320" role="img" aria-label="Lucid">
           <style>
             #a2 .ink{stroke:#e6ebf5} #a2 .acc{stroke:#f5a623} #a2 .accf{fill:#f5a623}
             @keyframes a2draw{from{stroke-dashoffset:1}}
-            @keyframes a2ignite{from{opacity:0}55%{opacity:1}to{opacity:.9}}
-            @keyframes a2breathe{0%,100%{opacity:.25}50%{opacity:.6}}
             @keyframes a2cycle{
               0%{stroke-dashoffset:0;opacity:1}
               2%{stroke-dashoffset:0;opacity:0}
               2.05%{stroke-dashoffset:1;opacity:1;animation-timing-function:cubic-bezier(.4,0,.2,1)}
               8%{stroke-dashoffset:0}
               100%{stroke-dashoffset:0}}
-            @keyframes a2lamp{0%{opacity:.9}2%{opacity:0}5%{opacity:0}7%{opacity:.9}100%{opacity:.9}}
             #a2 .s{stroke-dasharray:1;
-              animation:a2draw .5s cubic-bezier(.4,0,.2,1) var(--bd,0s) backwards,
+              animation:a2draw .52s cubic-bezier(.4,0,.2,1) var(--bd,0s) backwards,
                         a2cycle 12s linear calc(var(--bd,0s) + 12s) infinite}
-            #a2 .lamp{animation:a2ignite .8s ease-out .95s backwards,a2lamp 12s linear 12.95s infinite}
-            #a2 .halo{animation:a2ignite .8s ease-out .95s backwards,a2breathe 3.2s ease-in-out 2s infinite}
-            @media (prefers-reduced-motion:reduce){#a2 .s,#a2 .lamp,#a2 .halo{animation:none}}
+            @keyframes a2ignite{from{opacity:0}55%{opacity:1}to{opacity:.9}}
+            @keyframes a2breathe{0%,100%{opacity:.22}50%{opacity:.55}}
+            @keyframes a2lamp{0%{opacity:.9}2%{opacity:0}5%{opacity:0}7%{opacity:.9}100%{opacity:.9}}
+            #a2 .lamp{animation:a2ignite .8s ease-out .92s backwards,a2lamp 12s linear 12.92s infinite}
+            #a2 .halo{animation:a2ignite .8s ease-out .92s backwards,a2breathe 3.2s ease-in-out 2s infinite}
+            @media (prefers-reduced-motion:reduce){#a2 *{animation:none!important}}
           </style>
           <g id="a2">
-            <g fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="ink">
+            <g fill="none" stroke-width="5" stroke-linejoin="round" class="ink">
               <circle class="s" style="--bd:.05s" pathLength="1" cx="46" cy="58" r="36"/>
             </g>
             <g fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="acc">
-              <path class="s" style="--bd:.34s" pathLength="1" d="M46 22L70 40"/>
-              <path class="s" style="--bd:.42s" pathLength="1" d="M80 48L71 76"/>
-              <path class="s" style="--bd:.50s" pathLength="1" d="M64 90L28 90"/>
-              <path class="s" style="--bd:.58s" pathLength="1" d="M12 76L3 48"/>
-              <path class="s" style="--bd:.66s" pathLength="1" d="M22 40L46 22"/>
+              <path class="s" style="--bd:0.32s" pathLength="1" d="M46.0 28.0L74.5 48.7"/>
+              <path class="s" style="--bd:0.39s" pathLength="1" d="M74.5 48.7L63.6 82.3"/>
+              <path class="s" style="--bd:0.46s" pathLength="1" d="M63.6 82.3L28.4 82.3"/>
+              <path class="s" style="--bd:0.53s" pathLength="1" d="M28.4 82.3L17.5 48.7"/>
+              <path class="s" style="--bd:0.60s" pathLength="1" d="M17.5 48.7L46.0 28.0"/>
             </g>
-            <circle class="halo accf" cx="46" cy="58" r="17" opacity=".25"/>
-            <circle class="lamp accf" cx="46" cy="58" r="8"/>
-            <g transform="translate(120 30) scale(.44)" fill="none" stroke-width="20"
+            <circle class="halo accf" cx="46" cy="58" r="16" opacity=".22"/>
+            <circle class="lamp accf" cx="46" cy="58" r="7.5"/>
+            <g transform="translate(118 46) scale(.44)" fill="none" stroke-width="20"
                stroke-linecap="round" stroke-linejoin="round">
               <g class="ink">
-                <g transform="translate(0 0)"><path class="s" style="--bd:1.15s" pathLength="1" d="M10 -46L10 100"/></g>
-                <g transform="translate(96 0)"><path class="s" style="--bd:1.22s" pathLength="1" d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path class="s" style="--bd:1.22s" pathLength="1" d="M90 60L90 100"/></g>
-                <g transform="translate(210 0)"><path class="s" style="--bd:1.29s" pathLength="1" d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
-                <g transform="translate(324 0)"><path class="s" style="--bd:1.36s" pathLength="1" d="M10 20L10 100"/></g>
-                <g transform="translate(390 0)"><circle class="s" style="--bd:1.43s" pathLength="1" cx="50" cy="60" r="40"/><path class="s" style="--bd:1.43s" pathLength="1" d="M90 -46L90 100"/></g>
+              <g transform="translate(0 0)"><path class="s" style="--bd:1.10s" pathLength="1" d="M10 -46L10 100"/></g>
+              <g transform="translate(44 0)"><path class="s" style="--bd:1.17s" pathLength="1" d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path class="s" style="--bd:1.17s" pathLength="1" d="M90 60L90 100"/></g>
+              <g transform="translate(168 0)"><path class="s" style="--bd:1.24s" pathLength="1" d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
+              <g transform="translate(282 0)"><path class="s" style="--bd:1.31s" pathLength="1" d="M10 20L10 100"/></g>
+              <g transform="translate(326 0)"><circle class="s" style="--bd:1.38s" pathLength="1" cx="50" cy="60" r="40"/><path class="s" style="--bd:1.38s" pathLength="1" d="M90 -46L90 100"/></g>
               </g>
-              <circle class="lamp accf" cx="334" cy="-14" r="10"/>
+              <circle class="accf" cx="292" cy="-14" r="10"/>
             </g>
           </g>
         </svg>
-        <figcaption>lockup</figcaption>
+        <figcaption>lockup · 320 px</figcaption>
       </figure>
       <figure>
-        <svg viewBox="0 0 92 116" width="52" aria-hidden="true">
-          <circle fill="none" stroke="#e6ebf5" stroke-width="5" cx="46" cy="58" r="36"/>
-          <g fill="none" stroke="#f5a623" stroke-width="5" stroke-linecap="round">
-            <path d="M46 22L70 40"/><path d="M80 48L71 76"/><path d="M64 90L28 90"/><path d="M12 76L3 48"/><path d="M22 40L46 22"/></g>
-          <circle fill="#f5a623" cx="46" cy="58" r="8"/>
-        </svg>
+        <svg viewBox="0 0 92 116" width="46" aria-hidden="true"><circle fill="none" stroke="#e6ebf5" stroke-width="5" cx="46" cy="58" r="36"/><g fill="none" stroke="#f5a623" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M46.0 28.0L74.5 48.7"/><path d="M74.5 48.7L63.6 82.3"/><path d="M63.6 82.3L28.4 82.3"/><path d="M28.4 82.3L17.5 48.7"/><path d="M17.5 48.7L46.0 28.0"/></g><circle fill="#f5a623" cx="46" cy="58" r="7.5"/></svg>
         <figcaption>48</figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 92 116" width="26" aria-hidden="true"><circle fill="none" stroke="#e6ebf5" stroke-width="5" cx="46" cy="58" r="36"/><g fill="none" stroke="#f5a623" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M46.0 28.0L74.5 48.7"/><path d="M74.5 48.7L63.6 82.3"/><path d="M63.6 82.3L28.4 82.3"/><path d="M28.4 82.3L17.5 48.7"/><path d="M17.5 48.7L46.0 28.0"/></g><circle fill="#f5a623" cx="46" cy="58" r="7.5"/></svg>
+        <figcaption>26</figcaption>
       </figure>
     </div></div>
     <div class="bed light">
-      <svg viewBox="0 0 470 116" width="352" aria-hidden="true">
+      <svg viewBox="0 0 320 116" width="320" aria-hidden="true">
         <circle fill="none" stroke="#18233b" stroke-width="5" cx="46" cy="58" r="36"/>
-        <g fill="none" stroke="#d98614" stroke-width="5" stroke-linecap="round">
-          <path d="M46 22L70 40"/><path d="M80 48L71 76"/><path d="M64 90L28 90"/><path d="M12 76L3 48"/><path d="M22 40L46 22"/></g>
-        <circle fill="#d98614" cx="46" cy="58" r="8"/>
-        <g transform="translate(120 30) scale(.44)" fill="none" stroke="#18233b" stroke-width="20"
+        <g fill="none" stroke="#d98614" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M46.0 28.0L74.5 48.7"/>
+          <path d="M74.5 48.7L63.6 82.3"/>
+          <path d="M63.6 82.3L28.4 82.3"/>
+          <path d="M28.4 82.3L17.5 48.7"/>
+          <path d="M17.5 48.7L46.0 28.0"/>
+        </g>
+        <circle fill="#d98614" cx="46" cy="58" r="7.5"/>
+        <g transform="translate(118 46) scale(.44)" fill="none" stroke="#18233b" stroke-width="20"
            stroke-linecap="round" stroke-linejoin="round">
-          <g transform="translate(0 0)"><path d="M10 -46L10 100"/></g>
-          <g transform="translate(96 0)"><path d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path d="M90 60L90 100"/></g>
-          <g transform="translate(210 0)"><path d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
-          <g transform="translate(324 0)"><path d="M10 20L10 100"/></g>
-          <g transform="translate(390 0)"><circle cx="50" cy="60" r="40"/><path d="M90 -46L90 100"/></g>
-          <circle fill="#d98614" stroke="none" cx="334" cy="-14" r="10"/>
+              <g transform="translate(0 0)"><path  pathLength="1" d="M10 -46L10 100"/></g>
+              <g transform="translate(44 0)"><path  pathLength="1" d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path  pathLength="1" d="M90 60L90 100"/></g>
+              <g transform="translate(168 0)"><path  pathLength="1" d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
+              <g transform="translate(282 0)"><path  pathLength="1" d="M10 20L10 100"/></g>
+              <g transform="translate(326 0)"><circle  pathLength="1" cx="50" cy="60" r="40"/><path  pathLength="1" d="M90 -46L90 100"/></g>
+          <circle fill="#d98614" stroke="none" cx="292" cy="-14" r="10"/>
         </g>
       </svg>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════  3. RESOLVE  ══════════════════════ -->
 <section class="card">
   <header>
     <h2>3 · Resolve</h2><span class="tag">most literal</span>
-    <p class="why">Four coarse cells draw in, then split into sixteen fine ones that ripple
-       outward — one source pixel becoming the block it covers after a 4× upscale. The most
-       engineering-legible of the three, and the one that needs no explanation to a developer.</p>
+    <p class="why">Two coarse cells draw, then eight fine ones pop outward: one source pixel becoming the block it covers after upscaling. The most legible to a developer and the one that needs no explanation.</p>
   </header>
   <div class="beds">
     <div class="bed dark"><div class="sizes">
       <figure>
-        <svg viewBox="0 0 470 116" width="352" role="img" aria-label="Lucid">
+        <svg viewBox="0 0 320 116" width="320" role="img" aria-label="Lucid">
           <style>
-            #r3 .ink{stroke:#e6ebf5} #r3 .accf{fill:#3ddc84}
+            #r3 .ink{stroke:#e6ebf5} #r3 .acc{stroke:#3ddc84} #r3 .accf{fill:#3ddc84}
             @keyframes r3draw{from{stroke-dashoffset:1}}
-            @keyframes r3pop{from{opacity:0;transform:scale(.25)}}
             @keyframes r3cycle{
               0%{stroke-dashoffset:0;opacity:1}
               2%{stroke-dashoffset:0;opacity:0}
               2.05%{stroke-dashoffset:1;opacity:1;animation-timing-function:cubic-bezier(.4,0,.2,1)}
               8%{stroke-dashoffset:0}
               100%{stroke-dashoffset:0}}
-            @keyframes r3cellCycle{0%{opacity:1}2%{opacity:0}5%{opacity:0}8%{opacity:1}100%{opacity:1}}
             #r3 .s{stroke-dasharray:1;
-              animation:r3draw .5s cubic-bezier(.4,0,.2,1) var(--bd,0s) backwards,
+              animation:r3draw .52s cubic-bezier(.4,0,.2,1) var(--bd,0s) backwards,
                         r3cycle 12s linear calc(var(--bd,0s) + 12s) infinite}
+            @keyframes r3pop{from{opacity:0;transform:scale(.25)}}
+            @keyframes r3cellCycle{0%{opacity:1}2%{opacity:0}5%{opacity:0}8%{opacity:1}100%{opacity:1}}
             #r3 .cell{transform-box:fill-box;transform-origin:center;
               animation:r3pop .45s cubic-bezier(.34,1.56,.64,1) var(--bd,0s) backwards,
                         r3cellCycle 12s linear calc(var(--bd,0s) + 12s) infinite}
-            @media (prefers-reduced-motion:reduce){#r3 .s,#r3 .cell{animation:none}}
+            @media (prefers-reduced-motion:reduce){#r3 *{animation:none!important}}
           </style>
           <g id="r3">
             <g fill="none" stroke-width="5" stroke-linejoin="round" class="ink">
@@ -276,74 +270,72 @@
               <path class="s" style="--bd:.14s" pathLength="1" d="M8 60H44V96H8Z"/>
             </g>
             <g class="accf">
-              <rect class="cell" style="--bd:.42s" x="50" y="20" width="15" height="15" rx="3"/>
-              <rect class="cell" style="--bd:.48s" x="69" y="20" width="15" height="15" rx="3"/>
-              <rect class="cell" style="--bd:.54s" x="50" y="39" width="15" height="15" rx="3"/>
-              <rect class="cell" style="--bd:.60s" x="69" y="39" width="15" height="15" rx="3"/>
-              <rect class="cell" style="--bd:.54s" x="50" y="60" width="15" height="15" rx="3"/>
-              <rect class="cell" style="--bd:.60s" x="69" y="60" width="15" height="15" rx="3"/>
-              <rect class="cell" style="--bd:.66s" x="50" y="79" width="15" height="15" rx="3"/>
-              <rect class="cell" style="--bd:.72s" x="69" y="79" width="15" height="15" rx="3"/>
+              <rect class="cell" style="--bd:0.42s" x="50" y="20" width="15" height="15" rx="3"/>
+              <rect class="cell" style="--bd:0.48s" x="69" y="20" width="15" height="15" rx="3"/>
+              <rect class="cell" style="--bd:0.54s" x="50" y="39" width="15" height="15" rx="3"/>
+              <rect class="cell" style="--bd:0.60s" x="69" y="39" width="15" height="15" rx="3"/>
+              <rect class="cell" style="--bd:0.66s" x="50" y="60" width="15" height="15" rx="3"/>
+              <rect class="cell" style="--bd:0.72s" x="69" y="60" width="15" height="15" rx="3"/>
+              <rect class="cell" style="--bd:0.78s" x="50" y="79" width="15" height="15" rx="3"/>
+              <rect class="cell" style="--bd:0.84s" x="69" y="79" width="15" height="15" rx="3"/>
             </g>
-            <g transform="translate(120 30) scale(.44)" fill="none" stroke-width="20"
+            <g transform="translate(118 46) scale(.44)" fill="none" stroke-width="20"
                stroke-linecap="round" stroke-linejoin="round">
               <g class="ink">
-                <g transform="translate(0 0)"><path class="s" style="--bd:.95s" pathLength="1" d="M10 -46L10 100"/></g>
-                <g transform="translate(96 0)"><path class="s" style="--bd:1.02s" pathLength="1" d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path class="s" style="--bd:1.02s" pathLength="1" d="M90 60L90 100"/></g>
-                <g transform="translate(210 0)"><path class="s" style="--bd:1.09s" pathLength="1" d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
-                <g transform="translate(324 0)"><path class="s" style="--bd:1.16s" pathLength="1" d="M10 20L10 100"/></g>
-                <g transform="translate(390 0)"><circle class="s" style="--bd:1.23s" pathLength="1" cx="50" cy="60" r="40"/><path class="s" style="--bd:1.23s" pathLength="1" d="M90 -46L90 100"/></g>
+              <g transform="translate(0 0)"><path class="s" style="--bd:0.95s" pathLength="1" d="M10 -46L10 100"/></g>
+              <g transform="translate(44 0)"><path class="s" style="--bd:1.02s" pathLength="1" d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path class="s" style="--bd:1.02s" pathLength="1" d="M90 60L90 100"/></g>
+              <g transform="translate(168 0)"><path class="s" style="--bd:1.09s" pathLength="1" d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
+              <g transform="translate(282 0)"><path class="s" style="--bd:1.16s" pathLength="1" d="M10 20L10 100"/></g>
+              <g transform="translate(326 0)"><circle class="s" style="--bd:1.23s" pathLength="1" cx="50" cy="60" r="40"/><path class="s" style="--bd:1.23s" pathLength="1" d="M90 -46L90 100"/></g>
               </g>
-              <circle class="cell accf" style="--bd:1.16s" cx="334" cy="-14" r="10"/>
+              <circle class="accf" cx="292" cy="-14" r="10"/>
             </g>
           </g>
         </svg>
-        <figcaption>lockup</figcaption>
+        <figcaption>lockup · 320 px</figcaption>
       </figure>
       <figure>
-        <svg viewBox="0 0 92 116" width="52" aria-hidden="true">
-          <g fill="none" stroke="#e6ebf5" stroke-width="5" stroke-linejoin="round">
-            <path d="M8 20H44V56H8Z"/><path d="M8 60H44V96H8Z"/></g>
-          <g fill="#3ddc84">
-            <rect x="50" y="20" width="15" height="15" rx="3"/><rect x="69" y="20" width="15" height="15" rx="3"/>
-            <rect x="50" y="39" width="15" height="15" rx="3"/><rect x="69" y="39" width="15" height="15" rx="3"/>
-            <rect x="50" y="60" width="15" height="15" rx="3"/><rect x="69" y="60" width="15" height="15" rx="3"/>
-            <rect x="50" y="79" width="15" height="15" rx="3"/><rect x="69" y="79" width="15" height="15" rx="3"/></g>
-        </svg>
+        <svg viewBox="0 0 92 116" width="46" aria-hidden="true"><g fill="none" stroke="#e6ebf5" stroke-width="5" stroke-linejoin="round"><path d="M8 20H44V56H8Z"/><path d="M8 60H44V96H8Z"/></g><g fill="#3ddc84"><rect x="50" y="20" width="15" height="15" rx="3"/><rect x="69" y="20" width="15" height="15" rx="3"/><rect x="50" y="39" width="15" height="15" rx="3"/><rect x="69" y="39" width="15" height="15" rx="3"/><rect x="50" y="60" width="15" height="15" rx="3"/><rect x="69" y="60" width="15" height="15" rx="3"/><rect x="50" y="79" width="15" height="15" rx="3"/><rect x="69" y="79" width="15" height="15" rx="3"/></g></svg>
         <figcaption>48</figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 92 116" width="26" aria-hidden="true"><g fill="none" stroke="#e6ebf5" stroke-width="5" stroke-linejoin="round"><path d="M8 20H44V56H8Z"/><path d="M8 60H44V96H8Z"/></g><g fill="#3ddc84"><rect x="50" y="20" width="15" height="15" rx="3"/><rect x="69" y="20" width="15" height="15" rx="3"/><rect x="50" y="39" width="15" height="15" rx="3"/><rect x="69" y="39" width="15" height="15" rx="3"/><rect x="50" y="60" width="15" height="15" rx="3"/><rect x="69" y="60" width="15" height="15" rx="3"/><rect x="50" y="79" width="15" height="15" rx="3"/><rect x="69" y="79" width="15" height="15" rx="3"/></g></svg>
+        <figcaption>26</figcaption>
       </figure>
     </div></div>
     <div class="bed light">
-      <svg viewBox="0 0 470 116" width="352" aria-hidden="true">
+      <svg viewBox="0 0 320 116" width="320" aria-hidden="true">
         <g fill="none" stroke="#18233b" stroke-width="5" stroke-linejoin="round">
-          <path d="M8 20H44V56H8Z"/><path d="M8 60H44V96H8Z"/></g>
+          <path d="M8 20H44V56H8Z"/><path d="M8 60H44V96H8Z"/>
+        </g>
         <g fill="#0f9d58">
-          <rect x="50" y="20" width="15" height="15" rx="3"/><rect x="69" y="20" width="15" height="15" rx="3"/>
-          <rect x="50" y="39" width="15" height="15" rx="3"/><rect x="69" y="39" width="15" height="15" rx="3"/>
-          <rect x="50" y="60" width="15" height="15" rx="3"/><rect x="69" y="60" width="15" height="15" rx="3"/>
-          <rect x="50" y="79" width="15" height="15" rx="3"/><rect x="69" y="79" width="15" height="15" rx="3"/></g>
-        <g transform="translate(120 30) scale(.44)" fill="none" stroke="#18233b" stroke-width="20"
+<rect x="50" y="20" width="15" height="15" rx="3"/><rect x="69" y="20" width="15" height="15" rx="3"/><rect x="50" y="39" width="15" height="15" rx="3"/><rect x="69" y="39" width="15" height="15" rx="3"/><rect x="50" y="60" width="15" height="15" rx="3"/><rect x="69" y="60" width="15" height="15" rx="3"/><rect x="50" y="79" width="15" height="15" rx="3"/><rect x="69" y="79" width="15" height="15" rx="3"/>
+        </g>
+        <g transform="translate(118 46) scale(.44)" fill="none" stroke="#18233b" stroke-width="20"
            stroke-linecap="round" stroke-linejoin="round">
-          <g transform="translate(0 0)"><path d="M10 -46L10 100"/></g>
-          <g transform="translate(96 0)"><path d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path d="M90 60L90 100"/></g>
-          <g transform="translate(210 0)"><path d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
-          <g transform="translate(324 0)"><path d="M10 20L10 100"/></g>
-          <g transform="translate(390 0)"><circle cx="50" cy="60" r="40"/><path d="M90 -46L90 100"/></g>
-          <circle fill="#0f9d58" stroke="none" cx="334" cy="-14" r="10"/>
+              <g transform="translate(0 0)"><path  pathLength="1" d="M10 -46L10 100"/></g>
+              <g transform="translate(44 0)"><path  pathLength="1" d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path  pathLength="1" d="M90 60L90 100"/></g>
+              <g transform="translate(168 0)"><path  pathLength="1" d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
+              <g transform="translate(282 0)"><path  pathLength="1" d="M10 20L10 100"/></g>
+              <g transform="translate(326 0)"><circle  pathLength="1" cx="50" cy="60" r="40"/><path  pathLength="1" d="M90 -46L90 100"/></g>
+          <circle fill="#0f9d58" stroke="none" cx="292" cy="-14" r="10"/>
         </g>
       </svg>
     </div>
   </div>
 </section>
-
 </main>
 <footer>
-  The wordmark is monoline paths on the same 100-unit letter grid beaconhs uses, so it is not a
-  font and nothing has to be installed. Accent is one colour per concept —
-  <code>#5bd1ff</code> lens cyan, <code>#f5a623</code> the amber shared with bunkhouse and
-  beaconhs, or <code>#3ddc84</code> green. Pick a concept and an accent and I will cut
-  <code>.github/assets/lucid-logo.svg</code> and <code>-dark.svg</code>, the Dock
-  <code>.icns</code>, and the README lockup.
+  Fixed since the last pass: the iris blades are now chords of a circle inscribed <em>inside</em> the ring
+  (every endpoint at exactly r=30 against a r=36 ring, so none can escape it); all three marks and the
+  wordmark now share a centre line at y=58, where the marks previously sat 16&nbsp;units low; and the
+  letter spacing is even — the gaps ran 76/14/24/46 units, and are now 24 throughout, which is the same
+  rhythm beaconhs uses. The wordmark is monoline paths on a 100-unit letter grid, so no font is needed.
+  <br><br>
+  Pick a concept and an accent — <code>#5bd1ff</code> lens cyan, <code>#f5a623</code> the amber shared
+  with bunkhouse and beaconhs, or <code>#3ddc84</code> green — and I will cut
+  <code>.github/assets/lucid-logo.svg</code> and <code>-dark.svg</code>, the Dock <code>.icns</code>,
+  and the README lockup.
 </footer>
 </body>
 </html>
