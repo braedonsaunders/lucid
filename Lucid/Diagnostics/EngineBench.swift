@@ -120,7 +120,7 @@ enum EngineBench {
             backProjection: 0, backProjectionPasses: 0,
             sourceDeblock: t.sourceDeblock, sourceDeblockRadius: 1.6, presharpen: t.presharpen,
             temporal: t.temporal, motionLow: 0.02, motionHigh: 0.08,
-            radius: 4,
+            radius: ProcessInfo.processInfo.environment["LUCID_RADIUS"].flatMap(Int.init) ?? 4,
             blackPoint: t.blackPoint, whitePoint: t.whitePoint,
             contrast: t.contrast, saturation: t.saturation,
             stageLoopFilter: t.stageLoopFilter > 0.5,
