@@ -57,9 +57,9 @@
   <h1>Video Enhancer Lab</h1>
   <span class="status"><span class="dot" id="dot"></span><span id="conn">connecting to app…</span></span>
   <label class="switch"><input type="checkbox" id="enabled" checked> Enhancement</label>
-  <span class="group" id="engine"></span>
+  <span class="status" id="pipeline"></span>
   <span class="status" id="stats"></span>
-  <span class="hint"><kbd>Space</kbd> A/B · <kbd>↑</kbd><kbd>↓</kbd> clip · <kbd>1</kbd> Apple only · <kbd>2</kbd> Lucid</span>
+  <span class="hint"><kbd>Space</kbd> A/B · <kbd>↑</kbd><kbd>↓</kbd> clip</span>
 </header>
 <main>
   <aside>
@@ -173,33 +173,18 @@ function openControl() {
   };
 }
 function sendControl(obj) { if (control && control.readyState === 1) control.send(JSON.stringify({ type: 'control', ...obj })); }
-// Engine picker, populated from whatever the app reports it supports.
-let engineBuilt = false;
+// There is one pipeline now, so this reports what it is doing rather than
+// offering a choice. Comparisons live in the shooter below and in models.html.
 function buildEngines(m) {
-  const box = document.getElementById('engine');
-  if (!engineBuilt && m.engines && m.engines.length) {
-    box.innerHTML = '';
-    m.engines.forEach((id, i) => {
-      const input = document.createElement('input');
-      input.type = 'radio'; input.name = 'eng'; input.id = 'eng-' + id; input.value = id;
-      const label = document.createElement('label');
-      label.htmlFor = 'eng-' + id; label.textContent = (m.engineLabels && m.engineLabels[i]) || id;
-      input.onchange = () => sendControl({ engine: id });
-      box.append(input, label);
-    });
-    engineBuilt = true;
-  }
-  const current = document.getElementById('eng-' + m.engine);
-  if (current) current.checked = true;
+  const box = document.getElementById('pipeline');
+  const size = m.outputWidth ? ` → ${m.outputWidth}×${m.outputHeight}` : '';
+  const ms = m.processingMilliseconds ? ` · ${m.processingMilliseconds.toFixed(1)} ms` : '';
+  box.textContent = m.enhancing ? `SPAN ×4 on the Neural Engine${size}${ms}` : '';
 }
 enabledBox.onchange = () => sendControl({ enabled: enabledBox.checked });
 addEventListener('keydown', (e) => {
   if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return;
   if (e.code === 'Space') { e.preventDefault(); enabledBox.checked = !enabledBox.checked; sendControl({ enabled: enabledBox.checked }); }
-  if (e.key >= '1' && e.key <= '9') {
-    const box = document.querySelectorAll('#engine input')[parseInt(e.key,10)-1];
-    if (box) { box.checked = true; sendControl({ engine: box.value }); }
-  }
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
     const i = CLIPS.findIndex(c => c.id === currentClip); selectClip(CLIPS[(i + (e.key === 'ArrowDown' ? 1 : CLIPS.length - 1)) % CLIPS.length].id);
   }

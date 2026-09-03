@@ -34,8 +34,13 @@ A frame makes this trip, all of it on-device:
    calibrated on a one-pixel artifact; after a 4× upscale a block edge is a
    twelve-pixel ramp and none of the tests fire. It is also sixteen times fewer
    pixels.
-3. **Apple's scaler.** `VTLowLatencySuperResolutionScaler`, 2× per pass, chained
-   for 4×, tiled when the frame is larger than one session accepts.
+3. **SPAN, 4×, on the Neural Engine.** A small super-resolution network, ~1M
+   parameters, in Core ML. This started out as Apple's
+   `VTLowLatencySuperResolutionScaler` and it is not any more: measured against a
+   1080p ground truth, Apple's scaler scored *below* a plain Lanczos upscale,
+   inventing a mottled texture in foliage that is not in the source. SPAN is the
+   only upscaler measured here that beats doing nothing. There is no fallback to
+   the old path — see [When it runs](#when-it-runs).
 4. **Grade and detail.** Contrast-adaptive sharpening at the right radius, a tone
    grade, and perceptual saturation in Oklab.
 5. **Back into the page**, at exactly the size the video box occupies on screen.
@@ -66,9 +71,9 @@ The goal is the same and the approach has to be different.
 |  | RTX VSR | Lucid |
 |---|---|---|
 | Where it runs | Inside the GPU driver and the browser's video compositor | A separate app, plus a companion extension |
-| What does the upscaling | An NVIDIA-trained model | Apple's `VTLowLatencySuperResolutionScaler`, then a Metal pipeline |
+| What does the upscaling | An NVIDIA-trained model | SPAN on the Neural Engine, then a Metal pipeline |
 | Controls | Quality 1–4 | Quality: Off, Subtle, Standard, Strong |
-| Declines when | The video already matches or exceeds what is displayed | Same — above 1080p source, or under 1.15× stretch |
+| Declines when | The video already matches or exceeds what is displayed | Same — above 360p source, or under 1.15× stretch |
 
 The important difference is the first row. NVIDIA works with Chrome and Edge, so
 VSR sits inside the browser's own compositing path and has nothing to reach
@@ -83,11 +88,29 @@ their trademark, named here only to say plainly what this is.
 
 ## When it runs
 
-| Source | |
-|---|---|
-| Below 128×72 | left alone — too little to reconstruct from |
-| **144p to 1080p** | **enhanced** |
-| Above 1080p | left alone — already more detail than most windows show |
+| Source | | Neural Engine |
+|---|---|---|
+| Below 128×72 | left alone — too little to reconstruct from | |
+| **144p** (256×144) | **enhanced** | 4.5 ms |
+| **180p** (320×180) | **enhanced** | 7.0 ms |
+| **240p** (426×240) | **enhanced** | 13.6 ms |
+| **270p** (480×270) | **enhanced** | 14.7 ms |
+| **360p** (640×360) | **enhanced** | 26.7 ms |
+| 480p and above | left alone | 48 ms — past the frame budget |
+
+The ceiling is a frame budget, not a resolution: 28 ms, one frame at 30fps less
+what the rest of the pipeline costs. Above it Lucid does nothing at all rather
+than reaching for a weaker upscaler, because the weaker upscaler measured worse
+than leaving the frame alone. This is also where the returns are smallest — the
+larger the source, the less there is to recover.
+
+Those timings are on an M4 Pro, and every input width in that table is a multiple
+of 16. That is not cosmetic. The Neural Engine tiles along width, so an unaligned
+width pays for an entire extra pass: 426×240 costs **23.0 ms**, 432×240 costs
+**13.6 ms**, for the same picture. Height alignment buys nothing. So the two real
+streaming sizes that are not aligned — 426 and 854 wide — run models converted at
+the next multiple of 16, and the 1.4% stretch is undone when the frame is drawn
+back into the video box.
 
 It also stays out of the way unless the video is actually being stretched: the
 player has to be at least 1.15× the decoded width in real pixels before Lucid

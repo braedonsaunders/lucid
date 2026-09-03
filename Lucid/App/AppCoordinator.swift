@@ -26,11 +26,11 @@ final class AppCoordinator {
     /// When the running session's page first went quiet, so a brief gap does
     /// not tear the pipeline down.
     private var sessionMissingSince: ContinuousClock.Instant?
-    /// Which reconstruction engine new sessions use.
-    var engine: EngineKind {
-        get { EngineKind(rawValue: UserDefaults.standard.string(forKey: "engine") ?? "") ?? .learned }
-        set { UserDefaults.standard.set(newValue.rawValue, forKey: "engine") }
-    }
+    /// There is one pipeline, and it is `.learned`. This stays a variable only
+    /// so the offline comparison shooter can step through the other paths to
+    /// produce its stills; nothing in the shipping app changes it, and it is
+    /// deliberately not remembered between launches.
+    var engine: EngineKind = .learned
 
     private var latencySeconds: Double {
         let stored = UserDefaults.standard.double(forKey: "latencySeconds")
@@ -208,11 +208,6 @@ final class AppCoordinator {
             appState.enabled = enabled
             if !enabled { stopSession(reason: "Paused") } else { evaluate() }
         }
-        if let raw = control.engine, let kind = EngineKind(rawValue: raw), kind != engine {
-            engine = kind
-            session?.setEngine(kind)
-            appState.statusLine = session == nil ? appState.statusLine : "Enhancing with \(kind.label)"
-        }
         if let changes = control.tuning, !changes.isEmpty {
             var t = EnhancementSession.tuning
             for (key, value) in changes {
@@ -355,15 +350,17 @@ final class AppCoordinator {
         //
         // The floor is low on purpose: 144p is the case that needs help most,
         // and the old 320x180 floor rejected it outright. Below about 128 wide
-        // there is not enough left to reconstruct from and the scaler's tiling
-        // gets awkward.
+        // there is not enough left to reconstruct from.
         //
-        // The ceiling is where this stops being worth doing rather than where
-        // it stops working. Above 1080p a source already carries more detail
-        // than most windows show, so there is nothing to recover - the same
-        // reason NVIDIA's RTX Video Super Resolution declines to run when a
-        // video already matches or exceeds what is being displayed.
-        guard video.iw >= 128, video.ih >= 72, video.iw <= 1920, video.ih <= 1080 else { return false }
+        // The ceiling is not a number chosen here. It is wherever the learned
+        // upscaler stops fitting a frame - see LearnedUpscaler.variants - and
+        // today that is 640x360. Above it Lucid does nothing rather than
+        // reaching for a weaker upscaler, because the weaker upscaler measured
+        // worse than leaving the frame alone. This is also the point of
+        // diminishing returns: the larger the source, the less there is to
+        // recover, which is why RTX Video Super Resolution has a window too.
+        guard video.iw >= 128, video.ih >= 72 else { return false }
+        guard LearnedUpscaler.supports(width: video.iw, height: video.ih) else { return false }
         guard video.rect.w >= 200, video.rect.h >= 100 else { return false }
         let physicalWidth = video.rect.w * report.dpr
         // Hysteresis: start above 1.15×, but keep a running session down to 1.0×.
@@ -891,9 +888,18 @@ final class EnhancementSession {
         return { width, height in
             let compositor = try MetalTileCompositor()
             let kind = engine
+            // Lucid's own path. Built first, because when it succeeds - which
+            // is every session the app starts, since isEnhanceable only admits
+            // sizes it covers - Apple's tiled scaler is never touched and
+            // there is no reason to pay to build it.
+            // Not `try?`: a session only starts for sizes the table covers, so
+            // a failure here means the model is missing from the build. That
+            // should surface as an error, not as an unannounced downgrade to
+            // the scaler this project measured as worse than doing nothing.
+            let learned = kind.usesLearned ? try LearnedUpscaler(width: width, height: height) : nil
             var upscaler: TiledVideoToolboxUpscaler?
             var built = 1
-            if kind.rescales {
+            if kind.rescales, learned == nil {
                 let factor = Int(tuning.scalerFactor.rounded())
                 let first = try TiledVideoToolboxUpscaler(
                     width: width, height: height, compositor: compositor, preferredScale: factor
@@ -910,10 +916,8 @@ final class EnhancementSession {
                 }
                 upscaler = first
             }
-            // The learned upscaler, where one exists for this source size and
-            // fits the frame budget. It is a fixed 4x, so the detail stage that
-            // follows works at that scale rather than the tiled count.
-            let learned = kind.usesLearned ? try? LearnedUpscaler(width: width, height: height) : nil
+            // SPAN is a fixed 4x, so the detail stage that follows works at
+            // that scale rather than the tiled pass count.
             let outputScale = learned != nil ? 4.0 : (kind.rescales ? pow(2, Double(built)) : stretch)
             let settings = detailSettings(for: report, outputScale: outputScale)
             let detail = kind.usesDetail ? try? DetailEnhancer(device: compositor.device, settings: settings) : nil

@@ -62,10 +62,14 @@ xcodebuild -project Lucid.xcodeproj -scheme Lucid -configuration Release \
 
 # The learned upscaler's models. Compiled here so the app does not pay for
 # compilation on its first frame, and only the sizes it can actually use.
+# The sizes are listed rather than globbed: Model/ also holds the ones that
+# were converted to measure against, and shipping those would be dead weight.
+# This list is LearnedUpscaler.variants - keep the two in step.
 resources="$app/Contents/Resources"
 mkdir -p "$resources"
-for model in "$repo"/Model/SPAN_x4_ch28_*.mlpackage; do
-  [[ -d "$model" ]] || continue
+for size in 256x144 320x180 432x240 480x270 640x360; do
+  model="$repo/Model/SPAN_x4_ch28_$size.mlpackage"
+  [[ -d "$model" ]] || { echo "  missing $(basename "$model")"; continue; }
   name="$(basename "${model%.mlpackage}")"
   if [[ ! -d "$resources/$name.mlmodelc" ]]; then
     xcrun coremlcompiler compile "$model" "$resources" >/dev/null 2>&1 || true

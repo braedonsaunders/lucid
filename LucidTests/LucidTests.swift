@@ -54,7 +54,12 @@ struct SessionPolicyTests {
 
     @Test @MainActor func enhanceableRejectsWrongSizesAndStates() {
         #expect(AppCoordinator.isEnhanceable(report(iw: 100, ih: 56)) == false)   // below 128x72
-        #expect(AppCoordinator.isEnhanceable(report(iw: 3840, ih: 2160)) == false) // above 1080p
+        // The ceiling is the learned upscaler's table, not a round number:
+        // 640x360 is the largest size it carries inside the frame budget, so
+        // 854x480 and up are left alone rather than handed to a weaker scaler.
+        #expect(AppCoordinator.isEnhanceable(report(iw: 3840, ih: 2160)) == false)
+        let dvd = report(dpr: 2, iw: 854, ih: 480, rectX: 0, rectY: 0, rectW: 1040, rectH: 585)
+        #expect(AppCoordinator.isEnhanceable(dvd) == false)
         // 144p is the case that needs the most help, so it has to be inside the
         // window rather than rejected for being small.
         let tiny = report(dpr: 2, iw: 256, ih: 144, rectX: 0, rectY: 0, rectW: 1040, rectH: 585)
@@ -67,6 +72,10 @@ struct SessionPolicyTests {
         var hidden = report(); hidden.visible = false
         #expect(AppCoordinator.isEnhanceable(hidden) == false)
         // The YouTube case from ship-prep: 426x240 at ratio ~4.9 must enhance.
+        // 426 is not a multiple of 16, so this is the size that has to reach
+        // the 432-wide model - the alignment that costs 23.0ms unaligned and
+        // 13.6ms aligned.
+        #expect(LearnedUpscaler.variant(width: 426, height: 240)?.width == 432)
         let yt = report(dpr: 2, iw: 426, ih: 240, rectX: 0, rectY: 0, rectW: 1040, rectH: 585)
         #expect(AppCoordinator.isEnhanceable(yt) == true)
     }

@@ -2,8 +2,8 @@
 //  LearnedUpscaler.swift
 //  Lucid
 //
-//  A Core ML upscaler running on the Neural Engine, used in place of Apple's
-//  scaler where it fits the frame budget.
+//  Lucid's upscaler: SPAN, running on the Neural Engine. This is the whole
+//  reconstruction path - there is no second engine underneath it.
 //
 //  Measured against a 1080p reference on compressed 270p source, fine-band
 //  correlation with the truth - the metric that separates recovered detail from
@@ -18,6 +18,7 @@
 //  Apple's scaler invents a mottled texture in foliage that is not in the
 //  source; our sharpening then amplifies it. SPAN is the only option measured
 //  that beats a plain Lanczos upscale, and it is also the cleanest to look at.
+//  That result is why this file is the only upscaler left.
 //
 
 import CoreML
@@ -29,8 +30,8 @@ import VideoToolbox
 final class LearnedUpscaler: @unchecked Sendable {
     enum Failure: Error { case noModel, pixelBuffer, prediction }
 
-    /// Input sizes a model has been converted for, with what each costs on an
-    /// M4 Pro's Neural Engine. Cost is roughly parameters x low-resolution
+    /// Input sizes a model has been converted for, with what each measured on
+    /// an M4 Pro's Neural Engine. Cost is roughly parameters x low-resolution
     /// pixels, so it grows quickly with the source size.
     struct Variant {
         let width: Int
@@ -38,25 +39,57 @@ final class LearnedUpscaler: @unchecked Sendable {
         let milliseconds: Double
     }
 
+    /// Every width here is a multiple of 16, and that is the most important
+    /// thing about this table. The Neural Engine tiles along width, so a width
+    /// that is not a multiple of 16 pays for an entire extra pass:
+    ///
+    ///     426x240   23.0 ms          432x240   13.6 ms
+    ///     854x480   92.4 ms          864x480   48.2 ms
+    ///
+    /// Height alignment buys nothing - 480x272 measured *slower* than 480x270,
+    /// by exactly the two extra rows of pixels. So the real streaming sizes
+    /// that are not aligned (426 and 854 wide) are converted at the next
+    /// multiple of 16 and the frame is stretched that last 1.4% on the way in.
+    /// Nothing is lost: the page draws the result into the video box, which
+    /// has the true aspect, so the stretch is undone on presentation.
     static let variants: [Variant] = [
         Variant(width: 256, height: 144, milliseconds: 4.5),
-        Variant(width: 426, height: 240, milliseconds: 11.5),
+        Variant(width: 320, height: 180, milliseconds: 7.0),
+        Variant(width: 432, height: 240, milliseconds: 13.6),   // covers 426x240
         Variant(width: 480, height: 270, milliseconds: 14.7),
         Variant(width: 640, height: 360, milliseconds: 26.7),
     ]
 
-    /// Above this the learned pass costs more than the frame budget allows and
-    /// Apple's scaler is used instead. Being slower than real time would undo
-    /// any quality gain.
-    static let budgetMilliseconds = 16.0
+    /// One frame at 30fps, less the rest of the pipeline. Low-resolution
+    /// streaming video runs at 24-30fps; 60fps material is published at 720p
+    /// and above, which is outside the window Lucid works in anyway.
+    ///
+    /// A source with no variant under this budget is not enhanced at all.
+    /// There is no second engine to fall back to: Apple's scaler measured
+    /// *worse* than leaving the frame alone, so running it would be a
+    /// disservice. Lucid declines instead, the same way RTX Video Super
+    /// Resolution declines outside its own window.
+    static let budgetMilliseconds = 28.0
 
-    /// Whether a learned model exists for this size and is worth running.
+    /// Whether this size is inside the window Lucid works in. Deliberately a
+    /// question about the table above and not about what is on disk: if a build
+    /// were missing its models this must not quietly answer "nothing is
+    /// enhanceable" for every video. That case is a broken install, and `init`
+    /// throws so it is reported rather than swallowed.
     static func supports(width: Int, height: Int) -> Bool {
-        model(width: width, height: height) != nil
+        variant(width: width, height: height) != nil
     }
 
-    private static func variant(width: Int, height: Int) -> Variant? {
-        variants.first { $0.width == width && $0.height == height && $0.milliseconds <= budgetMilliseconds }
+    /// The cheapest variant that covers the source. Scaling a frame *up* to the
+    /// model's input costs nothing real; scaling it down would throw away the
+    /// detail we are here to recover, so a variant is only ever used when it is
+    /// at least as large as the source in both dimensions. The area bound stops
+    /// a small odd size from reaching for a model far bigger than it needs.
+    static func variant(width: Int, height: Int) -> Variant? {
+        variants
+            .filter { $0.width >= width && $0.height >= height && $0.milliseconds <= budgetMilliseconds }
+            .filter { Double($0.width * $0.height) <= Double(max(width * height, 1)) * 1.5 }
+            .min { $0.milliseconds < $1.milliseconds }
     }
 
     private static func model(width: Int, height: Int) -> URL? {

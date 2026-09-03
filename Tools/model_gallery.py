@@ -75,11 +75,10 @@ def main():
         print(f"no bench frames in {BENCH}; run --bench first"); return
 
     candidates = [
-        ("SPAN x4",            "Model/SPAN_x4_ch48_480x270.mlpackage", 4),
-        ("EfRLFN x4",          "Model/EfRLFN_x4_480x270.mlpackage", 4),
+        ("SPAN ch28 (ships)",  "Model/SPAN_x4_ch28_480x270.mlpackage", 4),
+        ("SPAN ch48",          "Model/SPAN_x4_ch48_480x270.mlpackage", 4),
         ("RealESRGAN x4v3",    "Model/RealESRGAN_x4v3_480x270.mlpackage", 4),
-        ("RealESRGAN anime",   "Model/RealESRGANAnime_x4_480x270.mlpackage", 4),
-        ("RealESRGAN rybu",    "Model/RealESRGANRybu_x4_480x270.mlpackage", 4),
+        ("EfRLFN x4",          "Model/EfRLFN_x4_480x270.mlpackage", 4),
     ]
     manifest = {"frames": []}
 
@@ -101,8 +100,8 @@ def main():
         add("reference", reference, note="ground truth")
         add("source", source, note="what the browser gets")
         add("lanczos", source.resize(target, Image.LANCZOS), note="anchor")
-        for label, bench_name, note in (("Apple scaler", "lowlatency", "what ships today"),
-                                        ("Apple + Lucid", "detail", "current pipeline")):
+        for label, bench_name, note in (("Apple scaler", "lowlatency", "the old upscaler"),
+                                        ("Apple + grade", "detail", "old upscaler, new grade")):
             file = path.replace("-input", f"-{bench_name}")
             if os.path.exists(file):
                 add(label, Image.open(file).convert("RGB"), note=note)

@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Builds a super-resolution training corpus that matches our content.
 
-Each pair: HR = a clean high-res crop of a source frame; LR = that same
-crop downscaled, pushed through a REAL codec (libx264 / libvpx-vp9) as a
-short segment at a streaming bitrate, then decoded. No synthetic
-blur+JPEG: temporal compression artifacts are the whole point.
+Each pair: HR = a clean high-res crop of a source frame at 2x the LR
+size; LR = that same crop downscaled, pushed through a REAL codec
+(libx264 / libvpx-vp9) as a short segment at a streaming bitrate, then
+decoded. No synthetic blur+JPEG: temporal compression artifacts are
+the whole point. Resolution is stratified: every block of 5 pairs
+covers 144p/240p/270p/360p/480p exactly once.
 
 Layout (torch DataLoader friendly): <out>/hr/%06d.png,
 <out>/lr/%06d.png with matching basenames, plus manifest.jsonl
@@ -23,6 +25,7 @@ Local sources default to TestSite/*.mp4 and
 import argparse
 import collections
 import json
+import math
 import os
 import random
 import subprocess
@@ -30,17 +33,20 @@ import sys
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LOCAL_SOURCES = sorted(
-    [os.path.join(ROOT, "TestSite", f) for f in sorted(os.listdir(
-        os.path.join(ROOT, "TestSite"))) if f.endswith(".mp4")]
-    + ([os.path.join(ROOT, ".build/bench/reference-1080p.mp4")]
-       if os.path.exists(os.path.join(ROOT,
-                                      ".build/bench/reference-1080p.mp4"))
-       else []))
+# HR must be clean: only genuinely high-quality material. Low-bitrate
+# clips (bbb-240p-200k etc.) would bake compression artifacts
+# into the target, so anything below 720p is rejected, not used.
+MIN_SOURCE_H = 720
+CLEAN_SOURCES = [
+    os.path.join(ROOT, ".build/bench/reference-1080p.mp4"),
+    os.path.join(ROOT, "TestSite/bbb-1080p60-1700k.mp4"),
+]
 FETCH_DIR = os.path.join(ROOT, ".build/corpus-sources")
 FETCH_URLS = {
-    "bbb-720p.mp4": ("https://archive.org/download/BigBuckBunny_124/"
-                     "Content/big_buck_bunny_720p_surround.mp4"),
+    # NOTE: the archive.org "720p_surround.mp4" is really 640x360;
+    # the AVI is the true 1280x720 master.
+    "bbb-720p.avi": ("https://archive.org/download/BigBuckBunny_124/"
+                     "Content/big_buck_bunny_720p_surround.avi"),
     "sintel-2048.mp4": ("https://archive.org/download/Sintel/"
                         "sintel-2048-stereo.mp4"),
 }
@@ -50,7 +56,7 @@ CODECS = ["libx264", "libvpx-vp9"]
 BITRATE_LO, BITRATE_HI = 90_000, 1_500_000
 GOPS = [30, 60, 120, 250]
 SEG_SECS = 2.0  # LR segment length; decoded frame taken from the middle.
-HR_W, HR_H = 960, 540
+SCALE = 2  # HR is 2x the LR: the fine-tune target is a 2x model.
 
 
 def sh(cmd, **kw):
@@ -114,13 +120,32 @@ def main():
     ap.add_argument("sources", nargs="*")
     args = ap.parse_args()
 
-    srcs = args.sources or list(LOCAL_SOURCES)
+    srcs = (args.sources or list(CLEAN_SOURCES)
+            + sorted(f for f in
+                     ([os.path.join(FETCH_DIR, f)
+                       for f in sorted(os.listdir(FETCH_DIR))]
+                      if os.path.isdir(FETCH_DIR) else [])
+                     if f.endswith((".mp4", ".avi"))))
     if args.fetch:
         srcs += fetch_sources()
     srcs = [s for s in srcs if os.path.exists(s)]
     if not srcs:
         sys.exit("no source videos found")
-    dims = {s: probe_dims(s) for s in srcs}
+    dims = {}
+    for s in srcs:
+        sw, sh_, dur = probe_dims(s)
+        if sh_ < MIN_SOURCE_H:
+            print(f"REJECTED {s}: {sw}x{sh_} below {MIN_SOURCE_H}p floor "
+                  f"- HR must be clean, low-bitrate clips would bake "
+                  f"artifacts into the target")
+            continue
+        dims[s] = (sw, sh_, dur)
+    srcs = list(dims)
+    if not srcs:
+        sys.exit("no source at or above 720p")
+    print(f"sources ({len(srcs)}): " +
+          ", ".join(f"{os.path.basename(s)} {dims[s][0]}x{dims[s][1]}"
+                    for s in srcs))
 
     hr_dir = os.path.join(args.out, "hr")
     lr_dir = os.path.join(args.out, "lr")
@@ -130,25 +155,40 @@ def main():
     man = open(man_path, "w")
 
     rng = random.Random(args.seed)
+    # Stratified resolution: every block of 5 pairs covers all five LR
+    # sizes in a per-epoch shuffled order. Plain rng.choice can clump
+    # (a 4-pair run came out all 144p); the corpus must span 144p-480p.
+    size_order = {}
+    def lr_size(i):
+        epoch, pos = divmod(i, len(LR_SIZES))
+        if epoch not in size_order:
+            e = list(LR_SIZES)
+            random.Random(args.seed + epoch).shuffle(e)
+            size_order[epoch] = e
+        return size_order[epoch][pos]
     made = 0
     attempt = 0
     while made < args.count:
         attempt += 1
         if attempt > args.count * 50:
             sys.exit("too many skips - sources too small for LR sizes?")
-        src = rng.choice(srcs)
+        # HR is 2x the LR: the fine-tune target is a 2x model, so every
+        # pair teaches the same mapping. A fixed HR size would mix 1.1x
+        # through 3.75x factors across pairs.
+        lw, lh = lr_size(made)
+        cw, ch = lw * 2, lh * 2
+        fit_srcs = [s for s in srcs
+                    if dims[s][0] >= cw and dims[s][1] >= ch]
+        if not fit_srcs:
+            continue
+        src = rng.choice(fit_srcs)
         sw, sh_, dur = dims[src]
         t0 = rng.uniform(0, max(0.1, dur - SEG_SECS - 0.5))
-        cw, ch = min(HR_W, sw) // 2 * 2, min(HR_H, sh_) // 2 * 2
         cx = rng.randint(0, (sw - cw) // 2) * 2 if sw > cw else 0
         cy = rng.randint(0, (sh_ - ch) // 2) * 2 if sh_ > ch else 0
-        fit = [(w, h) for w, h in LR_SIZES if w <= cw and h <= ch]
-        if not fit:
-            continue
-        lw, lh = rng.choice(fit)
         codec = rng.choice(CODECS)
-        bitrate = int(10 ** rng.uniform(__import__("math").log10(BITRATE_LO),
-                                        __import__("math").log10(BITRATE_HI)))
+        bitrate = int(10 ** rng.uniform(math.log10(BITRATE_LO),
+                                        math.log10(BITRATE_HI)))
         gop = rng.choice(GOPS)
 
         hr_path = os.path.join(hr_dir, f"{made:06d}.png")

@@ -13,8 +13,11 @@
 //      Apple's scaler                0.174
 //      Apple's scaler + our detail   0.152
 //
-//  So the learned engine is used wherever it fits the frame budget, and Apple's
-//  scaler is the fallback for sources too large for it.
+//  So there is one pipeline: SPAN. The other two cases exist only for the
+//  offline comparison shooter, which produces the stills that justify that
+//  choice; the app never runs them. A source SPAN cannot carry in the frame
+//  budget is left alone rather than handed to a scaler that measured worse
+//  than doing nothing.
 //
 
 enum EngineKind: String, Codable, Sendable, CaseIterable {
@@ -31,7 +34,7 @@ enum EngineKind: String, Codable, Sendable, CaseIterable {
         switch self {
         case .apple: return "Apple scaler only"
         case .lucid: return "Apple scaler + Lucid"
-        case .learned: return "Neural Engine"
+        case .learned: return "Lucid"
         }
     }
 }
