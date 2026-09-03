@@ -24,6 +24,9 @@ struct PipelineStats: Sendable {
 /// Everything that depends on the frame size or the chosen engine.
 struct PipelineStages: @unchecked Sendable {
     let upscaler: TiledVideoToolboxUpscaler?
+    /// Preferred when it exists: it is the only upscaler measured that beats a
+    /// plain Lanczos anchor on correlation with the truth.
+    let learned: LearnedUpscaler?
     let detail: DetailEnhancer?
     let inputWidth: Int
     let inputHeight: Int
@@ -142,7 +145,9 @@ actor EnhancementPipeline {
             guard let stages else { return }
             let cleaned = (try? stages.detail?.preprocess(frame.pixelBuffer, sourceRect: frame.sourceRect, radius: stages.preprocessRadius)) ?? frame.pixelBuffer
             let reconstructed: CVPixelBuffer
-            if let upscaler = stages.upscaler {
+            if let learned = stages.learned, let output = try? learned.upscale(cleaned) {
+                reconstructed = output
+            } else if let upscaler = stages.upscaler {
                 reconstructed = try await upscaler.upscale(cleaned, pts: frame.presentationTimestamp)
             } else {
                 reconstructed = cleaned

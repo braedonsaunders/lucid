@@ -28,7 +28,7 @@ final class AppCoordinator {
     private var sessionMissingSince: ContinuousClock.Instant?
     /// Which reconstruction engine new sessions use.
     var engine: EngineKind {
-        get { EngineKind(rawValue: UserDefaults.standard.string(forKey: "engine") ?? "") ?? .lucid }
+        get { EngineKind(rawValue: UserDefaults.standard.string(forKey: "engine") ?? "") ?? .learned }
         set { UserDefaults.standard.set(newValue.rawValue, forKey: "engine") }
     }
 
@@ -555,17 +555,19 @@ final class EnhancementSession {
     struct Tuning: Codable, Sendable {
         // Settled by hand against real clips and then checked against ground
         // truth. Mirrors Tools/tuning.json, which the offline tuner writes.
-        // Higher than it would be on its own: the temporal stage takes the
-        // edge off, so what reads as over-sharpened without it is right with it.
-        var sharpness: Float = 0.70
-        var fine: Float = 0.60
+        // Off by default. Measured against a plain Lanczos anchor, the
+        // sharpening stage cost 0.021 of fine-band correlation on its own and
+        // turned the scaler's invented foliage texture into something crunchy.
+        // Strong turns it back on for anyone who wants it.
+        var sharpness: Float = 0.0
+        var fine: Float = 0.0
         var deblock: Float = 0.35
         var sourceDeblock: Float = 0.040
         var temporal: Float = 0.50
-        var blackPoint: Float = 0.050
+        var blackPoint: Float = 0.020
         var whitePoint: Float = 0.975
-        var contrast: Float = 0.300
-        var saturation: Float = 1.100
+        var contrast: Float = 0.100
+        var saturation: Float = 1.050
         /// 2 runs the scaler twice, 4 runs it once at its native 4x factor.
         var scalerFactor: Float = 2
         var micro: Float = 0.0
@@ -666,14 +668,17 @@ final class EnhancementSession {
                 sharpness = 0; fine = 0; blackPoint = 0; whitePoint = 1
                 contrast = 0; saturation = 1; sourceDeblock = 0; micro = 0
             case .subtle:
-                sharpness = 0.45; fine = 0.35; blackPoint = 0.025; whitePoint = 0.985
-                contrast = 0.15; saturation = 1.05; sourceDeblock = 0.030; micro = 0
+                // The upscaler and nothing else.
+                sharpness = 0; fine = 0; blackPoint = 0; whitePoint = 1
+                contrast = 0; saturation = 1.0; sourceDeblock = 0.030; micro = 0
             case .standard:
-                sharpness = 0.70; fine = 0.60; blackPoint = 0.050; whitePoint = 0.975
-                contrast = 0.30; saturation = 1.10; sourceDeblock = 0.040; micro = 0
+                // Enough grade to undo what compression flattens, and no
+                // sharpening: the upscaler is better at that than we are.
+                sharpness = 0; fine = 0; blackPoint = 0.020; whitePoint = 0.990
+                contrast = 0.10; saturation = 1.05; sourceDeblock = 0.040; micro = 0
             case .strong:
-                sharpness = 1.00; fine = 0.85; blackPoint = 0.070; whitePoint = 0.970
-                contrast = 0.40; saturation = 1.16; sourceDeblock = 0.050; micro = 0
+                sharpness = 0.45; fine = 0.35; blackPoint = 0.050; whitePoint = 0.980
+                contrast = 0.22; saturation = 1.10; sourceDeblock = 0.050; micro = 0
             }
         }
 
@@ -905,16 +910,23 @@ final class EnhancementSession {
                 }
                 upscaler = first
             }
-            let settings = detailSettings(for: report, outputScale: kind.rescales ? pow(2, Double(built)) : stretch)
+            // The learned upscaler, where one exists for this source size and
+            // fits the frame budget. It is a fixed 4x, so the detail stage that
+            // follows works at that scale rather than the tiled count.
+            let learned = kind.usesLearned ? try? LearnedUpscaler(width: width, height: height) : nil
+            let outputScale = learned != nil ? 4.0 : (kind.rescales ? pow(2, Double(built)) : stretch)
+            let settings = detailSettings(for: report, outputScale: outputScale)
             let detail = kind.usesDetail ? try? DetailEnhancer(device: compositor.device, settings: settings) : nil
             let label: String
-            if let upscaler {
+            if let learned {
+                label = "\(kind.label): SPAN 4× → \(learned.outputWidth)x\(learned.outputHeight), input \(width)x\(height)"
+            } else if let upscaler {
                 label = "\(kind.label): \(Int(pow(2.0, Double(built))))× in \(built) pass\(built == 1 ? "" : "es") → \(upscaler.outputWidth)x\(upscaler.outputHeight), \(upscaler.totalTileCount) tiles, input \(width)x\(height), radius \(settings.radius)"
             } else {
                 label = "\(kind.label): 1:1 at \(width)x\(height), radius \(settings.radius)"
             }
             return PipelineStages(
-                upscaler: upscaler, detail: detail,
+                upscaler: upscaler, learned: learned, detail: detail,
                 inputWidth: width, inputHeight: height,
                 preprocessRadius: kind.rescales ? 1 : max(1, Int(stretch.rounded())),
                 label: label

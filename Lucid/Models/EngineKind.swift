@@ -4,29 +4,34 @@
 //
 //  Which reconstruction engine a session runs.
 //
-//  Frames arrive from the page at the video's own decoded resolution and are
-//  reconstructed by Apple's scaler, which is both the fastest option measured
-//  and the one that looks best. Lucid's own stages then do what the scaler
-//  deliberately does not: put back contrast, black level and colour that
-//  compression flattened, and sharpen at the right scale.
+//  Frames arrive from the page at the video's own decoded resolution. Measured
+//  against a 1080p reference on compressed source, fine-band correlation with
+//  the truth - which separates recovered detail from invented detail:
 //
-//  (Re-homed here from NeuralUpscaler.swift when the learned-engine class was
-//  removed. The Neural Engine student remains a documented future step in
-//  PLAN-INVISIBLE-PRESENTATION.md; there is intentionally no neural case
-//  until a distilled model ships.)
+//      SPAN on the Neural Engine     0.221
+//      lanczos anchor                0.180
+//      Apple's scaler                0.174
+//      Apple's scaler + our detail   0.152
+//
+//  So the learned engine is used wherever it fits the frame budget, and Apple's
+//  scaler is the fallback for sources too large for it.
 //
 
 enum EngineKind: String, Codable, Sendable, CaseIterable {
     case apple          // Apple's scaler alone, for comparison
     case lucid          // Apple's scaler plus Lucid's grade and detail stages
+    case learned        // SPAN on the Neural Engine, Apple's scaler as fallback
 
-    var usesDetail: Bool { self == .lucid }
+    var usesDetail: Bool { self != .apple }
     var rescales: Bool { true }
+    /// Whether to try the Core ML upscaler before falling back to Apple's.
+    var usesLearned: Bool { self == .learned }
 
     var label: String {
         switch self {
         case .apple: return "Apple scaler only"
-        case .lucid: return "Lucid"
+        case .lucid: return "Apple scaler + Lucid"
+        case .learned: return "Neural Engine"
         }
     }
 }

@@ -60,6 +60,18 @@ xcodebuild -project Lucid.xcodeproj -scheme Lucid -configuration Release \
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $version" "$app/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $version" "$app/Contents/Info.plist"
 
+# The learned upscaler's models. Compiled here so the app does not pay for
+# compilation on its first frame, and only the sizes it can actually use.
+resources="$app/Contents/Resources"
+mkdir -p "$resources"
+for model in "$repo"/Model/SPAN_x4_ch28_*.mlpackage; do
+  [[ -d "$model" ]] || continue
+  name="$(basename "${model%.mlpackage}")"
+  if [[ ! -d "$resources/$name.mlmodelc" ]]; then
+    xcrun coremlcompiler compile "$model" "$resources" >/dev/null 2>&1 || true
+  fi
+done
+
 # ---- sign -----------------------------------------------------------------
 # A secure timestamp is required for notarisation and harmless without it.
 echo "▸ signing"

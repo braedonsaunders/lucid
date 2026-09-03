@@ -30,6 +30,18 @@ app_path="$repo_dir/.build/DerivedData/Build/Products/Debug/Lucid.app"
 
 # A stable signing identity keeps the Screen Recording grant across rebuilds;
 # ad-hoc signatures change every build and macOS asks again each time.
+# The learned upscaler's models. Compiled here so the app does not pay for
+# compilation on its first frame, and only the sizes it can actually use.
+resources="$app_path/Contents/Resources"
+mkdir -p "$resources"
+for model in "$repo_dir"/Model/SPAN_x4_ch28_*.mlpackage; do
+  [[ -d "$model" ]] || continue
+  name="$(basename "${model%.mlpackage}")"
+  if [[ ! -d "$resources/$name.mlmodelc" ]]; then
+    xcrun coremlcompiler compile "$model" "$resources" >/dev/null 2>&1 || true
+  fi
+done
+
 identity="$(security find-identity -v -p codesigning 2>/dev/null | grep -o '"Apple Development: [^"]*"' | head -1 | tr -d '"')"
 if [[ -n "$identity" ]]; then
   codesign --force --deep --options runtime --timestamp=none --sign "$identity" "$app_path"
