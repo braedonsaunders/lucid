@@ -30,12 +30,20 @@ import VideoToolbox
 final class LearnedUpscaler: @unchecked Sendable {
     enum Failure: Error { case noModel, pixelBuffer, prediction }
 
-    /// Input sizes a model has been converted for, with what each measured on
-    /// an M4 Pro's Neural Engine. Cost is roughly parameters x low-resolution
-    /// pixels, so it grows quickly with the source size.
+    /// Input sizes a model has been converted for, with what each costs per
+    /// frame on an M4 Pro. Cost is roughly parameters x low-resolution pixels,
+    /// so it grows quickly with the source size.
+    ///
+    /// `milliseconds` is the whole call, not the Core ML prediction: the
+    /// pipeline works in 420v and the model wants RGB, so a frame is converted
+    /// in and converted back, and the way back is at 4x. Measured separately
+    /// with Tools/PipelineBench.swift, that pair costs 0.36 ms at 256x144 and
+    /// 1.40 ms at 640x360 - small, but enough to put 640x360 over a budget set
+    /// against the model alone, which is why it is counted here.
     struct Variant {
         let width: Int
         let height: Int
+        /// Colour conversion in, model, colour conversion back out.
         let milliseconds: Double
     }
 
@@ -53,23 +61,27 @@ final class LearnedUpscaler: @unchecked Sendable {
     /// Nothing is lost: the page draws the result into the video box, which
     /// has the true aspect, so the stretch is undone on presentation.
     static let variants: [Variant] = [
-        Variant(width: 256, height: 144, milliseconds: 4.5),
-        Variant(width: 320, height: 180, milliseconds: 7.0),
-        Variant(width: 432, height: 240, milliseconds: 13.6),   // covers 426x240
-        Variant(width: 480, height: 270, milliseconds: 14.7),
-        Variant(width: 640, height: 360, milliseconds: 26.7),
+        Variant(width: 256, height: 144, milliseconds: 4.9),    // 4.5 model + 0.4 convert
+        Variant(width: 320, height: 180, milliseconds: 7.5),    // 7.0 + 0.5
+        Variant(width: 432, height: 240, milliseconds: 14.3),   // 13.6 + 0.7, covers 426x240
+        Variant(width: 480, height: 270, milliseconds: 15.6),   // 14.7 + 0.9
+        Variant(width: 640, height: 360, milliseconds: 28.1),   // 26.7 + 1.4
     ]
 
-    /// One frame at 30fps, less the rest of the pipeline. Low-resolution
-    /// streaming video runs at 24-30fps; 60fps material is published at 720p
-    /// and above, which is outside the window Lucid works in anyway.
+    /// A 30fps frame is 33.3 ms. This leaves 3 ms of it for the detail pass and
+    /// for getting the result back to the page. Low-resolution streaming video
+    /// runs at 24-30fps; 60fps material is published at 720p and above, which
+    /// is outside the window Lucid works in anyway.
+    ///
+    /// 640x360 sits at 28.1 ms, so it is the one size with almost no headroom.
+    /// If frames start dropping in real use, it is the first thing to remove.
     ///
     /// A source with no variant under this budget is not enhanced at all.
     /// There is no second engine to fall back to: Apple's scaler measured
     /// *worse* than leaving the frame alone, so running it would be a
     /// disservice. Lucid declines instead, the same way RTX Video Super
     /// Resolution declines outside its own window.
-    static let budgetMilliseconds = 28.0
+    static let budgetMilliseconds = 30.0
 
     /// Whether this size is inside the window Lucid works in. Deliberately a
     /// question about the table above and not about what is on disk: if a build

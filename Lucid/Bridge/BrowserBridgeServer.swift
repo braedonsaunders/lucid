@@ -35,6 +35,13 @@ final class BrowserBridgeServer: @unchecked Sendable {
     /// Frames dropped for backpressure, so the shortfall is visible rather than
     /// looking like the pipeline stalled.
     private(set) var droppedFrames = 0
+    /// Frames actually handed to a socket, and when this window started. The
+    /// pipeline's own fps counts frames it produced, which is not the same as
+    /// frames the page received - and when the two disagree the picture stops
+    /// changing while every number in the app still looks healthy.
+    private var deliveredFrames = 0
+    private var deliveredBytes = 0
+    private var windowStart = Date()
 
     init(
         port: UInt16 = BrowserBridgeServer.defaultPort,
@@ -80,6 +87,9 @@ final class BrowserBridgeServer: @unchecked Sendable {
                     continue
                 }
                 self.framesInFlight[id, default: 0] += 1
+                self.deliveredFrames += 1
+                self.deliveredBytes += data.count
+                self.reportDelivery()
                 connection.send(
                     content: data, contentContext: context, isComplete: true,
                     completion: .contentProcessed { [weak self] error in
@@ -94,6 +104,18 @@ final class BrowserBridgeServer: @unchecked Sendable {
                 )
             }
         }
+    }
+
+    /// Once a second, what the page is actually receiving. Called on `queue`,
+    /// which owns all three counters.
+    private func reportDelivery() {
+        let elapsed = Date().timeIntervalSince(windowStart)
+        guard elapsed >= 1 else { return }
+        let megabytes = Double(deliveredBytes) / 1_048_576
+        let perFrame = deliveredFrames > 0 ? megabytes / Double(deliveredFrames) : 0
+        print(String(format: "   📤 delivered %.0f fps · dropped %d · %.1f MB/frame · %.0f MB/s",
+                     Double(deliveredFrames) / elapsed, droppedFrames, perFrame, megabytes / elapsed))
+        deliveredFrames = 0; deliveredBytes = 0; droppedFrames = 0; windowStart = Date()
     }
 
     /// Sends any encodable message to every connected page.

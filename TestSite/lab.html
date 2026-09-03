@@ -50,6 +50,7 @@
   .tune label b { width:42px; text-align:right; color:var(--text); font-weight:500; font-variant-numeric:tabular-nums; }
   .scrollpad { height:900px; margin:18px; padding:18px; border:1px dashed var(--line); border-radius:12px; color:var(--muted); font-size:12.5px; }
   kbd { background:#1b2230; border:1px solid var(--line); border-radius:4px; padding:1px 5px; font-family: ui-monospace, monospace; }
+  #clips button.outside { opacity: .45; }
 </style>
 </head>
 <body>
@@ -120,6 +121,15 @@ function selectClip(id) {
   if (video.dataset.clip !== clip.id) { video.dataset.clip = clip.id; video.src = clip.src; video.play().catch(() => {}); }
   localStorage.setItem('lab.clip', clip.id);
 }
+// LearnedUpscaler.variants, mirrored. A source is enhanced when a variant
+// covers it in both dimensions without being more than 1.5x its area.
+const VARIANTS = [[256,144],[320,180],[432,240],[480,270],[640,360]];
+function insideWindow(label) {
+  const m = label.match(/(\d+)\s*[×x]\s*(\d+)/);
+  if (!m) return true;
+  const w = +m[1], h = +m[2];
+  return VARIANTS.some(([vw, vh]) => vw >= w && vh >= h && vw * vh <= w * h * 1.5);
+}
 let lastGroup = null;
 for (const c of CLIPS) {
   if (c.group !== lastGroup) {
@@ -129,6 +139,14 @@ for (const c of CLIPS) {
   }
   const b = document.createElement('button');
   b.textContent = c.label; b.dataset.id = c.id; b.onclick = () => selectClip(c.id);
+  // Mark the clips the app will decline. Without this a 480p or 720p clip
+  // looks exactly like a broken build: enhancement reads as on, and nothing
+  // about the picture changes - because nothing is supposed to.
+  if (!insideWindow(c.label)) {
+    b.classList.add('outside');
+    b.title = 'Outside the window Lucid works in — it will decline this one';
+    b.textContent = c.label + '  ·  declined';
+  }
   clipsEl.append(b);
 }
 function applySize() {

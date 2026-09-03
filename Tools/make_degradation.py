@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Builds a super-resolution training corpus that matches our content.
 
-Each pair: HR = a clean high-res crop of a source frame at 2x the LR
+Each pair: HR = a clean high-res crop of a source frame at 4x the LR
 size; LR = that same crop downscaled, pushed through a REAL codec
 (libx264 / libvpx-vp9) as a short segment at a streaming bitrate, then
 decoded. No synthetic blur+JPEG: temporal compression artifacts are
 the whole point. Resolution is stratified: every block of 5 pairs
-covers 144p/240p/270p/360p/480p exactly once.
+covers the five model input tiers exactly once. The 240p tier encodes
+at 426x240 (what YouTube ships) and is stretched to the 432x240 the
+model sees only after the codec round-trip.
 
 Layout (torch DataLoader friendly): <out>/hr/%06d.png,
 <out>/lr/%06d.png with matching basenames, plus manifest.jsonl
@@ -35,28 +37,40 @@ import urllib.request
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # HR must be clean: only genuinely high-quality material. Low-bitrate
 # clips (bbb-240p-200k etc.) would bake compression artifacts
-# into the target, so anything below 720p is rejected, not used.
-MIN_SOURCE_H = 720
+# into the target. The floor is per tier, not global: a source must be
+# at least the HR crop it is asked for, checked when the tier is drawn.
 CLEAN_SOURCES = [
-    os.path.join(ROOT, ".build/bench/reference-1080p.mp4"),
-    os.path.join(ROOT, "TestSite/bbb-1080p60-1700k.mp4"),
+    os.path.join(ROOT,
+                 ".build/corpus-sources/bbb_sunflower_2160p_60fps_normal.mp4"),
+    os.path.join(ROOT, ".build/corpus-sources/Sintel.2010.4k.mkv"),
 ]
 FETCH_DIR = os.path.join(ROOT, ".build/corpus-sources")
 FETCH_URLS = {
-    # NOTE: the archive.org "720p_surround.mp4" is really 640x360;
-    # the AVI is the true 1280x720 master.
-    "bbb-720p.avi": ("https://archive.org/download/BigBuckBunny_124/"
-                     "Content/big_buck_bunny_720p_surround.avi"),
-    "sintel-2048.mp4": ("https://archive.org/download/Sintel/"
-                        "sintel-2048-stereo.mp4"),
+    # (zip member name, download URL): Blender ships 2160p as a zip.
+    "bbb_sunflower_2160p_60fps_normal.mp4": (
+        "https://download.blender.org/demo/movies/BBB/"
+        "bbb_sunflower_2160p_60fps_normal.mp4.zip"),
+    "Sintel.2010.4k.mkv": ("https://archive.org/download/SintelDCP_201512/"
+                            "Sintel.2010.4k.mkv"),
 }
-# (width, height) LR operating points, 144p through 480p.
-LR_SIZES = [(256, 144), (426, 240), (480, 270), (640, 360), (854, 480)]
+# (model width, model height, encode width, encode height): the five LR
+# sizes the 4x model takes, and the size each is encoded at. All tiers
+# encode at the model size except 240p: YouTube ships 426x240, which is
+# not a multiple of 16 and costs the Neural Engine a whole extra pass,
+# so live it is stretched to 432x240 on the way into the model. The
+# corpus reproduces that: real codec pass at 426x240, then resize.
+LR_TIERS = [
+    (256, 144, 256, 144),
+    (432, 240, 426, 240),
+    (480, 270, 480, 270),
+    (640, 360, 640, 360),
+    (320, 180, 320, 180),
+]
 CODECS = ["libx264", "libvpx-vp9"]
 BITRATE_LO, BITRATE_HI = 90_000, 1_500_000
 GOPS = [30, 60, 120, 250]
 SEG_SECS = 2.0  # LR segment length; decoded frame taken from the middle.
-SCALE = 2  # HR is 2x the LR: the fine-tune target is a 2x model.
+SCALE = 4  # HR is 4x the LR: the fine-tune target is a 4x model.
 
 
 def sh(cmd, **kw):
@@ -72,14 +86,38 @@ def probe_dims(path):
             "-show_entries", "stream=width,height,duration",
             "-of", "csv=p=0", path])
     w, h, d = r.stdout.strip().split(",")
+    if d == "N/A":  # some masters omit stream duration; use container.
+        d = sh(["ffprobe", "-v", "error",
+                "-show_entries", "format=duration",
+                "-of", "csv=p=0", path]).stdout.strip()
     return int(w), int(h), float(d)
 
 
 def fetch_sources():
+    import zipfile
     os.makedirs(FETCH_DIR, exist_ok=True)
     got = []
     for name, url in FETCH_URLS.items():
         dest = os.path.join(FETCH_DIR, name)
+        if url.endswith(".zip"):
+            # Blender ships 2160p as a zip of one mp4; want the mp4.
+            if os.path.exists(dest):
+                got.append(dest)
+                continue
+            print(f"fetching {url} ...", flush=True)
+            try:
+                tmp = dest + ".zip"
+                urllib.request.urlretrieve(url, tmp)
+                with zipfile.ZipFile(tmp) as z:
+                    mp4s = [i for i in z.namelist()
+                            if i.endswith(".mp4")]
+                    z.extract(mp4s[0], FETCH_DIR)
+                    os.rename(os.path.join(FETCH_DIR, mp4s[0]), dest)
+                    got.append(dest)
+                os.remove(tmp)
+            except Exception as e:  # noqa: BLE001 - report, keep locals
+                print(f"  skipped ({e})")
+            continue
         if os.path.exists(dest):
             got.append(dest)
             continue
@@ -125,24 +163,33 @@ def main():
                      ([os.path.join(FETCH_DIR, f)
                        for f in sorted(os.listdir(FETCH_DIR))]
                       if os.path.isdir(FETCH_DIR) else [])
-                     if f.endswith((".mp4", ".avi"))))
+                     if f.endswith((".mp4", ".avi", ".mkv", ".mov"))))
     if args.fetch:
         srcs += fetch_sources()
     srcs = [s for s in srcs if os.path.exists(s)]
     if not srcs:
         sys.exit("no source videos found")
+    # No global floor: a source is judged per tier - it must cover the
+    # HR crop it is asked for. Anything that cannot is named here.
     dims = {}
     for s in srcs:
         sw, sh_, dur = probe_dims(s)
-        if sh_ < MIN_SOURCE_H:
-            print(f"REJECTED {s}: {sw}x{sh_} below {MIN_SOURCE_H}p floor "
-                  f"- HR must be clean, low-bitrate clips would bake "
-                  f"artifacts into the target")
-            continue
+        if sw < max(t[0] for t in LR_TIERS) * SCALE or \
+                sh_ < max(t[1] for t in LR_TIERS) * SCALE:
+            capped = [f"{t[0]}x{t[1]}" for t in LR_TIERS
+                      if t[0] * SCALE <= sw and t[1] * SCALE <= sh_]
+            if not capped:
+                print(f"REJECTED {s}: {sw}x{sh_} cannot supply any "
+                      f"HR crop - smallest needs "
+                      f"{min(t[0] for t in LR_TIERS) * SCALE}x"
+                      f"{min(t[1] for t in LR_TIERS) * SCALE}")
+                continue
+            print(f"LIMITED {s}: {sw}x{sh_} can only supply tiers "
+                  f"{','.join(capped)}")
         dims[s] = (sw, sh_, dur)
     srcs = list(dims)
     if not srcs:
-        sys.exit("no source at or above 720p")
+        sys.exit("no source can supply any HR crop")
     print(f"sources ({len(srcs)}): " +
           ", ".join(f"{os.path.basename(s)} {dims[s][0]}x{dims[s][1]}"
                     for s in srcs))
@@ -156,30 +203,30 @@ def main():
 
     rng = random.Random(args.seed)
     # Stratified resolution: every block of 5 pairs covers all five LR
-    # sizes in a per-epoch shuffled order. Plain rng.choice can clump
-    # (a 4-pair run came out all 144p); the corpus must span 144p-480p.
-    size_order = {}
-    def lr_size(i):
-        epoch, pos = divmod(i, len(LR_SIZES))
-        if epoch not in size_order:
-            e = list(LR_SIZES)
+    # tiers in a per-epoch shuffled order. Plain rng.choice can clump.
+    tier_order = {}
+    def lr_tier(i):
+        epoch, pos = divmod(i, len(LR_TIERS))
+        if epoch not in tier_order:
+            e = list(LR_TIERS)
             random.Random(args.seed + epoch).shuffle(e)
-            size_order[epoch] = e
-        return size_order[epoch][pos]
+            tier_order[epoch] = e
+        return tier_order[epoch][pos]
     made = 0
     attempt = 0
     while made < args.count:
         attempt += 1
         if attempt > args.count * 50:
             sys.exit("too many skips - sources too small for LR sizes?")
-        # HR is 2x the LR: the fine-tune target is a 2x model, so every
-        # pair teaches the same mapping. A fixed HR size would mix 1.1x
-        # through 3.75x factors across pairs.
-        lw, lh = lr_size(made)
-        cw, ch = lw * 2, lh * 2
+        # HR is 4x the LR: the fine-tune target is a 4x model, so every
+        # pair teaches the same mapping.
+        mw, mh, ew, eh = lr_tier(made)
+        cw, ch = mw * SCALE, mh * SCALE
         fit_srcs = [s for s in srcs
                     if dims[s][0] >= cw and dims[s][1] >= ch]
         if not fit_srcs:
+            print(f"  tier {mw}x{mh} has no source covering "
+                  f"{cw}x{ch} - skipped")
             continue
         src = rng.choice(fit_srcs)
         sw, sh_, dur = dims[src]
@@ -197,11 +244,14 @@ def main():
         sh(["ffmpeg", "-y", "-v", "error", "-ss", str(t0 + SEG_SECS / 2),
             "-i", src, "-frames:v", "1",
             "-vf", f"crop={cw}:{ch}:{cx}:{cy}", hr_path])
-        # LR: same segment downscaled, real codec round-trip.
+        # LR: same segment downscaled to the ENCODE size for a real
+        # codec round-trip, then resized to the MODEL size. The two
+        # differ only for 240p (426 encode -> 432 model); the resize
+        # must be part of the pipeline, not the codec pass.
         p = subprocess.run(
             ["ffmpeg", "-v", "error", "-ss", str(t0), "-i", src,
              "-t", str(SEG_SECS),
-             "-vf", f"crop={cw}:{ch}:{cx}:{cy},scale={lw}:{lh}",
+             "-vf", f"crop={cw}:{ch}:{cx}:{cy},scale={ew}:{eh}",
              "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
             capture_output=True)
         if p.returncode != 0:
@@ -209,19 +259,21 @@ def main():
         tmp = os.path.join(args.out, "tmp")
         os.makedirs(tmp, exist_ok=True)
         try:
-            seg = encode_segment(p.stdout, lw, lh, codec, bitrate, gop,
+            seg = encode_segment(p.stdout, ew, eh, codec, bitrate, gop,
                                  tmp)
+            vf = (f"scale={mw}:{mh}" if (mw, mh) != (ew, eh)
+                  else "null")
             sh(["ffmpeg", "-y", "-v", "error", "-ss",
                 str(SEG_SECS / 2), "-i", seg, "-frames:v", "1",
-                lr_path])
+                "-vf", vf, lr_path])
         except RuntimeError as e:
             print(f"  pair {made} skipped: {e}")
             continue
         rec = {"idx": made, "seed": args.seed, "source": src,
                "t0": round(t0, 3),
                "hr_crop": {"x": cx, "y": cy, "w": cw, "h": ch},
-               "lr": {"w": lw, "h": lh, "codec": codec,
-                      "bitrate": bitrate, "gop": gop}}
+               "lr": {"w": mw, "h": mh, "encode_w": ew, "encode_h": eh,
+                      "codec": codec, "bitrate": bitrate, "gop": gop}}
         man.write(json.dumps(rec) + "\n")
         made += 1
     man.close()
