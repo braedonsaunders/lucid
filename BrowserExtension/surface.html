@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!--
+  The surface Lucid draws into.
+
+  This runs at the extension's own origin inside an iframe the content script
+  places over the video. That matters: a page's Content-Security-Policy applies
+  to its content scripts as well as to the page itself, and most large sites
+  forbid connecting to ws://127.0.0.1 - so a canvas in the page cannot receive
+  enhanced frames from the app. This document is not bound by the page's policy,
+  so it can hold the socket itself. The iframe still lives in the page's DOM, so
+  it scrolls, clips and stacks exactly like the canvas did.
+-->
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<canvas id="surface"></canvas>
+<script src="surface.js"></script>
+</body>
+</html>

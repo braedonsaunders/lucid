@@ -211,9 +211,21 @@ final class BrowserBridgeServer: @unchecked Sendable {
             handleBinary(data)
             return
         }
-        if let probe = try? decoder.decode(MessageProbe.self, from: data), probe.type == "control" {
-            if let control = try? decoder.decode(BridgeControl.self, from: data) { onControl(control) }
-            return
+        if let probe = try? decoder.decode(MessageProbe.self, from: data) {
+            if probe.type == "control" {
+                if let control = try? decoder.decode(BridgeControl.self, from: data) { onControl(control) }
+                return
+            }
+            // The drawing surface runs at the extension's origin in its own
+            // iframe and holds its own socket, so it has to say which video's
+            // frames belong to it. Nothing else identifies that connection.
+            if probe.type == "attach", let session = probe.session, !session.isEmpty {
+                sessionsByConnection[key, default: []].insert(session)
+                if AppCoordinator.debugLogging {
+                    print("   🖼 surface attached for session \(session.prefix(8))")
+                }
+                return
+            }
         }
         do {
             let report = try decoder.decode(BrowserVideoReport.self, from: data)
@@ -230,6 +242,7 @@ final class BrowserBridgeServer: @unchecked Sendable {
 
 private struct MessageProbe: Decodable {
     let type: String
+    let session: String?
 }
 
 /// Commands a page or tool may send: `{"type":"control", ...}`.

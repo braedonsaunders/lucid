@@ -37,6 +37,14 @@ A frame makes this trip, all of it on-device:
    grade, and perceptual saturation in Oklab.
 5. **Back into the page**, at exactly the size the video box occupies on screen.
 
+The last step is the awkward one. Most large sites — YouTube among them — set a
+Content-Security-Policy that forbids connecting to `ws://127.0.0.1`, and that
+policy binds the page's content scripts too, so a canvas in the page cannot
+receive anything. Lucid draws from an iframe at the extension's own origin
+instead, which is governed by the extension's policy rather than the page's. The
+iframe is still an ordinary element in the page's DOM, so it scrolls, clips and
+stacks like the video does. One path, every site.
+
 ### Stages you can turn on and off
 
 | Stage | Default | What it is for |
@@ -85,13 +93,6 @@ What does not work, and why:
 
 - **DRM video** (Netflix, Disney+, and anything else using Widevine) is impossible.
   The frames are never available to the page, so there is nothing to read.
-- **Presentation falls back to an overlay window on sites with a strict CSP.**
-  Most large sites forbid connecting to `ws://127.0.0.1` from a content script.
-  Decoded frames still get through — they are relayed via the extension's service
-  worker, which is not bound by page policy — so the *input* is native everywhere.
-  But enhanced frames are ~10 MB each and `chrome.runtime` ports serialise as JSON,
-  so they cannot come back that way at frame rate. On those sites the app presents
-  through its own overlay instead of the in-page canvas.
 - **One video at a time**, top frame only. No iframes, no picture-in-picture, no
   CSS-transformed players.
 - **The loopback bridge is not authenticated.** Any local process can connect to it.

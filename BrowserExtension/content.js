@@ -102,6 +102,23 @@
   /// This is separate from receiving a frame: the gap has to close when the
   /// controls fade even if no new frame has arrived, or it stays open forever.
   let compositedWithGap = false;
+  /// True when the enhanced frames are painted by the extension's own iframe
+  /// rather than by a canvas in the page.
+  const usesFrameSurface = () => !!(runtime && runtime.getURL);
+  /// Tells the surface how tall the browser's control strip is right now, so it
+  /// can clear that band. Sent only on change.
+  let sentGap = -1;
+  function updateSurfaceGap(video) {
+    if (!surface || surface.tagName !== 'IFRAME' || !surface.contentWindow) return;
+    let band = 0;
+    if (video.controls && controlsShowing(video)) {
+      const box = contentBox(video, viewportRect(video));
+      band = Math.round(Math.min(Math.max(44, box.h * 0.12), 72) * (window.devicePixelRatio || 1));
+    }
+    if (band === sentGap) return;
+    sentGap = band;
+    try { surface.contentWindow.postMessage({ lucid: 'gap', band }, '*'); } catch (e) {}
+  }
   function composite() {
     if (!surface || !surfaceCtx || !imageData || !current) return;
     surfaceCtx.putImageData(imageData, 0, 0);
@@ -128,6 +145,27 @@
   function ensureSurface(video) {
     if (surface && surfaceFor === video && surface.isConnected) return surface;
     removeSurface();
+    // As an extension we draw from an iframe at the extension's own origin.
+    // A canvas in the page cannot receive the enhanced frames on any site whose
+    // CSP forbids ws://127.0.0.1 - which is most large sites - because that
+    // policy binds content scripts too. The iframe is still a normal element in
+    // the page, so it scrolls, clips and stacks exactly as the canvas did.
+    if (runtime && runtime.getURL) {
+      const frame = document.createElement('iframe');
+      frame.dataset.lucid = 'surface';
+      frame.setAttribute('aria-hidden', 'true');
+      frame.setAttribute('tabindex', '-1');
+      frame.allowTransparency = 'true';
+      frame.style.cssText = 'position:absolute; pointer-events:none; margin:0; padding:0; border:0; background:transparent; colorScheme:normal;';
+      frame.src = runtime.getURL('surface.html') + '#' + session;
+      const host = video.parentElement || document.body;
+      if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+      video.insertAdjacentElement('afterend', frame);
+      surface = frame;
+      surfaceCtx = null;
+      surfaceFor = video;
+      return frame;
+    }
     const canvas = document.createElement('canvas');
     canvas.dataset.lucid = 'surface';
     canvas.style.cssText = 'position:absolute; pointer-events:none; margin:0; padding:0; border:0;';
@@ -166,11 +204,18 @@
     surface.style.height = content.h + 'px';
     surface.style.zIndex = style.zIndex === 'auto' ? 'auto' : style.zIndex;
     surface.style.borderRadius = style.borderRadius;
-    surface.style.display = (drawing && content.w > 1) ? 'block' : 'none';
+    const isFrame = surface.tagName === 'IFRAME';
+    surface.style.display = ((drawing || isFrame) && content.w > 1) ? 'block' : 'none';
+    // The iframe decides for itself whether it has anything to show: it clears
+    // its own canvas when frames stop, so it is transparent rather than stale.
+    if (isFrame) surface.style.opacity = '1';
   }
 
   function drawEnhanced(width, height, pixels) {
     if (!current) return;
+    // Under the extension the surface iframe receives frames directly and
+    // paints them itself; nothing arrives here.
+    if (runtime && runtime.getURL) return;
     const canvas = ensureSurface(current);
     if (canvas.width !== width || canvas.height !== height) {
       canvas.width = width; canvas.height = height; imageData = null;
@@ -518,14 +563,26 @@
     if (!v.paused && !v.ended) startStreaming(video);
     // The canvas has to follow the video every frame, not on a timer, or it
     // slides behind during a scroll.
-    if (drawing) {
-      // If frames stop - the app quit, or the bridge fell behind - take the
-      // canvas away entirely rather than leaving a stale image, and especially
-      // rather than leaving a punched control gap, over a playing video.
+    // The surface has to exist before the app has anywhere to send frames, so
+    // put it in place as soon as there is a video worth enhancing. Under the
+    // extension it is an iframe that fetches its own frames and paints itself;
+    // all we do from here is keep it positioned and tell it about the controls.
+    // Not gated on playback: a paused video still gets re-rendered when a
+    // setting changes, and the app needs somewhere to put that frame.
+    if (usesFrameSurface()) {
+      ensureSurface(video);
+      updateSurfaceGap(video);
+      // Report that the page is drawing as soon as the surface exists, not once
+      // frames arrive. The app will not send a frame until the page claims to
+      // draw, so waiting for one first would deadlock. Whether anything is
+      // actually on screen is a separate question, handled by the opacity.
+      drawing = !!surface;
+      positionSurface(video);
+    } else if (drawing) {
+      // Canvas path only. If frames stop - the app quit, or the bridge fell
+      // behind - take the canvas away rather than leave a stale image, and
+      // especially rather than leave a punched control gap, over playing video.
       if (performance.now() - lastDraw > 400) {
-        // Frames stopped: take the canvas away rather than leave a stale image,
-        // and especially rather than leave a punched control gap, over a
-        // playing video.
         drawing = false;
         removeSurface();
       } else {
