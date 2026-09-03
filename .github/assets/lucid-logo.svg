@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 116" width="320" height="116" role="img" aria-labelledby="lt ld">
+  <title id="lt">Lucid</title>
+  <desc id="ld">The Lucid wordmark beside a camera aperture with a lit centre.</desc>
+  <!-- Lucid brand lockup. CSS only, no SMIL: the ring draws, five iris blades
+       sweep in, the lens ignites, the wordmark writes itself, and the whole logo
+       redraws on a 12s cycle. Resting styles are the finished logo and intros
+       start hidden via fill-mode:backwards, so a renderer that blocks animation
+       still shows it complete. Each blade is a pentagon edge extended out to the
+       rim - that is what gives a real iris its pinwheel rather than a pentagon -
+       and every endpoint lies on a circle inside the ring, so none can extend
+       past it. The wordmark is monoline paths on a 100-unit letter grid, so no
+       typeface has to be installed. -->
+  <style>
+    .ink { stroke: #18233b } .acc { stroke: #d98614 } .accf { fill: #d98614 }
+    @keyframes draw { from { stroke-dashoffset: 1 } }
+    @keyframes ignite { from { opacity: 0 } 55% { opacity: 1 } to { opacity: .9 } }
+    @keyframes cycle {
+      0% { stroke-dashoffset: 0; opacity: 1 }
+      2% { stroke-dashoffset: 0; opacity: 0 }
+      2.05% { stroke-dashoffset: 1; opacity: 1; animation-timing-function: cubic-bezier(.4,0,.2,1) }
+      8% { stroke-dashoffset: 0 }
+      100% { stroke-dashoffset: 0 } }
+    @keyframes lampCycle { 0% { opacity: .9 } 2% { opacity: 0 } 5% { opacity: 0 } 7% { opacity: .9 } 100% { opacity: .9 } }
+    .s { stroke-dasharray: 1;
+      animation: draw .52s cubic-bezier(.4,0,.2,1) var(--bd,0s) backwards,
+                 cycle 12s linear calc(var(--bd,0s) + 12s) infinite }
+    .lamp { animation: ignite .8s ease-out .95s backwards, lampCycle 12s linear 12.95s infinite }
+    @media (prefers-reduced-motion: reduce) { .s, .lamp { animation: none } }
+  </style>
+  <g fill="none" stroke-width="5" class="ink">
+    <circle class="s" style="--bd:.05s" pathLength="1" cx="46" cy="58" r="36"/>
+  </g>
+  <g fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="acc">
+    <path class="s" style="--bd:0.32s" pathLength="1" d="M46.0 39.0L78.7 62.7"/>
+    <path class="s" style="--bd:0.39s" pathLength="1" d="M64.1 52.1L51.6 90.5"/>
+    <path class="s" style="--bd:0.46s" pathLength="1" d="M57.2 73.4L16.8 73.4"/>
+    <path class="s" style="--bd:0.53s" pathLength="1" d="M34.8 73.4L22.4 35.0"/>
+    <path class="s" style="--bd:0.60s" pathLength="1" d="M27.9 52.1L60.6 28.4"/>
+  </g>
+  <circle class="lamp accf" cx="46" cy="58" r="6"/>
+  <g transform="translate(118 46) scale(.44)" fill="none" stroke-width="20"
+     stroke-linecap="round" stroke-linejoin="round">
+    <g class="ink">
+      <g transform="translate(0 0)"><path class="s" style="--bd:1.10s" pathLength="1" d="M10 -46L10 100"/></g>
+      <g transform="translate(44 0)"><path class="s" style="--bd:1.17s" pathLength="1" d="M10 20L10 60A40 40 0 0 0 90 60L90 20"/><path class="s" style="--bd:1.17s" pathLength="1" d="M90 60L90 100"/></g>
+      <g transform="translate(168 0)"><path class="s" style="--bd:1.24s" pathLength="1" d="M79.7 33.2A40 40 0 1 0 79.7 86.8"/></g>
+      <g transform="translate(282 0)"><path class="s" style="--bd:1.31s" pathLength="1" d="M10 20L10 100"/></g>
+      <g transform="translate(326 0)"><circle class="s" style="--bd:1.38s" pathLength="1" cx="50" cy="60" r="40"/><path class="s" style="--bd:1.38s" pathLength="1" d="M90 -46L90 100"/></g>
+    </g>
+    <circle class="lamp accf" cx="292" cy="-14" r="10"/>
+  </g>
+</svg>

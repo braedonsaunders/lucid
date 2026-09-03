@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Brand/lucid-banner.svg" alt="Lucid — sharper browser video on Apple silicon" width="880">
+  <img src=".github/assets/lucid-logo-dark.svg" alt="Lucid — sharper browser video on Apple silicon" width="320">
 </p>
 
 <p align="center">
