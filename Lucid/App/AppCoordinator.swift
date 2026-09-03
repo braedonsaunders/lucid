@@ -559,15 +559,22 @@ final class EnhancementSession {
         // turned the scaler's invented foliage texture into something crunchy.
         // Strong turns it back on for anyone who wants it.
         var sharpness: Float = 0.0
-        var fine: Float = 0.0
-        var deblock: Float = 0.35
+        // 0.3, measured. On the bicubic-trained model any detail gain
+        // amplified invented texture and cost fine-band correlation; the model
+        // trained on real codec degradation gives a clean enough base that a
+        // little gain now recovers rather than exaggerates. 0.5 overshoots.
+        var fine: Float = 0.3
+        // The post-upscale deblock is flat to four decimals across its whole
+        // range now and every non-zero value is very slightly worse, so it is
+        // off: the model removes blocking itself.
+        var deblock: Float = 0.0
         // Off since the model was trained on real codec degradation. Measured
         // on the trained base, turning it off *improves* fine-band correlation
         // by 0.0011 and mid by 0.0038: the network now removes compression
         // damage itself, so cleaning the input first only softens what it is
         // about to reconstruct from. On the old bicubic-trained ch28 the same
         // stage cost 0.0049 fine, so this was always harmful - just less so now.
-        var sourceDeblock: Float = 0.0
+        var sourceDeblock: Float = 0.02
         var temporal: Float = 0.50
         var blackPoint: Float = 0.020
         var whitePoint: Float = 0.975
