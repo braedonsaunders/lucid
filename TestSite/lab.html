@@ -75,14 +75,11 @@
     <div class="row"><button id="advancedToggle">Show advanced</button><button id="reset">Reset to tuned</button></div>
     <div class="tune" id="tune" hidden></div>
     <h2>Stages</h2>
-    <div class="meta">Each is independent. Turn them on one at a time to see what each one buys.</div>
+    <div class="meta">Measured on the trained model against a 1080p reference. Only the first earns its milliseconds; the rest are off because they cost fine-band accuracy.</div>
     <div id="stages"></div>
 
-    <h2>Comparison</h2>
-    <div class="row"><button id="shoot">Capture all engines</button></div>
-    <div class="meta" id="shootStatus">Pauses the clip and captures the same frame once per engine.</div>
     <h2>Notes</h2>
-    <div class="meta">The enhancer follows the one video that is playing here. Choose a display width larger than the clip's decoded size; on a Retina display 640 px wide shows a 360p clip at 1280 physical pixels.</div>
+    <div class="meta">The enhancer follows the one video playing here, and only when the player is bigger than the clip's decoded size. On a Retina display 640 px wide shows a 360p clip at 1280 physical pixels. Sources of 480p and below are enhanced; 720p and above are declined.</div>
   </aside>
   <section class="stage">
     <div class="frame"><video id="video" controls muted loop playsinline autoplay preload="auto"></video></div>
@@ -192,7 +189,7 @@ function openControl() {
 }
 function sendControl(obj) { if (control && control.readyState === 1) control.send(JSON.stringify({ type: 'control', ...obj })); }
 // There is one pipeline now, so this reports what it is doing rather than
-// offering a choice. Comparisons live in the shooter below and in models.html.
+// offering a choice. Side-by-side model comparison lives in models.html.
 function buildEngines(m) {
   const box = document.getElementById('pipeline');
   const size = m.outputWidth ? ` → ${m.outputWidth}×${m.outputHeight}` : '';
@@ -207,17 +204,6 @@ addEventListener('keydown', (e) => {
     const i = CLIPS.findIndex(c => c.id === currentClip); selectClip(CLIPS[(i + (e.key === 'ArrowDown' ? 1 : CLIPS.length - 1)) % CLIPS.length].id);
   }
 });
-// Freeze the clip, then have the app shoot every engine on that one frame.
-document.getElementById('shoot').onclick = async () => {
-  const status = document.getElementById('shootStatus');
-  video.pause();
-  video.currentTime = parseFloat(new URLSearchParams(location.search).get('t') || '4');
-  await new Promise(r => setTimeout(r, 600));
-  const name = (currentClip || 'clip') + '-' + Math.round(video.currentTime * 10);
-  status.textContent = 'capturing ' + name + '…';
-  sendControl({ shoot: name });
-  setTimeout(() => { status.textContent = 'written to .build/shots/' + name; }, 9000);
-};
 
 // Live grade and sharpening controls. These are the same values the offline
 // tuner searches, so anything found by eye here can be pinned in Tools/tuning.json.
@@ -228,20 +214,20 @@ const KNOBS = [
   ['contrast',  'Contrast',0, 0.5, 0.01],
   ['saturation','Colour',  0.8, 1.4, 0.01],
   ['sourceDeblock','Deblock',0, 0.06, 0.002],
-  // How tight the sharpening lobe runs relative to the detail scale. Measured
-  // against ground truth, halving it cuts coarse-band overshoot (the halos)
-  // from 15% to 7% while the fine detail it keeps matches the truth better.
-  ['lobeScale', 'Lobe',   0.25, 1.0, 0.05],
-  // Gain on the true one-pixel band. Above zero this mostly amplifies scaler
-  // noise: correlation with ground truth falls as it rises. Kept for tuning.
-  ['micro',     'Micro',  0, 2.0, 0.05],
+  // Lobe and Micro are gone. Lobe shapes the sharpening kernel and measured
+  // identical to four decimal places at every value, because sharpening is off
+  // and measures worse at every setting above zero. Micro measured a monotonic
+  // decline. Neither is a control; both were sliders that could only do harm.
 ];
 // What ships to a person using this: one control, four positions.
+// Sharpening is zero in all of them. It measured monotonically worse at every
+// setting above zero on both sweep passes, so a preset that raises it is a
+// preset that makes the picture less like the truth.
 const PRESETS = {
-  Off:      { sharpness: 0, fine: 0, blackPoint: 0, contrast: 0, saturation: 1, sourceDeblock: 0, micro: 0 },
-  Subtle:   { sharpness: 0.45, fine: 0.35, blackPoint: 0.025, contrast: 0.15, saturation: 1.05, sourceDeblock: 0.030, lobeScale: 0.5, micro: 0 },
-  Standard: null,   // whatever the tuner settled on
-  Strong:   { sharpness: 1.00, fine: 0.85, blackPoint: 0.070, contrast: 0.40, saturation: 1.16, sourceDeblock: 0.050, lobeScale: 0.5, micro: 0 },
+  Off:      { sharpness: 0, fine: 0,    blackPoint: 0,     contrast: 0,   saturation: 1, sourceDeblock: 0 },
+  Subtle:   { sharpness: 0, fine: 0.15, blackPoint: 0.02,  contrast: 0.1, saturation: 1, sourceDeblock: 0.02 },
+  Standard: null,   // the measured values
+  Strong:   { sharpness: 0, fine: 0.45, blackPoint: 0.03,  contrast: 0.3, saturation: 1, sourceDeblock: 0.02 },
 };
 let tunedDefaults = null;
 const presetBox = document.getElementById('presets');
@@ -267,12 +253,12 @@ const inputsExtra = inputs;
 // The researched stages, each behind its own switch, with the knob that
 // matters most for it so a stage can be judged at more than one strength.
 const STAGES = [
-  ['stageSiting',     'Chroma siting (left-sited 4:2:0)', null],
-  ['stageDeband',     'Debanding + grain',                ['debandThreshold', 'Threshold', 0, 0.03, 0.001]],
-  ['stageOklab',      'Oklab saturation',                 ['skinProtect', 'Skin protect', 0, 1, 0.05]],
-  ['stageLoopFilter', 'Blind H.264 loop filter',          ['loopFilterQuant', 'Quant', 25, 50, 1]],
-  ['stageTaa',        'Temporal (neighbourhood clip)',    ['taaFeedback', 'History', 0.5, 0.97, 0.01]],
-  ['stageCdef',       'CDEF dering',                      ['cdefPrimary', 'Strength', 0, 15, 1]],
+  ['stageTaa',        'Temporal — keep, worth 0.008 fine', ['taaFeedback', 'History', 0.5, 0.97, 0.01]],
+  ['stageSiting',     'Chroma siting — no measurable effect', null],
+  ['stageOklab',      'Oklab saturation — 0.9 ms, no gain', ['skinProtect', 'Skin protect', 0, 1, 0.05]],
+  ['stageDeband',     'Debanding + grain — costs 0.038 fine', ['debandThreshold', 'Threshold', 0, 0.03, 0.001]],
+  ['stageCdef',       'CDEF dering — costs 0.0014 fine',   ['cdefPrimary', 'Strength', 0, 15, 1]],
+  ['stageLoopFilter', 'Loop filter — costs 0.0013 fine',   ['loopFilterQuant', 'Quant', 25, 50, 1]],
 ];
 const stageBox = document.getElementById('stages');
 const stageInputs = {};

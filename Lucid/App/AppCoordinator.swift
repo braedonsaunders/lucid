@@ -578,8 +578,14 @@ final class EnhancementSession {
         var temporal: Float = 0.50
         var blackPoint: Float = 0.020
         var whitePoint: Float = 0.975
-        var contrast: Float = 0.100
-        var saturation: Float = 1.050
+        // 0.2: buys fine-band correlation (0.2866 -> 0.2886) and spends PSNR
+        // (26.39 -> 25.71). A deliberate trade, chosen by eye, not measured -
+        // the reference has no grade so no metric can pick this.
+        var contrast: Float = 0.200
+        // Exactly 1.0 skips the Oklab pass entirely, which is worth 1.0 ms of
+        // the frame. Saturation measured fidelity-neutral across its whole
+        // range, so this is a millisecond for nothing.
+        var saturation: Float = 1.000
         /// 2 runs the scaler twice, 4 runs it once at its native 4x factor.
         var scalerFactor: Float = 2
         var micro: Float = 0.0
