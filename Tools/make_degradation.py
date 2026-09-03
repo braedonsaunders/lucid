@@ -24,7 +24,7 @@ Local sources default to TestSite/*.mp4 and
 720p and Sintel (Blender, CC-BY) from archive.org into
 .build/corpus-sources/.
 """
-import argparse
+import argparse, glob
 import collections
 import json
 import math
@@ -39,11 +39,17 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # clips (bbb-240p-200k etc.) would bake compression artifacts
 # into the target. The floor is per tier, not global: a source must be
 # at least the HR crop it is asked for, checked when the tier is drawn.
+# Two Blender animated films were the whole corpus, and a model trained only on
+# animation has never seen skin, film grain, sensor noise or a real lens. The
+# Netflix Chimera set (live action, 4096x2160, CC BY, on media.xiph.org) fixes
+# that: faces, fast motion, water, crowds, fine texture, driving POV. They are
+# high-bitrate VP9 rather than raw masters - visually lossless at the scales
+# used here, and far cleaner than any re-encode, but worth knowing.
 CLEAN_SOURCES = [
     os.path.join(ROOT,
                  ".build/corpus-sources/bbb_sunflower_2160p_60fps_normal.mp4"),
     os.path.join(ROOT, ".build/corpus-sources/Sintel.2010.4k.mkv"),
-]
+] + sorted(glob.glob(os.path.join(ROOT, ".build/corpus-sources/netflix-*.webm")))
 FETCH_DIR = os.path.join(ROOT, ".build/corpus-sources")
 FETCH_URLS = {
     # (zip member name, download URL): Blender ships 2160p as a zip.
@@ -261,9 +267,18 @@ def main():
         # differ only for 240p (426 encode -> 432 model); the resize
         # must be part of the pipeline, not the codec pass.
         p = subprocess.run(
+            # -fps_mode passthrough matters as much here as on the two
+            # extraction commands. Without it ffmpeg conforms this output to a
+            # constant frame rate, duplicating or dropping frames on a
+            # variable-rate source - which shifts every index the encoder then
+            # sees, so frame 30 of the encoded segment stops being frame 30 of
+            # the decode that HR came from. That desync is independent of codec
+            # and GOP, which is exactly what the residual mismatches measured:
+            # 14.5% for both x264 and VP9, flat across every GOP length.
             ["ffmpeg", "-v", "error", "-ss", str(t0), "-i", src,
              "-t", str(SEG_SECS),
              "-vf", f"crop={cw}:{ch}:{cx}:{cy},scale={ew}:{eh}",
+             "-fps_mode", "passthrough",
              "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
             capture_output=True)
         if p.returncode != 0:

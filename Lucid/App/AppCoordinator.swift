@@ -398,7 +398,9 @@ final class AppCoordinator {
             self.session = session
             print("   🎯 Session \(report.session.prefix(8)): \(report.browser) window [\(window.id)] video \(report.video!.iw)x\(report.video!.ih) at \(report.video!.rect)")
             appState.isEnhancing = true
-            appState.statusLine = "Enhancing \(report.browser.capitalized) video \(report.video!.iw)×\(report.video!.ih) → 2×"
+            // 4×, not 2×: the tiled 2×-per-pass scaler was replaced by SPAN and
+            // this is the line users actually read.
+            appState.statusLine = "Enhancing \(report.browser.capitalized) video \(report.video!.iw)×\(report.video!.ih) → 4×"
             appState.lastError = nil
             menuBar?.refresh()
             broadcastStatus()
