@@ -221,6 +221,11 @@ enum EngineBench {
                 print("frame \(index)"); fflush(stdout)
                 let name = String(format: "%03d", index)
                 writePNG(frame, to: "\(outDir)/\(name)-input.png", context: context)
+                // The source after our own deblock and temporal pass. Every
+                // learned upscaler on offer was trained on clean bicubic
+                // downsampling, so what it is handed matters as much as which
+                // model it is.
+                writePNG(cleaned, to: "\(outDir)/\(name)-cleaned.png", context: context)
                 writePNG(lowLatencyOutput, to: "\(outDir)/\(name)-lowlatency.png", context: context)
                 writePNG(detailOutput, to: "\(outDir)/\(name)-detail.png", context: context)
                 writePNG(destination, to: "\(outDir)/\(name)-temporal.png", context: context)
