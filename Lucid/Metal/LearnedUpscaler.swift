@@ -68,6 +68,21 @@ final class LearnedUpscaler: @unchecked Sendable {
         Variant(width: 640, height: 360, milliseconds: 28.1),   // 26.7 + 1.4
     ]
 
+    /// Where the next speed comes from, measured 2026-09-03 so it is not
+    /// re-derived: this trunk is activation-bandwidth bound, not MAC bound.
+    /// Latency scales with channels rather than channels squared (ch16 0.63x,
+    /// ch20 0.75x, ch24 0.90x against ch28), and int8 weight quantisation moved
+    /// 30.6ms to 29.3ms - nothing, because weights are not the traffic.
+    ///
+    /// So the lever is pixels, not channels. PixelUnshuffle(2) at the input
+    /// puts the 18 trunk convs at quarter area with the head doing x8 instead
+    /// of x4, and at 640x360 that is 27.9ms -> 12.6ms at *more* capacity than
+    /// ships today (1.06M parameters against 1.03M). Its ladder also brings
+    /// 864x480 to 24.7ms, back inside this budget.
+    ///
+    /// That architecture has no pretrained weights, so it is waiting on the
+    /// codec-degradation corpus. Until it is trained, ch28 ships.
+    ///
     /// A 30fps frame is 33.3 ms. This leaves 3 ms of it for the detail pass and
     /// for getting the result back to the page. Low-resolution streaming video
     /// runs at 24-30fps; 60fps material is published at 720p and above, which
