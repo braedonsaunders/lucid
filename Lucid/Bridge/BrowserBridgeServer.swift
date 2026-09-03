@@ -104,7 +104,12 @@ final class BrowserBridgeServer: @unchecked Sendable {
                     $0.value.state == .ready && self.sessionsByConnection[$0.key]?.contains(session) == true
                 }
                 : attached
-            var matched = 0
+            // How many connections this frame was addressed to, which is what
+            // `targets` already is. This was a `var` that nothing incremented,
+            // so every frame counted as unmatched and the delivery log's "NO
+            // CONNECTION" column was always equal to the offered count - a
+            // lying counter inside the diagnostic built to catch lying counters.
+            let matched = targets.count
             for (id, connection) in targets {
                 guard self.framesInFlight[id, default: 0] < Self.maximumFramesInFlight else {
                     self.droppedFrames += 1
