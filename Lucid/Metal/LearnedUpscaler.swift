@@ -68,6 +68,18 @@ final class LearnedUpscaler: @unchecked Sendable {
         Variant(width: 640, height: 360, milliseconds: 28.1),   // 26.7 + 1.4
     ]
 
+    /// The target window is Microsoft Edge's: enabled below 720p. Edge arrived
+    /// at that independently, from inside a browser compositor, which is worth
+    /// something - it is the range where a source is short of what the display
+    /// shows, and above it there is progressively less to recover.
+    ///
+    /// That needs the 854x480 tier, which today's ch28 cannot carry (48.2 ms).
+    /// ch32u puts it at 24.7 ms, but 480p is 3456x1920 out - 1.8x the pixels of
+    /// 360p - so the colour conversions cost 4.2 ms and the detail stage scales
+    /// with them. The total lands around 33 ms against a 33.3 ms frame, which
+    /// means 480p fits only if the detail stage earns its milliseconds. The
+    /// ablation harness decides that; it is not a guess to make in advance.
+    ///
     /// Where the next speed comes from, measured 2026-09-03 so it is not
     /// re-derived: this trunk is activation-bandwidth bound, not MAC bound.
     /// Latency scales with channels rather than channels squared (ch16 0.63x,

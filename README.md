@@ -98,11 +98,18 @@ their trademark, named here only to say plainly what this is.
 | **360p** (640×360) | **enhanced** | 26.7 ms |
 | 480p and above | left alone | 48 ms — past the frame budget |
 
-The ceiling is a frame budget, not a resolution: 28 ms, one frame at 30fps less
-what the rest of the pipeline costs. Above it Lucid does nothing at all rather
-than reaching for a weaker upscaler, because the weaker upscaler measured worse
-than leaving the frame alone. This is also where the returns are smallest — the
-larger the source, the less there is to recover.
+The ceiling is a frame budget, not a resolution: one frame at 30fps, less what
+the rest of the pipeline costs. Above it Lucid does nothing at all rather than
+reaching for a weaker upscaler, because the weaker upscaler measured worse than
+leaving the frame alone.
+
+**The target is the window Microsoft Edge uses: enabled below 720p.** Edge
+reached that independently, from inside a browser compositor, and NVIDIA's RTX
+VSR declines on the same principle — below 720p is where a source is genuinely
+short of what the display is showing, and above it there is progressively less
+to recover. Reaching it needs the 854×480 tier, which the shipping model cannot
+carry in budget and the next one can; see `LearnedUpscaler.swift` for the
+arithmetic. Until then the ceiling is 360p.
 
 Those timings are on an M4 Pro, and every input width in that table is a multiple
 of 16. That is not cosmetic. The Neural Engine tiles along width, so an unaligned

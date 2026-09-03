@@ -70,12 +70,21 @@ FETCH_URLS = {
 # not a multiple of 16 and costs the Neural Engine a whole extra pass,
 # so live it is stretched to 432x240 on the way into the model. The
 # corpus reproduces that: real codec pass at 426x240, then resize.
+# (model width, model height, encode width, encode height). The encode size is
+# the real streaming size; the model size is that rounded up to a multiple of
+# 16, because an unaligned input width costs the Neural Engine a whole extra
+# tile pass. Only 240p and 480p differ.
+#
+# The target is Edge's window: enabled below 720p. That needs the 854x480 tier,
+# whose HR crop is 3456x1920 - Sintel 4K is 4096x1744 and cannot supply it, so
+# that tier draws only from the 2160-tall sources.
 LR_TIERS = [
     (256, 144, 256, 144),
+    (320, 180, 320, 180),
     (432, 240, 426, 240),
     (480, 270, 480, 270),
     (640, 360, 640, 360),
-    (320, 180, 320, 180),
+    (864, 480, 854, 480),
 ]
 CODECS = ["libx264", "libvpx-vp9"]
 BITRATE_LO, BITRATE_HI = 90_000, 1_500_000

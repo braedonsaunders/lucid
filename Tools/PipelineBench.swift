@@ -19,7 +19,7 @@ import CoreVideo
 import Foundation
 import VideoToolbox
 
-let variants = [(256, 144), (320, 180), (432, 240), (480, 270), (640, 360)]
+let variants = [(256, 144), (320, 180), (432, 240), (480, 270), (640, 360), (864, 480)]
 let scale = 4
 
 func makeBuffer(_ width: Int, _ height: Int, _ format: OSType) -> CVPixelBuffer {
