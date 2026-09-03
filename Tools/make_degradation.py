@@ -260,7 +260,16 @@ def main():
             print(f"  tier {mw}x{mh} has no source covering "
                   f"{cw}x{ch} - skipped")
             continue
-        src = rng.choice(fit_srcs)
+        # Pick the content class first, then a source inside it. Choosing
+        # uniformly over files gives whichever class has more files: 19 Netflix
+        # clips against 2 films made the corpus 95% live action, which is the
+        # original animation-only mistake with the sign flipped. Animation is
+        # real deployment content - anime, cartoons, game streams - and its flat
+        # shaded regions compress differently from film grain.
+        animated = [f for f in fit_srcs if "netflix" not in os.path.basename(f)]
+        live = [f for f in fit_srcs if "netflix" in os.path.basename(f)]
+        pool = live if (live and (not animated or rng.random() < 0.65)) else animated
+        src = rng.choice(pool or fit_srcs)
         sw, sh_, dur, fps = dims[src]
         # Decode only what the pair needs. A fixed 2s window is 48 frames on a
         # 24fps source and 120 on a 60fps one, and exactly one frame is kept -

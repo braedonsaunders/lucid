@@ -81,6 +81,46 @@ def pair_correlation(lr, hr):
     return float((x * y).mean() / np.sqrt((x * x).mean() * (y * y).mean()))
 
 
+def report_composition(corpus):
+    """Prints what the corpus is made of before a minute is spent training on it.
+
+    Every corpus fault this project has hit was distributional and passed every
+    structural check: pairs at 2x when 4x was needed, HR and LR from different
+    frames, 100% animation, then 95% live action, then stale pairs from a
+    superseded run blended in at 6%. Counts and sizes were right every time.
+    Shape is the thing that goes wrong, so shape is what gets printed.
+    """
+    path = os.path.join(corpus, "manifest.jsonl")
+    if not os.path.exists(path):
+        print("no manifest - composition unknown"); return
+    records = []
+    for line in open(path):
+        try: records.append(json.loads(line))
+        except ValueError: continue
+    if not records:
+        print("empty manifest - composition unknown"); return
+
+    def tally(label, values):
+        counts = {}
+        for v in values: counts[v] = counts.get(v, 0) + 1
+        total = sum(counts.values()) or 1
+        parts = ", ".join(f"{k} {100*v//total}%" for k, v in
+                          sorted(counts.items(), key=lambda kv: -kv[1])[:8])
+        print(f"  {label:12s} {parts}")
+
+    print(f"corpus composition ({len(records)} pairs)")
+    tally("content", ["live" if "netflix" in r.get("source", "") else "animation"
+                      for r in records])
+    tally("tier", [f"{r['lr']['w']}x{r['lr']['h']}" for r in records if "lr" in r])
+    tally("codec", [r["lr"]["codec"] for r in records if "lr" in r])
+    tally("bitrate", ["<150k" if r["lr"]["bitrate"] < 150_000 else
+                      "150-400k" if r["lr"]["bitrate"] < 400_000 else ">400k"
+                      for r in records if "lr" in r])
+    tally("gop", [str(r["lr"]["gop"]) for r in records if "lr" in r])
+    sources = {os.path.basename(r.get("source", "?")) for r in records}
+    print(f"  {'sources':12s} {len(sources)} distinct")
+
+
 def build_bank(corpus, out, per_pair=8, seed=0, min_correlation=0.85):
     """Pre-cuts training patches into a memory-mapped array.
 
@@ -92,6 +132,7 @@ def build_bank(corpus, out, per_pair=8, seed=0, min_correlation=0.85):
     pairs = sorted(os.listdir(os.path.join(corpus, "lr")))
     if not pairs:
         raise SystemExit(f"no pairs in {corpus}/lr")
+    report_composition(corpus)
     rng = random.Random(seed)
     total = len(pairs) * per_pair
     os.makedirs(out, exist_ok=True)
