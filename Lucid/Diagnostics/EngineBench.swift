@@ -106,6 +106,13 @@ enum EngineBench {
         VTPixelTransferSessionCreate(allocator: kCFAllocatorDefault, pixelTransferSessionOut: &transferSession)
         guard let transfer = transferSession else { throw NSError(domain: "bench", code: 3) }
 
+        // The stages that follow behave differently depending on what they sit
+        // on - deblocking earns more over a blockier base, sharpening earns
+        // less over one that already invented texture. So an ablation is only
+        // meaningful against the upscaler that actually ships, and this points
+        // the bench at it.
+        var learned: LearnedUpscaler?
+        let useLearned = ProcessInfo.processInfo.environment["LUCID_LEARNED"] == "1"
         var lowLatency: TiledVideoToolboxUpscaler?
         var processor: VTFrameProcessor?
         var sourcePool: CVPixelBufferPool?
@@ -179,7 +186,16 @@ enum EngineBench {
 
             let cleaned = try detail.preprocess(frame)
             let startLowLatency = ContinuousClock.now
-            let lowLatencyOutput = try await lowLatency!.upscale(cleaned, pts: pts)
+            let lowLatencyOutput: CVPixelBuffer
+            if useLearned {
+                if learned == nil {
+                    learned = try LearnedUpscaler(width: width, height: height)
+                    print("bench upscaler: SPAN 4× on the Neural Engine, \(width)x\(height)")
+                }
+                lowLatencyOutput = try learned!.upscale(cleaned)
+            } else {
+                lowLatencyOutput = try await lowLatency!.upscale(cleaned, pts: pts)
+            }
             lowLatencyTimes.append((ContinuousClock.now - startLowLatency).milliseconds)
 
             let startDetail = ContinuousClock.now
