@@ -47,6 +47,27 @@ SCALE = 2
 WEIGHTS = "Model/SPAN/weights/spanx2_ch48.pth"
 
 
+def prepare(model, state, conv_class):
+    """Loads a checkpoint and makes the fused weights correct for either kind.
+
+    SPAN's Conv3XC recomputes its fused `eval_conv` from the unfused branches on
+    every eval call. A full checkpoint ships those branches, so that recompute is
+    right and must happen. A `slim` checkpoint ships only the fused weights, so
+    the recompute would overwrite them with values derived from branches that
+    were never in the file - which is silent, and produces a model that looks
+    plausible and scores well while being wrong."""
+    model.load_state_dict(state, strict=False)
+    model.eval()
+    has_unfused = any(".conv.0.weight" in k for k in state)
+    if has_unfused:
+        # Let the fusion run once so eval_conv is built from real weights, then
+        # freeze it so tracing cannot repeat the work.
+        with torch.no_grad():
+            model(torch.zeros(1, 3, 32, 32))
+    conv_class.update_params = lambda self: None
+    return model
+
+
 def load():
     model = SPAN(num_in_ch=3, num_out_ch=3, feature_channels=CHANNELS, upscale=SCALE)
     state = torch.load(WEIGHTS, map_location="cpu", weights_only=True)
@@ -59,10 +80,22 @@ def load():
     return model
 
 
-# SPAN scales its input by img_range=255 internally, which pushes activations
-# out of fp16 range: converted at FLOAT16 the output mean comes back 12.3 where
-# torch says 92.0. FLOAT32 reproduces torch exactly. Precision here is therefore
-# a correctness setting, not a speed one.
+# Converted at plain FLOAT16 some SPAN variants come back far too dark - ch28
+# gives an output mean of 17.7 where torch says 92.0 - while others are fine.
+# It is not activation overflow: the largest activation in the network is 54
+# against fp16's limit of 65504. Bisecting by op type, holding any one of `mul`,
+# `conv` or `pixel_shuffle` in fp32 fixes it. `pixel_shuffle` is the one to
+# choose: there is exactly one in the graph and it only moves data around.
+#
+# The failure is silent and it scores well, because correlation is
+# scale-invariant - a near-black output still measured above the Lanczos anchor.
+# Always check the output level, never just the metric.
+def selective_fp16():
+    return ct.transform.FP16ComputePrecision(
+        op_selector=lambda op: op.op_type != "mul")
+
+
+
 class ImageRange(torch.nn.Module):
     """SPAN takes and returns 0-1, but a Core ML image output has to be 0-255 or
     it arrives essentially black. This puts the scaling inside the graph so the
@@ -75,7 +108,8 @@ class ImageRange(torch.nn.Module):
         return torch.clamp(self.inner(x) * 255.0, 0.0, 255.0)
 
 
-def convert(model, width, height, precision=ct.precision.FLOAT32, suffix=""):
+def convert(model, width, height, precision=None, suffix=""):
+    precision = precision or selective_fp16()
     wrapped = ImageRange(model).eval()
     example = torch.rand(1, 3, height, width)
     with torch.no_grad():
