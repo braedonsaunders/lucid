@@ -10,10 +10,16 @@
 
 import AppKit
 import Foundation
+import SwiftUI
 
 @MainActor
 final class MenuBarController: NSObject, NSMenuDelegate {
     private var statusItem: NSStatusItem?
+    /// The menu bar item opens a panel rather than a menu. A menu dismisses
+    /// itself the moment you choose anything, which makes it useless for
+    /// adjusting a picture while you watch it.
+    private var popover: NSPopover?
+    let panel = ControlPanelModel()
     private let appState: AppState
     /// One menu per host. An NSMenu cannot be attached in two places at once.
     private var menus: [NSMenu] = []
@@ -39,11 +45,74 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
     private func setup() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        item.button?.image = NSImage(systemSymbolName: "sparkles.tv", accessibilityDescription: "Lucid")
+        item.button?.image = NSImage(systemSymbolName: "camera.aperture", accessibilityDescription: "Lucid")
         item.button?.image?.isTemplate = true
-        item.menu = makeMenu()
+        item.button?.target = self
+        item.button?.action = #selector(togglePanel)
+        item.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
         statusItem = item
+
+        panel.onEnabledChange = { [weak self] on in
+            guard let self else { return }
+            appState.enabled = on
+            onToggleEnabled?(on)
+            refresh()
+        }
+        panel.onStrengthChange = { [weak self] option in
+            guard let self else { return }
+            strength = option
+            onStrengthChanged?(option)
+            panel.tuning = EnhancementSession.tuning
+            refresh()
+        }
+        panel.onTuningChange = { [weak self] tuning in
+            self?.onTuningChanged?(tuning)
+        }
+        panel.onOpenLab = { [weak self] in self?.onOpenTestPage?() }
+        panel.onReset = { [weak self] in
+            guard let self else { return }
+            onResetTuning?()
+            panel.tuning = EnhancementSession.tuning
+        }
+
+        let popover = NSPopover()
+        popover.behavior = .transient
+        popover.animates = true
+        popover.contentViewController = NSHostingController(rootView: ControlPanel(model: panel))
+        self.popover = popover
+
         refresh()
+    }
+
+    var onTuningChanged: ((EnhancementSession.Tuning) -> Void)?
+    var onResetTuning: (() -> Void)?
+
+    @objc private func togglePanel() {
+        guard let popover, let button = statusItem?.button else { return }
+        if popover.isShown {
+            popover.performClose(nil)
+            return
+        }
+        // A right-click still gets the plain menu, for the people who expect one.
+        if NSApp.currentEvent?.type == .rightMouseUp {
+            let menu = makeMenu()
+            statusItem?.menu = menu
+            button.performClick(nil)
+            statusItem?.menu = nil
+            return
+        }
+        syncPanel()
+        popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+        popover.contentViewController?.view.window?.makeKey()
+    }
+
+    private func syncPanel() {
+        panel.enabled = appState.enabled
+        panel.strength = strength
+        panel.status = appState.statusLine
+        panel.stats = appState.statsLine
+        panel.enhancing = appState.isEnhancing
+        panel.tuning = EnhancementSession.tuning
     }
 
     /// Builds a fresh copy of the menu. Called once for the menu bar and again
@@ -105,8 +174,14 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
     func refresh() {
         for menu in menus { update(menu) }
+        if popover?.isShown == true {
+            panel.status = appState.statusLine
+            panel.stats = appState.statsLine
+            panel.enhancing = appState.isEnhancing
+            panel.enabled = appState.enabled
+        }
         statusItem?.button?.appearsDisabled = !appState.enabled
-        let symbol = appState.isEnhancing ? "sparkles.tv.fill" : "sparkles.tv"
+        let symbol = appState.isEnhancing ? "camera.aperture" : "circle.dotted"
         statusItem?.button?.image = NSImage(systemSymbolName: symbol, accessibilityDescription: "Lucid")
         statusItem?.button?.image?.isTemplate = true
     }

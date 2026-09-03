@@ -48,6 +48,18 @@ final class AppCoordinator {
             self.broadcastStatus()
         }
         menuBar.onOpenTestPage = { [weak self] in self?.openTestPage() }
+        // Live edits from the control panel take effect on the next frame.
+        menuBar.onTuningChanged = { [weak self] tuning in
+            EnhancementSession.tuning = tuning
+            TiledVideoToolboxUpscaler.chromaSitingLeft = tuning.stageSiting > 0.5
+            self?.session?.reloadTuning()
+            self?.broadcastStatus()
+        }
+        menuBar.onResetTuning = { [weak self] in
+            EnhancementSession.tuning = EnhancementSession.Tuning.load()
+            self?.session?.reloadTuning()
+            self?.broadcastStatus()
+        }
         menuBar.onStrengthChanged = { [weak self] strength in
             guard let self else { return }
             var tuning = EnhancementSession.tuning
