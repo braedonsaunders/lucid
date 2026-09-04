@@ -22,7 +22,14 @@ regions that genuinely should not be changing, so movement there is our
 invention rather than the scene's. Measuring our output against itself would
 simply reward a model that changes less, which a blur does perfectly.
 
+Two ways in. `--stems` scores models the app already carries, through the real
+pipeline, and so includes everything the detail stages do. `--checkpoints`
+scores .pth files directly in torch, before conversion - which is the only way
+to ask whether a temporal model is worth the plumbing it would need, since the
+app has no multi-frame input path to run it through yet.
+
   .venv-convert/bin/python Tools/flicker.py --frames 12
+  .venv-convert/bin/python Tools/flicker.py --checkpoints Model/weights/*.pth
 """
 import argparse, json, os, shutil, subprocess, sys, tempfile
 
@@ -69,6 +76,63 @@ def render(stem, clip, reference, frames, tuning):
     return outputs, refs
 
 
+def decode(path, frames, width=None):
+    """Consecutive frames from the start of a clip, as RGB images.
+
+    Consecutive is the whole point and is easy to get wrong: seeking per frame
+    returns frames from slightly different decode states, which reads as
+    flicker that is ours when it is ffmpeg's. One decode, one pass, in order."""
+    out = tempfile.mkdtemp(prefix="flicker-frames-")
+    scale = ["-vf", f"scale={width}:-2:flags=lanczos"] if width else []
+    subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-frames:v", str(frames)]
+                   + scale + ["-fps_mode", "passthrough", os.path.join(out, "%04d.png")],
+                   check=True)
+    names = sorted(os.listdir(out))
+    images = [Image.open(os.path.join(out, n)).convert("RGB").copy() for n in names]
+    shutil.rmtree(out, ignore_errors=True)
+    return images
+
+
+def render_checkpoint(path, clip, reference, frames, device):
+    """Runs a checkpoint over consecutive frames, feeding a temporal model its
+    own history the way playback would.
+
+    History is the frames that actually preceded this one, oldest first. The
+    first frames of the clip have none, so the current frame is repeated - the
+    same degenerate case as a scene cut, and the honest one: it tells the model
+    nothing new rather than handing it an unrelated shot."""
+    import torch
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from train_span import Unshuffled
+
+    state = torch.load(path, map_location="cpu", weights_only=False)
+    history = state.get("frames", 1)
+    model = Unshuffled(state.get("channels", 32), frames=history,
+                       version=state.get("version", 1)).eval().to(device)
+    model.load_state_dict(state["model"] if "model" in state else state)
+
+    sources = decode(clip, frames)
+    refs = [np.asarray(f.convert("L"), dtype=np.float64) for f in decode(reference, frames)]
+    tensors = [torch.from_numpy(np.asarray(f, dtype=np.float32) / 255).permute(2, 0, 1)
+               for f in sources]
+
+    outputs = []
+    with torch.no_grad():
+        for i in range(len(tensors)):
+            window = [tensors[max(i - k, 0)] for k in range(history - 1, -1, -1)]
+            x = torch.cat(window, dim=0).unsqueeze(0).to(device)
+            y = model(x).clamp(0, 1)[0].permute(1, 2, 0).cpu().numpy()
+            outputs.append(Image.fromarray((y * 255).round().astype(np.uint8)))
+
+    aligned = []
+    for image, ref in zip(outputs, refs):
+        grey = image.convert("L")
+        if grey.size != (ref.shape[1], ref.shape[0]):
+            grey = grey.resize((ref.shape[1], ref.shape[0]), Image.LANCZOS)
+        aligned.append(np.asarray(grey, dtype=np.float64))
+    return aligned, refs[:len(aligned)], history
+
+
 def flicker(outputs, refs):
     """Mean frame-to-frame change in the output, over pixels the reference holds
     still. Also returns how much of the frame that mask covers, because a number
@@ -94,6 +158,9 @@ def main():
     parser.add_argument("--stems", nargs="*",
                         default=["SPAN_x4_ch32ul1_", "SPAN_x4_ch32u_"],
                         help="model stems to compare, in order")
+    parser.add_argument("--checkpoints", nargs="*", default=[],
+                        help=".pth files to score in torch instead of via the app")
+    parser.add_argument("--device", default="mps")
     args = parser.parse_args()
 
     known = {"crowdrun-360p-350k.mp4": "crowdrun-1080p.mp4",
@@ -112,7 +179,30 @@ def main():
     print("still, in 0-255 luma. Lower is steadier.\n")
     print(f"{'model':28s} {'flicker':>9s} {'static area':>12s}")
     results = {}
-    for stem in args.stems:
+
+    if args.checkpoints:
+        import torch
+        device = torch.device(args.device if args.device != "mps"
+                              or torch.backends.mps.is_available() else "cpu")
+        # The anchor: a plain Lanczos upscale invents nothing, so whatever it
+        # shimmers is the source's own noise passing through. A model below this
+        # line is steadier than the footage it was given.
+        sources = decode(clip, args.frames)
+        refs = [np.asarray(f.convert("L"), dtype=np.float64)
+                for f in decode(reference, args.frames)]
+        anchor = [np.asarray(f.convert("L").resize((refs[0].shape[1], refs[0].shape[0]),
+                                                   Image.LANCZOS), dtype=np.float64)
+                  for f in sources]
+        value, coverage = flicker(anchor, refs)
+        print(f"{'lanczos':28s} {value:9.4f} {coverage*100:11.1f}%")
+        for path in args.checkpoints:
+            outputs, refs, history = render_checkpoint(path, clip, reference,
+                                                       args.frames, device)
+            value, coverage = flicker(outputs, refs)
+            label = f"{os.path.basename(path).replace('.pth', '')} ({history}f)"
+            results[label] = value
+            print(f"{label:28s} {value:9.4f} {coverage*100:11.1f}%")
+    for stem in args.stems if not args.checkpoints else []:
         outputs, refs = render(stem, clip, reference, args.frames, tuning)
         if not outputs:
             print(f"{stem:28s}  render failed"); continue

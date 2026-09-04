@@ -141,6 +141,31 @@ def fft_loss(a, b):
     return (torch.abs(fa - fb)).mean()
 
 
+def temporal_loss(current_out, previous_out, current_in, previous_in, threshold=1.2 / 255):
+    """Penalises the model for changing its mind where the source did not move.
+
+    Feeding a model three frames does not make it steady - measured, a 3-frame
+    model shimmers *more* than the 1-frame one it was meant to improve on,
+    because nothing in an L1 loss asks for stability, so the extra input buys
+    detail instead. Stability has to be asked for directly, and once it is, a
+    single-frame model can be asked: this term needs two frames at training
+    time and none at inference, so it costs nothing at playback and needs no
+    multi-frame input path in the app.
+
+    Two frames of a still scene differ only by codec noise. Penalising the
+    output difference exactly there teaches the model to reconstruct the scene
+    rather than the noise, which is the shimmer a viewer sees. Restricting it
+    to static pixels is what stops the degenerate answer: a blurred, unchanging
+    picture would score perfectly on an unmasked version of this.
+    """
+    import torch.nn.functional as F
+    moved = (current_in - previous_in).abs().mean(dim=1, keepdim=True)
+    static = (moved < threshold).float()
+    static = F.interpolate(static, size=current_out.shape[-2:], mode="nearest")
+    difference = (current_out - previous_out).abs().mean(dim=1, keepdim=True)
+    return (difference * static).sum() / static.sum().clamp(min=1.0)
+
+
 def pick_device(preference="auto"):
     """CUDA if there is any, then Apple's GPU, then the CPU.
 
@@ -377,12 +402,22 @@ def main():
     parser.add_argument("--fft", type=float, default=0.0,
                         help="weight on the frequency-domain loss; 0.05 is what "
                              "the NTIRE 2026 winner used")
+    parser.add_argument("--temporal", type=float, default=0.0,
+                        help="weight on the temporal consistency loss. Needs a "
+                             "temporal bank for its second frame, but trains a "
+                             "single-frame model, so nothing changes at playback")
+    parser.add_argument("--input-frames", type=int, default=0,
+                        help="how many frames the model itself takes; 0 follows "
+                             "the bank")
     parser.add_argument("--steps", type=int, default=60000)
     parser.add_argument("--batch", type=int, default=32)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--out", default="Model/weights")
     parser.add_argument("--device", default="auto")
     parser.add_argument("--resume", default="")
+    parser.add_argument("--init", default="",
+                        help="start from these weights but at step 0, with a "
+                             "fresh optimiser - a fine-tune, not a resume")
     args = parser.parse_args()
 
     if args.bank:
@@ -397,13 +432,30 @@ def main():
     train_count = count - validation
     print(f"{train_count} training patches, {validation} held out")
 
+    # The temporal loss reads a second frame out of the bank but hands the model
+    # only the current one, so the thing being trained stays single-frame and
+    # the app's input path is untouched.
+    if args.temporal > 0 and frames < 2:
+        raise SystemExit("--temporal needs a bank built from a temporal corpus "
+                         "(one with lr_t1 beside lr)")
+    # --input-frames 1 on a temporal bank is the control this experiment needs:
+    # the same fine-tune, the same data, the same number of extra steps, without
+    # the term being tested. Without it a change cannot be attributed.
+    input_frames = args.input_frames or (1 if args.temporal > 0 else frames)
+    suffix = ("tc" if args.temporal > 0 else "t" if input_frames > 1 else "")
+
     device = pick_device(args.device)
-    model = Unshuffled(args.channels, frames=frames, version=args.version).to(device)
+    model = Unshuffled(args.channels, frames=input_frames, version=args.version).to(device)
     parameters = sum(p.numel() for p in model.parameters())
-    print(f"ch{args.channels}u{'t' if frames > 1 else ''}{'v2' if args.version == 2 else ''}: "
-          f"{parameters/1000:.0f}K parameters, {frames} input "
-          f"frame{'s' if frames > 1 else ''}, "
-          f"{'L1 + %.3g x FFT' % args.fft if args.fft > 0 else 'L1'}, on {device}")
+    terms = ["L1"]
+    if args.fft > 0:
+        terms.append(f"{args.fft:.3g} x FFT")
+    if args.temporal > 0:
+        terms.append(f"{args.temporal:.3g} x temporal")
+    print(f"ch{args.channels}u{suffix}{'v2' if args.version == 2 else ''}: "
+          f"{parameters/1000:.0f}K parameters, {input_frames} input "
+          f"frame{'s' if input_frames > 1 else ''}, "
+          f"{' + '.join(terms)}, on {device}")
 
     optimiser = torch.optim.Adam(model.parameters(), lr=args.lr, betas=(0.9, 0.99))
     schedule = torch.optim.lr_scheduler.CosineAnnealingLR(optimiser, T_max=args.steps, eta_min=args.lr / 100)
@@ -413,6 +465,10 @@ def main():
         model.load_state_dict(state["model"]); optimiser.load_state_dict(state["optimiser"])
         schedule.load_state_dict(state["schedule"]); start = state["step"]
         print(f"resumed from {args.resume} at step {start}")
+    elif args.init:
+        state = torch.load(args.init, map_location=device, weights_only=False)
+        model.load_state_dict(state["model"] if "model" in state else state)
+        print(f"fine-tuning from {args.init} (step {state.get('step', '?')}) at a fresh step 0")
 
     os.makedirs(args.out, exist_ok=True)
     rng = np.random.default_rng(0)
@@ -437,10 +493,17 @@ def main():
         if rng.random() < 0.5:
             lr, hr = lr.transpose(2, 3), hr.transpose(2, 3)
 
-        output = model(lr)
+        # A temporal bank carries the history frames the model does not see;
+        # the current frame is last, so a single-frame model takes the tail.
+        current = lr[:, -3 * input_frames:]
+        output = model(current)
         loss = charbonnier(output, hr)
         if args.fft > 0:
             loss = loss + args.fft * fft_loss(output, hr)
+        if args.temporal > 0:
+            previous = lr[:, -6:-3]
+            loss = loss + args.temporal * temporal_loss(output, model(previous),
+                                                        current, previous)
         optimiser.zero_grad(set_to_none=True)
         loss.backward()
         # SPAN's re-parameterised convs can spike early; clipping costs nothing
@@ -465,7 +528,7 @@ def main():
                     if not len(indices):
                         break
                     lr, hr = batch(indices)
-                    out = model(lr).clamp(0, 1)
+                    out = model(lr[:, -3 * input_frames:]).clamp(0, 1)
                     mse = float(((out - hr) ** 2).mean())
                     psnr_total += 10 * math.log10(1.0 / max(mse, 1e-9)) * len(indices)
                     fine_total += fine_band_correlation(out, hr) * len(indices)
@@ -475,13 +538,15 @@ def main():
             model.train()
             torch.save({"model": model.state_dict(), "optimiser": optimiser.state_dict(),
                         "schedule": schedule.state_dict(), "step": step + 1,
-                        "channels": args.channels, "frames": frames,
+                        "channels": args.channels, "frames": input_frames,
                         "version": args.version},
                        os.path.join(args.out,
-                                    f"span_ch{args.channels}u{'t' if frames > 1 else ''}"
+                                    f"span_ch{args.channels}u{suffix}"
                                     f"{'v2' if args.version == 2 else ''}.pth"))
 
-    print(f"done in {(time.time()-began)/60:.1f} min → {args.out}/span_ch{args.channels}u.pth")
+    print(f"done in {(time.time()-began)/60:.1f} min → "
+          f"{args.out}/span_ch{args.channels}u{suffix}"
+          f"{'v2' if args.version == 2 else ''}.pth")
 
 
 if __name__ == "__main__":
