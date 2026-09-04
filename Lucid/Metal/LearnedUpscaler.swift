@@ -174,19 +174,32 @@ final class LearnedUpscaler: @unchecked Sendable {
         // re-measured after the model changed, because a comment already
         // answered the question.
         //
-        // It stays on the Neural Engine anyway, for now, because those are
-        // isolated numbers. In the running app the detail stages are Metal
-        // compute on that same GPU, so moving the model there trades separate
-        // silicon for contention with our own pipeline, and an earlier
-        // measurement found ANE and GPU work running concurrently *lost*
-        // aggregate throughput (15.5 to 11.8 fps) rather than gaining it. The
-        // GPU figures above were also taken with the Mac otherwise idle, which
-        // is the best case and not the shipping case.
+        // The obvious objection to moving off the Neural Engine is that the
+        // detail stages are Metal compute on that same GPU, so the model would
+        // contend with our own pipeline instead of running on separate silicon.
+        // Measured end to end at 854x480 with the detail stages on and the
+        // shipping tuning, 60 frames, two repeats:
         //
-        // Switching needs an end-to-end A/B on a real page measuring frame
-        // time, not model time. Until that exists this is the conservative
-        // choice, not the proven one.
-        configuration.computeUnits = .cpuAndNeuralEngine
+        //                total          model          detail
+        //     ANE     32.21 / 29.39   28.33 / 26.11   3.25 / 2.70
+        //     GPU     18.77 / 19.68   16.62 / 17.18   1.78 / 2.04
+        //
+        // The contention did not materialise. The GPU is about 10 ms faster on
+        // the whole frame, and the detail stage is *faster* alongside it than
+        // it was alongside the Neural Engine - so the two were competing for
+        // something even when they looked independent. On the Neural Engine
+        // 480p sat at a 33.3 ms frame with p95 over budget; on the GPU it has
+        // room.
+        //
+        // LUCID_COMPUTE_UNITS=ane|gpu|all overrides this. Worth keeping: these
+        // numbers are an M4 Pro, the balance between the two engines differs
+        // across the range, and this should be re-measured rather than assumed
+        // on any machine whose GPU is smaller relative to its Neural Engine.
+        switch ProcessInfo.processInfo.environment["LUCID_COMPUTE_UNITS"]?.lowercased() {
+        case "ane": configuration.computeUnits = .cpuAndNeuralEngine
+        case "all": configuration.computeUnits = .all
+        default: configuration.computeUnits = .cpuAndGPU
+        }
         model = try MLModel(contentsOf: compiled, configuration: configuration)
         guard let input = model.modelDescription.inputDescriptionsByName.first,
               let output = model.modelDescription.outputDescriptionsByName.first,
