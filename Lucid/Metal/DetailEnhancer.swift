@@ -373,7 +373,7 @@ kernel void grade_luma(texture2d<float, access::read>  source      [[texture(0)]
     if (grain > 0.0f && stats[3] > 0u) {
         const float detail = float(stats[1]) / float(stats[3]);
         // 0.02 is roughly the off-grid figure of a normally textured frame.
-        const float scale = clamp(detail / 0.02f, 0.35f, 1.0f);
+        const float scale = clamp(detail / 0.02f, 0.25f, 1.0f);
         grain *= scale;
     }
     if (grain > 0.0f) {
