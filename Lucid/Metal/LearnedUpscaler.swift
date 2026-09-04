@@ -60,14 +60,26 @@ final class LearnedUpscaler: @unchecked Sendable {
     /// multiple of 16 and the frame is stretched that last 1.4% on the way in.
     /// Nothing is lost: the page draws the result into the video box, which
     /// has the true aspect, so the stretch is undone on presentation.
+    /// Measured end to end on the shipping path - model, colour conversions and
+    /// the detail stages together - on an M4 Pro's GPU, 60 frames after 8 warm
+    /// up, two repeats each. Not the model in isolation, and not arithmetic:
+    /// the first version of this table added an estimate for everything that
+    /// was not the model, and the estimate was the part that was wrong.
     static let variants: [Variant] = [
-        Variant(width: 256, height: 144, milliseconds: 3.5),    // 2.38 model + 0.5 convert + detail
-        Variant(width: 320, height: 180, milliseconds: 5.2),    // 3.54 + 0.7
-        Variant(width: 432, height: 240, milliseconds: 9.1),    // 6.40 + 1.1, covers 426x240
-        Variant(width: 480, height: 270, milliseconds: 11.6),   // 7.92 + 1.7
-        Variant(width: 640, height: 360, milliseconds: 18.2),   // 12.53 + 2.8
-        Variant(width: 864, height: 480, milliseconds: 32.7),   // 23.50 + 4.2, covers 854x480
+        Variant(width: 256, height: 144, milliseconds: 2.9),
+        Variant(width: 320, height: 180, milliseconds: 3.7),
+        Variant(width: 432, height: 240, milliseconds: 5.8),    // covers 426x240
+        Variant(width: 480, height: 270, milliseconds: 6.8),
+        Variant(width: 640, height: 360, milliseconds: 10.7),
+        Variant(width: 864, height: 480, milliseconds: 17.8),   // covers 854x480
     ]
+
+    /// 1280x720 is the ceiling, and it is a real one rather than a near miss:
+    /// measured at 37.0-37.5 ms against a 33.3 ms frame, of which the model
+    /// alone is 33.4-33.9. Removing every stage after the model would still
+    /// leave it over budget, so this is a property of the model at that size
+    /// and not something tuning can recover. It is also where the returns stop
+    /// - a 720p source is already close to what most windows display.
 
     /// The target window is Microsoft Edge's: enabled below 720p. Edge arrived
     /// at that independently, from inside a browser compositor, which is worth
@@ -104,8 +116,11 @@ final class LearnedUpscaler: @unchecked Sendable {
     /// runs at 24-30fps; 60fps material is published at 720p and above, which
     /// is outside the window Lucid works in anyway.
     ///
-    /// 864x480 sits at 32.7 ms, so it is the one size with almost no headroom.
-    /// If frames start dropping in real use, it is the first thing to remove.
+    /// Every rung now has room. 864x480 sits at 17.8 ms of a 33.3 ms frame and
+    /// 640x360 at 10.7, where before the move to the GPU 480p was at 32.7 with
+    /// nothing to spare. That headroom is the budget for detail stages coming
+    /// back, and for a larger model: at 360p the model itself is 9.2 ms of a
+    /// 33.3 ms frame, so there is room for one roughly three times its cost.
     ///
     /// A source with no variant under this budget is not enhanced at all.
     /// There is no second engine to fall back to: Apple's scaler measured
