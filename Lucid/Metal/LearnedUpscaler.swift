@@ -48,11 +48,19 @@ final class LearnedUpscaler: @unchecked Sendable {
     }
 
     /// Every width here is a multiple of 16, and that is the most important
-    /// thing about this table. The Neural Engine tiles along width, so a width
-    /// that is not a multiple of 16 pays for an entire extra pass:
+    /// thing about this table. An unaligned width costs a multiple, not a
+    /// margin, and it is not a Neural Engine quirk - the GPU cares more:
     ///
-    ///     426x240   23.0 ms          432x240   13.6 ms
-    ///     854x480   92.4 ms          864x480   48.2 ms
+    ///                        ANE      GPU
+    ///     432x240  aligned   6.24     4.36
+    ///     426x240  native   14.61    13.41     3.1x on the GPU
+    ///     864x480  aligned            14.68
+    ///     854x480  native             50.82    3.5x on the GPU
+    ///
+    /// That was worth checking rather than assuming, because the rule was
+    /// originally measured on the Neural Engine and the model now runs on the
+    /// GPU by default - so the obvious guess was that two of these six rungs
+    /// existed to solve a problem we no longer had. The opposite is true.
     ///
     /// Height alignment buys nothing - 480x272 measured *slower* than 480x270,
     /// by exactly the two extra rows of pixels. So the real streaming sizes
