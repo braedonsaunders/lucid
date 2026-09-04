@@ -339,6 +339,7 @@ kernel void deblock_luma(texture2d<float, access::read>  source      [[texture(0
 kernel void grade_luma(texture2d<float, access::read>  source      [[texture(0)]],
                        texture2d<float, access::write> destination [[texture(1)]],
                        constant float4&                params      [[buffer(0)]],
+                       device const uint*              stats       [[buffer(1)]],
                        uint2                           gid         [[thread_position_in_grid]])
 {
     if (gid.x >= source.get_width() || gid.y >= source.get_height()) { return; }
@@ -355,7 +356,26 @@ kernel void grade_luma(texture2d<float, access::read>  source      [[texture(0)]
     // gradient noise is not true blue noise but has none of white noise's
     // low-frequency energy, and the per-frame offset keeps it from standing
     // still. params.w carries strength, and the frame index rides in its sign.
-    const float grain = abs(params.w);
+    // Grain is scaled to how much real detail this frame has, and that is not
+    // a refinement - a fixed amount is wrong by an order of magnitude between
+    // clips. Measured on two valid pairs: on a textured clip the stage moved
+    // fine-band energy by 0.057, on a smooth one by 1.366, from the same
+    // setting. On that smooth clip the output carried 1.55x the reference's
+    // high-frequency energy and 88% of it was grain - the model reconstructed
+    // 0.18 and grain invented the rest.
+    //
+    // stats[1]/stats[3] is the mean off-grid second difference, already
+    // computed for the adaptive deblocker: real detail, measured off the
+    // transform grid so blocking does not count as texture. Grain is held to a
+    // fraction of it, with a floor so a genuinely flat gradient still gets
+    // enough noise to break banding, which is what the stage is for.
+    float grain = abs(params.w);
+    if (grain > 0.0f && stats[3] > 0u) {
+        const float detail = float(stats[1]) / float(stats[3]);
+        // 0.02 is roughly the off-grid figure of a normally textured frame.
+        const float scale = clamp(detail / 0.02f, 0.35f, 1.0f);
+        grain *= scale;
+    }
     if (grain > 0.0f) {
         const float2 p = float2(gid) + fract(params.w * 100.0f) * 5.588238f;
         const float ign = fract(52.9829189f * fract(0.06711056f * p.x + 0.00583715f * p.y));
@@ -1305,6 +1325,10 @@ final class DetailEnhancer: @unchecked Sendable {
                     : 0
                 var params = SIMD4<Float>(settings.blackPoint, settings.whitePoint, settings.contrast, grainTerm)
                 encoder.setBytes(&params, length: MemoryLayout<SIMD4<Float>>.stride, index: 0)
+                // The same per-frame statistics the adaptive deblocker uses, so
+                // grain can be held to a fraction of the detail actually present
+                // rather than added at a fixed amount to every kind of picture.
+                encoder.setBuffer(frameStats, offset: 0, index: 1)
                 encoder.dispatchThreadgroups(groups(width, height), threadsPerThreadgroup: threads)
                 encoder.endEncoding()
                 currentBuffer = out
