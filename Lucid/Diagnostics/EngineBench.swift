@@ -156,6 +156,15 @@ enum EngineBench {
         var index = 0
 
         while index < first + count, let sample = input.copyNextSampleBuffer(), let frame = sample.imageBuffer {
+            // Tag the SOURCE, not just whatever comes out of it. The reader
+            // propagates the container's colour attachments, so the incoming
+            // frame already claims Left siting and the pixel transfer resamples
+            // chroma at that claim before anything downstream gets a say.
+            // Setting the static alone changed nothing: two bench runs with
+            // opposite settings produced byte-identical output, which read as
+            // "this stage does nothing" when it meant "this stage was never
+            // reached".
+            TiledVideoToolboxUpscaler.ensureColorDescription(frame)
             let referenceFrame = reference.copyNextSampleBuffer()?.imageBuffer
             let width = CVPixelBufferGetWidth(frame), height = CVPixelBufferGetHeight(frame)
 
