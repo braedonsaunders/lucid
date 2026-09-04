@@ -371,7 +371,15 @@ kernel void grade_luma(texture2d<float, access::read>  source      [[texture(0)]
     // enough noise to break banding, which is what the stage is for.
     float grain = abs(params.w);
     if (grain > 0.0f && stats[3] > 0u) {
-        const float detail = float(stats[1]) / float(stats[3]);
+        // /8192 because measure_frame accumulates uint(step * 8192) to keep an
+        // integer atomic useful - so this buffer is not in luma units. Every
+        // previous consumer took a RATIO of two of its terms, where the factor
+        // cancels and nobody had to know. This is the first place the value is
+        // used as an absolute quantity, and without the conversion the scale
+        // below clamped to 1.0 on every frame that was not perfectly flat: the
+        // law was a no-op, and shipped twice before the before/after comparison
+        // caught two numbers agreeing to four decimal places.
+        const float detail = float(stats[1]) / float(stats[3]) / 8192.0f;
         // 0.02 is roughly the off-grid figure of a normally textured frame.
         const float scale = clamp(detail / 0.02f, 0.25f, 1.0f);
         grain *= scale;
