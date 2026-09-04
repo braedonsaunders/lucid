@@ -82,7 +82,15 @@ struct ControlPanel: View {
                     .frame(width: 7, height: 7)
             }
             VStack(alignment: .leading, spacing: 1) {
-                Text("Lucid").font(.system(size: 13, weight: .semibold))
+                HStack(alignment: .firstTextBaseline, spacing: 5) {
+                    Text("Lucid").font(.system(size: 13, weight: .semibold))
+                    // The build, next to the name. This app gets replaced
+                    // several times an hour during tuning and "am I looking at
+                    // the version I just installed" should not need Get Info.
+                    Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")
+                        .font(.system(size: 10, weight: .regular).monospacedDigit())
+                        .foregroundStyle(.tertiary)
+                }
                 Text(model.status.isEmpty ? "Idle" : model.status)
                     .font(.system(size: 10.5))
                     .foregroundStyle(.secondary)

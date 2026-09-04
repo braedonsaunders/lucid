@@ -188,6 +188,16 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
         menu.addItem(lab)
 
         menu.addItem(.separator())
+        // Which build this is. Worth having in the menu rather than only in
+        // Get Info: this app is replaced often, and "is the thing running the
+        // thing I just built" is otherwise answered by guesswork.
+        let bundle = Bundle.main.infoDictionary
+        let short = bundle?["CFBundleShortVersionString"] as? String ?? "?"
+        let version = NSMenuItem(title: "Lucid \(short)", action: nil, keyEquivalent: "")
+        version.isEnabled = false
+        menu.addItem(version)
+
+        menu.addItem(.separator())
         let quit = NSMenuItem(title: "Quit Lucid", action: #selector(quit), keyEquivalent: "q")
         quit.target = self
         menu.addItem(quit)
