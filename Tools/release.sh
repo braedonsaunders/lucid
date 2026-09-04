@@ -68,7 +68,7 @@ xcodebuild -project Lucid.xcodeproj -scheme Lucid -configuration Release \
 resources="$app/Contents/Resources"
 mkdir -p "$resources"
 for size in 256x144 320x180 432x240 480x270 640x360 864x480; do
-  model="$repo/Model/SPAN_x4_ch32u_$size.mlpackage"
+  model="$repo/Model/SPAN_x4_ch32utc_$size.mlpackage"
   [[ -d "$model" ]] || { echo "  missing $(basename "$model")"; continue; }
   name="$(basename "${model%.mlpackage}")"
   if [[ ! -d "$resources/$name.mlmodelc" ]]; then

@@ -47,7 +47,7 @@ resources="$app_path/Contents/Resources"
 mkdir -p "$resources"
 missing=0
 for size in 256x144 320x180 432x240 480x270 640x360 864x480; do
-  model="$repo_dir/Model/SPAN_x4_ch32u_$size.mlpackage"
+  model="$repo_dir/Model/SPAN_x4_ch32utc_$size.mlpackage"
   if [[ ! -d "$model" ]]; then
     echo "  missing $(basename "$model")"
     missing=1

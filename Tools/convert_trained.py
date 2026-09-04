@@ -54,7 +54,16 @@ def main():
     globals_for_convert = dict(ns)
     exec(compile(open(os.path.join(os.path.dirname(__file__), "convert_span.py")).read()
                  .split("if __name__")[0], "convert_span", "exec"), globals_for_convert)
-    globals_for_convert["CHANNELS"] = f"{channels}u{'t' if frames > 1 else ''}"
+    # Name the packages after the checkpoint they came from. Deriving the label
+    # instead - from the channel count and the frame count - cannot express what
+    # a checkpoint was trained *with*, so two models that differ only in their
+    # objective would land on the same filename and overwrite each other. The
+    # app selects a model by exactly this stem via LUCID_MODEL_STEM, so the file
+    # on disk and the checkpoint that made it can never disagree.
+    name = os.path.basename(args.weights).replace(".pth", "")
+    label = name[len("span_ch"):] if name.startswith("span_ch") else \
+        f"{channels}u{'t' if frames > 1 else ''}"
+    globals_for_convert["CHANNELS"] = label
     globals_for_convert["SCALE"] = 4
 
     for width, height in LADDER:

@@ -8,14 +8,29 @@
 //  Scored on 120 pairs of live-action footage in neither training corpus,
 //  against a plain Lanczos upscale:
 //
-//                     LPIPS     DISTS    detail
-//      ch32u          0.5664    0.1967     0.32
-//      lanczos        0.6129    0.2243     0.24
+//                     LPIPS     DISTS   BRISQUE   detail
+//      ch32utc        0.5336    0.1986     52.1     0.38
+//      ch32u          0.5664    0.1967     64.5     0.32
+//      lanczos        0.6129    0.2243     65.7     0.24
 //
-//  LPIPS and DISTS are perceptual distances, lower is better. `detail` is
-//  fine-band energy as a fraction of the reference's, where the truth is 1.00 -
-//  so this model carries a third of the high-frequency structure the source
-//  material has, and that headroom is what the work after this one is for.
+//  LPIPS and DISTS are perceptual distances and BRISQUE is a no-reference
+//  quality score; lower is better for all three. `detail` is fine-band energy
+//  as a fraction of the reference's, where the truth is 1.00.
+//
+//  The `tc` model is trained with a temporal consistency term: it is penalised
+//  for changing its mind where the source did not move. Two frames of a still
+//  scene are the same picture under two draws of codec noise, so forbidding the
+//  output to follow that difference stops the model spending capacity fitting
+//  noise - which is why a term aimed at stability also raised detail and
+//  lowered every perceptual score but DISTS.
+//
+//  It costs nothing here. The term needs a second frame during training and
+//  none at inference, so this is still a single-frame model, the graph is
+//  unchanged and so is every latency below.
+//
+//  Measured on the shipping pipeline, it shimmers 11.1% less than the model it
+//  replaces on a near-still clip and 2.7% more on a fast-motion one - the trade
+//  it was chosen for, since a still scene is where a viewer sees shimmer.
 //
 //  Against the models it replaces, at 480x270: ch32u runs in 7.92 ms where the
 //  previous ch28 took 14.7 ms and ch48 took 21.8 ms.
@@ -182,7 +197,7 @@ final class LearnedUpscaler: @unchecked Sendable {
         // variants table (or is over budget). isEnhanceable still reads the
         // table; this path is measurement only.
         if CommandLine.arguments.contains("--pipeline-ms") {
-            let stem = ProcessInfo.processInfo.environment["LUCID_MODEL_STEM"] ?? "SPAN_x4_ch32u_"
+            let stem = ProcessInfo.processInfo.environment["LUCID_MODEL_STEM"] ?? "SPAN_x4_ch32utc_"
             let exact = "\(stem)\(width)x\(height)"
             if let url = Bundle.main.url(forResource: exact, withExtension: "mlmodelc")
                 ?? Bundle.main.url(forResource: exact, withExtension: "mlpackage") {
@@ -194,7 +209,7 @@ final class LearnedUpscaler: @unchecked Sendable {
         // candidate can be measured through the real pipeline by the same
         // harness that measures the shipping one. Comparing two models by
         // rebuilding the app between them compares two builds.
-        let stem = ProcessInfo.processInfo.environment["LUCID_MODEL_STEM"] ?? "SPAN_x4_ch32u_"
+        let stem = ProcessInfo.processInfo.environment["LUCID_MODEL_STEM"] ?? "SPAN_x4_ch32utc_"
         let name = "\(stem)\(variant.width)x\(variant.height)"
         return Bundle.main.url(forResource: name, withExtension: "mlmodelc")
             ?? Bundle.main.url(forResource: name, withExtension: "mlpackage")
