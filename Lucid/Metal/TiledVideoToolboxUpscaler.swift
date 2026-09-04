@@ -236,6 +236,26 @@ final class TiledVideoToolboxUpscaler {
         for (key, value) in defaults where CVBufferCopyAttachment(buffer, key, nil) == nil {
             CVBufferSetAttachment(buffer, key, value, .shouldPropagate)
         }
+        // Chroma siting is set unconditionally, unlike the tags above.
+        //
+        // Filling it only when missing made the control inert wherever a frame
+        // arrived already tagged - which is every frame in the offline bench,
+        // since an AVAssetReader propagates the container's colour attachments.
+        // That is why toggling this stage measured exactly 0.0000 on every
+        // band: not a stage that does nothing, a stage that could not be
+        // reached. A control that cannot move is worse than an absent one.
+        //
+        // Overriding is also the correct default for what Lucid actually sees.
+        // H.264 and VP9 4:2:0 site chroma on the left luma column by
+        // specification, and streaming encoders routinely omit or mis-tag it;
+        // an untagged or centre-tagged buffer shifts colour half a luma pixel,
+        // which is two whole pixels after a 4x upscale.
+        let siting = chromaSitingLeft
+            ? kCVImageBufferChromaLocation_Left : kCVImageBufferChromaLocation_Center
+        for key in [kCVImageBufferChromaLocationTopFieldKey,
+                    kCVImageBufferChromaLocationBottomFieldKey] {
+            CVBufferSetAttachment(buffer, key, siting, .shouldPropagate)
+        }
     }
 
     private static func makeTileRects(layout: Layout, width: Int, height: Int) -> [(core: CGRect, input: CGRect)] {
