@@ -723,7 +723,7 @@ final class EnhancementSession {
                 sharpness = 0; fine = 0; blackPoint = 0; whitePoint = 1
                 contrast = 0; saturation = 1; sourceDeblock = 0; micro = 0
             case .subtle:
-                sharpness = 0.25; fine = 0; blackPoint = 0.020; whitePoint = 0.990
+                sharpness = 0.40; fine = 0; blackPoint = 0.020; whitePoint = 0.990
                 contrast = 0.10; saturation = 1.0; sourceDeblock = 0; micro = 0
             case .standard:
                 // Swept on the adversarially fine-tuned model against the
@@ -731,10 +731,10 @@ final class EnhancementSession {
                 // sweep wanted 0.5, it buys 0.0007 of DISTS - noise - and adds
                 // 20% to the overshoot, and when the primary metric cannot
                 // separate two settings the tiebreak is risk.
-                sharpness = 0.50; fine = 0; blackPoint = 0.020; whitePoint = 0.990
+                sharpness = 0.75; fine = 0; blackPoint = 0.020; whitePoint = 0.990
                 contrast = 0.20; saturation = 1.0; sourceDeblock = 0; micro = 0
             case .strong:
-                sharpness = 0.75; fine = 0; blackPoint = 0.030; whitePoint = 0.985
+                sharpness = 1.00; fine = 0; blackPoint = 0.030; whitePoint = 0.985
                 contrast = 0.30; saturation = 1.0; sourceDeblock = 0; micro = 0
             }
         }
