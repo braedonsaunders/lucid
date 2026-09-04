@@ -1,0 +1,91 @@
+Lucid
+Copyright (c) 2026 Braedon Saunders
+
+Lucid itself is licensed under the MIT License; see LICENSE.
+
+This file records third-party work that Lucid is built on and that carries its
+own licence terms. It exists mainly for one item — SPAN — because the model
+Lucid ships is a derivative of Apache-2.0 licensed code, and Apache-2.0 section
+4 asks that redistributions carry the licence and attribution with them.
+
+
+================================================================================
+SPAN — Swift Parameter-free Attention Network for Efficient Super-Resolution
+================================================================================
+
+    Licence:  Apache License, Version 2.0
+    Source:   https://github.com/hongyuanyu/SPAN
+    Paper:    Wan et al., "Swift Parameter-free Attention Network for Efficient
+              Super-Resolution", CVPR Workshops 2024
+
+Lucid's upscaler is derived from the SPAN architecture. It is not the published
+network and it does not use the published weights:
+
+  * The trunk is rearranged. A PixelUnshuffle(2) is placed before it so the 18
+    trunk convolutions run at quarter area and the reconstruction head does x8
+    instead of x4. See Tools/train_span.py, class `Unshuffled`.
+  * `img_range` is 1 and the RGB mean is zero, rather than the stock 255 scaling.
+  * The weights are trained from scratch by this project on a corpus of real
+    codec degradation (libx264 and libvpx-vp9 at 90 kbps to 1.5 Mbps, GOP 30 to
+    250), not on bicubic downsampling. No published SPAN checkpoint is used.
+
+The Core ML packages under Model/SPAN_x4_ch32u_*.mlpackage that ship inside
+Lucid.app are the output of that training, converted for the Neural Engine.
+Because they are produced by code derived from SPAN, they are covered by this
+attribution.
+
+A copy of the Apache License, Version 2.0 is available at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+The upstream SPAN checkout, when present, lives at Model/SPAN and carries its
+own LICENSE and LICENSE/ directory. It is not tracked in this repository and is
+not redistributed here; Tools/convert_span.py loads the architecture from it.
+That checkout also vendors licences for pytorch-image-models, SwinIR,
+stylegan2-pytorch and an NVIDIA source file, which apply to the parts of BasicSR
+those came from and not to anything Lucid ships.
+
+
+================================================================================
+Algorithms implemented from published descriptions
+================================================================================
+
+The filters in Lucid/Metal/DetailEnhancer.swift are written here from the
+published descriptions of the following work. No code was copied from these
+projects, and they are named because the ideas are theirs:
+
+  * CDEF, the constrained directional enhancement filter, from AV1
+    — Steinar Midtskogen and Jean-Marc Valin. The per-direction divisor table
+      matches the one used by dav1d.
+  * Temporal accumulation with neighbourhood clipping
+    — Brian Karis (temporal anti-aliasing) and Playdead's shipped implementation.
+  * Stochastic debanding
+    — the approach used by libplacebo and mpv.
+  * Contrast-adaptive sharpening
+    — the lobe from AMD FidelityFX CAS.
+  * Oklab
+    — Bjorn Ottosson.
+  * The deblocking filter
+    — ITU-T Recommendation H.264, Tables 8-16 and 8-17, run without a bitstream.
+
+
+================================================================================
+Test material
+================================================================================
+
+Test clips are not distributed in this repository. Those referenced by
+TestSite/ and by the training corpus generator are re-encodable from public
+sources:
+
+  * Big Buck Bunny and Sintel — (c) Blender Foundation, CC BY 3.0.
+  * Netflix Chimera test sequences — CC BY, via media.xiph.org.
+
+
+================================================================================
+Trademarks
+================================================================================
+
+Lucid is not affiliated with, endorsed by, or sponsored by NVIDIA, Apple,
+Microsoft or Google. RTX Video Super Resolution is a trademark of NVIDIA
+Corporation and is named in the documentation only to describe, by comparison,
+what this project does.

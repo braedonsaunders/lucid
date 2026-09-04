@@ -25,9 +25,26 @@ DerivedData/
 default.profraw
 
 # Lucid
-# Converted Core ML models: ~1.9 GB, and nothing reads them since the learned
-# engine was removed.
-Model/
+# Converted Core ML models. Model/ is ~1.9 GB, but almost none of it ships:
+# 880 MB of EfRLFN and 19 MB of Real-ESRGAN were converted only to measure
+# against, Model/SPAN is the upstream BasicSR checkout, and Model/weights holds
+# training checkpoints. None of those belong in git.
+#
+# The six packages the app actually loads are a different matter: they are
+# 527 kB each, 3.0 MB for the whole ladder, and without them a clone is useless.
+# LearnedUpscaler is the only upscaler and has no fallback by design, so a build
+# missing these throws Failure.noModel on every session and the app silently
+# enhances nothing. Three megabytes is a cheap price for `git clone` producing a
+# working app, so the shipping ladder is tracked and the rest stays ignored.
+#
+# Keep this list in step with LearnedUpscaler.variants and Tools/release.sh.
+Model/*
+!Model/SPAN_x4_ch32u_256x144.mlpackage
+!Model/SPAN_x4_ch32u_320x180.mlpackage
+!Model/SPAN_x4_ch32u_432x240.mlpackage
+!Model/SPAN_x4_ch32u_480x270.mlpackage
+!Model/SPAN_x4_ch32u_640x360.mlpackage
+!Model/SPAN_x4_ch32u_864x480.mlpackage
 # Test clips are large and re-encodable from public sources; see TestSite/README.
 TestSite/*.mp4
 TestSite/*.webm

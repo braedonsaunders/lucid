@@ -38,7 +38,8 @@ def main():
     state = torch.load(args.weights, map_location="cpu", weights_only=False)
     channels = state.get("channels", args.channels)
     frames = state.get("frames", 1)
-    model = Unshuffled(channels, frames=frames).eval()
+    model = Unshuffled(channels, frames=frames,
+                       version=state.get("version", 1)).eval()
     model.load_state_dict(state["model"] if "model" in state else state)
     step = state.get("step", "?")
     parameters = sum(p.numel() for p in model.parameters())

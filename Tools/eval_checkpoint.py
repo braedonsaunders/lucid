@@ -51,7 +51,8 @@ def score(output, reference):
 def load(path, device):
     state = torch.load(path, map_location="cpu", weights_only=False)
     frames = state.get("frames", 1)
-    model = Unshuffled(state.get("channels", 32), frames=frames).eval().to(device)
+    model = Unshuffled(state.get("channels", 32), frames=frames,
+                       version=state.get("version", 1)).eval().to(device)
     model.load_state_dict(state["model"] if "model" in state else state)
     return model, state.get("step", "?"), frames
 

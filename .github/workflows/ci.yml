@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Cheap, and it guards the failure mode that has actually bitten this repo:
+  # the four places that name the model ladder drifting apart, which produces an
+  # app that builds, launches, connects and enhances nothing. No Xcode needed.
+  ladder:
+    name: Model ladder is consistent
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install zsh
+        run: sudo apt-get update && sudo apt-get install -y zsh
+      - name: Check ladder
+        run: Tools/check-ladder.sh
+
+      # The shipping packages are 3 MB in total and are tracked on purpose:
+      # LearnedUpscaler is the only upscaler and has no fallback, so a clone
+      # without them silently enhances nothing. Guard the size too, so nobody
+      # un-ignores the 880 MB of comparison models by accident.
+      - name: Shipping models are present and small
+        run: |
+          set -eu
+          bytes=$(du -sb Model | cut -f1)
+          mb=$((bytes / 1048576))
+          echo "Model/ in the repo is ${mb} MB"
+          test "$mb" -lt 32 || {
+            echo "::error::Model/ is ${mb} MB. Only the six shipping packages (~3 MB) belong in git."
+            exit 1
+          }
+
+  test:
+    name: Build and unit tests
+    # Lucid needs macOS 26 and the matching SDK. If the hosted image is older
+    # than that this job will fail at build time rather than silently testing
+    # something else; that is the honest failure and the fix is the image, not
+    # a lowered deployment target.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: |
+          sw_vers
+          xcodebuild -version
+
+      # LucidTests is pure geometry, policy and layout arithmetic: no capture,
+      # no Metal, no VideoToolbox, so it runs on a hosted runner with no
+      # permissions and no GPU. LucidUITests is deliberately not run - it only
+      # asserts that the app launches without a window, needs a real session,
+      # and would be a flake generator here.
+      - name: Unit tests
+        run: |
+          xcodebuild \
+            -project Lucid.xcodeproj \
+            -scheme Lucid \
+            -configuration Debug \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            test -only-testing:LucidTests \
+            CODE_SIGNING_ALLOWED=NO \
+            SDK_STAT_CACHE_ENABLE=NO \
+            COMPILATION_CACHE_ENABLE_CACHING=NO

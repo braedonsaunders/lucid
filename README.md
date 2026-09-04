@@ -57,7 +57,7 @@ stacks like the video does. One path, every site.
 
 | Stage | Default | What it is for |
 |---|---|---|
-| Chroma siting | **on** | H.264/VP9 4:2:0 is left-sited. Untagged buffers get read as centre-sited, which shifts colour half a luma pixel — two whole pixels after a 4× upscale. |
+| Chroma siting | **on** | H.264/VP9 4:2:0 is left-sited. Untagged buffers get read as centre-sited, which shifts colour half a luma pixel — two whole pixels after a 4× upscale. The reasoning is solid and the tag is cheap, but it measures **exactly 0.0000** on every band on the clips tested, and it is not yet settled whether that means it does nothing on this content or the bench has a gap. On because it is free, not because it is proven. |
 | Temporal (neighbourhood clip) | **on** | Karis/Playdead-style history clamping. Steadies compression noise. Fails to softening rather than ghosting. |
 | Oklab saturation | **on** | Y′CbCr is non-constant-luminance, so a naive chroma multiply makes saturated red measurably *brighter*. Doing it in Oklab does not. |
 | Blind H.264 loop filter | off | The normative deblocking filter, run without a bitstream. |
@@ -91,33 +91,61 @@ their trademark, named here only to say plainly what this is.
 | Source | | Neural Engine |
 |---|---|---|
 | Below 128×72 | left alone — too little to reconstruct from | |
-| **144p** (256×144) | **enhanced** | 4.5 ms |
-| **180p** (320×180) | **enhanced** | 7.0 ms |
-| **240p** (426×240) | **enhanced** | 13.6 ms |
-| **270p** (480×270) | **enhanced** | 14.7 ms |
-| **360p** (640×360) | **enhanced** | 26.7 ms |
-| 480p and above | left alone | 48 ms — past the frame budget |
+| **144p** (256×144) | **enhanced** | 3.5 ms |
+| **180p** (320×180) | **enhanced** | 5.2 ms |
+| **240p** (426×240) | **enhanced** | 9.1 ms |
+| **270p** (480×270) | **enhanced** | 11.6 ms |
+| **360p** (640×360) | **enhanced** | 18.2 ms |
+| **480p** (854×480) | **enhanced** | 32.7 ms — fits, with 0.6 ms to spare |
+| 720p and above | left alone | nothing in the table covers it |
 
 The ceiling is a frame budget, not a resolution: one frame at 30fps, less what
 the rest of the pipeline costs. Above it Lucid does nothing at all rather than
 reaching for a weaker upscaler, because the weaker upscaler measured worse than
 leaving the frame alone.
 
-**The target is the window Microsoft Edge uses: enabled below 720p.** Edge
-reached that independently, from inside a browser compositor, and NVIDIA's RTX
-VSR declines on the same principle — below 720p is where a source is genuinely
-short of what the display is showing, and above it there is progressively less
-to recover. Reaching it needs the 854×480 tier, which the shipping model cannot
-carry in budget and the next one can; see `LearnedUpscaler.swift` for the
-arithmetic. Until then the ceiling is 360p.
+**The target is the window Microsoft Edge uses: enabled below 720p, and Lucid
+now reaches it.** Edge got there independently, from inside a browser
+compositor, and NVIDIA's RTX VSR declines on the same principle — below 720p is
+where a source is genuinely short of what the display is showing, and above it
+there is progressively less to recover.
+
+Reaching it took the 854×480 tier, which the previous model could not carry:
+ch28 needed 48.2 ms for it, well past a 33.3 ms frame. The trained ch32u does
+the same tier in 23.5 ms. That is not a smaller network — it is a rearranged
+one. Folding a 2×2 block into the channel dimension before the trunk runs the
+18 trunk convolutions at quarter area and lets the head do ×8 instead of ×4,
+which is worth more than any channel count: measured on the Neural Engine this
+trunk is activation-bandwidth bound, not MAC bound, so the lever is pixels
+rather than channels. See `LearnedUpscaler.swift` for the arithmetic.
+
+Be honest about the top of that table: 480p lands at 32.7 ms against 33.3 ms.
+It fits and it has been measured fitting, but there is no headroom, and it is
+the first thing to remove if frames start dropping in real use. The 32.7 is the
+conservative figure and it is the one published here; with the shipping
+defaults, Colour sits at exactly 1.0, which skips the Oklab pass and hands back
+0.9 ms, so the real cost is nearer 31.8 ms. Quote the number that does not
+depend on a setting anyone can change.
+
+The model alone, without the colour conversions either side of it, is faster
+still — 2.38, 3.54, 6.40, 7.92, 12.53 and 23.50 ms across the ladder. The table
+above is the whole call, because that is what has to fit in a frame.
 
 Those timings are on an M4 Pro, and every input width in that table is a multiple
 of 16. That is not cosmetic. The Neural Engine tiles along width, so an unaligned
-width pays for an entire extra pass: 426×240 costs **23.0 ms**, 432×240 costs
-**13.6 ms**, for the same picture. Height alignment buys nothing. So the two real
+width pays for an entire extra pass. Measured on the ch28 ladder, where the
+effect was first found and is easiest to read:
+
+| | unaligned | aligned |
+|---|---|---|
+| 240p | 426×240 — **23.0 ms** | 432×240 — **13.6 ms** |
+| 480p | 854×480 — **92.4 ms** | 864×480 — **48.2 ms** |
+
+Same picture, nearly half the time. Height alignment buys nothing — 480×272
+measured *slower* than 480×270, by exactly the two extra rows. So the two real
 streaming sizes that are not aligned — 426 and 854 wide — run models converted at
 the next multiple of 16, and the 1.4% stretch is undone when the frame is drawn
-back into the video box.
+back into the video box. Without this, 480p would not fit the budget at all.
 
 It also stays out of the way unless the video is actually being stretched: the
 player has to be at least 1.15× the decoded width in real pixels before Lucid
@@ -126,7 +154,8 @@ and off as a window is resized.
 
 ## Requirements
 
-- **Apple silicon.** `VTLowLatencySuperResolutionScaler` is not available otherwise.
+- **Apple silicon.** The whole budget assumes the Neural Engine; the same graph
+  measured roughly twice as slow on the GPU, which puts it outside a frame.
 - **macOS 26 or later.**
 - Chrome, Edge or Safari, with the companion extension in `BrowserExtension/`.
 
@@ -231,4 +260,13 @@ they are all implemented here from their published descriptions:
 - **Oklab** — Björn Ottosson.
 - **The H.264 deblocking filter** — ITU-T H.264, run blind.
 
-Apple's `VTLowLatencySuperResolutionScaler` does the upscaling itself.
+The upscaler is **SPAN** — Wan et al., *Swift Parameter-free Attention Network
+for Efficient Super-Resolution* — rearranged to run its trunk at quarter area,
+and trained here from scratch on real codec degradation rather than on bicubic
+downsampling. The architecture is Apache-2.0; see [NOTICE](NOTICE).
+
+Apple's `VTLowLatencySuperResolutionScaler` is **not** in the shipping path. It
+was the original upscaler, and it was measured out: against a 1080p ground truth
+it scored below a plain Lanczos upscale, inventing a mottled texture in foliage
+that is not in the source. There is no fallback to it — see
+[When it runs](#when-it-runs).

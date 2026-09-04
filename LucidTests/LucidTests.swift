@@ -54,12 +54,24 @@ struct SessionPolicyTests {
 
     @Test @MainActor func enhanceableRejectsWrongSizesAndStates() {
         #expect(AppCoordinator.isEnhanceable(report(iw: 100, ih: 56)) == false)   // below 128x72
-        // The ceiling is the learned upscaler's table, not a round number:
-        // 640x360 is the largest size it carries inside the frame budget, so
-        // 854x480 and up are left alone rather than handed to a weaker scaler.
+        // The ceiling is the learned upscaler's table, not a round number: it is
+        // wherever a variant stops fitting the frame budget, and it moves when
+        // the model does. ch28 topped out at 640x360; the trained ch32u carries
+        // 864x480 in 32.7 ms against a 33.0 ms budget, so 480p is now inside the
+        // window and this test moved with it rather than pinning the old number.
         #expect(AppCoordinator.isEnhanceable(report(iw: 3840, ih: 2160)) == false)
+        // 854x480 is the top of the ladder: not aligned to 16, so like 426 it has
+        // to reach the next multiple - the 864-wide model - and it enhances.
+        #expect(LearnedUpscaler.variant(width: 854, height: 480)?.width == 864)
         let dvd = report(dpr: 2, iw: 854, ih: 480, rectX: 0, rectY: 0, rectW: 1040, rectH: 585)
-        #expect(AppCoordinator.isEnhanceable(dvd) == false)
+        #expect(AppCoordinator.isEnhanceable(dvd) == true)
+        // 720p is the first size past the top of the ladder, and it is the
+        // product boundary too: the target window is Edge's, enabled below 720p.
+        // Nothing covers it, so Lucid declines rather than reaching for a weaker
+        // upscaler that measured worse than leaving the frame alone.
+        #expect(LearnedUpscaler.variant(width: 1280, height: 720) == nil)
+        let hd = report(dpr: 2, iw: 1280, ih: 720, rectX: 0, rectY: 0, rectW: 1600, rectH: 900)
+        #expect(AppCoordinator.isEnhanceable(hd) == false)
         // 144p is the case that needs the most help, so it has to be inside the
         // window rather than rejected for being small.
         let tiny = report(dpr: 2, iw: 256, ih: 144, rectX: 0, rectY: 0, rectW: 1040, rectH: 585)

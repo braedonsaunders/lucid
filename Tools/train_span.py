@@ -46,9 +46,10 @@ class Unshuffled(nn.Module):
     stops existing.
     """
 
-    def __init__(self, channels=32, scale=SCALE, frames=1):
+    def __init__(self, channels=32, scale=SCALE, frames=1, version=1):
         super().__init__()
         self.frames = frames
+        self.version = version
         self.unshuffle = nn.PixelUnshuffle(2)
         # 3 RGB channels per frame, x4 from the 2x2 unshuffle. One frame is 12
         # channels in; three consecutive frames are 36, and that extra width
@@ -61,12 +62,63 @@ class Unshuffled(nn.Module):
         # rgb_mean is shaped (1,3,1,1) and the trunk takes 12*frames, so replace
         # it with something that broadcasts.
         self.core.mean = torch.zeros(1, 1, 1, 1)
+        if version == 2:
+            spanv2_attention(self.core, channels)
 
     def forward(self, x):
         """x is (B, 3*frames, H, W): the current frame last, so a single-frame
         checkpoint stays a prefix of a temporal one and the ordering is the same
         at training and at playback."""
         return self.core(self.unshuffle(x))
+
+
+def spanv2_attention(core, channels):
+    """Turns SPAN's blocks into SPANV2's.
+
+    SPAN's attention is `sigmoid(out3) - 0.5` - genuinely parameter-free, which
+    is what the P in the name stands for. SPANV2, which won NTIRE 2026, replaces
+    exactly that with a learned 1x1 projection: full channel mixing for C^2
+    parameters per block, so 1024 on a 32-channel block and about 5K across the
+    five of them. The thing SPAN was named for is the thing its successor
+    removed, and it came out both smaller and faster: 0.139M against 0.151M
+    parameters and 5.256 ms against 7.65 ms.
+
+    Done by rebinding rather than by editing the vendored architecture, so the
+    upstream checkout stays exactly as published and a v1 checkpoint still
+    loads into a v1 model.
+    """
+    def forward(self, x):
+        out1 = self.c1_r(x)
+        out2 = self.c2_r(self.act1(out1))
+        out3 = self.c3_r(self.act1(out2))
+        attention = torch.sigmoid(self.attn(out3)) - 0.5
+        return (out3 + x) * attention, out1, attention
+
+    blocks = [getattr(core, f"block_{i}") for i in range(1, 7)]
+    for block in blocks:
+        block.attn = nn.Conv2d(channels, channels, 1, bias=True)
+        # Start as an identity so the block begins life behaving like SPAN's
+        # parameter-free version and learns away from it, rather than starting
+        # from noise in the one place the whole block's output is gated.
+        nn.init.eye_(block.attn.weight.view(channels, channels))
+        nn.init.zeros_(block.attn.bias)
+        block.forward = forward.__get__(block, type(block))
+    return core
+
+
+def fft_loss(a, b):
+    """L1 in the frequency domain.
+
+    Every top team at NTIRE 2026 that reported a loss used one of these
+    alongside a pixel loss; the winner used L1 + 0.05 x FFT. It is the right
+    auxiliary for this project specifically: a pixel loss averages, and the
+    thing being optimised here is the high-frequency band that averaging
+    destroys - which is the band this project measures and the band a
+    compressed source has actually lost.
+    """
+    fa = torch.fft.rfft2(a.float(), norm="ortho")
+    fb = torch.fft.rfft2(b.float(), norm="ortho")
+    return (torch.abs(fa - fb)).mean()
 
 
 def charbonnier(a, b, eps=1e-3):
@@ -281,6 +333,11 @@ def main():
     parser.add_argument("--min-correlation", type=float, default=0.85,
                         help="reject pairs whose HR and LR are not the same frame")
     parser.add_argument("--channels", type=int, default=32)
+    parser.add_argument("--version", type=int, default=1, choices=(1, 2),
+                        help="2 uses SPANV2's learned attention (NTIRE 2026 winner)")
+    parser.add_argument("--fft", type=float, default=0.0,
+                        help="weight on the frequency-domain loss; 0.05 is what "
+                             "the NTIRE 2026 winner used")
     parser.add_argument("--steps", type=int, default=60000)
     parser.add_argument("--batch", type=int, default=32)
     parser.add_argument("--lr", type=float, default=1e-3)
@@ -301,10 +358,12 @@ def main():
     print(f"{train_count} training patches, {validation} held out")
 
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-    model = Unshuffled(args.channels, frames=frames).to(device)
+    model = Unshuffled(args.channels, frames=frames, version=args.version).to(device)
     parameters = sum(p.numel() for p in model.parameters())
-    print(f"ch{args.channels}u{'t' if frames > 1 else ''}: {parameters/1000:.0f}K "
-          f"parameters, {frames} input frame{'s' if frames > 1 else ''}, on {device}")
+    print(f"ch{args.channels}u{'t' if frames > 1 else ''}{'v2' if args.version == 2 else ''}: "
+          f"{parameters/1000:.0f}K parameters, {frames} input "
+          f"frame{'s' if frames > 1 else ''}, "
+          f"{'L1 + %.3g x FFT' % args.fft if args.fft > 0 else 'L1'}, on {device}")
 
     optimiser = torch.optim.Adam(model.parameters(), lr=args.lr, betas=(0.9, 0.99))
     schedule = torch.optim.lr_scheduler.CosineAnnealingLR(optimiser, T_max=args.steps, eta_min=args.lr / 100)
@@ -340,6 +399,8 @@ def main():
 
         output = model(lr)
         loss = charbonnier(output, hr)
+        if args.fft > 0:
+            loss = loss + args.fft * fft_loss(output, hr)
         optimiser.zero_grad(set_to_none=True)
         loss.backward()
         # SPAN's re-parameterised convs can spike early; clipping costs nothing
@@ -374,9 +435,11 @@ def main():
             model.train()
             torch.save({"model": model.state_dict(), "optimiser": optimiser.state_dict(),
                         "schedule": schedule.state_dict(), "step": step + 1,
-                        "channels": args.channels, "frames": frames},
+                        "channels": args.channels, "frames": frames,
+                        "version": args.version},
                        os.path.join(args.out,
-                                    f"span_ch{args.channels}u{'t' if frames > 1 else ''}.pth"))
+                                    f"span_ch{args.channels}u{'t' if frames > 1 else ''}"
+                                    f"{'v2' if args.version == 2 else ''}.pth"))
 
     print(f"done in {(time.time()-began)/60:.1f} min → {args.out}/span_ch{args.channels}u.pth")
 
