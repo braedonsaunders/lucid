@@ -157,8 +157,35 @@ final class LearnedUpscaler: @unchecked Sendable {
         guard let url = Self.model(width: width, height: height) else { throw Failure.noModel }
         let compiled = url.pathExtension == "mlmodelc" ? url : try MLModel.compileModel(at: url)
         let configuration = MLModelConfiguration()
-        // The Neural Engine is the only placement that meets the budget: the
-        // same graph measured roughly twice as slow on the GPU.
+        // Placement is not settled, and the comment that used to sit here was
+        // wrong. It said the Neural Engine was the only placement that met the
+        // budget and that the GPU measured twice as slow. That was true of
+        // ch28. It did not survive the architecture change: with the trunk
+        // running at quarter area and the head doing x8, measured on the
+        // shipping packages, the GPU is faster at every tier -
+        //
+        //     tier        ANE      GPU
+        //     256x144    2.30     1.66
+        //     432x240    6.25     4.29
+        //     640x360   11.80     8.38
+        //     864x480   22.68    14.36
+        //
+        // - and Core ML's automatic placement lands between the two. Nobody
+        // re-measured after the model changed, because a comment already
+        // answered the question.
+        //
+        // It stays on the Neural Engine anyway, for now, because those are
+        // isolated numbers. In the running app the detail stages are Metal
+        // compute on that same GPU, so moving the model there trades separate
+        // silicon for contention with our own pipeline, and an earlier
+        // measurement found ANE and GPU work running concurrently *lost*
+        // aggregate throughput (15.5 to 11.8 fps) rather than gaining it. The
+        // GPU figures above were also taken with the Mac otherwise idle, which
+        // is the best case and not the shipping case.
+        //
+        // Switching needs an end-to-end A/B on a real page measuring frame
+        // time, not model time. Until that exists this is the conservative
+        // choice, not the proven one.
         configuration.computeUnits = .cpuAndNeuralEngine
         model = try MLModel(contentsOf: compiled, configuration: configuration)
         guard let input = model.modelDescription.inputDescriptionsByName.first,
