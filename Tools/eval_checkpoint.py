@@ -26,6 +26,68 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from train_span import Unshuffled, bank_frames  # noqa: E402
 
 
+# ---- the perceptual scoreboard -----------------------------------------------
+#
+# This project spent its whole life optimising fine-band correlation with ground
+# truth. That metric was chosen for a good reason - Apple's scaler fooled us by
+# inventing mottled foliage that looked like detail and was not - but it is
+# scale-invariant and correlation-based, so it CANNOT reward invented detail by
+# construction. Every downstream decision followed from that: sharpening off,
+# deband off, grain off, GAN and diffusion losses never considered. The right
+# answer to "our upscaler invents bad detail" is "invent good detail", not
+# "never invent detail".
+#
+# So correlation is demoted to a guard - is this still the same scene - and the
+# objective is now perceptual:
+#
+#   LPIPS    lower is better. Deep-feature distance; rewards detail that is
+#            plausible, not detail that is identical.
+#   DISTS    lower is better. Explicitly tolerant of texture that differs
+#            pixel-wise but matches statistically, which is exactly what a good
+#            hallucinated texture does.
+#   detail   fine-band energy as a fraction of the reference's. 1.0 means as
+#            much high-frequency structure as the truth. Under the old metric
+#            this number was untrustworthy because it cannot tell recovered
+#            from invented - under this one that is the point.
+#   BRISQUE  lower is better, and needs no reference at all, so it says whether
+#            the picture looks good on its own terms.
+
+_lpips = None
+_dists = None
+
+
+def perceptual(output, reference, device):
+    """LPIPS, DISTS and BRISQUE for one image pair, plus the detail ratio."""
+    global _lpips, _dists
+    import lpips as _lp, piq
+    if _lpips is None:
+        _lpips = _lp.LPIPS(net="alex", verbose=False).to(device)
+        _dists = piq.DISTS().to(device)
+    a = torch.from_numpy(np.asarray(output, dtype=np.float32) / 255)
+    b = torch.from_numpy(np.asarray(reference, dtype=np.float32) / 255)
+    a = a.permute(2, 0, 1).unsqueeze(0).to(device)
+    b = b.permute(2, 0, 1).unsqueeze(0).to(device)
+    with torch.no_grad():
+        # LPIPS wants -1..1, DISTS and BRISQUE want 0..1.
+        l = float(_lpips(a * 2 - 1, b * 2 - 1))
+        d = float(_dists(a, b))
+        try:
+            q = float(piq.brisque(a.clamp(0, 1)))
+        except Exception:
+            q = float("nan")
+    return l, d, q
+
+
+def detail_ratio(output, reference):
+    """Fine-band energy relative to the reference. 1.0 is as much fine structure
+    as the truth has; below 1 is soft, above 1 is embellished."""
+    a = np.asarray(output.convert("L"), dtype=np.float64)
+    r = np.asarray(reference.convert("L"), dtype=np.float64)
+    ab, rb = bands(a), bands(r)
+    energy = np.sqrt((rb[0] ** 2).mean())
+    return float(np.sqrt((ab[0] ** 2).mean()) / energy) if energy > 0 else 0.0
+
+
 def bands(gray):
     im = Image.fromarray(np.clip(gray, 0, 255).astype(np.uint8))
     blurred = [np.asarray(im.filter(ImageFilter.GaussianBlur(r)), dtype=np.float64)
@@ -39,12 +101,13 @@ def correlation(a, b):
     return float((a * b).mean() / d) if d > 0 else 0.0
 
 
-def score(output, reference):
+def score(output, reference, device):
     a = np.asarray(output.convert("L"), dtype=np.float64)
     r = np.asarray(reference.convert("L"), dtype=np.float64)
     ab, rb = bands(a), bands(r)
-    return (correlation(ab[0], rb[0]), correlation(ab[1], rb[1]),
-            correlation(ab[2], rb[2]),
+    l, d, q = perceptual(output, reference, device)
+    return (l, d, q, detail_ratio(output, reference),
+            correlation(ab[0], rb[0]),
             10 * np.log10(255 * 255 / max(((a - r) ** 2).mean(), 1e-9)))
 
 
@@ -98,7 +161,7 @@ def main():
         lr = Image.open(os.path.join(args.corpus, "lr", name)).convert("RGB")
         hr = Image.open(os.path.join(args.corpus, "hr", name)).convert("RGB")
         tier = f"{lr.width}x{lr.height}"
-        rows["lanczos"][tier].append(score(lr.resize(hr.size, Image.LANCZOS), hr))
+        rows["lanczos"][tier].append(score(lr.resize(hr.size, Image.LANCZOS), hr, device))
 
     for path in args.checkpoints:
         if not os.path.exists(path):
@@ -111,20 +174,26 @@ def main():
                 x, lr = stack_input(args.corpus, name, frames, available)
                 y = model(x.to(device)).clamp(0, 1)[0].permute(1, 2, 0).cpu().numpy()
                 out = Image.fromarray((y * 255).round().astype(np.uint8))
-                rows[f"{label}@{step}"][f"{lr.width}x{lr.height}"].append(score(out, hr))
+                rows[f"{label}@{step}"][f"{lr.width}x{lr.height}"].append(score(out, hr, device))
 
     tiers = sorted({t for v in rows.values() for t in v},
                    key=lambda s: int(s.split("x")[0]))
-    print(f"{'variant':28s} {'tier':10s} {'fine':>8s} {'mid':>8s} {'coarse':>8s} {'PSNR':>8s}")
+    print("LPIPS and DISTS lower is better. detail is fine-band energy against the")
+    print("reference: 1.00 is as much high-frequency structure as the truth has.")
+    print("corr is the old fidelity metric, kept as a guard, not the objective.\n")
+    print(f"{'variant':26s} {'tier':10s} {'LPIPS':>8s} {'DISTS':>8s} "
+          f"{'BRISQUE':>8s} {'detail':>7s} {'corr':>7s} {'PSNR':>7s}")
     for label in rows:
         for tier in tiers:
             if not rows[label][tier]:
                 continue
-            m = np.array(rows[label][tier]).mean(axis=0)
-            print(f"{label:28s} {tier:10s} {m[0]:8.4f} {m[1]:8.4f} {m[2]:8.4f} {m[3]:8.2f}")
+            m = np.nanmean(np.array(rows[label][tier]), axis=0)
+            print(f"{label:26s} {tier:10s} {m[0]:8.4f} {m[1]:8.4f} {m[2]:8.1f} "
+                  f"{m[3]:7.2f} {m[4]:7.4f} {m[5]:7.2f}")
         allrows = [r for t in tiers for r in rows[label][t]]
-        m = np.array(allrows).mean(axis=0)
-        print(f"{label:28s} {'ALL':10s} {m[0]:8.4f} {m[1]:8.4f} {m[2]:8.4f} {m[3]:8.2f}\n")
+        m = np.nanmean(np.array(allrows), axis=0)
+        print(f"{label:26s} {'ALL':10s} {m[0]:8.4f} {m[1]:8.4f} {m[2]:8.1f} "
+              f"{m[3]:7.2f} {m[4]:7.4f} {m[5]:7.2f}\n")
 
 
 if __name__ == "__main__":
