@@ -26,7 +26,27 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from convert_span import SPAN  # noqa: E402  (loads the arch without BasicSR)
+# The architecture, without dragging Core ML along with it. convert_span imports
+# coremltools at module scope, which is an Apple-only dependency and has no place
+# on a training box - training runs wherever it is fastest, and conversion only
+# ever happens on the Mac.
+def _load_span():
+    import importlib.util, types
+    root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Model", "SPAN")
+    registry = types.ModuleType("basicsr.utils.registry")
+    registry.ARCH_REGISTRY = type("R", (), {"register": staticmethod(lambda *a, **k: (lambda c: c))})()
+    for name, module in (("basicsr", types.ModuleType("basicsr")),
+                         ("basicsr.utils", types.ModuleType("basicsr.utils")),
+                         ("basicsr.utils.registry", registry)):
+        sys.modules.setdefault(name, module)
+    spec = importlib.util.spec_from_file_location(
+        "span_arch", os.path.join(root, "basicsr", "archs", "span_arch.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.SPAN
+
+
+SPAN = _load_span()
 
 LR_PATCH = 64          # even, so the 2x unshuffle is exact
 SCALE = 4
@@ -119,6 +139,21 @@ def fft_loss(a, b):
     fa = torch.fft.rfft2(a.float(), norm="ortho")
     fb = torch.fft.rfft2(b.float(), norm="ortho")
     return (torch.abs(fa - fb)).mean()
+
+
+def pick_device(preference="auto"):
+    """CUDA if there is any, then Apple's GPU, then the CPU.
+
+    Training runs wherever it is fastest; conversion and every latency figure
+    still have to happen on the Mac, because Core ML and the Neural Engine are
+    the only things that decide what ships."""
+    if preference != "auto":
+        return torch.device(preference)
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    return torch.device("cpu")
 
 
 def charbonnier(a, b, eps=1e-3):
@@ -301,9 +336,13 @@ def load_bank(out):
 # ---- metrics ----------------------------------------------------------------
 
 def fine_band_correlation(a, b):
-    """The metric this project judges upscalers by: correlation with the truth
-    in the finest spatial band. Band *energy* cannot tell recovered detail from
-    invented detail and has misled this project twice; correlation can."""
+    """Correlation with the truth in the finest spatial band.
+
+    A guard, not the objective. It answers 'is this the right detail' and cannot
+    answer 'is there enough of it', because it is scale-invariant - an output
+    carrying a third of the truth's high-frequency energy scores the same as one
+    carrying all of it. Quality is judged by LPIPS and DISTS; see
+    Tools/eval_checkpoint.py."""
     def luma(t):
         return (0.299 * t[:, 0] + 0.587 * t[:, 1] + 0.114 * t[:, 2]).unsqueeze(1)
 
@@ -342,6 +381,7 @@ def main():
     parser.add_argument("--batch", type=int, default=32)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--out", default="Model/weights")
+    parser.add_argument("--device", default="auto")
     parser.add_argument("--resume", default="")
     args = parser.parse_args()
 
@@ -357,7 +397,7 @@ def main():
     train_count = count - validation
     print(f"{train_count} training patches, {validation} held out")
 
-    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+    device = pick_device(args.device)
     model = Unshuffled(args.channels, frames=frames, version=args.version).to(device)
     parameters = sum(p.numel() for p in model.parameters())
     print(f"ch{args.channels}u{'t' if frames > 1 else ''}{'v2' if args.version == 2 else ''}: "

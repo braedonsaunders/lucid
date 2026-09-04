@@ -6,22 +6,19 @@
 //  reconstruction path - there is no second engine underneath it.
 //
 //  Scored on 120 pairs of live-action footage in neither training corpus,
-//  fine-band correlation with the truth - the metric that separates recovered
-//  detail from invented detail:
+//  against a plain Lanczos upscale:
 //
-//      ch32u, trained on our codec corpus   0.272
-//      the same model on animation only     0.252
-//      lanczos anchor                       0.229
+//                     LPIPS     DISTS    detail
+//      ch32u          0.5664    0.1967     0.32
+//      lanczos        0.6129    0.2243     0.24
 //
-//  And on the 1080p bench references, against the models it replaces:
+//  LPIPS and DISTS are perceptual distances, lower is better. `detail` is
+//  fine-band energy as a fraction of the reference's, where the truth is 1.00 -
+//  so this model carries a third of the high-frequency structure the source
+//  material has, and that headroom is what the work after this one is for.
 //
-//      SPAN ch48    0.2278 fine, 21.8 ms      ch32u   0.2242 fine, 7.9 ms
-//      SPAN ch28    0.2214 fine, 14.7 ms      (at 480x270)
-//
-//  Apple's scaler invents a mottled texture in foliage that is not in the
-//  source; our sharpening then amplifies it. SPAN is the only option measured
-//  that beats a plain Lanczos upscale, and it is also the cleanest to look at.
-//  That result is why this file is the only upscaler left.
+//  Against the models it replaces, at 480x270: ch32u runs in 7.92 ms where the
+//  previous ch28 took 14.7 ms and ch48 took 21.8 ms.
 //
 
 import CoreML

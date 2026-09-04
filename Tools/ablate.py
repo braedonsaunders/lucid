@@ -11,9 +11,17 @@ result against a 1080p reference. For each stage this reports what it buys and
 what it costs, which are the two numbers needed to decide whether it earns its
 place in a 33 ms frame.
 
-Correlation per spatial band is the metric, not band energy. Energy cannot tell
-detail that was recovered from detail that was invented, and it has misled this
-project twice.
+Three numbers, because the question has three sides and no single metric answers
+it. LPIPS and DISTS say whether it LOOKS right, and they are the objective.
+Band energy says whether there is ENOUGH detail - a picture can be perfectly
+correlated with the truth and still carry a third of its high-frequency energy,
+which is exactly what a purely reconstructive model does. Band correlation says
+whether it is the RIGHT detail, and it is a guard against hallucination rather
+than a target.
+
+Using correlation alone was a mistake this project made for a long time: it is
+scale-invariant, so it cannot distinguish 32% of the right detail from 100% of
+it, and every stage that synthesised texture was scored as loss.
 
   .venv-convert/bin/python Tools/ablate.py --clip sintel-scene-360p-300k.mp4
 """
