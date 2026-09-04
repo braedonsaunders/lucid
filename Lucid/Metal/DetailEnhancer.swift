@@ -28,10 +28,6 @@ struct DetailSettings: Equatable, Sendable {
     var flatThreshold: Float = 0.004
     var edgeThreshold: Float = 0.030
     var deblock: Float = 0.30
-    /// How hard the reconstruction is pulled back toward the pixels that
-    /// actually arrived. 0 disables the consistency pass.
-    var backProjection: Float = 0.0
-    var backProjectionPasses: Int = 0
     /// Source-resolution deblocking: luma differences below this (0-1) are
     /// treated as compression noise and smoothed before scaling. 0 disables.
     var sourceDeblock: Float = 0.035
@@ -84,7 +80,7 @@ struct DetailSettings: Equatable, Sendable {
 
     static let off = DetailSettings(
         sharpness: 0, fine: 0, micro: 0, lobeScale: 1, mid: 0, flatThreshold: 0, edgeThreshold: 1,
-        deblock: 0, backProjection: 0, backProjectionPasses: 0, sourceDeblock: 0, sourceDeblockRadius: 0,
+        deblock: 0, sourceDeblock: 0, sourceDeblockRadius: 0,
         presharpen: 0, temporal: 0, motionLow: 0, motionHigh: 1, radius: 1,
         blackPoint: 0, whitePoint: 1, contrast: 0, saturation: 1,
         stageLoopFilter: false, stageCdef: false, stageDeband: false, stageTaa: false, stageOklab: false,
@@ -95,10 +91,7 @@ struct DetailSettings: Equatable, Sendable {
 /// Metal Shading Language source, compiled at run time so the app does not need
 /// the Metal toolchain at build time.
 ///
-/// Detail reconstruction that runs after Apple's scaler. The scaler is clean but
-/// conservative: measured against ground truth it recovers about half the detail
-/// the browser throws away. This closes part of the rest without inventing
-/// texture where there is none.
+/// Detail reconstruction that runs after the 4× SPAN upscale.
 ///
 /// Luma only, so chroma - and therefore colour - cannot shift. Per pixel:
 ///   * flat areas are smoothed, because in a low-bitrate stream that is where
@@ -338,55 +331,6 @@ kernel void deblock_luma(texture2d<float, access::read>  source      [[texture(0
     }
     destination.write(float4(result, 0.0f, 0.0f, 1.0f), gid);
     historyOut.write(float4(result, 0.0f, 0.0f, 1.0f), gid);
-}
-
-// Back projection, step 1: how wrong is the reconstruction?
-//
-// A reconstruction is only honest if, when shrunk back down, it reproduces the
-// pixels that actually arrived. Anything it invented shows up here as error.
-kernel void back_project_residual(texture2d<float, access::read>  reconstructed [[texture(0)]],
-                                  texture2d<float, access::read>  original      [[texture(1)]],
-                                  texture2d<float, access::write> residual      [[texture(2)]],
-                                  constant uint&                  scale         [[buffer(0)]],
-                                  uint2                           gid           [[thread_position_in_grid]])
-{
-    const uint width = original.get_width();
-    const uint height = original.get_height();
-    if (gid.x >= width || gid.y >= height) { return; }
-
-    float sum = 0.0f;
-    for (uint dy = 0; dy < scale; ++dy) {
-        for (uint dx = 0; dx < scale; ++dx) {
-            uint2 c = uint2(min(gid.x * scale + dx, reconstructed.get_width() - 1),
-                            min(gid.y * scale + dy, reconstructed.get_height() - 1));
-            sum += reconstructed.read(c).r;
-        }
-    }
-    const float shrunk = sum / float(scale * scale);
-    residual.write(float4(original.read(gid).r - shrunk, 0.0f, 0.0f, 1.0f), gid);
-}
-
-// Back projection, step 2: push the error back into the reconstruction.
-//
-// This is what stops the pipeline inventing structure. Detail that is not
-// supported by the pixels that actually arrived gets pulled back out, while
-// detail that is consistent with them survives.
-kernel void back_project_apply(texture2d<float, access::read>  reconstructed [[texture(0)]],
-                               texture2d<float, access::sample> residual     [[texture(1)]],
-                               texture2d<float, access::write> destination   [[texture(2)]],
-                               constant float&                 strength      [[buffer(0)]],
-                               constant uint&                  scale         [[buffer(1)]],
-                               uint2                           gid           [[thread_position_in_grid]])
-{
-    const uint width = reconstructed.get_width();
-    const uint height = reconstructed.get_height();
-    if (gid.x >= width || gid.y >= height) { return; }
-
-    constexpr sampler linearSampler(coord::normalized, address::clamp_to_edge, filter::linear);
-    const float2 uv = (float2(gid) + 0.5f) / float2(float(width), float(height));
-    const float correction = residual.sample(linearSampler, uv).r;
-    const float value = reconstructed.read(gid).r + strength * correction;
-    destination.write(float4(clamp(value, 0.0f, 1.0f), 0.0f, 0.0f, 1.0f), gid);
 }
 
 // Tone grade. A compressed stream arrives with its blacks lifted and its
@@ -934,8 +878,6 @@ final class DetailEnhancer: @unchecked Sendable {
     private let device: MTLDevice
     private let queue: MTLCommandQueue
     private let pipeline: MTLComputePipelineState
-    private let residualPipeline: MTLComputePipelineState
-    private let applyPipeline: MTLComputePipelineState
     private let deblockPipeline: MTLComputePipelineState
     private let chromaPipeline: MTLComputePipelineState
     private let lumaGradePipeline: MTLComputePipelineState
@@ -965,7 +907,6 @@ final class DetailEnhancer: @unchecked Sendable {
     private var historyIndex = 0
     private var historyValid = false
     private var historyRect: CGRect = .zero
-    private var residualTexture: MTLTexture?
     private var textureCache: CVMetalTextureCache
     private var pool: CVPixelBufferPool?
     private var poolSize = (width: 0, height: 0, format: OSType(0))
@@ -986,10 +927,6 @@ final class DetailEnhancer: @unchecked Sendable {
         }
         guard let function = library.makeFunction(name: "detail_enhance_luma") else { throw Failure.library }
         guard let state = try? device.makeComputePipelineState(function: function),
-              let residualFunction = library.makeFunction(name: "back_project_residual"),
-              let residual = try? device.makeComputePipelineState(function: residualFunction),
-              let applyFunction = library.makeFunction(name: "back_project_apply"),
-              let apply = try? device.makeComputePipelineState(function: applyFunction),
               let deblockFunction = library.makeFunction(name: "deblock_luma"),
               let deblock = try? device.makeComputePipelineState(function: deblockFunction),
               let chromaFunction = library.makeFunction(name: "grade_chroma"),
@@ -1014,8 +951,6 @@ final class DetailEnhancer: @unchecked Sendable {
         deblockPipeline = deblock
         chromaPipeline = chroma
         pipeline = state
-        residualPipeline = residual
-        applyPipeline = apply
         var cache: CVMetalTextureCache?
         guard CVMetalTextureCacheCreate(kCFAllocatorDefault, nil, device, nil, &cache) == kCVReturnSuccess,
               let cache else { throw Failure.textureCache }
@@ -1280,9 +1215,8 @@ final class DetailEnhancer: @unchecked Sendable {
     }
 
     /// Returns an enhanced copy of `reconstructed`. Luma is filtered, chroma is
-    /// copied. When the frame it was reconstructed from is supplied, the result
-    /// is also corrected against it so the pipeline cannot invent structure.
-    func process(_ reconstructed: CVPixelBuffer, original: CVPixelBuffer? = nil) throws -> CVPixelBuffer {
+    /// copied.
+    func process(_ reconstructed: CVPixelBuffer) throws -> CVPixelBuffer {
         let doesGrade = settings.blackPoint > 0 || settings.whitePoint < 1 || settings.contrast > 0
         let doesDetail = settings.sharpness > 0 || settings.fine != 0 || settings.micro != 0 || settings.mid != 0 || settings.deblock > 0 || doesGrade
         let width = CVPixelBufferGetWidth(reconstructed)
@@ -1290,16 +1224,7 @@ final class DetailEnhancer: @unchecked Sendable {
         let format = CVPixelBufferGetPixelFormatType(reconstructed)
         let lumaFormat = MetalTileCompositor.metalFormat(for: format, plane: 0)
 
-        var scale = 0
-        if let original, settings.backProjection > 0, settings.backProjectionPasses > 0 {
-            let originalWidth = CVPixelBufferGetWidth(original)
-            if originalWidth > 0, width % originalWidth == 0,
-               CVPixelBufferGetPixelFormatType(original) == format {
-                scale = width / originalWidth
-            }
-        }
-        let passes = scale > 1 ? settings.backProjectionPasses : 0
-        guard doesDetail || passes > 0 else { return reconstructed }
+        guard doesDetail else { return reconstructed }
 
         guard let commandBuffer = queue.makeCommandBuffer() else { return reconstructed }
         var retained: [CVMetalTexture] = []
@@ -1360,42 +1285,6 @@ final class DetailEnhancer: @unchecked Sendable {
             encoder.endEncoding()
             currentBuffer = out
             currentLuma = outLuma
-        }
-
-        if passes > 0, let original {
-            let originalWidth = CVPixelBufferGetWidth(original)
-            let originalHeight = CVPixelBufferGetHeight(original)
-            let (originalLuma, originalRef) = try texture(original, plane: 0, format: lumaFormat)
-            retained.append(originalRef)
-            let residual = try residualScratch(width: originalWidth, height: originalHeight)
-            var scaleValue = UInt32(scale)
-            var strength = settings.backProjection
-
-            for _ in 0..<passes {
-                guard let residualEncoder = commandBuffer.makeComputeCommandEncoder() else { break }
-                residualEncoder.setComputePipelineState(residualPipeline)
-                residualEncoder.setTexture(currentLuma, index: 0)
-                residualEncoder.setTexture(originalLuma, index: 1)
-                residualEncoder.setTexture(residual, index: 2)
-                residualEncoder.setBytes(&scaleValue, length: MemoryLayout<UInt32>.stride, index: 0)
-                residualEncoder.dispatchThreadgroups(groups(originalWidth, originalHeight), threadsPerThreadgroup: threads)
-                residualEncoder.endEncoding()
-
-                let out = try nextBuffer()
-                let (outLuma, outRef) = try texture(out, plane: 0, format: lumaFormat)
-                retained.append(outRef)
-                guard let applyEncoder = commandBuffer.makeComputeCommandEncoder() else { break }
-                applyEncoder.setComputePipelineState(applyPipeline)
-                applyEncoder.setTexture(currentLuma, index: 0)
-                applyEncoder.setTexture(residual, index: 1)
-                applyEncoder.setTexture(outLuma, index: 2)
-                applyEncoder.setBytes(&strength, length: MemoryLayout<Float>.stride, index: 0)
-                applyEncoder.setBytes(&scaleValue, length: MemoryLayout<UInt32>.stride, index: 1)
-                applyEncoder.dispatchThreadgroups(groups(width, height), threadsPerThreadgroup: threads)
-                applyEncoder.endEncoding()
-                currentBuffer = out
-                currentLuma = outLuma
-            }
         }
 
         // Tone grade last, so sharpening works on untouched levels.
@@ -1508,20 +1397,6 @@ final class DetailEnhancer: @unchecked Sendable {
             CVBufferSetAttachments(currentBuffer, attachments, .shouldPropagate)
         }
         return currentBuffer
-    }
-
-    private func residualScratch(width: Int, height: Int) throws -> MTLTexture {
-        if let residualTexture, residualTexture.width == width, residualTexture.height == height {
-            return residualTexture
-        }
-        let descriptor = MTLTextureDescriptor.texture2DDescriptor(
-            pixelFormat: .r16Float, width: width, height: height, mipmapped: false
-        )
-        descriptor.usage = [.shaderRead, .shaderWrite]
-        descriptor.storageMode = .private
-        guard let created = device.makeTexture(descriptor: descriptor) else { throw Failure.texture }
-        residualTexture = created
-        return created
     }
 
     private func texture(_ buffer: CVPixelBuffer, plane: Int, format: MTLPixelFormat) throws -> (MTLTexture, CVMetalTexture) {

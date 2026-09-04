@@ -214,10 +214,9 @@ final class TiledVideoToolboxUpscaler {
         await nextStage?.end()
     }
 
-    /// Fills in any missing colour tags with the Rec. 709 video-range set that
-    /// ScreenCaptureKit is asked to produce.
-    /// Whether 4:2:0 chroma is treated as left-sited. Off falls back to what an
-    /// untagged buffer gets, which is centre siting.
+    /// Fills in any missing Rec. 709 tags, and always writes chroma siting
+    /// from `chromaSitingLeft`. Whether 4:2:0 chroma is treated as left-sited
+    /// (H.264 / VP9) or centre-sited (the untagged default).
     nonisolated(unsafe) static var chromaSitingLeft = true
 
     static func ensureColorDescription(_ buffer: CVPixelBuffer) {
@@ -225,36 +224,125 @@ final class TiledVideoToolboxUpscaler {
             (kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_709_2),
             (kCVImageBufferColorPrimariesKey, kCVImageBufferColorPrimaries_ITU_R_709_2),
             (kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_ITU_R_709_2),
-            // H.264 and VP9 4:2:0 site chroma on the left luma column, not in the
-            // centre of the quad. Untagged buffers are read as centre-sited, which
-            // shifts colour half a luma pixel - two whole pixels once 4x scaled.
-            (kCVImageBufferChromaLocationTopFieldKey,
-             chromaSitingLeft ? kCVImageBufferChromaLocation_Left : kCVImageBufferChromaLocation_Center),
-            (kCVImageBufferChromaLocationBottomFieldKey,
-             chromaSitingLeft ? kCVImageBufferChromaLocation_Left : kCVImageBufferChromaLocation_Center),
         ]
         for (key, value) in defaults where CVBufferCopyAttachment(buffer, key, nil) == nil {
             CVBufferSetAttachment(buffer, key, value, .shouldPropagate)
         }
-        // Chroma siting is set unconditionally, unlike the tags above.
-        //
-        // Filling it only when missing made the control inert wherever a frame
-        // arrived already tagged - which is every frame in the offline bench,
-        // since an AVAssetReader propagates the container's colour attachments.
-        // That is why toggling this stage measured exactly 0.0000 on every
-        // band: not a stage that does nothing, a stage that could not be
-        // reached. A control that cannot move is worse than an absent one.
-        //
-        // Overriding is also the correct default for what Lucid actually sees.
-        // H.264 and VP9 4:2:0 site chroma on the left luma column by
-        // specification, and streaming encoders routinely omit or mis-tag it;
-        // an untagged or centre-tagged buffer shifts colour half a luma pixel,
-        // which is two whole pixels after a 4x upscale.
+        // Siting is a control, not a default. Fill-if-missing made the toggle
+        // inert: AVAssetReader and recycled pool buffers already carry a
+        // chroma location. Always write these two. That is not enough on its
+        // own — VT samples 4:2:0 from the source, so LearnedUpscaler tags the
+        // source before the 420→RGB convert. Tagging only this buffer after
+        // the transfer leaves the attachment correct and the pixels wrong.
         let siting = chromaSitingLeft
-            ? kCVImageBufferChromaLocation_Left : kCVImageBufferChromaLocation_Center
-        for key in [kCVImageBufferChromaLocationTopFieldKey,
-                    kCVImageBufferChromaLocationBottomFieldKey] {
-            CVBufferSetAttachment(buffer, key, siting, .shouldPropagate)
+            ? kCVImageBufferChromaLocation_Left
+            : kCVImageBufferChromaLocation_Center
+        CVBufferSetAttachment(buffer, kCVImageBufferChromaLocationTopFieldKey, siting, .shouldPropagate)
+        CVBufferSetAttachment(buffer, kCVImageBufferChromaLocationBottomFieldKey, siting, .shouldPropagate)
+    }
+
+    /// Tag plus, when the flag is centre, a real chroma resample.
+    ///
+    /// `VTPixelTransferSession` and `CIImage` do not honour the chroma
+    /// location attachment. Tagging the source made `--pipeline-ms` print
+    /// Left vs Center and left `--bench` writing byte-identical PNGs — the
+    /// sticker moved, the samples did not. AVAssetReader buffers are also
+    /// often read-only, so this copies to a writable buffer first.
+    ///
+    /// Left is the H.264 / VP9 site and is a no-op on the planes. Centre
+    /// shifts chroma half a luma pixel (0.25 of a chroma texel), which is
+    /// the whole difference the control is supposed to be.
+    static func prepareSource(_ source: CVPixelBuffer) -> CVPixelBuffer {
+        let prepared = writableCopy(source) ?? source
+        ensureColorDescription(prepared)
+        if !chromaSitingLeft { shiftChromaToCenter(prepared) }
+        return prepared
+    }
+
+    private static func writableCopy(_ source: CVPixelBuffer) -> CVPixelBuffer? {
+        let width = CVPixelBufferGetWidth(source)
+        let height = CVPixelBufferGetHeight(source)
+        let format = CVPixelBufferGetPixelFormatType(source)
+        let attributes: [String: Any] = [
+            kCVPixelBufferIOSurfacePropertiesKey as String: [:] as [String: Any],
+            kCVPixelBufferMetalCompatibilityKey as String: true,
+        ]
+        var copy: CVPixelBuffer?
+        guard CVPixelBufferCreate(
+            kCFAllocatorDefault, width, height, format,
+            attributes as CFDictionary, &copy
+        ) == kCVReturnSuccess, let copy else { return nil }
+        CVPixelBufferLockBaseAddress(source, .readOnly)
+        CVPixelBufferLockBaseAddress(copy, [])
+        defer {
+            CVPixelBufferUnlockBaseAddress(source, .readOnly)
+            CVPixelBufferUnlockBaseAddress(copy, [])
+        }
+        let planes = max(1, CVPixelBufferGetPlaneCount(source))
+        for plane in 0..<planes {
+            let src = (planes > 1
+                ? CVPixelBufferGetBaseAddressOfPlane(source, plane)
+                : CVPixelBufferGetBaseAddress(source))
+            let dst = (planes > 1
+                ? CVPixelBufferGetBaseAddressOfPlane(copy, plane)
+                : CVPixelBufferGetBaseAddress(copy))
+            guard let src, let dst else { continue }
+            let srcStride = planes > 1
+                ? CVPixelBufferGetBytesPerRowOfPlane(source, plane)
+                : CVPixelBufferGetBytesPerRow(source)
+            let dstStride = planes > 1
+                ? CVPixelBufferGetBytesPerRowOfPlane(copy, plane)
+                : CVPixelBufferGetBytesPerRow(copy)
+            let rows = planes > 1
+                ? CVPixelBufferGetHeightOfPlane(source, plane)
+                : CVPixelBufferGetHeight(source)
+            let bytes = min(srcStride, dstStride)
+            for row in 0..<rows {
+                memcpy(dst.advanced(by: row * dstStride), src.advanced(by: row * srcStride), bytes)
+            }
+        }
+        if let attachments = CVBufferCopyAttachments(source, .shouldPropagate) {
+            CVBufferSetAttachments(copy, attachments, .shouldPropagate)
+        }
+        return copy
+    }
+
+    /// 0.5 luma pixel = 0.25 of a 4:2:0 chroma texel.
+    private static func shiftChromaToCenter(_ buffer: CVPixelBuffer) {
+        let planes = CVPixelBufferGetPlaneCount(buffer)
+        guard planes >= 2 else { return }
+        CVPixelBufferLockBaseAddress(buffer, [])
+        defer { CVPixelBufferUnlockBaseAddress(buffer, []) }
+        guard let base = CVPixelBufferGetBaseAddressOfPlane(buffer, 1) else { return }
+        let width = CVPixelBufferGetWidthOfPlane(buffer, 1)
+        let height = CVPixelBufferGetHeightOfPlane(buffer, 1)
+        let stride = CVPixelBufferGetBytesPerRowOfPlane(buffer, 1)
+        let bytesPerPixel = 2
+        let src = base.assumingMemoryBound(to: UInt8.self)
+        var scratch = [UInt8](repeating: 0, count: stride * height)
+        scratch.withUnsafeMutableBufferPointer { dst in
+            for y in 0..<height {
+                let fy = min(Float(height - 1), Float(y) + 0.25)
+                let y0 = Int(fy)
+                let y1 = min(height - 1, y0 + 1)
+                let wy = fy - Float(y0)
+                for x in 0..<width {
+                    let fx = min(Float(width - 1), Float(x) + 0.25)
+                    let x0 = Int(fx)
+                    let x1 = min(width - 1, x0 + 1)
+                    let wx = fx - Float(x0)
+                    for c in 0..<bytesPerPixel {
+                        let p00 = Float(src[y0 * stride + x0 * bytesPerPixel + c])
+                        let p10 = Float(src[y0 * stride + x1 * bytesPerPixel + c])
+                        let p01 = Float(src[y1 * stride + x0 * bytesPerPixel + c])
+                        let p11 = Float(src[y1 * stride + x1 * bytesPerPixel + c])
+                        let value = p00 * (1 - wx) * (1 - wy) + p10 * wx * (1 - wy)
+                            + p01 * (1 - wx) * wy + p11 * wx * wy
+                        dst[y * stride + x * bytesPerPixel + c] = UInt8(max(0, min(255, value.rounded())))
+                    }
+                }
+            }
+            memcpy(base, dst.baseAddress, stride * height)
         }
     }
 

@@ -81,7 +81,6 @@ final class AppCoordinator {
         }
         RunLoop.main.add(timer, forMode: .common)
         sweepTimer = timer
-        Task { await ensurePermission() }
     }
 
     // MARK: - Bridge
@@ -252,7 +251,17 @@ final class AppCoordinator {
             session?.reloadTuning()
         }
         if let name = control.shoot, !name.isEmpty {
-            shoot(into: name)
+            // The shoot control drives Screen Recording to write browser
+            // stills to disk. Auth stops a website; this stops a same-user
+            // process that stole the token from turning that TCC grant into
+            // a screenshot service. Bench tools opt in with LUCID_SHOOT=1.
+            let allowed = Self.debugLogging
+                || ProcessInfo.processInfo.environment["LUCID_SHOOT"] == "1"
+            if allowed {
+                shoot(into: name)
+            } else {
+                print("   🔒 shoot refused — set LUCID_SHOOT=1 to allow comparison stills")
+            }
         }
         if let latency = control.latency, latency > 0 {
             UserDefaults.standard.set(latency, forKey: "latencySeconds")
@@ -270,6 +279,8 @@ final class AppCoordinator {
             enabled: appState.enabled,
             enhancing: appState.isEnhancing,
             engine: engine.rawValue,
+            engines: (EngineKind.comparisonPathEnabled ? EngineKind.allCases : EngineKind.shipping).map(\.rawValue),
+            engineLabels: (EngineKind.comparisonPathEnabled ? EngineKind.allCases : EngineKind.shipping).map(\.label),
             tuning: EnhancementSession.tuningDictionary,
             status: appState.statusLine,
             stats: appState.statsLine,
@@ -378,15 +389,6 @@ final class AppCoordinator {
             menuBar?.refresh()
             return
         }
-        guard ScreenCapturePermission.isGranted else {
-            if appState.statusLine != "Screen Recording permission required" {
-                print("   🔒 Screen Recording permission not granted to this build (bundle \(Bundle.main.bundleIdentifier ?? "?"))")
-            }
-            appState.statusLine = "Screen Recording permission required"
-            appState.lastError = "Grant Screen Recording to Lucid in System Settings → Privacy & Security."
-            menuBar?.refresh()
-            return
-        }
         do {
             let session = try EnhancementSession(
                 report: report, window: window, latencySeconds: latencySeconds, engine: engine,
@@ -476,8 +478,14 @@ final class AppCoordinator {
         }
     }
 
-    private func ensurePermission() async {
-        await ScreenCapturePermission.request()
+    /// Set when the user declines Screen Recording this launch. Decoded-frame
+    /// sessions still start; the capture fallback will not keep re-prompting.
+    fileprivate var screenCaptureDenied = false
+
+    fileprivate func noteScreenCaptureDenied() {
+        screenCaptureDenied = true
+        appState.lastError = "Grant Screen Recording to Lucid in System Settings → Privacy & Security."
+        menuBar?.refresh()
     }
 }
 
@@ -520,7 +528,7 @@ final class EnhancementSession {
     private var resizeTask: Task<Void, Never>?
     private let onEnded: (String) -> Void
 
-    enum Failure: Error { case noVideo, tooSmall }
+    enum Failure: Error { case noVideo, tooSmall, comparisonEngineDisabled }
 
     /// How many chained 2× passes to run. Picks the power of two nearest the
     /// stretch, not the next one up: with the detail gains normalised across
@@ -535,11 +543,11 @@ final class EnhancementSession {
         return min(max(Int(log2(max(stretch, 1)).rounded()), 1), 3)
     }
 
-    /// Width, in physical pixels, at which enhanced frames are handed back to
-    /// the page: exactly what the video box occupies on screen. Sending less
-    /// means the browser scales back up and the fine detail is lost; sending
-    /// more is bandwidth the display cannot show. Bounded so a full-screen 4K
-    /// box cannot ask for more than the bridge can carry at frame rate.
+    /// Physical width of the video box. The sender uses this as the box, not
+    /// as a hard output size: NV12 within 1.5× of the box is sent whole
+    /// (plane copy) because downscaling costs milliseconds and discards
+    /// detail. Bounded so a full-screen 4K box cannot ask for more than the
+    /// bridge can carry at frame rate.
     nonisolated static func deliveryWidth(for report: BrowserVideoReport) -> Int {
         if let forced = ProcessInfo.processInfo.environment["LUCID_MAXW"].flatMap(Int.init) { return forced }
         guard let video = report.video else { return 1280 }
@@ -568,13 +576,15 @@ final class EnhancementSession {
         // range now and every non-zero value is very slightly worse, so it is
         // off: the model removes blocking itself.
         var deblock: Float = 0.0
-        // Off since the model was trained on real codec degradation. Measured
-        // on the trained base, turning it off *improves* fine-band correlation
-        // by 0.0011 and mid by 0.0038: the network now removes compression
-        // damage itself, so cleaning the input first only softens what it is
-        // about to reconstruct from. On the old bicubic-trained ch28 the same
-        // stage cost 0.0049 fine, so this was always harmful - just less so now.
-        var sourceDeblock: Float = 0.02
+        // Off. The model is trained on real codec degradation and removes
+        // blocking itself, so cleaning the input first only softens what it is
+        // about to reconstruct from. Perceptual ablation on the L1 ch32u
+        // (bbb-360p-350k): turning this off wins DISTS +0.0097, LPIPS +0.0102
+        // and detail energy +0.0150, with no column disagreeing. The GAN
+        // checkpoint at 4000 is if anything more so (DISTS +0.0087, and
+        // LPIPS improved +0.0091 → +0.0148). It was wrong on ch28 too,
+        // just less so.
+        var sourceDeblock: Float = 0.0
         var temporal: Float = 0.50
         var blackPoint: Float = 0.020
         var whitePoint: Float = 0.975
@@ -598,7 +608,14 @@ final class EnhancementSession {
         var adaptive: Float = 1.0
         // Stage toggles, 0 or 1, so each can be judged on its own.
         var stageSiting: Float = 1
-        var stageDeband: Float = 0
+        // On. The stage adds the same high-frequency energy regardless of
+        // the model underneath (+0.0833 L1 vs +0.0836 GAN on bbb-360p-350k),
+        // and that work still wins DISTS +0.0133 and BRISQUE +17.7 on the
+        // GAN checkpoint at 4000. Smaller than the L1 table (DISTS +0.0175,
+        // LPIPS +0.0196) because the better model needs less help — LPIPS
+        // almost vanishes (+0.0010) while DISTS still credits the texture.
+        // Costs nothing measurable. CDEF and the loop filter stay off.
+        var stageDeband: Float = 1
         var stageOklab: Float = 1
         var stageLoopFilter: Float = 0
         var stageTaa: Float = 1
@@ -796,8 +813,6 @@ final class EnhancementSession {
             flatThreshold: 0.004,
             edgeThreshold: 0.030,
             deblock: t.deblock,
-            backProjection: 0.0,
-            backProjectionPasses: 0,
             sourceDeblock: t.sourceDeblock,
             sourceDeblockRadius: 1.6,
             presharpen: t.presharpen,
@@ -931,18 +946,18 @@ final class EnhancementSession {
         return { width, height in
             let compositor = try MetalTileCompositor()
             let kind = engine
-            // Lucid's own path. Built first, because when it succeeds - which
-            // is every session the app starts, since isEnhanceable only admits
-            // sizes it covers - Apple's tiled scaler is never touched and
-            // there is no reason to pay to build it.
-            // Not `try?`: a session only starts for sizes the table covers, so
-            // a failure here means the model is missing from the build. That
-            // should surface as an error, not as an unannounced downgrade to
-            // the scaler this project measured as worse than doing nothing.
-            let learned = kind.usesLearned ? try LearnedUpscaler(width: width, height: height) : nil
+            let learned: LearnedUpscaler?
             var upscaler: TiledVideoToolboxUpscaler?
             var built = 1
-            if kind.rescales, learned == nil {
+            if kind.usesLearned {
+                // Not `try?`: a session only starts for sizes the table covers,
+                // so a missing model is an error, not a silent downgrade.
+                learned = try LearnedUpscaler(width: width, height: height)
+            } else {
+                guard EngineKind.comparisonPathEnabled else {
+                    throw EnhancementSession.Failure.comparisonEngineDisabled
+                }
+                learned = nil
                 let factor = Int(tuning.scalerFactor.rounded())
                 let first = try TiledVideoToolboxUpscaler(
                     width: width, height: height, compositor: compositor, preferredScale: factor
@@ -1007,6 +1022,18 @@ final class EnhancementSession {
 
     private func startScreenCapture() async {
         guard !screenCaptureRunning else { return }
+        if !ScreenCapturePermission.isGranted {
+            if AppCoordinator.shared.screenCaptureDenied {
+                end("Screen Recording permission required")
+                return
+            }
+            let granted = await ScreenCapturePermission.request()
+            if !granted {
+                AppCoordinator.shared.noteScreenCaptureDenied()
+                end("Screen Recording permission required")
+                return
+            }
+        }
         do {
             let stream = try await capture.start()
             captureRunning = true

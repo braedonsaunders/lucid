@@ -15,6 +15,14 @@
   const runtime = (globalThis.browser && browser.runtime && browser.runtime.id) ? browser.runtime
                 : (globalThis.chrome && chrome.runtime && chrome.runtime.id) ? chrome.runtime : null;
   const BRIDGE_URL = 'ws://127.0.0.1:47811';
+  const TOKEN_URL = 'http://127.0.0.1:47812/token';
+  async function fetchBridgeToken() {
+    const response = await fetch(TOKEN_URL, { cache: 'no-store' });
+    if (!response.ok) throw new Error('token ' + response.status);
+    const token = (await response.text()).trim();
+    if (!token) throw new Error('token empty');
+    return token;
+  }
   const FRAME_MAGIC = 0x4c554346; // 'LUCF' decoded frame, page -> app
   const ENHANCED_MAGIC = 0x4c554345; // 'LUCE' enhanced frame, app -> page
   const HEARTBEAT_MS = 500;
@@ -89,17 +97,45 @@
     };
     transportReady = () => !!port;
   } else {
-    let socket = null, backoff = 1000;
-    const connect = () => {
+    let socket = null, backoff = 1000, connecting = false, reportReady = false;
+    const connect = async () => {
+      if (connecting || (socket && (socket.readyState === 0 || socket.readyState === 1))) return;
+      connecting = true;
+      reportReady = false;
+      let token;
+      try {
+        token = await fetchBridgeToken();
+      } catch (e) {
+        connecting = false;
+        socket = null;
+        setTimeout(connect, backoff);
+        backoff = Math.min(backoff * 2, 10000);
+        return;
+      }
       try {
         socket = new WebSocket(BRIDGE_URL);
-        socket.onopen = () => { backoff = 1000; };
-        socket.onclose = () => { socket = null; setTimeout(connect, backoff); backoff = Math.min(backoff * 2, 10000); };
+        socket.onopen = () => {
+          connecting = false;
+          backoff = 1000;
+          try { socket.send(JSON.stringify({ type: 'hello', token })); } catch (e) {}
+          reportReady = true;
+        };
+        socket.onclose = () => {
+          connecting = false;
+          reportReady = false;
+          socket = null;
+          setTimeout(connect, backoff);
+          backoff = Math.min(backoff * 2, 10000);
+        };
         socket.onerror = () => {};
-      } catch (e) { socket = null; setTimeout(connect, backoff); }
+      } catch (e) {
+        connecting = false;
+        socket = null;
+        setTimeout(connect, backoff);
+      }
     };
     connect();
-    send = (message) => { if (socket && socket.readyState === 1) socket.send(JSON.stringify(message)); };
+    send = (message) => { if (socket && socket.readyState === 1 && reportReady) socket.send(JSON.stringify(message)); };
     // This socket carries reports. Frames arrive on frameSocket, opened further
     // down, so that is the one that decides whether the page can draw.
     transportReady = () => !!(frameSocket && frameSocket.readyState === 1);
@@ -112,7 +148,7 @@
   // clipping and stacking for free, which is the only way to make it behave
   // like part of the page rather than something pasted over the top. It never
   // takes pointer events, so the video's own controls keep working.
-  let surface = null, surfaceCtx = null, surfaceFor = null, imageData = null;
+  let surface = null, surfaceCtx = null, surfaceFor = null, lastNV12 = null;
   let drawing = false, lastDraw = 0, controlsUntil = 0;
   // Whether a frame has ever been painted, so the stale-frame teardown below
   // cannot fire before the first one arrives.
@@ -140,9 +176,24 @@
     sentGap = band;
     try { surface.contentWindow.postMessage({ lucid: 'gap', band }, '*'); } catch (e) {}
   }
+  function paintNV12(ctx, width, height, pixels) {
+    const frame = new VideoFrame(pixels, {
+      format: 'NV12',
+      codedWidth: width,
+      codedHeight: height,
+      timestamp: 0,
+      layout: [
+        { offset: 0, stride: width },
+        { offset: width * height, stride: width },
+      ],
+    });
+    ctx.drawImage(frame, 0, 0, width, height);
+    frame.close();
+  }
+
   function composite() {
-    if (!surface || !surfaceCtx || !imageData || !current) return;
-    surfaceCtx.putImageData(imageData, 0, 0);
+    if (!surface || !surfaceCtx || !lastNV12 || !current) return;
+    paintNV12(surfaceCtx, lastNV12.width, lastNV12.height, lastNV12.pixels);
     const gap = current.controls && controlsShowing(current);
     if (gap) {
       // `surface` is the overlay canvas. Sizing this from anything else clears
@@ -207,7 +258,7 @@
 
   function removeSurface() {
     if (surface && surface.parentElement) surface.parentElement.removeChild(surface);
-    surface = null; surfaceCtx = null; surfaceFor = null; imageData = null; drawing = false; everDrew = false;
+    surface = null; surfaceCtx = null; surfaceFor = null; lastNV12 = null; drawing = false; everDrew = false;
   }
 
   // Keep the canvas exactly over the video's rendered content box, in the
@@ -232,35 +283,87 @@
     if (isFrame) surface.style.opacity = '1';
   }
 
-  function drawEnhanced(width, height, pixels) {
+  function drawEnhanced(width, height, pixels, format) {
     if (!current) return;
     // Under the extension the surface iframe receives frames directly and
     // paints them itself; nothing arrives here.
     if (runtime && runtime.getURL) return;
+    if (format && format !== 'NV12') return;
     const canvas = ensureSurface(current);
     if (canvas.width !== width || canvas.height !== height) {
-      canvas.width = width; canvas.height = height; imageData = null;
+      canvas.width = width; canvas.height = height;
     }
-    if (!imageData || imageData.width !== width || imageData.height !== height) {
-      imageData = new ImageData(new Uint8ClampedArray(width * height * 4), width, height);
-    }
-    imageData.data.set(pixels);
+    lastNV12 = { width, height, pixels };
     composite();
     drawing = true; everDrew = true; lastDraw = performance.now();
     positionSurface(current);
   }
 
   // ---- video discovery -----------------------------------------------------
-  function collectVideos(root, out, depth) {
-    if (depth > 4) return;
-    let nodes;
-    try { nodes = root.querySelectorAll('video, iframe, *'); } catch (e) { return; }
-    for (const node of nodes) {
-      if (node.tagName === 'VIDEO') out.push(node);
-      else if (node.tagName === 'IFRAME') {
-        try { if (node.contentDocument) collectVideos(node.contentDocument, out, depth + 1); } catch (e) {}
-      } else if (node.shadowRoot) collectVideos(node.shadowRoot, out, depth + 1);
+  //
+  // Do not walk the whole DOM every animation frame. The old collector ran
+  // querySelectorAll('video, iframe, *') — every element — twice per frame,
+  // ~120 full walks a second in the page's renderer. Keep a live set and
+  // only score that.
+  const knownVideos = new Set();
+  const observedRoots = new Set();
+
+  function watchRoot(root) {
+    if (!root || observedRoots.has(root)) return;
+    observedRoots.add(root);
+    const observer = new MutationObserver((records) => {
+      for (const record of records) {
+        for (const node of record.addedNodes) ingestNode(node);
+        for (const node of record.removedNodes) forgetNode(node);
+      }
+    });
+    try {
+      observer.observe(root, { childList: true, subtree: true });
+    } catch (e) {
+      observedRoots.delete(root);
+      return;
     }
+    ingestNode(root === document ? document.documentElement : root);
+  }
+
+  function bindIframe(frame) {
+    const bind = () => {
+      try { if (frame.contentDocument) watchRoot(frame.contentDocument); } catch (e) {}
+    };
+    bind();
+    frame.addEventListener('load', bind);
+  }
+
+  function ingestNode(node) {
+    if (!node) return;
+    if (node.nodeType === 11) { watchRoot(node); return; }
+    if (node.nodeType !== 1) return;
+    if (node.tagName === 'VIDEO') knownVideos.add(node);
+    else if (node.tagName === 'IFRAME') bindIframe(node);
+    if (node.shadowRoot) watchRoot(node.shadowRoot);
+    if (!node.querySelectorAll) return;
+    let found;
+    try { found = node.querySelectorAll('video, iframe'); } catch (e) { return; }
+    for (const el of found) {
+      if (el.tagName === 'VIDEO') knownVideos.add(el);
+      else if (el.tagName === 'IFRAME') bindIframe(el);
+    }
+    // Open shadow roots have no selector. Walk this subtree once, when it
+    // appears, not every frame.
+    let all;
+    try { all = node.querySelectorAll('*'); } catch (e) { return; }
+    for (const el of all) {
+      if (el.shadowRoot) watchRoot(el.shadowRoot);
+    }
+  }
+
+  function forgetNode(node) {
+    if (!node || node.nodeType !== 1) return;
+    if (node.tagName === 'VIDEO') knownVideos.delete(node);
+    if (!node.querySelectorAll) return;
+    try {
+      for (const video of node.querySelectorAll('video')) knownVideos.delete(video);
+    } catch (e) {}
   }
 
   function viewportRect(el) {
@@ -298,10 +401,9 @@
   }
 
   function pickVideo() {
-    const videos = [];
-    collectVideos(document, videos, 0);
     let best = null, bestScore = 0;
-    for (const v of videos) {
+    for (const v of knownVideos) {
+      if (!v.isConnected) { knownVideos.delete(v); continue; }
       if (!v.videoWidth || !v.videoHeight) continue;
       const cs = getComputedStyle(v);
       if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) < 0.5) continue;
@@ -390,48 +492,57 @@
     try {
       const meta = JSON.parse(new TextDecoder().decode(new Uint8Array(buffer, 8, headerLength)));
       if (meta.session !== session) return;
-      drawEnhanced(meta.w, meta.h, new Uint8Array(buffer, 8 + headerLength));
+      drawEnhanced(meta.w, meta.h, new Uint8Array(buffer, 8 + headerLength), meta.format);
       stats.drawn = (stats.drawn || 0) + 1;
       if (stats.drawn % 30 === 1) publishStats();
     } catch (e) { stats.errors++; stats.last = 'draw ' + (e && e.message || e); publishStats(); }
   }
   onBinary = receiveBinary;
 
+  let frameConnecting = false;
   function openFrameSocket() {
     // Under the extension the worker already carries frames; nothing to open.
     if (runtime) { stats.socket = 'port'; publishStats(); return; }
-    if (frameSocket && (frameSocket.readyState === 0 || frameSocket.readyState === 1)) return;
-    try { frameSocket = new WebSocket(BRIDGE_URL); } catch (e) { frameSocket = null; return; }
-    frameSocket.binaryType = 'arraybuffer';
-    frameSocket.onopen = () => {
-      frameBackoff = 500; stats.socket = 'open';
-      // Say which video's frames belong to this socket. Reports travel on a
-      // different connection, and the app learns the session from those, so
-      // without this it sends every frame to the report socket - which has no
-      // onmessage handler and never reads a byte of it. The surface iframe
-      // sends the same message for the same reason.
-      try { frameSocket.send(JSON.stringify({ type: 'attach', session })); } catch (e) {}
-      publishStats();
-    };
-    frameSocket.onclose = () => {
-      frameSocket = null; framesInFlight = 0; stats.socket = 'closed'; publishStats();
-      setTimeout(openFrameSocket, frameBackoff);
-      frameBackoff = Math.min(frameBackoff * 2, 8000);
-    };
-    frameSocket.onerror = () => {};
-    // The app asks for a frame when it needs one re-rendered, which is how a
-    // paused video keeps up with a settings change.
-    frameSocket.onmessage = (event) => {
-      if (event.data instanceof ArrayBuffer) { receiveBinary(event.data); return; }
-      stats.rx = (stats.rx || 0) + 1;
-      stats.rxType = 'text';
+    if (frameConnecting || (frameSocket && (frameSocket.readyState === 0 || frameSocket.readyState === 1))) return;
+    frameConnecting = true;
+    fetchBridgeToken().then((token) => {
+      try { frameSocket = new WebSocket(BRIDGE_URL); } catch (e) { frameConnecting = false; frameSocket = null; return; }
+      frameSocket.binaryType = 'arraybuffer';
+      frameSocket.onopen = () => {
+        frameConnecting = false;
+        frameBackoff = 500; stats.socket = 'open';
+        try { frameSocket.send(JSON.stringify({ type: 'hello', token })); } catch (e) {}
+        // Say which video's frames belong to this socket. Reports travel on a
+        // different connection, and the app learns the session from those, so
+        // without this it sends every frame to the report socket - which has no
+        // onmessage handler and never reads a byte of it. The surface iframe
+        // sends the same message for the same reason.
+        try { frameSocket.send(JSON.stringify({ type: 'attach', session })); } catch (e) {}
+        publishStats();
+      };
+      frameSocket.onclose = () => {
+        frameConnecting = false;
+        frameSocket = null; framesInFlight = 0; stats.socket = 'closed'; publishStats();
+        setTimeout(openFrameSocket, frameBackoff);
+        frameBackoff = Math.min(frameBackoff * 2, 8000);
+      };
+      frameSocket.onerror = () => {};
       // The app asks for a frame when it needs one re-rendered, which is how a
       // paused video keeps up with a settings change.
-      try {
-        const message = JSON.parse(event.data);
-        if (message && message.type === 'nudge' && current) sendFrame(current);
-      } catch (e) {}
-    };
+      frameSocket.onmessage = (event) => {
+        if (event.data instanceof ArrayBuffer) { receiveBinary(event.data); return; }
+        stats.rx = (stats.rx || 0) + 1;
+        stats.rxType = 'text';
+        try {
+          const message = JSON.parse(event.data);
+          if (message && message.type === 'nudge' && current) sendFrame(current);
+        } catch (e) {}
+      };
+    }).catch(() => {
+      frameConnecting = false;
+      setTimeout(openFrameSocket, frameBackoff);
+      frameBackoff = Math.min(frameBackoff * 2, 8000);
+    });
   }
 
   function deliverFrame(packet) {
@@ -571,14 +682,13 @@
     // A page can look momentarily hidden or video-less while the layout
     // settles. Withdrawing instantly tears the app's session down and makes it
     // rebuild the whole pipeline, so require the condition to actually hold.
-    const absent = document.visibilityState !== 'visible' || !pickVideo();
-    if (absent) {
+    const video = document.visibilityState === 'visible' ? pickVideo() : null;
+    if (!video) {
       if (!absentSince) absentSince = now;
       if (now - absentSince > 500) sendGone();
       requestAnimationFrame(tick); return;
     }
     absentSince = 0;
-    const video = pickVideo();
     if (video !== current) { current = video; cutouts = []; lastCutoutAt = 0; stopStreaming(); removeSurface(); }
 
     const v = snapshot(video);
@@ -667,6 +777,7 @@
     document.addEventListener(type, (event) => {
       const video = event.target;
       if (!(video instanceof HTMLVideoElement)) return;
+      knownVideos.add(video);
       if (video !== current) return;
       if (!video.paused && !video.ended) startStreaming(video);
       else if (streaming && video.readyState >= 2) sendFrame(video);
@@ -701,6 +812,7 @@
   });
   document.addEventListener('visibilitychange', () => { if (document.visibilityState !== 'visible') sendGone(); });
 
+  watchRoot(document);
   pumpIdle();
   requestAnimationFrame(tick);
 })();

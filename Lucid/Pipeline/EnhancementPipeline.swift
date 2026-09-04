@@ -2,8 +2,8 @@
 //  EnhancementPipeline.swift
 //  Lucid
 //
-//  Off-main-actor stage graph: capture stream → tiled super resolution →
-//  timestamp-paced presentation. Backpressure comes from the capture stream's
+//  Off-main-actor stage graph: capture stream → SPAN → Metal detail →
+//  presentation. Backpressure comes from the capture stream's
 //  newest-frame buffering: if processing lags, older frames are dropped and
 //  the pipeline never queues unboundedly.
 //
@@ -143,16 +143,39 @@ actor EnhancementPipeline {
                 print("   🔬 \(built.label)")
             }
             guard let stages else { return }
-            let cleaned = (try? stages.detail?.preprocess(frame.pixelBuffer, sourceRect: frame.sourceRect, radius: stages.preprocessRadius)) ?? frame.pixelBuffer
+            let cleaned: CVPixelBuffer
+            if let detail = stages.detail {
+                do {
+                    cleaned = try detail.preprocess(frame.pixelBuffer, sourceRect: frame.sourceRect, radius: stages.preprocessRadius)
+                } catch {
+                    print("   ⚠️ detail preprocess failed: \(error)")
+                    cleaned = frame.pixelBuffer
+                }
+            } else {
+                cleaned = frame.pixelBuffer
+            }
             let reconstructed: CVPixelBuffer
-            if let learned = stages.learned, let output = try? learned.upscale(cleaned) {
-                reconstructed = output
+            if let learned = stages.learned {
+                // Not `try?` and not a fall-through to Apple's scaler. A session
+                // that built SPAN and then misses a frame should surface that,
+                // not silently become the path measured worse than Lanczos.
+                reconstructed = try learned.upscale(cleaned)
             } else if let upscaler = stages.upscaler {
                 reconstructed = try await upscaler.upscale(cleaned, pts: frame.presentationTimestamp)
             } else {
                 reconstructed = cleaned
             }
-            let output = (try? stages.detail?.process(reconstructed, original: frame.pixelBuffer)) ?? reconstructed
+            let output: CVPixelBuffer
+            if let detail = stages.detail {
+                do {
+                    output = try detail.process(reconstructed)
+                } catch {
+                    print("   ⚠️ detail process failed: \(error)")
+                    output = reconstructed
+                }
+            } else {
+                output = reconstructed
+            }
             let elapsed = (ContinuousClock.now - started).milliseconds
             processingEMA = processingEMA == 0 ? elapsed : processingEMA * 0.9 + elapsed * 0.1
             lastOutputSize = CGSize(width: CVPixelBufferGetWidth(output), height: CVPixelBufferGetHeight(output))

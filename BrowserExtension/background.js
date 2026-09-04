@@ -6,10 +6,14 @@
 // most large sites set a Content-Security-Policy that forbids connecting to
 // ws://127.0.0.1 and that policy binds the content script too. The worker is
 // governed by the extension's own policy, so it can always reach the app.
+importScripts('bridge-auth.js');
+
 const runtime = (globalThis.browser && browser.runtime) ? browser.runtime : chrome.runtime;
 const BRIDGE_URL = 'ws://127.0.0.1:47811';
 
 let socket = null;
+let connecting = false;
+let bridgeReady = false;
 let backoff = 1000;
 const pending = [];
 const portSessions = new Map();
@@ -22,11 +26,25 @@ function portForSession(session) {
   return null;
 }
 
-function connect() {
+async function connect() {
+  if (connecting) return;
   if (socket && (socket.readyState === 0 || socket.readyState === 1)) return;
+  connecting = true;
+  bridgeReady = false;
+  let token;
+  try {
+    token = await lucidFetchToken();
+  } catch (e) {
+    connecting = false;
+    socket = null;
+    setTimeout(connect, backoff);
+    backoff = Math.min(backoff * 2, 10000);
+    return;
+  }
   try {
     socket = new WebSocket(BRIDGE_URL);
   } catch (e) {
+    connecting = false;
     socket = null;
     setTimeout(connect, backoff);
     backoff = Math.min(backoff * 2, 10000);
@@ -34,7 +52,10 @@ function connect() {
   }
   socket.binaryType = 'arraybuffer';
   socket.onopen = () => {
+    connecting = false;
     backoff = 1000;
+    try { socket.send(lucidHello(token)); } catch (e) {}
+    bridgeReady = true;
     while (pending.length) socket.send(pending.shift());
   };
   socket.onmessage = (event) => {
@@ -50,6 +71,8 @@ function connect() {
     // app draws with its own overlay window instead and we simply drop these.
   };
   socket.onclose = () => {
+    connecting = false;
+    bridgeReady = false;
     socket = null;
     setTimeout(connect, backoff);
     backoff = Math.min(backoff * 2, 10000);
@@ -59,7 +82,7 @@ function connect() {
 
 function deliver(message) {
   const text = JSON.stringify(message);
-  if (socket && socket.readyState === 1) {
+  if (socket && socket.readyState === 1 && bridgeReady) {
     socket.send(text);
   } else {
     // Keep only the newest message per session while disconnected.
@@ -80,7 +103,7 @@ runtime.onConnect.addListener((port) => {
       // A decoded video frame, base64 because runtime ports are JSON only.
       // Dropping it when the socket is down is right: a stale frame is worth
       // nothing and queueing them costs memory.
-      if (socket && socket.readyState === 1) {
+      if (socket && socket.readyState === 1 && bridgeReady) {
         const binary = atob(message.b);
         const bytes = new Uint8Array(binary.length);
         for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);

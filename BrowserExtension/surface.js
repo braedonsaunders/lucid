@@ -11,8 +11,9 @@
 
   const canvas = document.getElementById('surface');
   const context = canvas.getContext('2d', { alpha: true, desynchronized: true });
-  let imageData = null;
+  let lastNV12 = null;
   let socket = null;
+  let connecting = false;
   let backoff = 400;
   let lastFrameAt = 0;
   let frozen = false;
@@ -20,18 +21,30 @@
   // browser's own video controls show through. The content script measures it.
   let gap = 0;
 
-  function connect() {
-    if (frozen) return;
+  async function connect() {
+    if (frozen || connecting) return;
     if (socket && (socket.readyState === 0 || socket.readyState === 1)) return;
-    try { socket = new WebSocket(BRIDGE_URL); } catch (e) { socket = null; retry(); return; }
+    connecting = true;
+    let token;
+    try {
+      token = await lucidFetchToken();
+    } catch (e) {
+      connecting = false;
+      retry();
+      return;
+    }
+    try { socket = new WebSocket(BRIDGE_URL); } catch (e) { connecting = false; socket = null; retry(); return; }
     socket.binaryType = 'arraybuffer';
     socket.onopen = () => {
+      connecting = false;
       backoff = 400;
+      // Token first: the bridge drops anything else until it has seen hello.
+      try { socket.send(lucidHello(token)); } catch (e) {}
       // Tell the app which video's frames to send here. Without this the bridge
       // has no way to know this connection belongs to that session.
       socket.send(JSON.stringify({ type: 'attach', session }));
     };
-    socket.onclose = () => { socket = null; retry(); };
+    socket.onclose = () => { connecting = false; socket = null; retry(); };
     socket.onerror = () => {};
     socket.onmessage = (event) => {
       if (!(event.data instanceof ArrayBuffer)) return;
@@ -43,7 +56,7 @@
         meta = JSON.parse(new TextDecoder().decode(new Uint8Array(event.data, 8, headerLength)));
       } catch (e) { return; }
       if (meta.session !== session) return;
-      draw(meta.w, meta.h, new Uint8Array(event.data, 8 + headerLength));
+      draw(meta.w, meta.h, new Uint8Array(event.data, 8 + headerLength), meta.format);
     };
   }
 
@@ -53,20 +66,38 @@
     backoff = Math.min(backoff * 2, 6000);
   }
 
-  function draw(width, height, pixels) {
+  function draw(width, height, pixels, format) {
     if (width < 2 || height < 2) return;
     if (canvas.width !== width || canvas.height !== height) {
       canvas.width = width;
       canvas.height = height;
-      imageData = null;
     }
-    if (!imageData || imageData.width !== width || imageData.height !== height) {
-      imageData = new ImageData(new Uint8ClampedArray(width * height * 4), width, height);
-    }
-    imageData.data.set(pixels);
-    context.putImageData(imageData, 0, 0);
-    if (gap > 0) context.clearRect(0, height - Math.min(gap, height), width, Math.min(gap, height));
+    lastNV12 = { width, height, pixels, format };
+    paint();
     lastFrameAt = performance.now();
+  }
+
+  function paint() {
+    if (!lastNV12) return;
+    const { width, height, pixels, format } = lastNV12;
+    if (format !== 'NV12' || typeof VideoFrame !== 'function') return;
+    try {
+      const frame = new VideoFrame(pixels, {
+        format: 'NV12',
+        codedWidth: width,
+        codedHeight: height,
+        timestamp: 0,
+        layout: [
+          { offset: 0, stride: width },
+          { offset: width * height, stride: width },
+        ],
+      });
+      context.drawImage(frame, 0, 0, width, height);
+      frame.close();
+    } catch (e) {
+      return;
+    }
+    if (gap > 0) context.clearRect(0, height - Math.min(gap, height), width, Math.min(gap, height));
   }
 
   // The content script measures the control strip and reports whether the
@@ -79,10 +110,7 @@
     gap = next;
     // Re-composite immediately so the gap opens and closes with the controls
     // rather than waiting for whatever frame happens to arrive next.
-    if (imageData) {
-      context.putImageData(imageData, 0, 0);
-      if (gap > 0) context.clearRect(0, canvas.height - Math.min(gap, canvas.height), canvas.width, Math.min(gap, canvas.height));
-    }
+    paint();
   });
 
   // If frames stop - the app quit, the video changed, the pipeline stalled -
@@ -92,7 +120,7 @@
   setInterval(() => {
     if (lastFrameAt && performance.now() - lastFrameAt > 400) {
       context.clearRect(0, 0, canvas.width, canvas.height);
-      imageData = null;
+      lastNV12 = null;
       lastFrameAt = 0;
     }
   }, 200);

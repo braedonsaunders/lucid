@@ -27,7 +27,7 @@ enum EngineBench {
         }
         let format = CVPixelBufferGetPixelFormatType(buffer)
         let fourCC = String(bytes: [UInt8(format >> 24 & 255), UInt8(format >> 16 & 255), UInt8(format >> 8 & 255), UInt8(format & 255)], encoding: .ascii) ?? "?"
-        print("  \(label): \(CVPixelBufferGetWidth(buffer))x\(CVPixelBufferGetHeight(buffer)) \(fourCC) matrix=\(value(kCVImageBufferYCbCrMatrixKey)) primaries=\(value(kCVImageBufferColorPrimariesKey)) transfer=\(value(kCVImageBufferTransferFunctionKey))")
+        print("  \(label): \(CVPixelBufferGetWidth(buffer))x\(CVPixelBufferGetHeight(buffer)) \(fourCC) matrix=\(value(kCVImageBufferYCbCrMatrixKey)) primaries=\(value(kCVImageBufferColorPrimariesKey)) transfer=\(value(kCVImageBufferTransferFunctionKey)) chroma=\(value(kCVImageBufferChromaLocationTopFieldKey))")
         fflush(stdout)
     }
 
@@ -120,17 +120,15 @@ enum EngineBench {
         var previousSource: CVPixelBuffer?
         var previousOutput: CVPixelBuffer?
         let t = EnhancementSession.Tuning.load()
-        // Chroma siting lives on a static that only AppCoordinator sets, so the
-        // bench used to ignore stageSiting completely and report it as having
-        // exactly zero effect - a broken measurement that reads like a result.
-        // It does apply on the learned path: LearnedUpscaler's colour
-        // conversion goes through ensureColorDescription.
+        // Chroma siting lives on a static. Setting it is not enough: the
+        // incoming AVAssetReader buffer is usually already tagged, and VT
+        // samples chroma from the source, so ensureColorDescription must
+        // overwrite siting on that buffer before the 420→RGB convert.
         TiledVideoToolboxUpscaler.chromaSitingLeft = t.stageSiting > 0.5
         let detail = try DetailEnhancer(device: compositor.device, settings: DetailSettings(
             sharpness: t.sharpness, fine: t.fine,
             micro: t.micro, lobeScale: t.lobeScale, mid: t.mid,
             flatThreshold: 0.004, edgeThreshold: 0.030, deblock: t.deblock,
-            backProjection: 0, backProjectionPasses: 0,
             sourceDeblock: t.sourceDeblock, sourceDeblockRadius: 1.6, presharpen: t.presharpen, adaptive: t.adaptive,
             temporal: t.temporal, motionLow: 0.02, motionHigh: 0.08,
             radius: ProcessInfo.processInfo.environment["LUCID_RADIUS"].flatMap(Int.init) ?? 4,
@@ -167,6 +165,12 @@ enum EngineBench {
             TiledVideoToolboxUpscaler.ensureColorDescription(frame)
             let referenceFrame = reference.copyNextSampleBuffer()?.imageBuffer
             let width = CVPixelBufferGetWidth(frame), height = CVPixelBufferGetHeight(frame)
+            if index == first { describe(frame, "captured input (as decoded)") }
+            let frame = TiledVideoToolboxUpscaler.prepareSource(frame)
+            if index == first {
+                describe(frame, "captured input (after siting prepare)")
+                print("bench chroma flag=\(TiledVideoToolboxUpscaler.chromaSitingLeft ? "left" : "center") resampled=\(TiledVideoToolboxUpscaler.chromaSitingLeft ? "none" : "center")")
+            }
 
             if lowLatency == nil {
                 let factor = Int(t.scalerFactor.rounded())
@@ -214,7 +218,7 @@ enum EngineBench {
             lowLatencyTimes.append((ContinuousClock.now - startLowLatency).milliseconds)
 
             let startDetail = ContinuousClock.now
-            let detailOutput = try detail.process(lowLatencyOutput, original: frame)
+            let detailOutput = try detail.process(lowLatencyOutput)
             detailTimes.append((ContinuousClock.now - startDetail).milliseconds)
 
             let source = makeBuffer(sourcePool!)
@@ -243,7 +247,7 @@ enum EngineBench {
             previousOutput = destination
 
             if index == first {
-                describe(frame, "captured input")
+                describe(frame, "captured input (after siting)")
                 describe(lowLatencyOutput, "low-latency 4×")
                 describe(destination, "temporal 4×")
                 if let referenceFrame { describe(referenceFrame, "reference") }

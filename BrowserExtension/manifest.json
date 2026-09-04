@@ -7,6 +7,9 @@
   "permissions": [
     "alarms"
   ],
+  "host_permissions": [
+    "http://127.0.0.1/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
@@ -26,7 +29,8 @@
     {
       "resources": [
         "surface.html",
-        "surface.js"
+        "surface.js",
+        "bridge-auth.js"
       ],
       "matches": [
         "<all_urls>"
