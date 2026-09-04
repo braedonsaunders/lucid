@@ -48,6 +48,12 @@
   .tune label span { width:66px; }
   .tune label input { flex:1; accent-color: var(--accent); }
   .tune label b { width:42px; text-align:right; color:var(--text); font-weight:500; font-variant-numeric:tabular-nums; }
+  #stages > label.switch { display:flex; align-items:flex-start; gap:7px; font-size:12px; line-height:1.35; margin:7px 0 2px; color:var(--text); }
+  #stages > label.switch input { margin-top:2px; flex:none; }
+  #stages label.knob { display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--muted); margin:2px 0 8px 22px; }
+  #stages label.knob span { width:74px; flex:none; }
+  #stages label.knob input { flex:1; min-width:0; accent-color:var(--accent); }
+  #stages label.knob b { width:42px; flex:none; text-align:right; color:var(--text); font-weight:500; font-variant-numeric:tabular-nums; }
   .scrollpad { height:900px; margin:18px; padding:18px; border:1px dashed var(--line); border-radius:12px; color:var(--muted); font-size:12.5px; }
   kbd { background:#1b2230; border:1px solid var(--line); border-radius:4px; padding:1px 5px; font-family: ui-monospace, monospace; }
   #clips button.outside { opacity: .45; }
@@ -274,7 +280,7 @@ for (const [key, label, knob] of STAGES) {
   if (knob) {
     const [nk, nlabel, min, max, step] = knob;
     const sub = document.createElement('label');
-    sub.style.paddingLeft = '22px';
+    sub.className = 'knob';
     const name = document.createElement('span'); name.textContent = nlabel;
     const input = document.createElement('input');
     input.type = 'range'; input.min = min; input.max = max; input.step = step;

@@ -686,17 +686,21 @@ final class EnhancementSession {
                 sharpness = 0; fine = 0; blackPoint = 0; whitePoint = 1
                 contrast = 0; saturation = 1; sourceDeblock = 0; micro = 0
             case .subtle:
-                // The upscaler and nothing else.
-                sharpness = 0; fine = 0; blackPoint = 0; whitePoint = 1
-                contrast = 0; saturation = 1.0; sourceDeblock = 0.030; micro = 0
+                sharpness = 0; fine = 0.15; blackPoint = 0.020; whitePoint = 0.990
+                contrast = 0.10; saturation = 1.0; sourceDeblock = 0.020; micro = 0
             case .standard:
-                // Enough grade to undo what compression flattens, and no
-                // sharpening: the upscaler is better at that than we are.
-                sharpness = 0; fine = 0; blackPoint = 0.020; whitePoint = 0.990
-                contrast = 0.10; saturation = 1.05; sourceDeblock = 0.040; micro = 0
+                // The measured values. Detail 0.3 and source deblock 0.02 are
+                // both peaks found by sweeping against a 1080p reference; the
+                // grade is a look chosen on top of them.
+                sharpness = 0; fine = 0.30; blackPoint = 0.020; whitePoint = 0.990
+                contrast = 0.20; saturation = 1.0; sourceDeblock = 0.020; micro = 0
             case .strong:
-                sharpness = 0.45; fine = 0.35; blackPoint = 0.050; whitePoint = 0.980
-                contrast = 0.22; saturation = 1.10; sourceDeblock = 0.050; micro = 0
+                // More detail gain than measured optimal, deliberately. Nothing
+                // here raises sharpening: it measured worse at every setting
+                // above zero, so a "strong" preset that sharpens is a preset
+                // that makes the picture less like the truth.
+                sharpness = 0; fine = 0.45; blackPoint = 0.030; whitePoint = 0.985
+                contrast = 0.30; saturation = 1.0; sourceDeblock = 0.020; micro = 0
             }
         }
 
