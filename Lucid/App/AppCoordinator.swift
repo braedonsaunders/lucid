@@ -229,6 +229,7 @@ final class AppCoordinator {
                 case "taaFeedback": t.taaFeedback = value
                 case "taaGamma": t.taaGamma = value
                 case "grain": t.grain = value
+                case "grainPhase": t.grainPhase = value
                 case "debandThreshold": t.debandThreshold = value
                 case "cdefSecondary": t.cdefSecondary = value
                 case "cdefPrimary": t.cdefPrimary = value
@@ -625,6 +626,15 @@ final class EnhancementSession {
         var cdefSecondary: Float = 2
         var debandThreshold: Float = 0.008
         var grain: Float = 0.010
+        // 0: the grain pattern is fixed rather than re-randomised each frame.
+        // Measured as a trade, not an improvement. Moving grain scores better on
+        // every per-frame metric (DISTS 0.2461 against 0.2511, LPIPS 0.5548
+        // against 0.5640) and costs 15% more frame-to-frame shimmer (2.31
+        // against 1.96 on the flicker metric). Braedon's report on real video
+        // was "it flickers", so steadiness wins - and a per-frame metric is
+        // structurally incapable of seeing the axis he was describing, which is
+        // the same reason the temporal stage measured harmful on every clip.
+        var grainPhase: Float = 0.0
         var taaGamma: Float = 1.25
         // The gentlest setting the control offers: enough to steady the image
         // without the history dominating it.
@@ -660,6 +670,7 @@ final class EnhancementSession {
             taaFeedback = try f(.taaFeedback, taaFeedback)
             taaGamma = try f(.taaGamma, taaGamma)
             grain = try f(.grain, grain)
+            grainPhase = try f(.grainPhase, grainPhase)
             debandThreshold = try f(.debandThreshold, debandThreshold)
             cdefSecondary = try f(.cdefSecondary, cdefSecondary)
             cdefPrimary = try f(.cdefPrimary, cdefPrimary)
@@ -835,6 +846,7 @@ final class EnhancementSession {
             cdefSecondary: t.cdefSecondary,
             debandThreshold: t.debandThreshold,
             grain: t.grain,
+            grainPhase: t.grainPhase,
             taaGamma: t.taaGamma,
             taaFeedback: t.taaFeedback,
             skinProtect: t.skinProtect,

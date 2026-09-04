@@ -144,6 +144,7 @@ enum EngineBench {
             cdefSecondary: t.cdefSecondary,
             debandThreshold: t.debandThreshold,
             grain: t.grain,
+            grainPhase: t.grainPhase,
             taaGamma: t.taaGamma,
             taaFeedback: t.taaFeedback,
             skinProtect: t.skinProtect
