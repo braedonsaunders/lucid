@@ -160,7 +160,12 @@ final class LearnedUpscaler: @unchecked Sendable {
 
     private static func model(width: Int, height: Int) -> URL? {
         guard let variant = variant(width: width, height: height) else { return nil }
-        let name = "SPAN_x4_ch32u_\(variant.width)x\(variant.height)"
+        // LUCID_MODEL_STEM swaps the model without changing what ships, so a
+        // candidate can be measured through the real pipeline by the same
+        // harness that measures the shipping one. Comparing two models by
+        // rebuilding the app between them compares two builds.
+        let stem = ProcessInfo.processInfo.environment["LUCID_MODEL_STEM"] ?? "SPAN_x4_ch32u_"
+        let name = "\(stem)\(variant.width)x\(variant.height)"
         return Bundle.main.url(forResource: name, withExtension: "mlmodelc")
             ?? Bundle.main.url(forResource: name, withExtension: "mlpackage")
     }
