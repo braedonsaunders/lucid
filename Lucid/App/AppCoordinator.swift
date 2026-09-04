@@ -591,7 +591,7 @@ final class EnhancementSession {
         var micro: Float = 0.0
         // Half the detail scale: measured against ground truth this halves
         // coarse-band overshoot, which is what reads as halos.
-        var lobeScale: Float = 0.5
+        var lobeScale: Float = 0.3
         var mid: Float = 0.0
         var presharpen: Float = 0.0
         /// Lets the deblocker read the frame and set its own strength.
@@ -681,26 +681,44 @@ final class EnhancementSession {
         /// Applies a strength without disturbing the stage switches, which are
         /// not something a person using this should have to think about.
         mutating func apply(_ strength: Strength) {
+            // The ladder is built on `sharpness`, not `fine`, and that is the
+            // whole point of it rather than a detail.
+            //
+            // Both controls add high-frequency detail, but not the same way.
+            // `sharpness` drives a contrast-adaptive lobe whose per-pixel
+            // strength is set by how close that pixel already sits to the local
+            // extremes, and which cannot leave the range of the pixels it was
+            // computed from. `fine` is a straight gain on a band: no
+            // adaptation, no per-pixel limit, clamped only at the very end.
+            //
+            // Every arm used to pin sharpness to 0 and express strength purely
+            // through `fine` - the self-limiting mechanism switched off and the
+            // unlimited one carrying all the detail. That came directly from
+            // measuring on band correlation, which rewards matching the
+            // reference's band energy (a flat gain does that well) and punishes
+            // an adaptive lobe's deviations. Measured perceptually the order
+            // reverses, and the edge-overshoot guard says the swept
+            // configuration rings 27% LESS than what shipped while carrying
+            // more detail. Putting the lift back through the mechanism built to
+            // carry it safely is one move, not two.
             switch strength {
             case .off:
                 sharpness = 0; fine = 0; blackPoint = 0; whitePoint = 1
                 contrast = 0; saturation = 1; sourceDeblock = 0; micro = 0
             case .subtle:
-                sharpness = 0; fine = 0.15; blackPoint = 0.020; whitePoint = 0.990
-                contrast = 0.10; saturation = 1.0; sourceDeblock = 0.020; micro = 0
+                sharpness = 0.25; fine = 0; blackPoint = 0.020; whitePoint = 0.990
+                contrast = 0.10; saturation = 1.0; sourceDeblock = 0; micro = 0
             case .standard:
-                // The measured values. Detail 0.3 and source deblock 0.02 are
-                // both peaks found by sweeping against a 1080p reference; the
-                // grade is a look chosen on top of them.
-                sharpness = 0; fine = 0.30; blackPoint = 0.020; whitePoint = 0.990
-                contrast = 0.20; saturation = 1.0; sourceDeblock = 0.020; micro = 0
+                // Swept on the adversarially fine-tuned model against the
+                // perceptual scoreboard. micro is held at 0 deliberately: the
+                // sweep wanted 0.5, it buys 0.0007 of DISTS - noise - and adds
+                // 20% to the overshoot, and when the primary metric cannot
+                // separate two settings the tiebreak is risk.
+                sharpness = 0.50; fine = 0; blackPoint = 0.020; whitePoint = 0.990
+                contrast = 0.20; saturation = 1.0; sourceDeblock = 0; micro = 0
             case .strong:
-                // More detail gain than measured optimal, deliberately. Nothing
-                // here raises sharpening: it measured worse at every setting
-                // above zero, so a "strong" preset that sharpens is a preset
-                // that makes the picture less like the truth.
-                sharpness = 0; fine = 0.45; blackPoint = 0.030; whitePoint = 0.985
-                contrast = 0.30; saturation = 1.0; sourceDeblock = 0.020; micro = 0
+                sharpness = 0.75; fine = 0; blackPoint = 0.030; whitePoint = 0.985
+                contrast = 0.30; saturation = 1.0; sourceDeblock = 0; micro = 0
             }
         }
 
