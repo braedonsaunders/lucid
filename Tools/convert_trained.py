@@ -37,12 +37,13 @@ def main():
 
     state = torch.load(args.weights, map_location="cpu", weights_only=False)
     channels = state.get("channels", args.channels)
-    model = Unshuffled(channels).eval()
+    frames = state.get("frames", 1)
+    model = Unshuffled(channels, frames=frames).eval()
     model.load_state_dict(state["model"] if "model" in state else state)
     step = state.get("step", "?")
     parameters = sum(p.numel() for p in model.parameters())
-    print(f"ch{channels}u from {args.weights} at step {step}: "
-          f"{parameters/1000:.0f}K parameters")
+    print(f"ch{channels}u{'t' if frames > 1 else ''} from {args.weights} at "
+          f"step {step}: {parameters/1000:.0f}K parameters, {frames} input frame(s)")
 
     # convert_span's converter carries the fp16 policy and the image in/out
     # wrapper; reuse it rather than restating the conversion rules here.
@@ -52,7 +53,7 @@ def main():
     globals_for_convert = dict(ns)
     exec(compile(open(os.path.join(os.path.dirname(__file__), "convert_span.py")).read()
                  .split("if __name__")[0], "convert_span", "exec"), globals_for_convert)
-    globals_for_convert["CHANNELS"] = f"{channels}u"
+    globals_for_convert["CHANNELS"] = f"{channels}u{'t' if frames > 1 else ''}"
     globals_for_convert["SCALE"] = 4
 
     for width, height in LADDER:

@@ -29,6 +29,11 @@
   .hint { color:var(--muted); font-size:12px; margin-left:auto; white-space:nowrap; }
   main { display:grid; grid-template-columns: 300px 1fr; gap:18px; padding:18px; align-items:start; }
   aside { background:var(--panel); max-height:calc(100vh - 88px); overflow:auto; border:1px solid var(--line); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:12px; position:sticky; top:64px; }
+  /* aside is a flex column with a max-height, so every child shrinks by
+     default. .meta has min-height:18px, so a four-line description was being
+     squeezed into 18px and its text drew straight over the controls below it.
+     Nothing in this panel should ever be compressed. */
+  aside > * { flex: none; }
   aside h2 { font-size:12px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin:6px 0 2px; font-weight:600; }
   .clips { display:flex; flex-direction:column; gap:4px; }
   .clips button { text-align:left; background:#1b2230; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:7px 10px; font:inherit; font-size:12.5px; cursor:pointer; }

@@ -46,16 +46,26 @@ class Unshuffled(nn.Module):
     stops existing.
     """
 
-    def __init__(self, channels=32, scale=SCALE):
+    def __init__(self, channels=32, scale=SCALE, frames=1):
         super().__init__()
+        self.frames = frames
         self.unshuffle = nn.PixelUnshuffle(2)
-        self.core = SPAN(num_in_ch=12, num_out_ch=3, feature_channels=channels,
+        # 3 RGB channels per frame, x4 from the 2x2 unshuffle. One frame is 12
+        # channels in; three consecutive frames are 36, and that extra width
+        # lands on the first convolution only - the trunk is unchanged, so the
+        # cost is a rounding error against a graph that is bandwidth bound on
+        # its 32-channel body.
+        self.core = SPAN(num_in_ch=12 * frames, num_out_ch=3,
+                         feature_channels=channels,
                          upscale=scale * 2, img_range=1.0, rgb_mean=(0.0, 0.0, 0.0))
-        # rgb_mean is shaped (1,3,1,1) and the trunk now takes 12 channels, so
-        # replace it with something that broadcasts.
+        # rgb_mean is shaped (1,3,1,1) and the trunk takes 12*frames, so replace
+        # it with something that broadcasts.
         self.core.mean = torch.zeros(1, 1, 1, 1)
 
     def forward(self, x):
+        """x is (B, 3*frames, H, W): the current frame last, so a single-frame
+        checkpoint stays a prefix of a temporal one and the ordering is the same
+        at training and at playback."""
         return self.core(self.unshuffle(x))
 
 
@@ -121,6 +131,14 @@ def report_composition(corpus):
     print(f"  {'sources':12s} {len(sources)} distinct")
 
 
+def bank_frames(corpus):
+    """How many input frames this corpus carries. A temporal corpus adds lr_t1
+    and lr_t2 next to lr; a single-frame one does not, and the trainer should
+    work with either without being told which."""
+    extra = [d for d in ("lr_t2", "lr_t1") if os.path.isdir(os.path.join(corpus, d))]
+    return len(extra) + 1, extra
+
+
 def build_bank(corpus, out, per_pair=8, seed=0, min_correlation=0.85):
     """Pre-cuts training patches into a memory-mapped array.
 
@@ -132,13 +150,16 @@ def build_bank(corpus, out, per_pair=8, seed=0, min_correlation=0.85):
     pairs = sorted(os.listdir(os.path.join(corpus, "lr")))
     if not pairs:
         raise SystemExit(f"no pairs in {corpus}/lr")
+    frames, extra = bank_frames(corpus)
+    if frames > 1:
+        print(f"temporal corpus: {frames} frames per sample ({', '.join(extra)} + lr)")
     report_composition(corpus)
     rng = random.Random(seed)
     total = len(pairs) * per_pair
     os.makedirs(out, exist_ok=True)
     lr_bank = np.lib.format.open_memmap(
         os.path.join(out, "lr.npy"), mode="w+", dtype=np.uint8,
-        shape=(total, LR_PATCH, LR_PATCH, 3))
+        shape=(total, LR_PATCH, LR_PATCH, 3 * frames))
     hr_bank = np.lib.format.open_memmap(
         os.path.join(out, "hr.npy"), mode="w+", dtype=np.uint8,
         shape=(total, HR_PATCH, HR_PATCH, 3))
@@ -152,6 +173,19 @@ def build_bank(corpus, out, per_pair=8, seed=0, min_correlation=0.85):
             continue
         lr = np.asarray(Image.open(lr_path).convert("RGB"))
         hr = np.asarray(Image.open(hr_path).convert("RGB"))
+        # Oldest frame first, current frame last, so channel order is the same
+        # here as it is at playback.
+        history = []
+        for name_dir in extra:
+            other = os.path.join(corpus, name_dir, name)
+            if not os.path.exists(other):
+                history = None; break
+            frame = np.asarray(Image.open(other).convert("RGB"))
+            if frame.shape != lr.shape:
+                history = None; break
+            history.append(frame)
+        if history is None:
+            continue
         # The corpus is only useful if HR really is 4x LR. A 2x corpus trains
         # the wrong mapping and looks fine until the model ships, so check
         # rather than trust.
@@ -177,7 +211,9 @@ def build_bank(corpus, out, per_pair=8, seed=0, min_correlation=0.85):
         for _ in range(per_pair):
             y = rng.randrange(0, lr.shape[0] - LR_PATCH + 1)
             x = rng.randrange(0, lr.shape[1] - LR_PATCH + 1)
-            lr_bank[written] = lr[y:y + LR_PATCH, x:x + LR_PATCH]
+            stack = [f[y:y + LR_PATCH, x:x + LR_PATCH] for f in history]
+            stack.append(lr[y:y + LR_PATCH, x:x + LR_PATCH])
+            lr_bank[written] = np.concatenate(stack, axis=2)
             hr_bank[written] = hr[y * SCALE:y * SCALE + HR_PATCH,
                                   x * SCALE:x * SCALE + HR_PATCH]
             written += 1
@@ -197,7 +233,8 @@ def build_bank(corpus, out, per_pair=8, seed=0, min_correlation=0.85):
                 "fix the generator rather than training on what is left")
     lr_bank.flush(); hr_bank.flush()
     with open(os.path.join(out, "bank.json"), "w") as fh:
-        json.dump({"count": written, "lr_patch": LR_PATCH, "scale": SCALE}, fh)
+        json.dump({"count": written, "lr_patch": LR_PATCH, "scale": SCALE,
+               "frames": frames}, fh)
     print(f"wrote {written} patches to {out}")
 
 
@@ -206,7 +243,7 @@ def load_bank(out):
         meta = json.load(fh)
     lr = np.load(os.path.join(out, "lr.npy"), mmap_mode="r")
     hr = np.load(os.path.join(out, "hr.npy"), mmap_mode="r")
-    return lr[:meta["count"]], hr[:meta["count"]]
+    return lr[:meta["count"]], hr[:meta["count"]], meta.get("frames", 1)
 
 
 # ---- metrics ----------------------------------------------------------------
@@ -256,7 +293,7 @@ def main():
                    min_correlation=args.min_correlation)
         return
 
-    lr_bank, hr_bank = load_bank(args.bank_dir)
+    lr_bank, hr_bank, frames = load_bank(args.bank_dir)
     count = len(lr_bank)
     # A held-out tail, taken by index so the same patches are never trained on.
     validation = max(256, count // 40)
@@ -264,9 +301,10 @@ def main():
     print(f"{train_count} training patches, {validation} held out")
 
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-    model = Unshuffled(args.channels).to(device)
+    model = Unshuffled(args.channels, frames=frames).to(device)
     parameters = sum(p.numel() for p in model.parameters())
-    print(f"ch{args.channels}u: {parameters/1000:.0f}K parameters, training on {device}")
+    print(f"ch{args.channels}u{'t' if frames > 1 else ''}: {parameters/1000:.0f}K "
+          f"parameters, {frames} input frame{'s' if frames > 1 else ''}, on {device}")
 
     optimiser = torch.optim.Adam(model.parameters(), lr=args.lr, betas=(0.9, 0.99))
     schedule = torch.optim.lr_scheduler.CosineAnnealingLR(optimiser, T_max=args.steps, eta_min=args.lr / 100)
@@ -336,8 +374,9 @@ def main():
             model.train()
             torch.save({"model": model.state_dict(), "optimiser": optimiser.state_dict(),
                         "schedule": schedule.state_dict(), "step": step + 1,
-                        "channels": args.channels},
-                       os.path.join(args.out, f"span_ch{args.channels}u.pth"))
+                        "channels": args.channels, "frames": frames},
+                       os.path.join(args.out,
+                                    f"span_ch{args.channels}u{'t' if frames > 1 else ''}.pth"))
 
     print(f"done in {(time.time()-began)/60:.1f} min → {args.out}/span_ch{args.channels}u.pth")
 

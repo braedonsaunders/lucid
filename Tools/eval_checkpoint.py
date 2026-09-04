@@ -23,7 +23,7 @@ import torch
 from PIL import Image, ImageFilter
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from train_span import Unshuffled  # noqa: E402
+from train_span import Unshuffled, bank_frames  # noqa: E402
 
 
 def bands(gray):
@@ -50,9 +50,30 @@ def score(output, reference):
 
 def load(path, device):
     state = torch.load(path, map_location="cpu", weights_only=False)
-    model = Unshuffled(state.get("channels", 32)).eval().to(device)
+    frames = state.get("frames", 1)
+    model = Unshuffled(state.get("channels", 32), frames=frames).eval().to(device)
     model.load_state_dict(state["model"] if "model" in state else state)
-    return model, state.get("step", "?")
+    return model, state.get("step", "?"), frames
+
+
+def stack_input(corpus, name, frames, available):
+    """Builds the model's input: oldest frame first, current frame last.
+
+    When a temporal model is scored on a corpus without history - or at a scene
+    cut in real playback - the current frame is repeated. That is the honest
+    degenerate case: it tells the model nothing new rather than handing it an
+    unrelated shot, which is the failure that would show up as ghosting."""
+    from PIL import Image as _Image
+    current = _Image.open(os.path.join(corpus, "lr", name)).convert("RGB")
+    layers = []
+    for directory in available[:frames - 1]:
+        path = os.path.join(corpus, directory, name)
+        layers.append(_Image.open(path).convert("RGB") if os.path.exists(path) else current)
+    while len(layers) < frames - 1:
+        layers.append(current)
+    layers.append(current)
+    array = np.concatenate([np.asarray(l, dtype=np.float32) / 255 for l in layers], axis=2)
+    return torch.from_numpy(array).permute(2, 0, 1).unsqueeze(0), current
 
 
 def main():
@@ -65,7 +86,9 @@ def main():
     device = torch.device(args.device if args.device != "mps"
                           or torch.backends.mps.is_available() else "cpu")
     names = sorted(os.listdir(os.path.join(args.corpus, "lr")))
-    print(f"{len(names)} pairs from {args.corpus}, on {device}\n")
+    _, available = bank_frames(args.corpus)
+    history = f", {len(available)} history frame(s)" if available else ", no history"
+    print(f"{len(names)} pairs from {args.corpus}, on {device}{history}\n")
 
     # The anchor first: whatever a model scores only means something relative to
     # doing nothing clever.
@@ -79,15 +102,13 @@ def main():
     for path in args.checkpoints:
         if not os.path.exists(path):
             print(f"missing: {path}"); continue
-        model, step = load(path, device)
+        model, step, frames = load(path, device)
         label = os.path.basename(path).replace("span_", "").replace(".pth", "")
         with torch.no_grad():
             for name in names:
-                lr = Image.open(os.path.join(args.corpus, "lr", name)).convert("RGB")
                 hr = Image.open(os.path.join(args.corpus, "hr", name)).convert("RGB")
-                x = torch.from_numpy(np.asarray(lr, dtype=np.float32) / 255)
-                x = x.permute(2, 0, 1).unsqueeze(0).to(device)
-                y = model(x).clamp(0, 1)[0].permute(1, 2, 0).cpu().numpy()
+                x, lr = stack_input(args.corpus, name, frames, available)
+                y = model(x.to(device)).clamp(0, 1)[0].permute(1, 2, 0).cpu().numpy()
                 out = Image.fromarray((y * 255).round().astype(np.uint8))
                 rows[f"{label}@{step}"][f"{lr.width}x{lr.height}"].append(score(out, hr))
 

@@ -230,8 +230,18 @@ def main():
 
     hr_dir = os.path.join(args.out, "hr")
     lr_dir = os.path.join(args.out, "lr")
+    # Codec noise is temporally independent while the signal is temporally
+    # coherent, so consecutive frames carry complementary true detail that no
+    # single-frame model can reach at any capacity. These hold the two frames
+    # before the pair frame, from the same encoded segment, so a model can be
+    # trained to use them. Causal on purpose: t-2 and t-1 are available at
+    # playback time, t+1 would cost a frame of latency.
+    prev1_dir = os.path.join(args.out, "lr_t1")
+    prev2_dir = os.path.join(args.out, "lr_t2")
     os.makedirs(hr_dir, exist_ok=True)
     os.makedirs(lr_dir, exist_ok=True)
+    os.makedirs(prev1_dir, exist_ok=True)
+    os.makedirs(prev2_dir, exist_ok=True)
     man_path = os.path.join(args.out, "manifest.jsonl")
     man = open(man_path, "w")
 
@@ -290,6 +300,8 @@ def main():
 
         hr_path = os.path.join(hr_dir, f"{made:06d}.png")
         lr_path = os.path.join(lr_dir, f"{made:06d}.png")
+        prev1_path = os.path.join(prev1_dir, f"{made:06d}.png")
+        prev2_path = os.path.join(prev2_dir, f"{made:06d}.png")
         # HR and LR must be the SAME frame, and that is harder than it looks.
         # This used to seek three times - once for HR at t0+1s, once for the
         # raw pipe at t0, and once into the encoded segment - and `-ss` before
@@ -333,11 +345,21 @@ def main():
             # No -ss: decode the segment from its start and take the same
             # frame index HR took, so the two are the same instant by
             # construction rather than by luck.
-            select = f"select=eq(n\\,{PAIR_FRAME})"
+            # One decode, three frames: t-2, t-1 and t written in order. Doing
+            # it as three separate extractions would be three decodes of the
+            # same segment, and any one of them landing differently would
+            # reintroduce exactly the desync that cost this corpus two rebuilds.
+            select = f"select=between(n\\,{PAIR_FRAME - 2}\\,{PAIR_FRAME})"
             chain = select if vf == "null" else f"{select},{vf}"
+            triplet = os.path.join(tmp, "trip_%02d.png")
             sh(["ffmpeg", "-y", "-v", "error", "-i", seg,
-                "-vf", chain, "-frames:v", "1",
-                "-fps_mode", "passthrough", lr_path])
+                "-vf", chain, "-frames:v", "3",
+                "-fps_mode", "passthrough", triplet])
+            for index, target in ((1, prev2_path), (2, prev1_path), (3, lr_path)):
+                produced = os.path.join(tmp, f"trip_{index:02d}.png")
+                if not os.path.exists(produced):
+                    raise RuntimeError(f"segment gave fewer than 3 frames at n={PAIR_FRAME}")
+                os.replace(produced, target)
         except RuntimeError as e:
             print(f"  pair {made} skipped: {e}")
             continue
