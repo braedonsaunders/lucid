@@ -163,11 +163,23 @@ def main():
         tier = f"{lr.width}x{lr.height}"
         rows["lanczos"][tier].append(score(lr.resize(hr.size, Image.LANCZOS), hr, device))
 
+    # A sweep writes the same filename into one directory per setting, so a
+    # label taken from the basename alone silently averages every checkpoint in
+    # the sweep into a single row - four models, one number, and nothing in the
+    # output says so. Where basenames collide, the directory is the label.
+    basenames = [os.path.basename(p) for p in args.checkpoints]
+    labels = {}
+    for path, name in zip(args.checkpoints, basenames):
+        stem = name.replace("span_", "").replace(".pth", "")
+        if basenames.count(name) > 1:
+            stem = f"{os.path.basename(os.path.dirname(path))}/{stem}"
+        labels[path] = stem
+
     for path in args.checkpoints:
         if not os.path.exists(path):
             print(f"missing: {path}"); continue
         model, step, frames = load(path, device)
-        label = os.path.basename(path).replace("span_", "").replace(".pth", "")
+        label = labels[path]
         with torch.no_grad():
             for name in names:
                 hr = Image.open(os.path.join(args.corpus, "hr", name)).convert("RGB")
