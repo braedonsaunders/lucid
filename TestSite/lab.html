@@ -184,9 +184,24 @@ selectClip(localStorage.getItem('lab.clip') || 'bbb-360-3m');
 const dot = document.getElementById('dot'), conn = document.getElementById('conn'), stats = document.getElementById('stats');
 const enabledBox = document.getElementById('enabled');
 let control = null, appEnabled = true;
-function openControl() {
+async function openControl() {
+  let token;
+  try {
+    const response = await fetch('http://127.0.0.1:47812/token', { cache: 'no-store' });
+    if (!response.ok) throw new Error('token');
+    token = (await response.text()).trim();
+  } catch (e) {
+    dot.classList.remove('on');
+    conn.textContent = 'app not running';
+    setTimeout(openControl, 1500);
+    return;
+  }
   control = new WebSocket('ws://127.0.0.1:47811');
-  control.onopen = () => { dot.classList.add('on'); conn.textContent = 'app connected'; };
+  control.onopen = () => {
+    control.send(JSON.stringify({ type: 'hello', token }));
+    dot.classList.add('on');
+    conn.textContent = 'app connected';
+  };
   control.onclose = () => { dot.classList.remove('on'); conn.textContent = 'app not running'; stats.textContent = ''; setTimeout(openControl, 1500); };
   control.onerror = () => {};
   control.onmessage = (e) => {

@@ -115,6 +115,16 @@ struct SessionPolicyTests {
         var gone = report(); gone.video = nil
         #expect(EnhancementSession.deliveryWidth(for: gone) == 1280)
     }
+
+    @Test func sendSizeKeepsFrameWithinFactorOfBox() {
+        // 3456 in a 2560 box is 1.35×: plane-copy the reconstruction.
+        #expect(EnhancedFrameSender.sendSize(sourceWidth: 3456, sourceHeight: 1920, boxWidth: 2560) == (3456, 1920))
+        // 3456 in a 1920 box is 1.80×: still pay VT to shrink.
+        #expect(EnhancedFrameSender.sendSize(sourceWidth: 3456, sourceHeight: 1920, boxWidth: 1920) == (1920, 1066))
+        // At or under the box, always send whole — even widths, even heights.
+        #expect(EnhancedFrameSender.sendSize(sourceWidth: 1920, sourceHeight: 1080, boxWidth: 2560) == (1920, 1080))
+        #expect(EnhancedFrameSender.sendSize(sourceWidth: 3456, sourceHeight: 1920, boxWidth: 3456) == (3456, 1920))
+    }
 }
 
 struct GeometryTests {

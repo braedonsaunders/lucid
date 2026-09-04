@@ -2,7 +2,7 @@
 //  LearnedUpscaler.swift
 //  Lucid
 //
-//  Lucid's upscaler: SPAN, running on the Neural Engine. This is the whole
+//  Lucid's upscaler: SPAN, running on the GPU by default. This is the whole
 //  reconstruction path - there is no second engine underneath it.
 //
 //  Scored on 120 pairs of live-action footage in neither training corpus,
@@ -158,7 +158,37 @@ final class LearnedUpscaler: @unchecked Sendable {
             .min { $0.milliseconds < $1.milliseconds }
     }
 
+    static var computeUnits: MLComputeUnits {
+        switch ProcessInfo.processInfo.environment["LUCID_COMPUTE_UNITS"]?.lowercased() {
+        case "ane": return .cpuAndNeuralEngine
+        case "gpu": return .cpuAndGPU
+        case "all": return .all
+        case "cpu": return .cpuOnly
+        default: return .cpuAndGPU
+        }
+    }
+
+    static var computeUnitsLabel: String {
+        switch computeUnits {
+        case .cpuAndGPU: return "cpuAndGPU"
+        case .all: return "all"
+        case .cpuOnly: return "cpuOnly"
+        default: return "cpuAndNeuralEngine"
+        }
+    }
+
     private static func model(width: Int, height: Int) -> URL? {
+        // --pipeline-ms can load an exact-size package that is not in the
+        // variants table (or is over budget). isEnhanceable still reads the
+        // table; this path is measurement only.
+        if CommandLine.arguments.contains("--pipeline-ms") {
+            let stem = ProcessInfo.processInfo.environment["LUCID_MODEL_STEM"] ?? "SPAN_x4_ch32u_"
+            let exact = "\(stem)\(width)x\(height)"
+            if let url = Bundle.main.url(forResource: exact, withExtension: "mlmodelc")
+                ?? Bundle.main.url(forResource: exact, withExtension: "mlpackage") {
+                return url
+            }
+        }
         guard let variant = variant(width: width, height: height) else { return nil }
         // LUCID_MODEL_STEM swaps the model without changing what ships, so a
         // candidate can be measured through the real pipeline by the same
@@ -219,15 +249,24 @@ final class LearnedUpscaler: @unchecked Sendable {
         // 480p sat at a 33.3 ms frame with p95 over budget; on the GPU it has
         // room.
         //
-        // LUCID_COMPUTE_UNITS=ane|gpu|all overrides this. Worth keeping: these
-        // numbers are an M4 Pro, the balance between the two engines differs
-        // across the range, and this should be re-measured rather than assumed
-        // on any machine whose GPU is smaller relative to its Neural Engine.
-        switch ProcessInfo.processInfo.environment["LUCID_COMPUTE_UNITS"]?.lowercased() {
-        case "ane": configuration.computeUnits = .cpuAndNeuralEngine
-        case "all": configuration.computeUnits = .all
-        default: configuration.computeUnits = .cpuAndGPU
-        }
+        // Same protocol at 640x360 (the tier that had only an isolated
+        // modelbench number). Placement is the same, not per-tier:
+        //
+        //                total          model          detail
+        //     ANE     16.98 / 17.24   13.04 / 13.18   3.29 / 3.37
+        //     GPU     10.70 / 10.72    9.15 /  9.18   1.22 / 1.19
+        //
+        // GPU still wins, by less in absolute milliseconds (~6 ms against
+        // ~10 ms at 480p) and about the same fraction of the frame. Detail
+        // is faster alongside the GPU again.
+        //
+        // LUCID_COMPUTE_UNITS=ane|gpu|all|cpu overrides this. Worth keeping:
+        // these numbers are an M4 Pro, the balance between the two engines
+        // differs across the range, and this should be re-measured rather than
+        // assumed on any machine whose GPU is smaller relative to its Neural
+        // Engine.
+        configuration.computeUnits = Self.computeUnits
+        print("   🧠 SPAN compute units: \(Self.computeUnitsLabel)")
         model = try MLModel(contentsOf: compiled, configuration: configuration)
         guard let input = model.modelDescription.inputDescriptionsByName.first,
               let output = model.modelDescription.outputDescriptionsByName.first,
@@ -288,6 +327,10 @@ final class LearnedUpscaler: @unchecked Sendable {
         guard let pool, CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pool, &destination) == kCVReturnSuccess,
               let destination, let transfer
         else { throw Failure.pixelBuffer }
+        // Tag the source first. VT samples 4:2:0 chroma using the source's
+        // location; tagging only the destination (after the transfer) cannot
+        // change what the model sees.
+        TiledVideoToolboxUpscaler.ensureColorDescription(source)
         VTPixelTransferSessionTransferImage(transfer, from: source, to: destination)
         if let attachments = CVBufferCopyAttachments(source, .shouldPropagate) {
             CVBufferSetAttachments(destination, attachments, .shouldPropagate)

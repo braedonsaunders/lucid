@@ -96,14 +96,14 @@ final class DecodedFrameSource: @unchecked Sendable {
         if format == kCVPixelFormatType_32BGRA {
             swizzleRGBAToBGRA(buffer)
         }
-        TiledVideoToolboxUpscaler.ensureColorDescription(buffer)
+        let prepared = TiledVideoToolboxUpscaler.prepareSource(buffer)
 
         lock.lock()
         let box = contentRect
         lock.unlock()
         let captured = CapturedFrame(
-            surface: unsafeBitCast(CVPixelBufferGetIOSurface(buffer)!.takeUnretainedValue(), to: IOSurface.self),
-            pixelBuffer: buffer,
+            surface: unsafeBitCast(CVPixelBufferGetIOSurface(prepared)!.takeUnretainedValue(), to: IOSurface.self),
+            pixelBuffer: prepared,
             presentationTimestamp: CMTime(value: CMTimeValue(frame.header.ts), timescale: 1_000_000),
             contentRect: CGRect(x: 0, y: 0, width: width, height: height),
             contentScale: 1, scaleFactor: 1,

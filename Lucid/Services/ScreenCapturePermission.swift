@@ -2,11 +2,10 @@
 //  ScreenCapturePermission.swift
 //  Lucid
 //
-//  Screen Recording permission state for the overlay presentation path. The
-//  decoded-frame path (page canvas) needs no system permission; the
-//  ScreenCaptureKit fallback that feeds the shadow-layer window cannot start
-//  without it, so the coordinator checks before opening a session and prompts
-//  once at launch.
+//  Screen Recording permission for the overlay / ScreenCaptureKit fallback.
+//  The decoded-frame path (page canvas via the extension iframe) needs no
+//  system permission and must not prompt at launch. The coordinator only
+//  asks when that path has not produced frames and capture is about to start.
 //
 
 import ScreenCaptureKit

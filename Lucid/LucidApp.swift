@@ -26,6 +26,17 @@ enum LucidMain {
             }
             exit(2)
         }
+        if CommandLine.arguments.contains("--pipeline-ms") {
+            if #available(macOS 26.0, *) {
+                Task.detached { await PipelineTiming.run() }
+                RunLoop.main.run()
+            }
+            exit(2)
+        }
+        if CommandLine.arguments.contains("--delivery-ms") {
+            Task.detached { DeliveryTiming.run() }
+            RunLoop.main.run()
+        }
         LucidApp.main()
     }
 }

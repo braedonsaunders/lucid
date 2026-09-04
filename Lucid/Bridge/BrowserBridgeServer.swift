@@ -7,6 +7,11 @@
 //  `BrowserVideoReport` JSON messages. The server is the only channel between
 //  the browser and the native app; nothing is ever written into the page.
 //
+//  Every connection must send `{"type":"hello","token":"..."}` before
+//  reports, attach, control, or frames. The token is issued on
+//  http://127.0.0.1:47812/token to allowlisted Origins only. A website
+//  that opens this socket without the token is dropped.
+//
 
 import Foundation
 import Network
@@ -15,9 +20,13 @@ final class BrowserBridgeServer: @unchecked Sendable {
     static let defaultPort: UInt16 = 47811
 
     private let port: UInt16
+    private let token: String
+    private var tokenIssuer: BridgeTokenIssuer?
     private let queue = DispatchQueue(label: "com.lucid.bridge", qos: .userInteractive)
     private var listener: NWListener?
     private var connections: [ObjectIdentifier: NWConnection] = [:]
+    private var authenticated: Set<ObjectIdentifier> = []
+    private var authTimeouts: [ObjectIdentifier: DispatchWorkItem] = [:]
     private let decoder = JSONDecoder()
     private let onReport: @Sendable (BrowserVideoReport) -> Void
     /// Decoded frames straight from the browser, at the video's own resolution.
@@ -48,6 +57,8 @@ final class BrowserBridgeServer: @unchecked Sendable {
     private var deliveredBytes = 0
     private var offeredFrames = 0
     private var unmatchedFrames = 0
+    private var lastFrameWidth = 0
+    private var lastFrameHeight = 0
     private var windowStart = Date()
 
     init(
@@ -57,6 +68,7 @@ final class BrowserBridgeServer: @unchecked Sendable {
         onControl: @escaping @Sendable (BridgeControl) -> Void = { _ in }
     ) {
         self.port = port
+        self.token = BridgeAuth.issue()
         self.onReport = onReport
         self.onDisconnect = onDisconnect
         self.onControl = onControl
@@ -69,7 +81,7 @@ final class BrowserBridgeServer: @unchecked Sendable {
             guard !connections.isEmpty, let data = try? JSONEncoder().encode(status) else { return }
             let metadata = NWProtocolWebSocket.Metadata(opcode: .text)
             let context = NWConnection.ContentContext(identifier: "status", metadata: [metadata])
-            for connection in connections.values where connection.state == .ready {
+            for (id, connection) in connections where connection.state == .ready && authenticated.contains(id) {
                 connection.send(content: data, contentContext: context, isComplete: true, completion: .contentProcessed { _ in })
             }
         }
@@ -92,16 +104,22 @@ final class BrowserBridgeServer: @unchecked Sendable {
             // healthy pipeline: everything upstream reports 30fps and the page
             // never receives a pixel.
             self.offeredFrames += 1
+            if let size = Self.luceSize(data) {
+                self.lastFrameWidth = size.0
+                self.lastFrameHeight = size.1
+            }
             // Prefer connections that asked for this session's frames. Falling
             // back to every connection that merely mentioned the session sends
             // megabytes to sockets that never read them - which looks like
             // perfect delivery and draws nothing.
             let attached = self.connections.filter {
-                $0.value.state == .ready && self.attachedByConnection[$0.key]?.contains(session) == true
+                $0.value.state == .ready && self.authenticated.contains($0.key)
+                    && self.attachedByConnection[$0.key]?.contains(session) == true
             }
             let targets = attached.isEmpty
                 ? self.connections.filter {
-                    $0.value.state == .ready && self.sessionsByConnection[$0.key]?.contains(session) == true
+                    $0.value.state == .ready && self.authenticated.contains($0.key)
+                        && self.sessionsByConnection[$0.key]?.contains(session) == true
                 }
                 : attached
             // How many connections this frame was addressed to, which is what
@@ -143,11 +161,24 @@ final class BrowserBridgeServer: @unchecked Sendable {
         guard elapsed >= 1, offeredFrames > 0 else { return }
         let megabytes = Double(deliveredBytes) / 1_048_576
         let perFrame = deliveredFrames > 0 ? megabytes / Double(deliveredFrames) : 0
-        print(String(format: "   📤 offered %.0f fps · delivered %.0f · dropped %d · NO CONNECTION %d · %.1f MB/frame · %.0f MB/s",
+        print(String(format: "   📤 offered %.0f fps · delivered %.0f · dropped %d · NO CONNECTION %d · %dx%d · %.1f MB/frame · %.0f MB/s",
                      Double(offeredFrames) / elapsed, Double(deliveredFrames) / elapsed,
-                     droppedFrames, unmatchedFrames, perFrame, megabytes / elapsed))
+                     droppedFrames, unmatchedFrames, lastFrameWidth, lastFrameHeight,
+                     perFrame, megabytes / elapsed))
         deliveredFrames = 0; deliveredBytes = 0; droppedFrames = 0
         offeredFrames = 0; unmatchedFrames = 0; windowStart = Date()
+    }
+
+    private static func luceSize(_ data: Data) -> (Int, Int)? {
+        guard data.count >= 8 else { return nil }
+        let magic = data.withUnsafeBytes { $0.loadUnaligned(fromByteOffset: 0, as: UInt32.self).bigEndian }
+        guard magic == 0x4C554345 else { return nil }
+        let headerLength = Int(data.withUnsafeBytes { $0.loadUnaligned(fromByteOffset: 4, as: UInt32.self).bigEndian })
+        guard data.count >= 8 + headerLength,
+              let json = try? JSONSerialization.jsonObject(with: data.subdata(in: 8..<(8 + headerLength))) as? [String: Any],
+              let width = json["w"] as? Int, let height = json["h"] as? Int
+        else { return nil }
+        return (width, height)
     }
 
     /// Sends any encodable message to every connected page.
@@ -158,13 +189,17 @@ final class BrowserBridgeServer: @unchecked Sendable {
         )
         queue.async { [weak self] in
             guard let self else { return }
-            for connection in self.connections.values {
+            for (id, connection) in self.connections where self.authenticated.contains(id) {
                 connection.send(content: data, contentContext: context, isComplete: true, completion: .contentProcessed { _ in })
             }
         }
     }
 
     func start() throws {
+        let issuer = BridgeTokenIssuer(token: token)
+        try issuer.start()
+        tokenIssuer = issuer
+
         let parameters = NWParameters.tcp
         parameters.allowLocalEndpointReuse = true
         parameters.requiredLocalEndpoint = NWEndpoint.hostPort(
@@ -173,7 +208,7 @@ final class BrowserBridgeServer: @unchecked Sendable {
         )
         let webSocket = NWProtocolWebSocket.Options()
         webSocket.autoReplyPing = true
-        webSocket.maximumMessageSize = 48 << 20   // a 4K enhanced frame is 33 MB of RGBA
+        webSocket.maximumMessageSize = 48 << 20   // headroom; 4K NV12 is ~12 MB, 3456 RGBA was 25
         parameters.defaultProtocolStack.applicationProtocols.insert(webSocket, at: 0)
 
         let listener = try NWListener(using: parameters)
@@ -192,8 +227,13 @@ final class BrowserBridgeServer: @unchecked Sendable {
     }
 
     func stop() {
+        tokenIssuer?.stop()
+        tokenIssuer = nil
         listener?.cancel()
         listener = nil
+        for work in authTimeouts.values { work.cancel() }
+        authTimeouts.removeAll()
+        authenticated.removeAll()
         for connection in connections.values { connection.cancel() }
         connections.removeAll()
     }
@@ -201,7 +241,14 @@ final class BrowserBridgeServer: @unchecked Sendable {
     private func accept(_ connection: NWConnection) {
         let key = ObjectIdentifier(connection)
         connections[key] = connection
-        print("   🔌 Bridge: browser connected (\(connections.count) open)")
+        let timeout = DispatchWorkItem { [weak self] in
+            guard let self, !self.authenticated.contains(key) else { return }
+            print("   🔒 Bridge: dropped unauthenticated connection")
+            connection.cancel()
+            self.drop(key)
+        }
+        authTimeouts[key] = timeout
+        queue.asyncAfter(deadline: .now() + 2, execute: timeout)
         connection.stateUpdateHandler = { [weak self] state in
             switch state {
             case .failed, .cancelled:
@@ -215,6 +262,9 @@ final class BrowserBridgeServer: @unchecked Sendable {
     }
 
     private func drop(_ key: ObjectIdentifier) {
+        authTimeouts[key]?.cancel()
+        authTimeouts.removeValue(forKey: key)
+        authenticated.remove(key)
         guard connections.removeValue(forKey: key) != nil else { return }
         framesInFlight.removeValue(forKey: key)
         attachedByConnection.removeValue(forKey: key)
@@ -222,6 +272,23 @@ final class BrowserBridgeServer: @unchecked Sendable {
         if let sessions = sessionsByConnection.removeValue(forKey: key), !sessions.isEmpty {
             onDisconnect(sessions)
         }
+    }
+
+    private func authenticate(_ data: Data, key: ObjectIdentifier) {
+        let isFrame = data.count > 8 && data.withUnsafeBytes({ $0.loadUnaligned(fromByteOffset: 0, as: UInt32.self).bigEndian }) == 0x4c554346
+        if !isFrame,
+           let probe = try? decoder.decode(MessageProbe.self, from: data),
+           probe.type == "hello",
+           BridgeAuth.tokensEqual(token, probe.token) {
+            authenticated.insert(key)
+            authTimeouts[key]?.cancel()
+            authTimeouts.removeValue(forKey: key)
+            print("   🔌 Bridge: browser authenticated (\(authenticated.count) open)")
+            return
+        }
+        print("   🔒 Bridge: rejected handshake")
+        connections[key]?.cancel()
+        drop(key)
     }
 
     private func receive(on connection: NWConnection, key: ObjectIdentifier) {
@@ -262,6 +329,10 @@ final class BrowserBridgeServer: @unchecked Sendable {
     }
 
     private func handle(_ data: Data, key: ObjectIdentifier) {
+        if !authenticated.contains(key) {
+            authenticate(data, key: key)
+            return
+        }
         if data.count > 8, data.withUnsafeBytes({ $0.loadUnaligned(fromByteOffset: 0, as: UInt32.self).bigEndian }) == 0x4c554346 {
             handleBinary(data)
             return
@@ -299,6 +370,7 @@ final class BrowserBridgeServer: @unchecked Sendable {
 private struct MessageProbe: Decodable {
     let type: String
     let session: String?
+    let token: String?
 }
 
 /// Commands a page or tool may send: `{"type":"control", ...}`.
@@ -309,6 +381,7 @@ struct BridgeControl: Codable, Sendable {
     /// Which reconstruction engine to use.
     var engine: String?
     /// Capture one frame per engine into this folder under ~/Documents/Code/lucid/.build/shots.
+    /// Ignored unless the app was launched with LUCID_SHOOT=1 or LUCID_DEBUG=1.
     var shoot: String?
     /// Live enhancement changes: only the keys present are applied.
     var tuning: [String: Float]?
@@ -343,8 +416,8 @@ struct BridgeStatus: Codable, Sendable {
     var enabled: Bool
     var enhancing: Bool
     var engine: String = ""
-    var engines: [String] = EngineKind.allCases.map(\.rawValue)
-    var engineLabels: [String] = EngineKind.allCases.map(\.label)
+    var engines: [String] = EngineKind.shipping.map(\.rawValue)
+    var engineLabels: [String] = EngineKind.shipping.map(\.label)
     var tuning: [String: Float] = [:]
     var status: String
     var stats: String
