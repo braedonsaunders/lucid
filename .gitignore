@@ -24,6 +24,19 @@ DerivedData/
 .playwright-cli/
 default.profraw
 
+# Python bytecode. These were tracked, so every edit to a tool under Tools/
+# rewrote a binary blob in the history.
+__pycache__/
+*.pyc
+
+# Engineering notes. Kept on disk because they are useful to work from, and out
+# of the repository because everything published here is documentation of what
+# Lucid is, not a record of how it was arrived at. README.md is the only
+# document a reader of this repository is meant to need.
+TRAINING.md
+POC-RESULTS.md
+PLAN-INVISIBLE-PRESENTATION.md
+
 # Lucid
 # Converted Core ML models. Model/ is ~1.9 GB, but almost none of it ships:
 # 880 MB of EfRLFN and 19 MB of Real-ESRGAN were converted only to measure

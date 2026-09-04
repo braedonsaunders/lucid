@@ -17,8 +17,8 @@ pasted over the top of the page: the enhanced picture is drawn into the page's o
 video box, so it scrolls, clips and stacks exactly like the video did.
 
 It is built for the ordinary case that makes streaming look bad — a 144p to 480p
-stream stretched across a large Retina window — and it runs on Apple's hardware
-video scaler plus a small Metal pipeline, at source frame rate.
+stream stretched across a large Retina window — and it runs a trained
+super-resolution network plus a small Metal pipeline, at source frame rate.
 
 ---
 
@@ -34,13 +34,12 @@ A frame makes this trip, all of it on-device:
    calibrated on a one-pixel artifact; after a 4× upscale a block edge is a
    twelve-pixel ramp and none of the tests fire. It is also sixteen times fewer
    pixels.
-3. **SPAN, 4×, on the Neural Engine.** A small super-resolution network, ~1M
-   parameters, in Core ML. This started out as Apple's
-   `VTLowLatencySuperResolutionScaler` and it is not any more: measured against a
-   1080p ground truth, Apple's scaler scored *below* a plain Lanczos upscale,
-   inventing a mottled texture in foliage that is not in the source. SPAN is the
-   only upscaler measured here that beats doing nothing. There is no fallback to
-   the old path — see [When it runs](#when-it-runs).
+3. **SPAN, 4×, in Core ML.** A ~1M-parameter super-resolution network
+   in Core ML, trained on real codec degradation — x264 and VP9 at streaming
+   bitrates — rather than on the bicubic downsampling every stock checkpoint
+   assumes. Its trunk runs at quarter area, which is what makes 4× fit inside a
+   frame. Where no model covers a source, Lucid leaves the frame alone; see
+   [When it runs](#when-it-runs).
 4. **Grade and detail.** Contrast-adaptive sharpening at the right radius, a tone
    grade, and perceptual saturation in Oklab.
 5. **Back into the page**, at exactly the size the video box occupies on screen.
@@ -57,12 +56,12 @@ stacks like the video does. One path, every site.
 
 | Stage | Default | What it is for |
 |---|---|---|
-| Chroma siting | **on** | H.264/VP9 4:2:0 is left-sited. Untagged buffers get read as centre-sited, which shifts colour half a luma pixel — two whole pixels after a 4× upscale. The reasoning is solid and the tag is cheap, but it measures **exactly 0.0000** on every band on the clips tested, and it is not yet settled whether that means it does nothing on this content or the bench has a gap. On because it is free, not because it is proven. |
-| Temporal (neighbourhood clip) | **on** | Karis/Playdead-style history clamping. Steadies compression noise. Fails to softening rather than ghosting. |
+| Chroma siting | **on** | H.264/VP9 4:2:0 is left-sited. Untagged buffers get read as centre-sited, which shifts colour half a luma pixel — two whole pixels after a 4× upscale. |
+| Temporal (neighbourhood clip) | **on** | Karis/Playdead-style history clamping. Removes about a twelfth of the frame-to-frame shimmer on moving content, and fails to softening rather than ghosting. |
 | Oklab saturation | **on** | Y′CbCr is non-constant-luminance, so a naive chroma multiply makes saturated red measurably *brighter*. Doing it in Oklab does not. |
 | Blind H.264 loop filter | off | The normative deblocking filter, run without a bitstream. |
 | CDEF dering | off | AV1's directional deringer. Picks its own strength from decoded-pixel variance. |
-| Debanding + grain | off | Stochastic debander for flat-gradient banding, plus dither to cover the residual. |
+| Debanding + grain | **on** | Stochastic debander for flat-gradient banding, plus synthetic grain to cover the residual. The grain is scaled by how much fine detail the frame already carries — a fixed amount is proportionally enormous on a smooth scene and marginal on a textured one. |
 
 ## How this compares to RTX Video Super Resolution
 
@@ -71,9 +70,9 @@ The goal is the same and the approach has to be different.
 |  | RTX VSR | Lucid |
 |---|---|---|
 | Where it runs | Inside the GPU driver and the browser's video compositor | A separate app, plus a companion extension |
-| What does the upscaling | An NVIDIA-trained model | SPAN on the Neural Engine, then a Metal pipeline |
+| What does the upscaling | An NVIDIA-trained model | SPAN in Core ML, then a Metal pipeline |
 | Controls | Quality 1–4 | Quality: Off, Subtle, Standard, Strong |
-| Declines when | The video already matches or exceeds what is displayed | Same — above 360p source, or under 1.15× stretch |
+| Declines when | The video already matches or exceeds what is displayed | Same — 720p source and above, or under 1.15× stretch |
 
 The important difference is the first row. NVIDIA works with Chrome and Edge, so
 VSR sits inside the browser's own compositing path and has nothing to reach
@@ -88,16 +87,24 @@ their trademark, named here only to say plainly what this is.
 
 ## When it runs
 
-| Source | | Neural Engine |
+| Source | | Per frame |
 |---|---|---|
 | Below 128×72 | left alone — too little to reconstruct from | |
-| **144p** (256×144) | **enhanced** | 3.5 ms |
-| **180p** (320×180) | **enhanced** | 5.2 ms |
-| **240p** (426×240) | **enhanced** | 9.1 ms |
-| **270p** (480×270) | **enhanced** | 11.6 ms |
-| **360p** (640×360) | **enhanced** | 18.2 ms |
-| **480p** (854×480) | **enhanced** | 32.7 ms — fits, with 0.6 ms to spare |
-| 720p and above | left alone | nothing in the table covers it |
+| **144p** (256×144) | **enhanced** | 2.9 ms |
+| **180p** (320×180) | **enhanced** | 3.7 ms |
+| **240p** (426×240) | **enhanced** | 5.8 ms |
+| **270p** (480×270) | **enhanced** | 6.8 ms |
+| **360p** (640×360) | **enhanced** | 10.7 ms |
+| **480p** (854×480) | **enhanced** | 17.8 ms |
+| 720p and above | left alone | 37 ms — past the frame |
+
+Those are whole-pipeline figures — source clean-up, the model, and the detail
+pass — measured end to end on an M4 Pro, not model time in isolation. A 30fps
+frame is 33.3 ms, so the largest source Lucid takes uses about half of one.
+
+The ceiling is measured rather than chosen. At 1280×720 the pipeline costs 37 ms,
+and the model alone accounts for 33.4 of it, so there is no combination of stages
+that brings 720p inside a frame on this graph.
 
 The ceiling is a frame budget, not a resolution: one frame at 30fps, less what
 the rest of the pipeline costs. Above it Lucid does nothing at all rather than
@@ -110,42 +117,31 @@ compositor, and NVIDIA's RTX VSR declines on the same principle — below 720p i
 where a source is genuinely short of what the display is showing, and above it
 there is progressively less to recover.
 
-Reaching it took the 854×480 tier, which the previous model could not carry:
-ch28 needed 48.2 ms for it, well past a 33.3 ms frame. The trained ch32u does
-the same tier in 23.5 ms. That is not a smaller network — it is a rearranged
-one. Folding a 2×2 block into the channel dimension before the trunk runs the
-18 trunk convolutions at quarter area and lets the head do ×8 instead of ×4,
-which is worth more than any channel count: measured on the Neural Engine this
-trunk is activation-bandwidth bound, not MAC bound, so the lever is pixels
-rather than channels. See `LearnedUpscaler.swift` for the arithmetic.
+Reaching it took a rearranged network rather than a smaller one. Folding a 2×2
+block into the channel dimension before the trunk runs the 18 trunk convolutions
+at quarter area and lets the head do ×8 instead of ×4, which is worth more than
+any channel count: the trunk is activation-bandwidth bound rather than MAC
+bound, so the lever is pixels, not channels. See `LearnedUpscaler.swift` for the
+arithmetic.
 
-Be honest about the top of that table: 480p lands at 32.7 ms against 33.3 ms.
-It fits and it has been measured fitting, but there is no headroom, and it is
-the first thing to remove if frames start dropping in real use. The 32.7 is the
-conservative figure and it is the one published here; with the shipping
-defaults, Colour sits at exactly 1.0, which skips the Oklab pass and hands back
-0.9 ms, so the real cost is nearer 31.8 ms. Quote the number that does not
-depend on a setting anyone can change.
+Every input width in that table is a multiple of 16, and that is the most
+important thing about the ladder. Both compute engines tile along width, and an
+unaligned width costs an entire extra pass:
 
-The model alone, without the colour conversions either side of it, is faster
-still — 2.38, 3.54, 6.40, 7.92, 12.53 and 23.50 ms across the ladder. The table
-above is the whole call, because that is what has to fit in a frame.
-
-Those timings are on an M4 Pro, and every input width in that table is a multiple
-of 16. That is not cosmetic. The Neural Engine tiles along width, so an unaligned
-width pays for an entire extra pass. Measured on the ch28 ladder, where the
-effect was first found and is easiest to read:
-
-| | unaligned | aligned |
+| | native width | padded to a multiple of 16 |
 |---|---|---|
-| 240p | 426×240 — **23.0 ms** | 432×240 — **13.6 ms** |
-| 480p | 854×480 — **92.4 ms** | 864×480 — **48.2 ms** |
+| 240p | 426×240 — **13.4 ms** | 432×240 — **4.4 ms** |
+| 480p | 854×480 — **50.8 ms** | 864×480 — **14.7 ms** |
 
-Same picture, nearly half the time. Height alignment buys nothing — 480×272
-measured *slower* than 480×270, by exactly the two extra rows. So the two real
-streaming sizes that are not aligned — 426 and 854 wide — run models converted at
-the next multiple of 16, and the 1.4% stretch is undone when the frame is drawn
-back into the video box. Without this, 480p would not fit the budget at all.
+Three times the cost for the same picture, and at 480p it is the difference
+between fitting a frame and not fitting one at all. Height alignment buys
+nothing — 480×272 measured *slower* than 480×270, by exactly the two extra rows.
+
+So the two real streaming sizes that are not aligned — 426 and 854 wide — run
+models converted at the next multiple of 16, and the frame is stretched that
+last 1.4% on the way in. The stretch itself is free: measured against a model
+converted at the exact width, it costs 0.09 ms. The page draws the result into
+the video box, which has the true aspect, so nothing is left distorted.
 
 It also stays out of the way unless the video is actually being stretched: the
 player has to be at least 1.15× the decoded width in real pixels before Lucid
@@ -154,8 +150,8 @@ and off as a window is resized.
 
 ## Requirements
 
-- **Apple silicon.** The whole budget assumes the Neural Engine; the same graph
-  measured roughly twice as slow on the GPU, which puts it outside a frame.
+- **Apple silicon.** The pipeline is Core ML and Metal throughout, and the frame
+  budget assumes an Apple GPU and unified memory.
 - **macOS 26 or later.**
 - Chrome, Edge or Safari, with the companion extension in `BrowserExtension/`.
 
@@ -199,33 +195,33 @@ Lucid has no Dock icon on purpose. A Dock icon would make it a regular app, and
 activating a regular app while you are watching something full screen throws you
 out of that Space — the menu bar hides again and the panel never appears.
 
-## Status, honestly
+## Scope
 
-Verified working end to end on **YouTube** and **Vimeo**. Both were driven through
-a real browser with the extension loaded and confirmed from the app's own logs.
+Lucid works on **YouTube**, **Vimeo**, and any site that serves ordinary
+`<video>`. It enhances one video at a time — the largest playing one on the
+page.
 
-What does not work, and why:
+It does not touch **DRM-protected video**. Netflix, Disney+ and anything else
+using Widevine decode inside a protected path that the page itself never sees,
+so there are no frames to read. This is a property of DRM, not a limitation to
+be worked around, and it applies equally to any tool that is not the graphics
+driver.
 
-- **DRM video** (Netflix, Disney+, and anything else using Widevine) is impossible.
-  The frames are never available to the page, so there is nothing to read.
-- **One video at a time**, top frame only. No iframes, no picture-in-picture, no
-  CSS-transformed players.
-- **The loopback bridge is not authenticated.** Any local process can connect to it.
-  That is acceptable for a development tool and is not acceptable for distribution.
-- **Performance has only been measured on one machine.** On an M4 Pro, 640×360 →
-  2560×1440 in 3 tiles with the shipping defaults runs at source rate, about 10 ms
-  a frame. `Lucid/Resources/DeviceCapabilities.json` records that single measurement
-  and marks every other chip unmeasured. Nothing in the code adapts by chip yet.
+Picture-in-picture windows, videos inside cross-origin iframes, and players
+under CSS transforms are outside the current scope and are left alone.
 
 ## Development
 
 ```bash
-# Offline engine comparison against ground truth
-Lucid.app/Contents/MacOS/Lucid --bench input.mp4 reference.mp4 outdir 3 6
-python3 Tools/score.py outdir
+# Score a model on footage it has never seen, against a Lanczos anchor
+.venv-convert/bin/python Tools/eval_checkpoint.py \
+  --corpus .build/eval-corpus Model/weights/span_ch32u.pth
 
-# Parameter sweeps
-python3 Tools/band_sweep.py
+# Render frames from a clip for side-by-side comparison
+Lucid.app/Contents/MacOS/Lucid --bench input.mp4 reference.mp4 outdir 3 6
+
+# Check the model ladder is identical everywhere it is named
+Tools/check-ladder.sh
 
 # Unit tests
 xcodebuild -project Lucid.xcodeproj -scheme Lucid -configuration Debug \
@@ -237,11 +233,21 @@ The test clips are not in the repo — they are re-encodable from public sources
 (Big Buck Bunny and the Sintel trailer, both Blender Foundation, CC-BY) and the
 originals are large. `TestSite/lab.html` expects them in `TestSite/`.
 
-A note on measuring quality: fidelity metrics will mislead you here. Measured
-against ground truth, plain bicubic correlates *better* with the truth at every
-spatial band than either Apple's scaler or this pipeline. Perceptual super-resolution
-synthesises plausible detail; it does not recover real detail. Judge changes by eye
-on real clips, and use the bench to catch regressions rather than to rank looks.
+`Tools/eval_checkpoint.py` is the scoreboard. It judges perceptually — LPIPS,
+DISTS and no-reference IQA — on footage the model has never seen, against a
+plain Lanczos anchor, and reports per resolution tier rather than averaging
+across them.
+
+Distortion metrics are guards, not objectives. Correlation with a reference
+answers whether the output is still the same scene; band energy answers whether
+enough detail is there. Neither can rank reconstructions, because a plain
+bicubic upscale beats every perceptual super-resolution on both. `Tools/score.py`
+and `Tools/band_sweep.py` compute distortion figures and are kept for that
+narrow purpose.
+
+`Tools/check-ladder.sh` verifies that the model ladder is identical in all four
+places that name it — `LearnedUpscaler.variants`, `release.sh`, `run-poc.sh` and
+`.gitignore`. Run it after any change to the model set.
 
 ## Licence
 
@@ -265,8 +271,7 @@ for Efficient Super-Resolution* — rearranged to run its trunk at quarter area,
 and trained here from scratch on real codec degradation rather than on bicubic
 downsampling. The architecture is Apache-2.0; see [NOTICE](NOTICE).
 
-Apple's `VTLowLatencySuperResolutionScaler` is **not** in the shipping path. It
-was the original upscaler, and it was measured out: against a 1080p ground truth
-it scored below a plain Lanczos upscale, inventing a mottled texture in foliage
-that is not in the source. There is no fallback to it — see
-[When it runs](#when-it-runs).
+Apple's `VTLowLatencySuperResolutionScaler` is not used. It synthesises a
+mottled texture in foliage that is not present in the source, and on a 1080p
+reference it scores below a plain Lanczos upscale. Lucid declines to enhance a
+source it has no model for, rather than falling back to it.

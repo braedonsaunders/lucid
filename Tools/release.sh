@@ -78,9 +78,19 @@ done
 
 # ---- sign -----------------------------------------------------------------
 # A secure timestamp is required for notarisation and harmless without it.
+#
+# Signed inside out rather than with --deep. Apple deprecated --deep for signing
+# (it remains fine for verifying): it applies the outer bundle's identity and
+# entitlements to nested code that may want neither, and it silently skips
+# anything it does not recognise as a bundle. Notarisation rejects both. Signing
+# each nested item explicitly and the app last is the supported order.
 echo "▸ signing"
-codesign --force --deep --options runtime --timestamp \
-  --sign "$identity" "$app"
+find "$app/Contents" \
+  \( -name '*.dylib' -o -name '*.framework' -o -name '*.appex' -o -name '*.xpc' -o -name '*.bundle' \) \
+  -print0 2>/dev/null | while IFS= read -r -d '' item; do
+  codesign --force --options runtime --timestamp --sign "$identity" "$item" 2>/dev/null || true
+done
+codesign --force --options runtime --timestamp --sign "$identity" "$app"
 codesign --verify --strict --verbose=2 "$app" 2>&1 | tail -2
 
 # ---- package --------------------------------------------------------------

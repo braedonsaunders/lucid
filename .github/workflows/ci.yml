@@ -22,7 +22,7 @@ jobs:
       - name: Install zsh
         run: sudo apt-get update && sudo apt-get install -y zsh
       - name: Check ladder
-        run: Tools/check-ladder.sh
+        run: zsh Tools/check-ladder.sh
 
       # The shipping packages are 3 MB in total and are tracked on purpose:
       # LearnedUpscaler is the only upscaler and has no fallback, so a clone

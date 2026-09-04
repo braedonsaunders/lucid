@@ -65,9 +65,9 @@ fi
 
 identity="$(security find-identity -v -p codesigning 2>/dev/null | grep -o '"Apple Development: [^"]*"' | head -1 | tr -d '"')"
 if [[ -n "$identity" ]]; then
-  codesign --force --deep --options runtime --timestamp=none --sign "$identity" "$app_path"
+  codesign --force --options runtime --timestamp=none --sign "$identity" "$app_path"
 else
-  codesign --force --deep --sign - "$app_path"
+  codesign --force --sign - "$app_path"
 fi
 open -a "Google Chrome" "http://127.0.0.1:8765/TestSite/lab.html"
 "$app_path/Contents/MacOS/Lucid"

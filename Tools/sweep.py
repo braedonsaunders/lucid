@@ -46,23 +46,48 @@ GRADE = [
 
 
 def sweep(label, key, values, base, clip, reference, frames, learned):
-    """Sweeps one control, returning the value with the highest fine-band
-    correlation. Ties break toward the smaller value: two settings that measure
-    the same are not equally good, and the one that does less is the one that
-    can go wrong in fewer ways."""
+    """Sweeps one control and returns the value that scores best on DISTS.
+
+    Ties break toward the smaller value: two settings that measure the same are
+    not equally good, and the one that does less is the one that can go wrong in
+    fewer ways.
+
+    INERT DETECTION. Every run is fingerprinted by its output pixels. If the
+    whole sweep produces one distinct fingerprint, the control changed nothing
+    at any setting and the sweep did not happen - which is reported as INERT
+    rather than as a winning value.
+
+    This is not hypothetical. `lobeScale` measured identical to four decimal
+    places at every value, was read as "inert, it shapes the sharpening kernel
+    and sharpening is off", and moved on from. That was the same failure as
+    three others in this project: a control that could not vary, and a zero read
+    as a property of the control rather than as a broken experiment. A control
+    that is inert BECAUSE ANOTHER CONTROL IS OFF is a real and useful thing to
+    be told - it means this sweep is conditional on that one - but it has to be
+    said out loud rather than inferred from a flat column.
+    """
     rows = []
+    prints = set()
     for value in values:
         tuning = dict(base); tuning[key] = value
-        result, (ms, _) = run(tuning, clip, reference, frames, learned)
+        result, (ms, _), print_ = run(tuning, clip, reference, frames, learned)
         if result is None:
             print(f"    {value:>6}  bench failed"); continue
         rows.append((value, result, ms))
-        print(f"    {value:>6}  fine {result['fine']:.4f}  mid {result['mid']:.4f}  "
-              f"coarse {result['coarse']:.4f}  PSNR {result['psnr']:.2f}  "
+        prints.add(print_)
+        print(f"    {value:>6}  DISTS {result['dists']:.4f}  LPIPS {result['lpips']:.4f}  "
+              f"detail {result['detail']:.4f}  BRISQUE {result['brisque']:.1f}  "
               f"{ms or 0:.2f} ms", flush=True)
     if not rows:
         return base.get(key), None
-    best = max(rows, key=lambda r: (round(r[1]["fine"], 4), -r[0]))
+    if len(prints) == 1 and len(rows) > 1:
+        print(f"    INERT - all {len(rows)} settings produced byte-identical output. "
+              f"This control does nothing in the current configuration, so the "
+              f"'best' value below is meaningless. Find what gates it before "
+              f"reading anything into this row.")
+        return base.get(key), None
+    # DISTS is a distance, so the best value is the LOWEST.
+    best = min(rows, key=lambda r: (round(r[1]["dists"], 4), r[0]))
     return best[0], best[1]
 
 
@@ -84,12 +109,13 @@ def main():
 
     with open(args.tuning) as fh:
         base = json.load(fh)
-    start, (start_ms, upscale_ms) = run(base, clip, reference, args.frames, True)
+    start, (start_ms, upscale_ms), _ = run(base, clip, reference, args.frames, True)
     if start is None:
         raise SystemExit("baseline bench failed")
-    print(f"clip {args.clip}, {args.frames} frames, ch32u on the Neural Engine")
-    print(f"starting point: fine {start['fine']:.4f}  mid {start['mid']:.4f}  "
-          f"PSNR {start['psnr']:.2f}  (upscaler {upscale_ms or 0:.2f} ms, "
+    stem = os.environ.get("LUCID_MODEL_STEM", "SPAN_x4_ch32u_")
+    print(f"clip {args.clip}, {args.frames} frames, model {stem}")
+    print(f"starting point: DISTS {start['dists']:.4f}  LPIPS {start['lpips']:.4f}  "
+          f"detail {start['detail']:.4f}  (upscaler {upscale_ms or 0:.2f} ms, "
           f"detail {start_ms or 0:.2f} ms)\n")
 
     for pass_index in range(args.passes):
@@ -102,14 +128,14 @@ def main():
             print(f"    best: {best}{moved}\n")
             base[key] = best
 
-    final, (final_ms, _) = run(base, clip, reference, args.frames, True)
+    final, (final_ms, _), _ = run(base, clip, reference, args.frames, True)
     print("── result ──")
     for key, label, _ in FIDELITY:
         print(f"  {label:9s} {base[key]}")
     if final:
-        print(f"\n  fine {start['fine']:.4f} -> {final['fine']:.4f}   "
-              f"mid {start['mid']:.4f} -> {final['mid']:.4f}   "
-              f"PSNR {start['psnr']:.2f} -> {final['psnr']:.2f}   "
+        print(f"\n  DISTS {start['dists']:.4f} -> {final['dists']:.4f}   "
+              f"LPIPS {start['lpips']:.4f} -> {final['lpips']:.4f}   "
+              f"detail {start['detail']:.4f} -> {final['detail']:.4f}   "
               f"detail {start_ms or 0:.2f} -> {final_ms or 0:.2f} ms")
 
     if args.grade:

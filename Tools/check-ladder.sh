@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 #
 # Checks that the model ladder is the same in every place that names it.
 #
