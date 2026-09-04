@@ -40,7 +40,7 @@ import torch.nn.functional as F
 from torch.nn.utils import spectral_norm
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from train_span import (Unshuffled, load_bank, charbonnier, pick_device,  # noqa: E402
+from train_span import (Unshuffled, load_bank, charbonnier, pick_device, temporal_loss,  # noqa: E402
                         LR_PATCH, HR_PATCH)
 
 
@@ -131,6 +131,12 @@ def main():
     parser.add_argument("--pixel", type=float, default=1.0)
     parser.add_argument("--perceptual", type=float, default=1.0)
     parser.add_argument("--adversarial", type=float, default=0.1)
+    parser.add_argument("--temporal", type=float, default=0.0,
+                        help="weight on the temporal consistency loss. Needs a "
+                             "bank built from a temporal corpus. This is where "
+                             "it matters most: a discriminator judges one frame "
+                             "at a time, so it rewards texture invented "
+                             "independently on every frame")
     parser.add_argument("--out", default="Model/weights")
     parser.add_argument("--device", default="auto")
     args = parser.parse_args()
@@ -141,8 +147,15 @@ def main():
     validation = max(256, count // 40)
     train_count = count - validation
 
+    # The temporal term reads a history frame out of the bank; the generator
+    # still sees one frame, so what ships stays single-frame.
+    if args.temporal > 0 and frames < 2:
+        raise SystemExit("--temporal needs a bank built from a temporal corpus "
+                         "(one with lr_t1 beside lr)")
+    input_frames = 1 if args.temporal > 0 else frames
+
     state = torch.load(args.weights, map_location="cpu", weights_only=False)
-    generator = Unshuffled(state.get("channels", 32), frames=frames,
+    generator = Unshuffled(state.get("channels", 32), frames=input_frames,
                            version=state.get("version", 1)).to(device)
     generator.load_state_dict(state["model"])
     discriminator = UNetDiscriminator().to(device)
@@ -152,7 +165,11 @@ def main():
           f"{sum(p.numel() for p in generator.parameters())/1000:.0f}K parameters")
     print(f"discriminator {sum(p.numel() for p in discriminator.parameters())/1e6:.1f}M "
           f"(training only - it never ships and never converts)")
-    print(f"loss: {args.pixel} x L1 + {args.perceptual} x VGG + {args.adversarial} x adversarial", flush=True)
+    terms = (f"{args.pixel} x L1 + {args.perceptual} x VGG + "
+             f"{args.adversarial} x adversarial")
+    if args.temporal > 0:
+        terms += f" + {args.temporal} x temporal"
+    print(f"loss: {terms}", flush=True)
     print(f"batch {args.batch} at {args.crop}x{args.crop} LR "
           f"({args.crop*4}x{args.crop*4} through the discriminator)", flush=True)
 
@@ -175,8 +192,12 @@ def main():
                     left * 4:(left + args.crop) * 4]
         return lr, hr
 
+    # Before the first step, not at the first save: a run that cannot write its
+    # result should fail in a second rather than an hour.
+    os.makedirs(args.out, exist_ok=True)
+
     began = time.time()
-    running = {"pixel": 0.0, "perc": 0.0, "adv": 0.0, "d": 0.0}
+    running = {"pixel": 0.0, "perc": 0.0, "adv": 0.0, "d": 0.0, "temporal": 0.0}
     for step in range(args.steps):
         indices = np.sort(rng.integers(0, train_count, size=args.batch))
         lr, hr = batch(indices)
@@ -186,15 +207,21 @@ def main():
         # ---- generator ----
         for p in discriminator.parameters():
             p.requires_grad = False
-        fake = generator(lr)
+        current = lr[:, -3 * input_frames:]
+        fake = generator(current)
         pixel = charbonnier(fake, hr)
         perc = perceptual(fake.clamp(0, 1), hr)
+        steadiness = torch.zeros((), device=device)
+        if args.temporal > 0:
+            previous = lr[:, -6:-3]
+            steadiness = temporal_loss(fake, generator(previous), current, previous)
         # One discriminator pass, not two. Written twice this ran the whole
         # discriminator a second time just to get a tensor of ones the right
         # shape, which is the most expensive way imaginable to call ones_like.
         fake_logits = discriminator(fake)
         adversarial = bce(fake_logits, torch.ones_like(fake_logits))
-        loss_g = args.pixel * pixel + args.perceptual * perc + args.adversarial * adversarial
+        loss_g = (args.pixel * pixel + args.perceptual * perc
+                  + args.adversarial * adversarial + args.temporal * steadiness)
         opt_g.zero_grad(set_to_none=True)
         loss_g.backward()
         torch.nn.utils.clip_grad_norm_(generator.parameters(), 1.0)
@@ -214,12 +241,15 @@ def main():
 
         running["pixel"] += float(pixel); running["perc"] += float(perc)
         running["adv"] += float(adversarial); running["d"] += float(loss_real + loss_fake)
+        running["temporal"] += float(steadiness)
 
         if (step + 1) % 200 == 0:
             rate = (step + 1) / max(time.time() - began, 1e-6)
             print(f"  step {step+1}/{args.steps}  L1 {running['pixel']/200:.4f}  "
                   f"VGG {running['perc']/200:.4f}  adv {running['adv']/200:.3f}  "
-                  f"D {running['d']/200:.3f}  {rate:.1f} it/s", flush=True)
+                  f"D {running['d']/200:.3f}"
+                  + (f"  temporal {running['temporal']/200:.4f}" if args.temporal > 0 else "")
+                  + f"  {rate:.1f} it/s", flush=True)
             running = {k: 0.0 for k in running}
 
         if (step + 1) % 1000 == 0 or step + 1 == args.steps:
@@ -227,16 +257,17 @@ def main():
             with torch.no_grad():
                 indices = np.arange(train_count, min(train_count + args.batch, count))
                 lr, hr = batch(indices)
-                out = generator(lr).clamp(0, 1)
+                out = generator(lr[:, -3 * input_frames:]).clamp(0, 1)
                 mse = float(((out - hr) ** 2).mean())
                 # The ratio this whole run exists to move.
                 ratio = detail_energy(out) / max(detail_energy(hr), 1e-9)
             print(f"  ── step {step+1}: PSNR {10*math.log10(1/max(mse,1e-9)):.2f} dB  "
                   f"detail {ratio:.3f} of truth", flush=True)
             generator.train()
-            name = os.path.basename(args.weights).replace(".pth", "") + "_gan.pth"
+            name = (os.path.basename(args.weights).replace(".pth", "")
+                    + ("_gantc" if args.temporal > 0 else "_gan") + ".pth")
             torch.save({"model": generator.state_dict(), "step": step + 1,
-                        "channels": state.get("channels", 32), "frames": frames,
+                        "channels": state.get("channels", 32), "frames": input_frames,
                         "version": state.get("version", 1)},
                        os.path.join(args.out, name))
 
