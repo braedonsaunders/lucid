@@ -1,0 +1,73 @@
+{
+  "args": {
+    "bank": "C:\\lucid\\presented-diversity-20260905\\data\\bank",
+    "pixrestore_cache": "C:\\lucid\\presented-diversity-20260905\\data\\teacher-cache",
+    "shipping_cache": "C:\\lucid\\presented-diversity-20260905\\shipping-cache",
+    "init": "C:\\lucid\\presented-detail-20260904\\shipping.pth",
+    "out": "bounded",
+    "teacher_mix": 0.5,
+    "steps": 8000,
+    "batch": 4,
+    "crop": 96,
+    "lr": 2e-05,
+    "seed": 20260914,
+    "architecture": "coupled",
+    "detail_channels": 32,
+    "detail_blocks": 4,
+    "detail_target": "reference",
+    "dino_gan_weight": 0.005,
+    "gan_head_ratio_cap": 0.15,
+    "pixrestore_repository": "C:\\lucid\\pixrestore-baseline-20260904",
+    "dino_repository": "C:\\lucid\\causal-frontier-20260904-dino\\third_party\\dinov2",
+    "dino_checkpoint": "C:\\lucid\\frontier-teachers-20260904\\dinov2_vits14_pretrain.pth"
+  },
+  "bank_sha256": "b11ccdaba5ed388ec615da4270058b6441369fb6325a6e5e6680472e98d6d2f0",
+  "checkpoint_sha256": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65",
+  "teacher_manifest_sha256": "05299b2de67e8eb5bca2684333fa7b5979b33fdada4dc73506b17672e03afa23",
+  "shipping_manifest_sha256": "3909586f4058c096823074c61f6e4f1ead741925f2beaf70670535908346ce41",
+  "source_hashes": {
+    "train_presented_detail.py": "2d3fdaac8e745dc4ae1423ab21a8fb7b73e2e493f077d7d823bb5a135858b6ad",
+    "fold_shipping_head.py": "750795d69cce54883e601440b64344e25cd137b90c05e0e0d990d3bcf205d01e",
+    "train_causal_detail.py": "29484d4cf228a0ff04c17c509c68dfe62adf30eafea67f0903f4ebb52dfd662e",
+    "train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+    "span_arch.py": "0fd7c3c6bddcf6fd9c547793a58e9ded66a99e75c106fa20aa3e1cd059f6a806",
+    "dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+    "dino_supervision.py": "d99d245ff19a85fe63c3cd3d2d8427b8e847c8eb1d11c25f6f5921e91075d60b"
+  },
+  "loss": "L1 to fixed mixture + 0.2 signed Sobel to reference + 0.05 FFT to reference + 0.1 L1 to reference; 8 output-pixel border excluded",
+  "precision": "CUDA BF16 autocast; AdamW FP32; no compilation",
+  "torch": "2.6.0+cu124",
+  "gpu": "NVIDIA GeForce RTX 4080",
+  "purpose": "controlled quality/performance experiment; not shipping promotion",
+  "adversary": {
+    "upstream": "https://github.com/csslc/PixRestore",
+    "gan_sha256": "21be7412da65dc94eb7048e3510ce8ec8e6b47ae241ff4679df0eba728f99b59",
+    "feature_encoder": {
+      "inspiration": "https://github.com/csslc/PixRestore",
+      "reviewed_pixrestore_commit": "909ca06e614cf72e218d52b4fa41077c603d872b",
+      "encoder_repository": "https://github.com/facebookresearch/dinov2",
+      "encoder_commit": "7764ea0f912e53c92e82eb78a2a1631e92725fc8",
+      "encoder_weight_sha256": "b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9",
+      "layers": [
+        1,
+        2,
+        4,
+        6,
+        8,
+        10
+      ],
+      "size": 224,
+      "temperature": 1.0,
+      "normalization": "ImageNet RGB; raw intermediate patch tokens; cosine distance",
+      "weighting": "softmax((1-mean_LQ_HQ_cosine)/temperature), detached",
+      "inference_cost": "none; used only for training"
+    },
+    "real_target": "known training HQ reference",
+    "real_label": 0.8,
+    "discriminator_optimizer": "AdamW, lr 1e-4, weight_decay 0",
+    "discriminator_loss": "0.5 * (real BCE + detached fake BCE), gradient clip 1",
+    "inference_cost": "none; feature encoder and discriminator discarded"
+  },
+  "discriminator_initial_sha256": "8fb69a3ae94f25496d8d44d17362627bb6f2567bc361d9d9ba61da0d846d5cbc",
+  "first_batch_sha256": "b98fd2d1790308429ae374d525eeb86964a93897640903818aaf1c287aa2d002"
+}
