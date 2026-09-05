@@ -1,0 +1,89 @@
+{
+  "spatial_gate_pass": true,
+  "failure_reasons": [],
+  "frames_per_variant": 48,
+  "source_balanced": {
+    "shipping4x": {
+      "lpips": 0.27347911754623055,
+      "dists": 0.12592758859197298,
+      "fine_correlation": 0.5258513564517759
+    },
+    "candidate": {
+      "lpips": 0.2737344061024487,
+      "dists": 0.1262472408513228,
+      "fine_correlation": 0.5258939990733528
+    }
+  },
+  "per_source": {
+    "shipping4x": {
+      "crowd_run": {
+        "lpips": 0.3944719396531582,
+        "dists": 0.1649620532989502,
+        "fine_correlation": 0.35634315484479623
+      },
+      "four_people": {
+        "lpips": 0.19693366577848792,
+        "dists": 0.0993313118815422,
+        "fine_correlation": 0.6348000146508805
+      },
+      "johnny": {
+        "lpips": 0.22903174720704556,
+        "dists": 0.11348940059542656,
+        "fine_correlation": 0.586410899859651
+      }
+    },
+    "candidate": {
+      "crowd_run": {
+        "lpips": 0.39430380426347256,
+        "dists": 0.1649947687983513,
+        "fine_correlation": 0.35635494421738384
+      },
+      "four_people": {
+        "lpips": 0.19686865201219916,
+        "dists": 0.09975161775946617,
+        "fine_correlation": 0.6347836107912543
+      },
+      "johnny": {
+        "lpips": 0.23003076203167439,
+        "dists": 0.11399533599615097,
+        "fine_correlation": 0.5865434422114202
+      }
+    }
+  },
+  "perceptual_improvements": {
+    "lpips": -0.0009334846422963672,
+    "dists": -0.0025383814851369646
+  },
+  "per_source_changes": {
+    "crowd_run": {
+      "lpips": 0.00042622902362454695,
+      "dists": -0.00019832136389452693,
+      "fine_correlation": 1.1789372587611702e-05
+    },
+    "four_people": {
+      "lpips": 0.00033013028032435887,
+      "dists": -0.004231353336249022,
+      "fine_correlation": -1.6403859626201722e-05
+    },
+    "johnny": {
+      "lpips": -0.004361905442417546,
+      "dists": -0.004457996941300335,
+      "fine_correlation": 0.0001325423517691826
+    }
+  },
+  "status": "Previously evaluated native source regression; color coverage, browser cadence and fresh release validation remain",
+  "thresholds": {
+    "source_balanced_lpips_improvement_min": -0.005,
+    "source_balanced_dists_improvement_min": -0.005,
+    "per_source_perceptual_regression_max": 0.005,
+    "per_source_fine_correlation_drop_max": 0.002
+  },
+  "promotion_authorized": false,
+  "evidence_sha256": {
+    ".build/tensor-output-native-quality.json": "b28947b9a176fd684624f8b793eedce87958b736b0096d9c790afac8a5afb260",
+    ".build/tensor-output-native-rgb/manifest.json": "0dd88c9d79e3cf89ccd69b193b4c3d55685b96c23738662d5492f3d5863361e7",
+    "Benchmarks/frontier/tensor-output-native-config.json": "436cca66294edef6959959727d9f9c3c4b0be0220dc7bcbf9f45f7e88d55eacb",
+    ".build/frontier-sequences-2x/sequences.json": "a42d1514b0c0ebb6b10d7107fe8c7d944022c9cca4a9f20992e560448ef4f696",
+    "/Users/braedonsaunders/Documents/Code/lucid/Tools/frontier_eval/gate_tensor_output.py": "f5df7585f6d51d97d0be2808e07da935dbc1b09b7907b3088a8a811e89e1cca3"
+  }
+}

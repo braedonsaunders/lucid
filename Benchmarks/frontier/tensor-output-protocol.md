@@ -21,3 +21,13 @@ The full raw-tensor diagnostic checks 44,236,800 channel values across the four 
 ## Fixed FP32 confirmation
 
 180 balanced interleaved samples after ten warmups pass the same RGB thresholds: max one level, mean 0.045. Image output averages 8.188 ms (p95 8.926); FP32 tensor plus Metal packing averages 6.018 ms (p95 6.301), a 26.5% lower mean. These timings supersede the noisy short probe for this boundary only. Proceed to measurement-only native integration with full 4× geometry, existing color conversion, Standard gain/radius4 and existing 2× sender. No shipping model change.
+
+## Native 48-pair admission
+
+The fixed FP32 route passes the unchanged noninferiority gates through actual native NV12 conversion, Standard radius4 detail and 2× sender. Source-balanced LPIPS is 0.093% worse and DISTS 0.254% worse; all per-source perceptual and fine-correlation limits pass. This is a small accepted numerical difference, not a quality improvement. All 48 shipping packet payloads/headers and decoded PNG hashes reproduce previous controls exactly. The 12 short paired conditions average 12.893 ms shipping and 11.378 ms tensor (11.8% lower), excluding sender/browser and too short for sustained latency conclusions. Proceed with the unchanged configuration to the frozen eight-source 960-pair regression. No quality-based tuning or selection.
+
+The first GPU scoring launch lacked copied Python dependencies; a second exposed the missing architecture package. Both failed before scoring. The third runs the identical scorer with the full dependency tree and separately redirected output/error logs; it completed 96 scores on the RTX 4080. No model training occurred.
+
+## 480p boundary-only check
+
+The same frozen FP32 output at 864×480→3456×1920 passes all four RGB comparisons (maximum one level, mean about 0.045). In 180 balanced interleaved samples, image output averages 19.267 ms and tensor plus packing 14.610 ms (24.2% lower), p95 25.152/19.408 ms. Full native processing, source-quality, memory and browser gates at this resolution remain. The third exported storage type is not evaluated or selected; the original FP32 choice stays fixed.
