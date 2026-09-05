@@ -1,0 +1,17 @@
+# Preserve 4× processing while changing the Core ML output boundary
+
+Frozen before the native probe, September 5, 2026. The quantized 2× route fails the wider detail screen even with nominal gain fixed. This experiment retains full 4× reconstruction geometry and leaves the subsequent NV12 conversion, detail filtering and final presentation order available unchanged. It tests whether Core ML image-output materialization can be replaced efficiently. No model training or shipping asset changes.
+
+Export the same frozen shipping reconstruction and mixed precision three ways: existing RGB image output, FP32 tensor output and FP16 tensor output, all in 0–255 range. The sole graph intervention is output storage type. A Metal kernel reads tensor strides and packs RGB8 into a full-resolution BGRA IOSurface using fixed clamp/nearest rounding. It borrows storage through `MLMultiArray.withUnsafeMutableBytes`; GPU work completes before that closure returns. Page-aligned, page-sized storage on unified memory is wrapped directly; otherwise an explicit copy is made and reported. This does not prove that Core ML itself performed no internal copy. Apple's [documented borrowing API](https://developer.apple.com/documentation/coreml/mlmultiarray/withunsafemutablebytes(_:)) and installed macOS 26.2 SDK signatures were checked.
+
+First require maximum RGB error ≤3 levels and mean ≤0.6 against the matching native image output for each of four deterministic synthetic inputs. Failures receive no timing admission. Then measure 60 interleaved predictions after ten warmups at 640×360, including borrowed-buffer access, any explicit copy, Metal packing and GPU completion. Compare the whole boundary time, not tensor prediction alone. Both candidates must finish with the same 2560×1440 BGRA geometry. Keep all samples and actual dtype/stride/storage-mode receipts.
+
+A candidate needs at least 10% lower mean boundary time to justify native integration work. Freeze the fastest passing storage type before wider image/content checks; do not select per-frame outputs or tune rounding. This short probe does not establish full native delivered quality, browser speed, or a new reconstruction method. A successful boundary probe still requires identical downstream order, broad source/color regression and actual browser delivery before promotion.
+
+## Initial boundary result
+
+Both tensor formats pass four synthetic RGB comparisons: maximum one level, mean about 0.045. All borrowed buffers meet page-alignment requirements and use the shared-storage Metal wrapper; FP32 storage is 44,236,800 bytes and FP16 is 22,118,400 bytes. The full 2560×1440 output is retained.
+
+Mean image-output time is 18.03 ms. FP32 tensor plus Metal packing averages 13.97 ms (22.5% lower); FP16 averages 14.25 ms. Corresponding p95 values are 28.37/25.25/29.22 ms. The high variance prevents claiming stable tail-latency improvement. Freeze FP32, the predeclared fastest passing mean, for a longer two-arm confirmation. The first three-arm order alternated forward/reverse; the confirmation uses only the frozen candidate and image control with balanced alternating order.
+
+Before using this packing path for quality evaluation, inspect whether the remaining single-level differences arise from RGB8 half-way rounding. This is a numerical-equivalence diagnostic against the native image output, not a source-quality or sharpening-parameter sweep. No broader quality or deployment claim follows from the short timing run.

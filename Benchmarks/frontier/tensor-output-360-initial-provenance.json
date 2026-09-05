@@ -1,0 +1,12 @@
+{
+  "files": {
+    "Tools/experiments/TensorOutputBench.swift": "4b4e55072083c944d0e247a7885a17699649bf2597477a33b049d751903b87ab",
+    "Tools/experiments/export_tensor_output.py": "f5243d2e5f1013434f179ac9eb4f1bb4f16c98cd82d47f82ea01d7273442ab95",
+    ".build/TensorOutputBench": "d97f3a872a5ed1a701e1f5a71394ea78bd4b970cc7f4c356e91a4a39a66e374b"
+  },
+  "compile": "xcrun swiftc -O -whole-module-optimization -target arm64-apple-macos15.0 Tools/experiments/TensorOutputBench.swift -o .build/TensorOutputBench -framework CoreML -framework CoreVideo -framework Metal",
+  "run": ".build/TensorOutputBench .build/tensor-output-360 .build/tensor-output-360-native.json 60",
+  "selected_for_confirmation": "tensor4x_fp32",
+  "selection_basis": "Fastest passing initial mean boundary time; dtype is frozen before wider content checks",
+  "limitations": "Host timing variance is high; confirm the fixed choice before native pipeline integration. Shared wrapper is observed, not proof of no internal Core ML copy."
+}
