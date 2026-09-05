@@ -28,11 +28,15 @@ def main():
         ap.add_argument('--'+key,type=Path,required=True)
     ap.add_argument('--development-presentation', action='store_true',
                     help='Use the fixed 48-pair development screen for the quantized shipping presentation')
+    ap.add_argument('--presentation-corpus', choices=['development48', 'regression960'], default='development48',
+                    help='Previously used, fixed source sets; neither is a fresh holdout')
     ap.add_argument('--preserve-display-gain', action='store_true',
                     help='Diagnostic: keep nominal gain when the presentation candidate changes output scale')
     args=ap.parse_args()
     if args.preserve_display_gain and not args.development_presentation:
         ap.error('--preserve-display-gain requires --development-presentation')
+    if args.presentation_corpus != 'development48' and not args.development_presentation:
+        ap.error('--presentation-corpus requires --development-presentation')
     if args.out.exists():ap.error('fresh output directory required')
     sequences=json.loads(args.manifest.read_text())
     frames=json.loads((args.frozen_frames/'manifest.json').read_text())
@@ -40,7 +44,11 @@ def main():
     development = args.development_presentation
     if development and (config['candidate_sha256']!='fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65' or config['radius']!=2):
         raise ValueError('development presentation requires unchanged shipping weights and 2x scale')
-    if development and digest(args.frozen_frames/'manifest.json')!='aac663ad088fede87e1ede68cb46501603fc0f0b066b5ae6c07726b6555d923f':
+    corpus_hashes = {
+        'development48': 'aac663ad088fede87e1ede68cb46501603fc0f0b066b5ae6c07726b6555d923f',
+        'regression960': '307d6670ef1c4918798172a16292dd55ade37db61d953efeddb5d60e21154b3b',
+    }
+    if development and digest(args.frozen_frames/'manifest.json')!=corpus_hashes[args.presentation_corpus]:
         raise ValueError('fixed development inputs required')
     if frames['sequence_manifest_sha256']!=digest(args.manifest) or (not development and frames['split']!='quality-holdout'):
         raise ValueError('frozen sequence/frame manifests differ')
@@ -80,6 +88,7 @@ def main():
         report['configuration']=f"Standard shipping sharpness0.75/radius4; quantized presentation sharpness{config['tuning']['sharpness']}/radius2. Fixed grain phase0."
         report['limitations'][-1]='Repeated development sources; unchanged weights, standard postprocessing and real sender compared before product integration'
         report['preserve_display_gain']=args.preserve_display_gain
+        report['presentation_corpus']=args.presentation_corpus
     def save():
         (args.out/'manifest.json').write_text(json.dumps(report,indent=2)+'\n')
     for sequence in sequences:

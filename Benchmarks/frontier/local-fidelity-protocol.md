@@ -38,3 +38,9 @@ Both strict deterministic 8,000-step arms and both automatic evaluations complet
 | 96 bank-validation pairs | 8.86% / 4.42% | 1.16% / 0.44% | Unconstrained fails both REDS sources; constrained passes all |
 
 The local penalty protects detail on both repeated development sets, but removes most perceptual improvement. Neither arm meets the unchanged joint gate. No coefficient/checkpoint sweep follows, and no bundled model is replaced. The completed receipts, raw scores, gates and independent verifier remain beside this protocol; final checkpoints remain in `.build/local-fidelity-results` and the remote r4 experiment directory.
+
+## Training-context diagnostic
+
+After rejecting the matched endpoints, a read-only RTX 4080 probe compares the same frozen area-folded reconstruction on full training patches versus even-aligned center crops of 96 pixels. It uses the lexicographically first training sequence and first frame from each of 26 source identities; no validation footage, optimization or teacher selection. The exact script/data/checkpoint hashes and all rows are in `training-context-probe.json`.
+
+With the training objective's eight-output-pixel exclusion, source-balanced absolute context difference is 0.0575 RGB levels, about 1.05% of the corresponding reference error on average (per-source ratios averaged). At 32 pixels it falls to 0.00228 levels, and at 64 pixels to 0.00000331 levels. Individual edge-adjacent peaks are larger, but this limited probe does not support crop context as the dominant explanation of the failed perceptual/detail tradeoff. It is not evidence that all random crops or the learned pooled controller are context-invariant. No new training run follows this diagnostic.

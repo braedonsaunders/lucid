@@ -1,0 +1,1105 @@
+{
+  "complete": true,
+  "purpose": "Training-only context diagnostic; no quality promotion or training",
+  "selection": "Lexicographically first training sequence per source, first frame, even-aligned center crop96",
+  "bank_sha256": "b11ccdaba5ed388ec615da4270058b6441369fb6325a6e5e6680472e98d6d2f0",
+  "checkpoint_sha256": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65",
+  "code_sha256": "2a97c878bcfc9db64798054f8fdf596da4110d9203bbd96f16f3240b606c9279",
+  "torch": "2.6.0+cu124",
+  "device": "NVIDIA GeForce RTX 4080",
+  "precision": "FP32, TF32 disabled; same area-folded frozen model in both contexts",
+  "rows": [
+    {
+      "source_id": "bbb",
+      "sequence_id": "bbb-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.10655105113983154,
+          "max_rgb_levels": 9.164651870727539,
+          "context_mae_over_reference_mae": 0.017530107870697975,
+          "full_reference_mae_rgb_levels": 6.078174591064453
+        },
+        "32": {
+          "mean_rgb_levels": 0.005950832273811102,
+          "max_rgb_levels": 0.2327147126197815,
+          "context_mae_over_reference_mae": 0.0008235779241658747,
+          "full_reference_mae_rgb_levels": 7.225584983825684
+        },
+        "64": {
+          "mean_rgb_levels": 4.429925866133999e-06,
+          "max_rgb_levels": 9.119510650634766e-05,
+          "context_mae_over_reference_mae": 1.4117649698164314e-06,
+          "full_reference_mae_rgb_levels": 3.1378636360168457
+        },
+        "80": {
+          "mean_rgb_levels": 2.473825873039459e-07,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 1.2166940166480344e-07,
+          "full_reference_mae_rgb_levels": 2.033235788345337
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_Aerial",
+      "sequence_id": "fast_netflix_Aerial-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.03923387825489044,
+          "max_rgb_levels": 2.255290985107422,
+          "context_mae_over_reference_mae": 0.004712729714810848,
+          "full_reference_mae_rgb_levels": 8.325085639953613
+        },
+        "32": {
+          "mean_rgb_levels": 0.0009405410964973271,
+          "max_rgb_levels": 0.05581900477409363,
+          "context_mae_over_reference_mae": 0.00011461773101473227,
+          "full_reference_mae_rgb_levels": 8.20589542388916
+        },
+        "64": {
+          "mean_rgb_levels": 2.1691585061489604e-06,
+          "max_rgb_levels": 3.039836883544922e-05,
+          "context_mae_over_reference_mae": 2.735009445586911e-07,
+          "full_reference_mae_rgb_levels": 7.931082725524902
+        },
+        "80": {
+          "mean_rgb_levels": 1.2987584341317415e-07,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 1.826487050493597e-08,
+          "full_reference_mae_rgb_levels": 7.110690593719482
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "sequence_id": "fast_netflix_BarScene-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.045355867594480515,
+          "max_rgb_levels": 1.2863373756408691,
+          "context_mae_over_reference_mae": 0.011209309101104736,
+          "full_reference_mae_rgb_levels": 4.046267986297607
+        },
+        "32": {
+          "mean_rgb_levels": 0.0013394118286669254,
+          "max_rgb_levels": 0.04744425415992737,
+          "context_mae_over_reference_mae": 0.00042108073830604553,
+          "full_reference_mae_rgb_levels": 3.1808905601501465
+        },
+        "64": {
+          "mean_rgb_levels": 1.9935168893425725e-06,
+          "max_rgb_levels": 3.039836883544922e-05,
+          "context_mae_over_reference_mae": 7.013293839008838e-07,
+          "full_reference_mae_rgb_levels": 2.8424830436706543
+        },
+        "80": {
+          "mean_rgb_levels": 1.1750672257448969e-07,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 3.25771267739583e-08,
+          "full_reference_mae_rgb_levels": 3.6070313453674316
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_Boat",
+      "sequence_id": "fast_netflix_Boat-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.11082110553979874,
+          "max_rgb_levels": 6.4491658210754395,
+          "context_mae_over_reference_mae": 0.005057109985500574,
+          "full_reference_mae_rgb_levels": 21.91391944885254
+        },
+        "32": {
+          "mean_rgb_levels": 0.004028285853564739,
+          "max_rgb_levels": 0.46521663665771484,
+          "context_mae_over_reference_mae": 0.00017322473286185414,
+          "full_reference_mae_rgb_levels": 23.254680633544922
+        },
+        "64": {
+          "mean_rgb_levels": 4.1871817302308045e-06,
+          "max_rgb_levels": 6.079673767089844e-05,
+          "context_mae_over_reference_mae": 1.5855215451665572e-07,
+          "full_reference_mae_rgb_levels": 26.40886116027832
+        },
+        "80": {
+          "mean_rgb_levels": 2.968590706586838e-07,
+          "max_rgb_levels": 3.039836883544922e-05,
+          "context_mae_over_reference_mae": 1.0357148028106167e-08,
+          "full_reference_mae_rgb_levels": 28.662242889404297
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_BoxingPractice",
+      "sequence_id": "fast_netflix_BoxingPractice-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.05762521177530289,
+          "max_rgb_levels": 3.765742301940918,
+          "context_mae_over_reference_mae": 0.006677819415926933,
+          "full_reference_mae_rgb_levels": 8.629345893859863
+        },
+        "32": {
+          "mean_rgb_levels": 0.0012078690342605114,
+          "max_rgb_levels": 0.08005410432815552,
+          "context_mae_over_reference_mae": 0.00011938226089114323,
+          "full_reference_mae_rgb_levels": 10.117659568786621
+        },
+        "64": {
+          "mean_rgb_levels": 5.287725343805505e-06,
+          "max_rgb_levels": 6.079673767089844e-05,
+          "context_mae_over_reference_mae": 4.204607648716774e-07,
+          "full_reference_mae_rgb_levels": 12.57602596282959
+        },
+        "80": {
+          "mean_rgb_levels": 4.6662535169161856e-07,
+          "max_rgb_levels": 3.039836883544922e-05,
+          "context_mae_over_reference_mae": 3.66704853149713e-08,
+          "full_reference_mae_rgb_levels": 12.724821090698242
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_Crosswalk",
+      "sequence_id": "fast_netflix_Crosswalk-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.038808275014162064,
+          "max_rgb_levels": 2.5240373611450195,
+          "context_mae_over_reference_mae": 0.004360721912235022,
+          "full_reference_mae_rgb_levels": 8.899507522583008
+        },
+        "32": {
+          "mean_rgb_levels": 0.0008501184638589621,
+          "max_rgb_levels": 0.0466310977935791,
+          "context_mae_over_reference_mae": 8.813220483716577e-05,
+          "full_reference_mae_rgb_levels": 9.64594554901123
+        },
+        "64": {
+          "mean_rgb_levels": 2.4413566279690713e-06,
+          "max_rgb_levels": 3.039836883544922e-05,
+          "context_mae_over_reference_mae": 2.8539847107822425e-07,
+          "full_reference_mae_rgb_levels": 8.554203987121582
+        },
+        "80": {
+          "mean_rgb_levels": 7.421476766467094e-08,
+          "max_rgb_levels": 7.599592208862305e-06,
+          "context_mae_over_reference_mae": 1.0391696392275662e-08,
+          "full_reference_mae_rgb_levels": 7.14173698425293
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_Dancers",
+      "sequence_id": "fast_netflix_Dancers-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.028186485171318054,
+          "max_rgb_levels": 1.1375278234481812,
+          "context_mae_over_reference_mae": 0.01225972268730402,
+          "full_reference_mae_rgb_levels": 2.2991127967834473
+        },
+        "32": {
+          "mean_rgb_levels": 0.0011551183415576816,
+          "max_rgb_levels": 0.028743557631969452,
+          "context_mae_over_reference_mae": 0.0004614861973095685,
+          "full_reference_mae_rgb_levels": 2.503039598464966
+        },
+        "64": {
+          "mean_rgb_levels": 2.073761606879998e-06,
+          "max_rgb_levels": 3.039836883544922e-05,
+          "context_mae_over_reference_mae": 9.586780151948915e-07,
+          "full_reference_mae_rgb_levels": 2.163147211074829
+        },
+        "80": {
+          "mean_rgb_levels": 1.3667887799329037e-07,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 6.96971582669903e-08,
+          "full_reference_mae_rgb_levels": 1.961039423942566
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_DinnerScene",
+      "sequence_id": "fast_netflix_DinnerScene-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.025743605569005013,
+          "max_rgb_levels": 1.3184912204742432,
+          "context_mae_over_reference_mae": 0.018529709428548813,
+          "full_reference_mae_rgb_levels": 1.389315128326416
+        },
+        "32": {
+          "mean_rgb_levels": 0.0014920533867552876,
+          "max_rgb_levels": 0.03868952393531799,
+          "context_mae_over_reference_mae": 0.0009529574308544397,
+          "full_reference_mae_rgb_levels": 1.5657082796096802
+        },
+        "64": {
+          "mean_rgb_levels": 1.4498938298856956e-06,
+          "max_rgb_levels": 3.039836883544922e-05,
+          "context_mae_over_reference_mae": 4.936687219014857e-07,
+          "full_reference_mae_rgb_levels": 2.9369773864746094
+        },
+        "80": {
+          "mean_rgb_levels": 1.8213542318790132e-07,
+          "max_rgb_levels": 7.599592208862305e-06,
+          "context_mae_over_reference_mae": 5.8429240112900516e-08,
+          "full_reference_mae_rgb_levels": 3.117196559906006
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "sequence_id": "fast_netflix_DrivingPOV-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.04171027988195419,
+          "max_rgb_levels": 1.7847110033035278,
+          "context_mae_over_reference_mae": 0.00353135890327394,
+          "full_reference_mae_rgb_levels": 11.811396598815918
+        },
+        "32": {
+          "mean_rgb_levels": 0.0013336550910025835,
+          "max_rgb_levels": 0.059603601694107056,
+          "context_mae_over_reference_mae": 0.00010877672320930287,
+          "full_reference_mae_rgb_levels": 12.260482788085938
+        },
+        "64": {
+          "mean_rgb_levels": 2.8690192266367376e-06,
+          "max_rgb_levels": 3.039836883544922e-05,
+          "context_mae_over_reference_mae": 2.2830592172340403e-07,
+          "full_reference_mae_rgb_levels": 12.566556930541992
+        },
+        "80": {
+          "mean_rgb_levels": 2.040906110778451e-07,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 2.1940694594491106e-08,
+          "full_reference_mae_rgb_levels": 9.301920890808105
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "sequence_id": "fast_netflix_FoodMarket-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.04105661064386368,
+          "max_rgb_levels": 1.529144287109375,
+          "context_mae_over_reference_mae": 0.007351260166615248,
+          "full_reference_mae_rgb_levels": 5.584975719451904
+        },
+        "32": {
+          "mean_rgb_levels": 0.003026731312274933,
+          "max_rgb_levels": 0.11230107396841049,
+          "context_mae_over_reference_mae": 0.00047724973410367966,
+          "full_reference_mae_rgb_levels": 6.3420281410217285
+        },
+        "64": {
+          "mean_rgb_levels": 1.084231371351052e-06,
+          "max_rgb_levels": 1.6149133443832397e-05,
+          "context_mae_over_reference_mae": 1.678824759210329e-07,
+          "full_reference_mae_rgb_levels": 6.45827579498291
+        },
+        "80": {
+          "mean_rgb_levels": 6.277333142179486e-08,
+          "max_rgb_levels": 3.7997961044311523e-06,
+          "context_mae_over_reference_mae": 7.587551920096303e-09,
+          "full_reference_mae_rgb_levels": 8.273199081420898
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "sequence_id": "fast_netflix_FoodMarket2-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.038371741771698,
+          "max_rgb_levels": 1.7557698488235474,
+          "context_mae_over_reference_mae": 0.0038990797474980354,
+          "full_reference_mae_rgb_levels": 9.841229438781738
+        },
+        "32": {
+          "mean_rgb_levels": 0.0010981832165271044,
+          "max_rgb_levels": 0.0593528151512146,
+          "context_mae_over_reference_mae": 0.00010826822835952044,
+          "full_reference_mae_rgb_levels": 10.143171310424805
+        },
+        "64": {
+          "mean_rgb_levels": 2.4831024347804487e-06,
+          "max_rgb_levels": 3.039836883544922e-05,
+          "context_mae_over_reference_mae": 2.3100183454971557e-07,
+          "full_reference_mae_rgb_levels": 10.749276161193848
+        },
+        "80": {
+          "mean_rgb_levels": 1.979060613166439e-07,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 1.9152242458631008e-08,
+          "full_reference_mae_rgb_levels": 10.3333101272583
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "sequence_id": "fast_netflix_Narrator-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.039475198835134506,
+          "max_rgb_levels": 1.6348927021026611,
+          "context_mae_over_reference_mae": 0.006666329223662615,
+          "full_reference_mae_rgb_levels": 5.921579360961914
+        },
+        "32": {
+          "mean_rgb_levels": 0.0026736778672784567,
+          "max_rgb_levels": 0.10966211557388306,
+          "context_mae_over_reference_mae": 0.000435299618402496,
+          "full_reference_mae_rgb_levels": 6.142155170440674
+        },
+        "64": {
+          "mean_rgb_levels": 2.177121359636658e-06,
+          "max_rgb_levels": 3.039836883544922e-05,
+          "context_mae_over_reference_mae": 5.464296464197105e-07,
+          "full_reference_mae_rgb_levels": 3.9842662811279297
+        },
+        "80": {
+          "mean_rgb_levels": 8.039933874215421e-08,
+          "max_rgb_levels": 7.599592208862305e-06,
+          "context_mae_over_reference_mae": 2.759570172372605e-08,
+          "full_reference_mae_rgb_levels": 2.913473129272461
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "sequence_id": "fast_netflix_PierSeaside-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.05899500846862793,
+          "max_rgb_levels": 0.976775586605072,
+          "context_mae_over_reference_mae": 0.05762999877333641,
+          "full_reference_mae_rgb_levels": 1.0236856937408447
+        },
+        "32": {
+          "mean_rgb_levels": 0.006346048321574926,
+          "max_rgb_levels": 0.10724544525146484,
+          "context_mae_over_reference_mae": 0.006037165876477957,
+          "full_reference_mae_rgb_levels": 1.0511634349822998
+        },
+        "64": {
+          "mean_rgb_levels": 8.778370101936162e-06,
+          "max_rgb_levels": 0.00010639429092407227,
+          "context_mae_over_reference_mae": 7.953950444061775e-06,
+          "full_reference_mae_rgb_levels": 1.1036491394042969
+        },
+        "80": {
+          "mean_rgb_levels": 6.926712359245357e-08,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 7.774337973387446e-08,
+          "full_reference_mae_rgb_levels": 0.890971302986145
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_RitualDance",
+      "sequence_id": "fast_netflix_RitualDance-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.05311604589223862,
+          "max_rgb_levels": 1.5533547401428223,
+          "context_mae_over_reference_mae": 0.0046418230049312115,
+          "full_reference_mae_rgb_levels": 11.442928314208984
+        },
+        "32": {
+          "mean_rgb_levels": 0.002830208744853735,
+          "max_rgb_levels": 0.23661330342292786,
+          "context_mae_over_reference_mae": 0.0002727314713411033,
+          "full_reference_mae_rgb_levels": 10.37727165222168
+        },
+        "64": {
+          "mean_rgb_levels": 2.0539712295430945e-06,
+          "max_rgb_levels": 4.559755325317383e-05,
+          "context_mae_over_reference_mae": 1.9499242398524075e-07,
+          "full_reference_mae_rgb_levels": 10.533594131469727
+        },
+        "80": {
+          "mean_rgb_levels": 1.1379598419125614e-07,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 9.899115305245232e-09,
+          "full_reference_mae_rgb_levels": 11.495570182800293
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "sequence_id": "fast_netflix_RollerCoaster-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.056278958916664124,
+          "max_rgb_levels": 3.409633159637451,
+          "context_mae_over_reference_mae": 0.013352909125387669,
+          "full_reference_mae_rgb_levels": 4.214734077453613
+        },
+        "32": {
+          "mean_rgb_levels": 0.001407866133376956,
+          "max_rgb_levels": 0.07731825113296509,
+          "context_mae_over_reference_mae": 0.0002996882831212133,
+          "full_reference_mae_rgb_levels": 4.697768211364746
+        },
+        "64": {
+          "mean_rgb_levels": 4.152935161982896e-06,
+          "max_rgb_levels": 6.079673767089844e-05,
+          "context_mae_over_reference_mae": 7.807466317899525e-07,
+          "full_reference_mae_rgb_levels": 5.319183826446533
+        },
+        "80": {
+          "mean_rgb_levels": 2.6469933800399303e-07,
+          "max_rgb_levels": 3.039836883544922e-05,
+          "context_mae_over_reference_mae": 4.707801082304286e-08,
+          "full_reference_mae_rgb_levels": 5.622568607330322
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "sequence_id": "fast_netflix_SquareAndTimelapse-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.06896794587373734,
+          "max_rgb_levels": 3.4412930011749268,
+          "context_mae_over_reference_mae": 0.005479674320667982,
+          "full_reference_mae_rgb_levels": 12.586139678955078
+        },
+        "32": {
+          "mean_rgb_levels": 0.0020583011209964752,
+          "max_rgb_levels": 0.12708038091659546,
+          "context_mae_over_reference_mae": 0.0001647149765631184,
+          "full_reference_mae_rgb_levels": 12.496138572692871
+        },
+        "64": {
+          "mean_rgb_levels": 2.8806152840843424e-06,
+          "max_rgb_levels": 6.079673767089844e-05,
+          "context_mae_over_reference_mae": 2.382219008723041e-07,
+          "full_reference_mae_rgb_levels": 12.092151641845703
+        },
+        "80": {
+          "mean_rgb_levels": 2.606793714221567e-07,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 2.1267510419420432e-08,
+          "full_reference_mae_rgb_levels": 12.25716495513916
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_Tango",
+      "sequence_id": "fast_netflix_Tango-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.07266934216022491,
+          "max_rgb_levels": 5.446810245513916,
+          "context_mae_over_reference_mae": 0.02530110441148281,
+          "full_reference_mae_rgb_levels": 2.872180700302124
+        },
+        "32": {
+          "mean_rgb_levels": 0.0031550792045891285,
+          "max_rgb_levels": 0.12845590710639954,
+          "context_mae_over_reference_mae": 0.0010354797123000026,
+          "full_reference_mae_rgb_levels": 3.046973705291748
+        },
+        "64": {
+          "mean_rgb_levels": 4.340945451986045e-06,
+          "max_rgb_levels": 0.00013299286365509033,
+          "context_mae_over_reference_mae": 1.3027913610130781e-06,
+          "full_reference_mae_rgb_levels": 3.3320343494415283
+        },
+        "80": {
+          "mean_rgb_levels": 1.2276360905616457e-07,
+          "max_rgb_levels": 7.599592208862305e-06,
+          "context_mae_over_reference_mae": 4.597057667865556e-08,
+          "full_reference_mae_rgb_levels": 2.6704821586608887
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_ToddlerFountain",
+      "sequence_id": "fast_netflix_ToddlerFountain-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.033008940517902374,
+          "max_rgb_levels": 1.2926602363586426,
+          "context_mae_over_reference_mae": 0.008830124512314796,
+          "full_reference_mae_rgb_levels": 3.7382192611694336
+        },
+        "32": {
+          "mean_rgb_levels": 0.0015216863248497248,
+          "max_rgb_levels": 0.05222439765930176,
+          "context_mae_over_reference_mae": 0.0004134229675401002,
+          "full_reference_mae_rgb_levels": 3.6807010173797607
+        },
+        "64": {
+          "mean_rgb_levels": 2.9089096642564982e-06,
+          "max_rgb_levels": 4.559755325317383e-05,
+          "context_mae_over_reference_mae": 6.307063245003519e-07,
+          "full_reference_mae_rgb_levels": 4.612145900726318
+        },
+        "80": {
+          "mean_rgb_levels": 6.060872692614794e-08,
+          "max_rgb_levels": 7.599592208862305e-06,
+          "context_mae_over_reference_mae": 1.621584999611514e-08,
+          "full_reference_mae_rgb_levels": 3.7376229763031006
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "sequence_id": "fast_netflix_TunnelFlag-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.16491077840328217,
+          "max_rgb_levels": 11.092645645141602,
+          "context_mae_over_reference_mae": 0.010664683766663074,
+          "full_reference_mae_rgb_levels": 15.46325969696045
+        },
+        "32": {
+          "mean_rgb_levels": 0.004366437438875437,
+          "max_rgb_levels": 0.3235982358455658,
+          "context_mae_over_reference_mae": 0.00031197446514852345,
+          "full_reference_mae_rgb_levels": 13.996136665344238
+        },
+        "64": {
+          "mean_rgb_levels": 7.427738637488801e-06,
+          "max_rgb_levels": 7.599592208862305e-05,
+          "context_mae_over_reference_mae": 4.7214814458129695e-07,
+          "full_reference_mae_rgb_levels": 15.731797218322754
+        },
+        "80": {
+          "mean_rgb_levels": 4.3910404201596975e-07,
+          "max_rgb_levels": 3.039836883544922e-05,
+          "context_mae_over_reference_mae": 2.81824750203441e-08,
+          "full_reference_mae_rgb_levels": 15.580748558044434
+        }
+      }
+    },
+    {
+      "source_id": "fast_netflix_WindAndNature",
+      "sequence_id": "fast_netflix_WindAndNature-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.07111755758523941,
+          "max_rgb_levels": 3.953756332397461,
+          "context_mae_over_reference_mae": 0.01464150007814169,
+          "full_reference_mae_rgb_levels": 4.8572587966918945
+        },
+        "32": {
+          "mean_rgb_levels": 0.0011861317325383425,
+          "max_rgb_levels": 0.0780630111694336,
+          "context_mae_over_reference_mae": 0.0002460074028931558,
+          "full_reference_mae_rgb_levels": 4.821528434753418
+        },
+        "64": {
+          "mean_rgb_levels": 2.2339420411299216e-06,
+          "max_rgb_levels": 3.7997961044311523e-05,
+          "context_mae_over_reference_mae": 4.822870778298238e-07,
+          "full_reference_mae_rgb_levels": 4.6319756507873535
+        },
+        "80": {
+          "mean_rgb_levels": 2.452179614920169e-07,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 5.357309262876697e-08,
+          "full_reference_mae_rgb_levels": 4.5772600173950195
+        }
+      }
+    },
+    {
+      "source_id": "reds_025",
+      "sequence_id": "reds_025-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.06673077493906021,
+          "max_rgb_levels": 3.387814521789551,
+          "context_mae_over_reference_mae": 0.00494051817804575,
+          "full_reference_mae_rgb_levels": 13.506836891174316
+        },
+        "32": {
+          "mean_rgb_levels": 0.0020382124930620193,
+          "max_rgb_levels": 0.262489914894104,
+          "context_mae_over_reference_mae": 0.00015065564366523176,
+          "full_reference_mae_rgb_levels": 13.528948783874512
+        },
+        "64": {
+          "mean_rgb_levels": 3.108671080553904e-06,
+          "max_rgb_levels": 3.039836883544922e-05,
+          "context_mae_over_reference_mae": 2.2556794476713549e-07,
+          "full_reference_mae_rgb_levels": 13.78152847290039
+        },
+        "80": {
+          "mean_rgb_levels": 1.7069396562874317e-07,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 1.6228543842089493e-08,
+          "full_reference_mae_rgb_levels": 10.518132209777832
+        }
+      }
+    },
+    {
+      "source_id": "reds_084",
+      "sequence_id": "reds_084-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.060922957956790924,
+          "max_rgb_levels": 2.5996077060699463,
+          "context_mae_over_reference_mae": 0.007962634786963463,
+          "full_reference_mae_rgb_levels": 7.651104927062988
+        },
+        "32": {
+          "mean_rgb_levels": 0.0023886060807853937,
+          "max_rgb_levels": 0.07906615734100342,
+          "context_mae_over_reference_mae": 0.0003216367622371763,
+          "full_reference_mae_rgb_levels": 7.426408767700195
+        },
+        "64": {
+          "mean_rgb_levels": 3.788354661082849e-06,
+          "max_rgb_levels": 6.079673767089844e-05,
+          "context_mae_over_reference_mae": 4.996556981495814e-07,
+          "full_reference_mae_rgb_levels": 7.581930160522461
+        },
+        "80": {
+          "mean_rgb_levels": 1.8553691916167736e-07,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 2.7210068864746972e-08,
+          "full_reference_mae_rgb_levels": 6.818686008453369
+        }
+      }
+    },
+    {
+      "source_id": "reds_125",
+      "sequence_id": "reds_125-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.05091939494013786,
+          "max_rgb_levels": 3.7602782249450684,
+          "context_mae_over_reference_mae": 0.0038994615897536278,
+          "full_reference_mae_rgb_levels": 13.058056831359863
+        },
+        "32": {
+          "mean_rgb_levels": 0.00185512681491673,
+          "max_rgb_levels": 0.11029288172721863,
+          "context_mae_over_reference_mae": 0.0001322108000749722,
+          "full_reference_mae_rgb_levels": 14.031582832336426
+        },
+        "64": {
+          "mean_rgb_levels": 2.9797229217365384e-06,
+          "max_rgb_levels": 6.079673767089844e-05,
+          "context_mae_over_reference_mae": 2.124762517041745e-07,
+          "full_reference_mae_rgb_levels": 14.023792266845703
+        },
+        "80": {
+          "mean_rgb_levels": 1.4471879694610834e-07,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 1.0077783940687368e-08,
+          "full_reference_mae_rgb_levels": 14.360179901123047
+        }
+      }
+    },
+    {
+      "source_id": "reds_135",
+      "sequence_id": "reds_135-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.04288734495639801,
+          "max_rgb_levels": 1.9679523706436157,
+          "context_mae_over_reference_mae": 0.0065210554748773575,
+          "full_reference_mae_rgb_levels": 6.576748847961426
+        },
+        "32": {
+          "mean_rgb_levels": 0.0010765395127236843,
+          "max_rgb_levels": 0.10929733514785767,
+          "context_mae_over_reference_mae": 0.00019464294018689543,
+          "full_reference_mae_rgb_levels": 5.5308427810668945
+        },
+        "64": {
+          "mean_rgb_levels": 1.3435965229291469e-06,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 2.648415886596922e-07,
+          "full_reference_mae_rgb_levels": 5.073208332061768
+        },
+        "80": {
+          "mean_rgb_levels": 1.471926225349307e-07,
+          "max_rgb_levels": 7.599592208862305e-06,
+          "context_mae_over_reference_mae": 3.740123233342274e-08,
+          "full_reference_mae_rgb_levels": 3.935502052307129
+        }
+      }
+    },
+    {
+      "source_id": "reds_152",
+      "sequence_id": "reds_152-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.042423613369464874,
+          "max_rgb_levels": 1.8600457906723022,
+          "context_mae_over_reference_mae": 0.0022719772532582283,
+          "full_reference_mae_rgb_levels": 18.67255210876465
+        },
+        "32": {
+          "mean_rgb_levels": 0.0012492792448028922,
+          "max_rgb_levels": 0.06178468465805054,
+          "context_mae_over_reference_mae": 6.242241943255067e-05,
+          "full_reference_mae_rgb_levels": 20.013309478759766
+        },
+        "64": {
+          "mean_rgb_levels": 2.9361217457335442e-06,
+          "max_rgb_levels": 6.079673767089844e-05,
+          "context_mae_over_reference_mae": 1.6156529625277471e-07,
+          "full_reference_mae_rgb_levels": 18.1729736328125
+        },
+        "80": {
+          "mean_rgb_levels": 1.1379598419125614e-07,
+          "max_rgb_levels": 1.519918441772461e-05,
+          "context_mae_over_reference_mae": 7.570340798679354e-09,
+          "full_reference_mae_rgb_levels": 15.031817436218262
+        }
+      }
+    },
+    {
+      "source_id": "reds_187",
+      "sequence_id": "reds_187-stream-000-00",
+      "frame": 0,
+      "full_size": [
+        256,
+        256
+      ],
+      "crop": [
+        80,
+        80,
+        96,
+        96
+      ],
+      "margins": {
+        "8": {
+          "mean_rgb_levels": 0.039856694638729095,
+          "max_rgb_levels": 1.135880708694458,
+          "context_mae_over_reference_mae": 0.004751911852508783,
+          "full_reference_mae_rgb_levels": 8.387507438659668
+        },
+        "32": {
+          "mean_rgb_levels": 0.0027496733237057924,
+          "max_rgb_levels": 0.05032449960708618,
+          "context_mae_over_reference_mae": 0.000333699252223596,
+          "full_reference_mae_rgb_levels": 8.239974975585938
+        },
+        "64": {
+          "mean_rgb_levels": 4.5938941184431314e-06,
+          "max_rgb_levels": 6.079673767089844e-05,
+          "context_mae_over_reference_mae": 6.212741254785215e-07,
+          "full_reference_mae_rgb_levels": 7.39431095123291
+        },
+        "80": {
+          "mean_rgb_levels": 1.484295353293419e-07,
+          "max_rgb_levels": 3.039836883544922e-05,
+          "context_mae_over_reference_mae": 2.1411526773817968e-08,
+          "full_reference_mae_rgb_levels": 6.932225704193115
+        }
+      }
+    }
+  ],
+  "source_balanced": {
+    "8": {
+      "mean_rgb_levels": 0.05752864114653606,
+      "max_rgb_levels": 3.095548879641753,
+      "context_mae_over_reference_mae": 0.010487485972519677,
+      "full_reference_mae_rgb_levels": 8.415043207315298
+    },
+    "32": {
+      "mean_rgb_levels": 0.002281756702219494,
+      "max_rgb_levels": 0.12077257323723573,
+      "context_mae_over_reference_mae": 0.0005484810191354392,
+      "full_reference_mae_rgb_levels": 8.597153512331156
+    },
+    "64": {
+      "mean_rgb_levels": 3.3143762852187838e-06,
+      "max_rgb_levels": 5.104149190279154e-05,
+      "context_mae_over_reference_mae": 7.66084558388404e-07,
+      "full_reference_mae_rgb_levels": 8.603588305986845
+    },
+    "80": {
+      "mean_rgb_levels": 1.801135372130165e-07,
+      "max_rgb_levels": 1.5929914437807522e-05,
+      "context_mae_over_reference_mae": 3.285241634287672e-08,
+      "full_reference_mae_rgb_levels": 8.138801152889545
+    }
+  }
+}
