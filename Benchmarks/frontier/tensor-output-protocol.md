@@ -15,3 +15,9 @@ Both tensor formats pass four synthetic RGB comparisons: maximum one level, mean
 Mean image-output time is 18.03 ms. FP32 tensor plus Metal packing averages 13.97 ms (22.5% lower); FP16 averages 14.25 ms. Corresponding p95 values are 28.37/25.25/29.22 ms. The high variance prevents claiming stable tail-latency improvement. Freeze FP32, the predeclared fastest passing mean, for a longer two-arm confirmation. The first three-arm order alternated forward/reverse; the confirmation uses only the frozen candidate and image control with balanced alternating order.
 
 Before using this packing path for quality evaluation, inspect whether the remaining single-level differences arise from RGB8 half-way rounding. This is a numerical-equivalence diagnostic against the native image output, not a source-quality or sharpening-parameter sweep. No broader quality or deployment claim follows from the short timing run.
+
+The full raw-tensor diagnostic checks 44,236,800 channel values across the four inputs. All 1,994,878 image/tensor packing differences occur away from exact half-way values; half-up and nearest-even rounding have identical mismatch counts. Therefore tie-breaking does not explain the discrepancy, and the quantizer is unchanged. Small graph/output-boundary numerical differences remain possible. The frozen FP32 route proceeds only to the declared longer boundary confirmation; source-quality admission is still required.
+
+## Fixed FP32 confirmation
+
+180 balanced interleaved samples after ten warmups pass the same RGB thresholds: max one level, mean 0.045. Image output averages 8.188 ms (p95 8.926); FP32 tensor plus Metal packing averages 6.018 ms (p95 6.301), a 26.5% lower mean. These timings supersede the noisy short probe for this boundary only. Proceed to measurement-only native integration with full 4× geometry, existing color conversion, Standard gain/radius4 and existing 2× sender. No shipping model change.

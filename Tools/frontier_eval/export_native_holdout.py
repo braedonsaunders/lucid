@@ -30,6 +30,7 @@ def main():
                     help='Use the fixed 48-pair development screen for the quantized shipping presentation')
     ap.add_argument('--presentation-corpus', choices=['development48', 'regression960'], default='development48',
                     help='Previously used, fixed source sets; neither is a fresh holdout')
+    ap.add_argument('--tensor-output', action='store_true', help='Fixed FP32 full-4x output-storage regression; Standard radius4 in both arms')
     ap.add_argument('--preserve-display-gain', action='store_true',
                     help='Diagnostic: keep nominal gain when the presentation candidate changes output scale')
     args=ap.parse_args()
@@ -37,13 +38,17 @@ def main():
         ap.error('--preserve-display-gain requires --development-presentation')
     if args.presentation_corpus != 'development48' and not args.development_presentation:
         ap.error('--presentation-corpus requires --development-presentation')
+    if args.tensor_output and (args.preserve_display_gain or not args.development_presentation):
+        ap.error('--tensor-output requires development presentation and forbids gain modification')
     if args.out.exists():ap.error('fresh output directory required')
     sequences=json.loads(args.manifest.read_text())
     frames=json.loads((args.frozen_frames/'manifest.json').read_text())
     config=json.loads(args.native_config.read_text())
     development = args.development_presentation
-    if development and (config['candidate_sha256']!='fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65' or config['radius']!=2):
-        raise ValueError('development presentation requires unchanged shipping weights and 2x scale')
+    if development and (config['candidate_sha256']!='fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65' or config['radius']!=(4 if args.tensor_output else 2)):
+        raise ValueError('development presentation requires unchanged shipping weights and declared output scale')
+    if args.tensor_output and (config.get('output_storage') != 'tensor4x_fp32' or config['tuning']['sharpness'] != .75):
+        raise ValueError('tensor-output requires frozen FP32 storage and Standard gain')
     corpus_hashes = {
         'development48': 'aac663ad088fede87e1ede68cb46501603fc0f0b066b5ae6c07726b6555d923f',
         'regression960': '307d6670ef1c4918798172a16292dd55ade37db61d953efeddb5d60e21154b3b',
@@ -55,8 +60,8 @@ def main():
     refs={(r['sequence_id'],r['frame']):r for r in frames['frames'] if r['side']=='reference'}
     # Core ML metadata must identify the exact frozen weight pair.
     import coremltools as ct
-    packages={'shipping4x':args.models/'shipping4x_640x360.mlpackage',
-              'candidate':args.models/('quantized_bicubic2x_640x360.mlpackage' if development else 'direct2x_trained_640x360.mlpackage')}
+    packages={'shipping4x':args.models/('image4x.mlpackage' if args.tensor_output else 'shipping4x_640x360.mlpackage'),
+              'candidate':args.models/('tensor4x_fp32.mlpackage' if args.tensor_output else ('quantized_bicubic2x_640x360.mlpackage' if development else 'direct2x_trained_640x360.mlpackage'))}
     expected={'shipping4x':'fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65',
               'candidate':config['candidate_sha256']}
     for label,package in packages.items():
@@ -65,10 +70,21 @@ def main():
             raise ValueError('Core ML package does not identify frozen checkpoint')
         spec=model.get_spec().description
         image_in=next(x.type.imageType for x in spec.input if x.name=='input')
-        image_out=next(x.type.imageType for x in spec.output if x.name=='output')
-        scale=4 if label=='shipping4x' else 2
-        if (image_in.width,image_in.height,image_out.width,image_out.height)!=(640,360,640*scale,360*scale):
-            raise ValueError('Core ML graph geometry differs from frozen arm')
+        output=next(x for x in spec.output if x.name=='output')
+        scale=4 if label=='shipping4x' or args.tensor_output else 2
+        if args.tensor_output and label=='candidate':
+            tensor=output.type.multiArrayType
+            if (output.type.WhichOneof('Type') != 'multiArrayType'
+                    or list(tensor.shape) != [1,3,1440,2560]
+                    or tensor.dataType != ct.proto.FeatureTypes_pb2.ArrayFeatureType.FLOAT32
+                    or model.user_defined_metadata.get('lucid.output_range') != '0..255'
+                    or model.user_defined_metadata.get('lucid.output_scale') != '4'):
+                raise ValueError('fixed FP32 tensor output contract differs')
+        elif (output.type.WhichOneof('Type') != 'imageType'
+              or (output.type.imageType.width,output.type.imageType.height)!=(640*scale,360*scale)):
+            raise ValueError('Core ML image output geometry differs from frozen arm')
+        if (image_in.width,image_in.height)!=(640,360):
+            raise ValueError('Core ML input geometry differs from frozen arm')
     args.out.mkdir(parents=True)
     tuning=args.out/'candidate-tuning.json';tuning.write_text(json.dumps(config['tuning'],indent=2)+'\n')
     report={'purpose':'frozen native spatial holdout; no browser cadence or release claim',
@@ -89,6 +105,9 @@ def main():
         report['limitations'][-1]='Repeated development sources; unchanged weights, standard postprocessing and real sender compared before product integration'
         report['preserve_display_gain']=args.preserve_display_gain
         report['presentation_corpus']=args.presentation_corpus
+    if args.tensor_output:
+        report['configuration']='Identical Standard sharpness0.75/radius4, full 4x RGB8/NV12/detail and 2x sender in both arms. Fixed grain phase0.'
+        report['output_storage']='tensor4x_fp32'
     def save():
         (args.out/'manifest.json').write_text(json.dumps(report,indent=2)+'\n')
     for sequence in sequences:
@@ -127,6 +146,8 @@ def main():
                 reference_radius=2 if label=='candidate' else 4
                 if f'pipeline-ms detail referenceRadius={reference_radius}' not in result.stdout:
                     raise ValueError('diagnostic gain reference radius differs')
+            if args.tensor_output and ('pipeline-ms detail radius=4' not in result.stdout or 'pipeline-ms detail referenceRadius=4' not in result.stdout):
+                raise ValueError('tensor route must retain full 4x detail geometry and gain')
             actual_tuning=json.loads((target/'tuning.json').read_text())
             expected_tuning=dict(config['tuning'],sharpness=.75 if label=='shipping4x' else config['tuning']['sharpness'])
             if actual_tuning!=expected_tuning:raise ValueError('actual native tuning differs from frozen arm')

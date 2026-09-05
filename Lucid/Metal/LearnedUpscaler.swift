@@ -230,6 +230,7 @@ final class LearnedUpscaler: @unchecked Sendable {
     private let model: MLModel
     private let inputName: String
     private let outputName: String
+    private let tensorPacker: CoreMLTensorImagePacker?
     private let inputFormat: OSType
     private var transfer: VTPixelTransferSession?
     private var rgbPool: CVPixelBufferPool?
@@ -317,15 +318,28 @@ final class LearnedUpscaler: @unchecked Sendable {
         model = try MLModel(contentsOf: compiled, configuration: configuration)
         guard let input = model.modelDescription.inputDescriptionsByName.first,
               let output = model.modelDescription.outputDescriptionsByName.first,
-              let constraint = input.value.imageConstraint,
-              let outputConstraint = output.value.imageConstraint,
-              let reconstructionScale = Self.reconstructionScale(
-                inputWidth: constraint.pixelsWide, inputHeight: constraint.pixelsHigh,
-                outputWidth: outputConstraint.pixelsWide, outputHeight: outputConstraint.pixelsHigh)
-        else { throw Failure.noModel }
+              let constraint = input.value.imageConstraint else { throw Failure.noModel }
+        let metadata = model.modelDescription.metadata[.creatorDefinedKey] as? [String: String] ?? [:]
+        let outputWidth: Int, outputHeight: Int
+        if let image = output.value.imageConstraint {
+            outputWidth = image.pixelsWide; outputHeight = image.pixelsHigh
+            tensorPacker = nil
+        } else if CommandLine.arguments.contains("--pipeline-ms"),
+                  let tensor = output.value.multiArrayConstraint,
+                  tensor.dataType == .float32,
+                  tensor.shape.map(\.intValue) == [1, 3, constraint.pixelsHigh * 4, constraint.pixelsWide * 4],
+                  metadata["lucid.output_range"] == "0..255",
+                  metadata["lucid.output_scale"] == "4",
+                  metadata["lucid.checkpoint_sha256"] == "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65" {
+            // Measurement-only admission until full native/color/browser gates pass.
+            outputWidth = constraint.pixelsWide * 4; outputHeight = constraint.pixelsHigh * 4
+            tensorPacker = try CoreMLTensorImagePacker(width: outputWidth, height: outputHeight)
+        } else { throw Failure.noModel }
+        guard let reconstructionScale = Self.reconstructionScale(
+            inputWidth: constraint.pixelsWide, inputHeight: constraint.pixelsHigh,
+            outputWidth: outputWidth, outputHeight: outputHeight) else { throw Failure.noModel }
         scale = reconstructionScale
-        detailReferenceRadius = Self.detailReferenceRadius(scale: reconstructionScale,
-            metadata: model.modelDescription.metadata[.creatorDefinedKey] as? [String: String] ?? [:])
+        detailReferenceRadius = Self.detailReferenceRadius(scale: reconstructionScale, metadata: metadata)
         inputName = input.key
         outputName = output.key
         inputFormat = constraint.pixelFormatType
@@ -355,11 +369,17 @@ final class LearnedUpscaler: @unchecked Sendable {
 
         let provider = try MLDictionaryFeatureProvider(
             dictionary: [inputName: MLFeatureValue(pixelBuffer: rgb)])
-        guard let result = try? model.prediction(from: provider),
-              let value = result.featureValue(for: outputName)?.imageBufferValue,
-              CVPixelBufferGetWidth(value) == outputWidth,
-              CVPixelBufferGetHeight(value) == outputHeight
-        else { throw Failure.prediction }
+        let result = try model.prediction(from: provider)
+        let value: CVPixelBuffer
+        if let tensorPacker {
+            guard let array = result.featureValue(for: outputName)?.multiArrayValue else { throw Failure.prediction }
+            value = try tensorPacker.pack(array)
+        } else {
+            guard let image = result.featureValue(for: outputName)?.imageBufferValue else { throw Failure.prediction }
+            value = image
+        }
+        guard CVPixelBufferGetWidth(value) == outputWidth,
+              CVPixelBufferGetHeight(value) == outputHeight else { throw Failure.prediction }
 
         // The image model predicts RGB samples in its input encoding. Core ML
         // returns an untagged image; defaulting it to 709 would lose sRGB here.

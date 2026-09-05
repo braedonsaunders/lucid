@@ -6,6 +6,40 @@ import Metal
 import Testing
 @testable import Lucid
 
+struct TensorImagePackerTests {
+    @Test func paddedFloatStoragePacksRGBAndClampsWithoutEscapingBorrow() throws {
+        // Deliberately sub-page and padded: exercises the explicit-copy path.
+        let storage = UnsafeMutableRawPointer.allocate(byteCount: 256, alignment: 4)
+        storage.initializeMemory(as: UInt8.self, repeating: 0, count: 256)
+        let array = try MLMultiArray(dataPointer: storage, shape: [1,3,2,3], dataType: .float32,
+            strides: [48,16,5,1], deallocator: { $0.deallocate() })
+        let levels: [Float] = [-5,0.49,0.51,127.4,254.7,300]
+        for c in 0..<3 { for y in 0..<2 { for x in 0..<3 {
+            storage.assumingMemoryBound(to: Float.self)[c*16+y*5+x] = levels[(y*3+x+c)%6]
+        } } }
+        let packer = try CoreMLTensorImagePacker(width: 3, height: 2)
+        let output = try packer.pack(array)
+        #expect(packer.transferModes == ["explicit copy"])
+        CVPixelBufferLockBaseAddress(output, .readOnly)
+        defer { CVPixelBufferUnlockBaseAddress(output, .readOnly) }
+        let pixels = CVPixelBufferGetBaseAddress(output)!.assumingMemoryBound(to: UInt8.self)
+        let expected = [0,0,1,127,255,255]
+        for y in 0..<2 { for x in 0..<3 {
+            let at = y*CVPixelBufferGetBytesPerRow(output)+x*4
+            for c in 0..<3 { #expect(Int(pixels[at+2-c]) == expected[(y*3+x+c)%6]) }
+            #expect(pixels[at+3] == 255)
+        } }
+    }
+
+    @Test func rejectsWrongTensorGeometryAndType() throws {
+        let packer = try CoreMLTensorImagePacker(width: 3, height: 2)
+        let wrongShape = try MLMultiArray(shape: [1,3,3,2], dataType: .float32)
+        let wrongType = try MLMultiArray(shape: [1,3,2,3], dataType: .double)
+        #expect(throws: (any Error).self) { try packer.pack(wrongShape) }
+        #expect(throws: (any Error).self) { try packer.pack(wrongType) }
+    }
+}
+
 struct LearnedReconstructionGeometryTests {
     @Test func nominalDetailGainIsLimitedToTheVerifiedPresentationTransform() {
         var metadata = [
