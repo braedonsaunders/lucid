@@ -21,3 +21,15 @@ test('measured processing time paces capture without making a backlog', () => {
   assert.equal(g.reserve(1), true); g.acknowledge(1); tick(39); assert.equal(g.ready, false);
   tick(1); assert.equal(g.ready, true);
 });
+
+test('HDR names and explicit unknown color metadata never enter SDR capture', () => {
+  const { colorBlockReason } = require('../BrowserExtension/stream-policy.js');
+  for (const transfer of ['pq', 'hlg', 'smpte2084', 'arib-std-b67']) {
+    assert.equal(colorBlockReason({ transfer }), 'HDR video stays with the browser');
+  }
+  for (const field of ['primaries', 'transfer', 'matrix']) {
+    assert.ok(colorBlockReason({ [field]: 'future-color-space' }));
+  }
+  assert.equal(colorBlockReason({ primaries: 'smpte432', transfer: 'iec61966-2-1', matrix: 'rgb' }), null);
+  assert.equal(colorBlockReason({ primaries: null, transfer: null, matrix: null }), null);
+});

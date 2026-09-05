@@ -606,8 +606,8 @@
         if (frame) {
           try {
             const colorSpace = frame.colorSpace.toJSON();
-            if (['smpte2084', 'arib-std-b67'].includes(colorSpace.transfer)) {
-              const reason = 'HDR video stays with the browser';
+            const reason = globalThis.LucidColorBlockReason(colorSpace);
+            if (reason) {
               blockedSources.set(video, { src: video.currentSrc, w: width, h: height, reason });
               stats.last = reason; gate.reset(); stopStreaming(); clearEnhanced(); lastKey = ''; publishStats();
               return;

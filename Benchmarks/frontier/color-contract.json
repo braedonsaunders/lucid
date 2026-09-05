@@ -1,0 +1,23 @@
+{
+  "date": "2026-09-04",
+  "baseline_commit": "01b6352",
+  "native_tests": {
+    "passed": 30,
+    "failed": 0,
+    "skipped": 0,
+    "log": ".build/frontier-color-tests.log"
+  },
+  "browser_policy_tests": {
+    "passed": 4,
+    "failed": 0
+  },
+  "safari_resources": "synchronized",
+  "fixes": [
+    "Current pq/hlg and older smpte2084/arib-std-b67 HDR names rejected before SDR copying",
+    "P3 D65 preserved in native color attachments",
+    "Explicit unsupported wire or native metadata cannot silently become Rec.709",
+    "RGB buffers have no YCbCr matrix attachment; full range detected for RGB and planar full-range buffers"
+  ],
+  "source": "https://www.w3.org/TR/2026/WD-webcodecs-20260827/",
+  "test_note": "Core Video rejects arbitrary transfer attachment strings. The unsupported-native-transfer regression uses real SMPTE 240M metadata; unknown wire values are separately rejected."
+}

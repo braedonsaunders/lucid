@@ -24,6 +24,21 @@
     acknowledge(seq) { this.pending.delete(seq); }
     reset() { this.enabled = false; this.expires = 0; this.pending.clear(); }
   }
+  // WebCodecs August 2026 names plus the names exposed by older browsers.
+  function colorBlockReason(color = {}) {
+    if (['pq', 'hlg', 'smpte2084', 'arib-std-b67'].includes(color.transfer))
+      return 'HDR video stays with the browser';
+    const fields = {
+      primaries: ['bt709', 'bt470bg', 'smpte170m', 'bt2020', 'smpte432'],
+      transfer: ['bt709', 'smpte170m', 'iec61966-2-1', 'linear'],
+      matrix: ['rgb', 'bt709', 'bt470bg', 'smpte170m', 'bt2020-ncl'],
+    };
+    for (const [field, supported] of Object.entries(fields))
+      if (color[field] != null && !supported.includes(color[field]))
+        return 'This video color format stays with the browser';
+    return null;
+  }
+  globalThis.LucidColorBlockReason = colorBlockReason;
   globalThis.LucidCaptureGate = CaptureGate;
-  if (typeof module !== 'undefined') module.exports = { CaptureGate };
+  if (typeof module !== 'undefined') module.exports = { CaptureGate, colorBlockReason };
 })();

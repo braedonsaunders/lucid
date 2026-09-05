@@ -170,3 +170,52 @@ struct PresentationMetricTests {
         #expect(file.detailSettings() == EnhancementSession.Tuning().detailSettings())
     }
 }
+
+struct ColorMetadataTests {
+    @Test func hdrAndP3SurviveNativeAttachments() throws {
+        for (wire, expected) in [("pq", "pq"), ("hlg", "hlg"), ("smpte2084", "pq"), ("arib-std-b67", "hlg")] {
+            let buffer = try nv12 { _, _ in 128 }
+            let color = VideoColorInfo(primaries: "bt2020", transfer: wire, matrix: "bt2020-ncl", fullRange: false)
+            #expect(color.isHDR)
+            #expect(color.apply(to: buffer))
+            let read = VideoColorInfo.read(from: buffer)
+            #expect(read.transfer == expected)
+            #expect(read.primaries == "bt2020")
+            #expect(read.isHDR)
+            #expect(!read.supportsSDREnhancement)
+        }
+        let buffer = try nv12 { _, _ in 128 }
+        let p3 = VideoColorInfo(primaries: "smpte432", transfer: "iec61966-2-1", matrix: "bt709", fullRange: false)
+        #expect(p3.apply(to: buffer))
+        #expect(VideoColorInfo.read(from: buffer) == p3)
+    }
+    @Test func sdrAliasesAndUnknownAttachmentsRemainDistinguishable() throws {
+        let buffer = try nv12 { _, _ in 128 }
+        let pal = VideoColorInfo(primaries: "bt470bg", transfer: "smpte170m", matrix: "bt470bg", fullRange: false)
+        #expect(pal.apply(to: buffer))
+        let read = VideoColorInfo.read(from: buffer)
+        #expect(read.primaries == "bt470bg")
+        #expect(read.matrix == "smpte170m")
+        #expect(read.transfer == "bt709")
+        // Core Video rejects arbitrary strings on this key; use a real transfer
+        // understood by Core Video but not supported by Lucid's SDR contract.
+        CVBufferSetAttachment(buffer, kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_SMPTE_240M_1995, .shouldPropagate)
+        #expect(!VideoColorInfo.read(from: buffer).supportsSDREnhancement)
+        let unknown = VideoColorInfo(primaries: "future-gamut", transfer: "bt709", matrix: "bt709", fullRange: false)
+        #expect(!unknown.apply(to: buffer))
+        #expect(!unknown.supportsSDREnhancement)
+        #expect(VideoColorInfo.read(from: buffer).transfer == "unsupported:\(kCVImageBufferTransferFunction_SMPTE_240M_1995)")
+    }
+    @Test func newHDRNamesAndUnknownMetadataAreDeclinedBeforeFrameDelivery() async {
+        for transfer in ["pq", "hlg", "future-transfer"] {
+            let source = DecodedFrameSource(); let stream = source.stream()
+            let h = DecodedFrame.Header(session: "s", w: 64, h: 64, format: "NV12",
+                planes: [.init(offset: 0, stride: 64), .init(offset: 4096, stride: 64)], seq: 1, ts: 0,
+                colorSpace: .init(primaries: "bt2020", transfer: transfer, matrix: "bt2020-ncl", fullRange: false))
+            source.accept(.init(header: h, payload: Data(repeating: 128, count: 6144))); source.finish()
+            var iterator = stream.makeAsyncIterator()
+            let frame = await iterator.next()
+            #expect(frame == nil)
+        }
+    }
+}

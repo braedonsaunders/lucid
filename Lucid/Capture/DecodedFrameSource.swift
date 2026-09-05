@@ -54,7 +54,7 @@ final class DecodedFrameSource: @unchecked Sendable {
     func accept(_ frame: DecodedFrame) {
         let width = frame.header.w, height = frame.header.h
         guard Self.validLayout(frame.header, payloadCount: frame.payload.count),
-              frame.header.colorSpace?.isHDR != true else { return }
+              (frame.header.colorSpace ?? .rec709).supportsSDREnhancement else { return }
         let format: OSType
         switch frame.header.format.uppercased() {
         case "I420", "I420A": format = frame.header.colorSpace?.fullRange == true
@@ -108,7 +108,7 @@ final class DecodedFrameSource: @unchecked Sendable {
             swizzleRGBAToBGRA(buffer)
         }
         CVPixelBufferUnlockBaseAddress(buffer, [])
-        (frame.header.colorSpace ?? .rec709).apply(to: buffer)
+        guard (frame.header.colorSpace ?? .rec709).apply(to: buffer) else { return }
         guard let normalized = normalize(buffer) else { return }
         let prepared = TiledVideoToolboxUpscaler.prepareSource(normalized)
 
@@ -160,6 +160,7 @@ final class DecodedFrameSource: @unchecked Sendable {
     private func normalize(_ source: CVPixelBuffer) -> CVPixelBuffer? {
         let w = CVPixelBufferGetWidth(source), h = CVPixelBufferGetHeight(source)
         let color = VideoColorInfo.read(from: source)
+        guard color.supportsSDREnhancement else { return nil }
         if CVPixelBufferGetPixelFormatType(source) == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
            color.matrix == "bt709", color.primaries == "bt709", color.transfer == "bt709" { return source }
         if transfer == nil {
