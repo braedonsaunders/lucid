@@ -60,8 +60,7 @@ def main():
         raise ValueError('shipping comparator must be single-frame 4x')
     if args.direct_checkpoint:
         folded, _, direct_frames = load(args.direct_checkpoint, 'cpu')
-        direct_core = getattr(folded, 'anchor', folded).core
-        if direct_frames != 1 or direct_core.upsampler[1].upscale_factor != 4:
+        if direct_frames != 1 or folded.core.upsampler[1].upscale_factor != 4:
             raise ValueError('direct checkpoint must be a single-frame 2x reconstruction model')
     else:
         folded = fold_head(model)

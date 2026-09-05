@@ -5,6 +5,7 @@ Full-context shipping targets are cached before random training crops. Both arms
 share data/RNG/objectives; only the fixed teacher mixture differs. No flicker loss.
 """
 import argparse
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -23,6 +24,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from eval_checkpoint import load
 from reconstruction_loss import sobel_loss
 from train_span import fft_loss
+
+
+def state_digest(state):
+    result = hashlib.sha256()
+    for name, value in sorted(state.items()):
+        result.update(f'{name}:{value.dtype}:{tuple(value.shape)}\n'.encode())
+        result.update(value.detach().cpu().contiguous().reshape(-1).view(torch.uint8).numpy().tobytes())
+    return result.hexdigest()
 
 
 @torch.inference_mode()
@@ -70,6 +79,9 @@ def main():
     ap.add_argument('--crop', type=int, default=96)
     ap.add_argument('--lr', type=float, default=0.00002)
     ap.add_argument('--seed', type=int, default=20260914)
+    ap.add_argument('--architecture', choices=['coupled', 'anchored_detail'], default='coupled')
+    ap.add_argument('--detail-channels', type=int, default=32)
+    ap.add_argument('--detail-blocks', type=int, default=4)
     ap.add_argument('--dino-gan-weight', type=float, default=0)
     ap.add_argument('--pixrestore-repository', type=Path)
     ap.add_argument('--dino-repository', type=Path)
@@ -79,6 +91,8 @@ def main():
         ap.error('fresh output, fixed teacher mix 0/.5, positive steps/batch and even crop >=32 required')
     if not math.isfinite(args.lr) or args.lr <= 0:
         ap.error('positive finite learning rate required')
+    if args.detail_channels < 4 or args.detail_blocks < 1:
+        ap.error('detail channels >=4 and positive block count required')
     if not math.isfinite(args.dino_gan_weight) or args.dino_gan_weight < 0:
         ap.error('nonnegative finite adversarial weight required')
     if args.dino_gan_weight and not all((args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)):
@@ -102,7 +116,13 @@ def main():
     del teacher, target
     model = fold_head(shipping).cuda().train()
     del shipping
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=0)
+    if args.architecture == 'anchored_detail':
+        from architectures.anchored_detail import AnchoredDetail
+        # Added branch initialization must not change the matched discriminator
+        # RNG stream relative to the completed coupled reconstruction control.
+        with torch.random.fork_rng(devices=[torch.cuda.current_device()]):
+            model = AnchoredDetail(model, args.detail_channels, args.detail_blocks).cuda().train()
+    optimizer = torch.optim.AdamW((p for p in model.parameters() if p.requires_grad), lr=args.lr, weight_decay=0)
     rng = np.random.default_rng(args.seed)
     adversary = None
     if args.dino_gan_weight:
@@ -121,18 +141,32 @@ def main():
         'precision': 'CUDA BF16 autocast; AdamW FP32; no compilation',
         'torch': str(torch.__version__), 'gpu': torch.cuda.get_device_name(),
         'purpose': 'controlled quality/performance experiment; not shipping promotion'}
+    if args.architecture == 'anchored_detail':
+        experiment['source_hashes']['anchored_detail.py'] = digest(
+            Path(__file__).resolve().parents[1] / 'architectures/anchored_detail.py')
+        experiment['fidelity_anchor'] = 'frozen folded shipping weights; only conditional detail branch is optimized'
     if adversary:
         experiment['adversary'] = adversary.metadata
+        experiment['discriminator_initial_sha256'] = state_digest(adversary.discriminator.state_dict())
         experiment['source_hashes']['dino_adversary.py'] = digest(Path(__file__).with_name('dino_adversary.py'))
         experiment['source_hashes']['dino_supervision.py'] = digest(Path(__file__).with_name('dino_supervision.py'))
     (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
     started = time.monotonic()
+    anchor_hash = None
     for step in range(1, args.steps + 1):
         x, reference, intended = batch(data['train'], rng, args.batch, 1, args.crop, mixed)
         x, reference, intended = (v[:, 0].cuda() for v in (x, reference, intended))
+        if step == 1:
+            experiment['first_batch_sha256'] = state_digest({'source': x, 'reference': reference, 'intended': intended})
         optimizer.zero_grad(set_to_none=True)
         with torch.autocast('cuda', dtype=torch.bfloat16):
             output = model(x)
+        if step == 1:
+            if args.architecture == 'anchored_detail':
+                # The first forward materializes the frozen inference convolutions.
+                anchor_hash = state_digest(model.anchor.state_dict())
+                experiment['anchor_initial_sha256'] = anchor_hash
+            (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
         output, reference, intended = (v.float()[:, :, 8:-8, 8:-8] for v in (output, reference, intended))
         loss = F.l1_loss(output, intended) + .2 * sobel_loss(output, intended) \
              + .05 * fft_loss(output, intended) + .1 * F.l1_loss(output, reference)
@@ -141,7 +175,7 @@ def main():
             with torch.autocast('cuda', dtype=torch.bfloat16):
                 gan_loss, fake_features = adversary.generator_loss(output)
             if step in (1, 200, 1000):
-                head = model.core.upsampler[0].weight
+                head = model.head.weight if args.architecture == 'anchored_detail' else model.core.upsampler[0].weight
                 base_gradient = torch.autograd.grad(loss, head, retain_graph=True)[0].float().norm()
                 adversarial_gradient = torch.autograd.grad(args.dino_gan_weight * gan_loss, head, retain_graph=True)[0].float().norm()
                 print(json.dumps({'step': step, 'head_base_gradient_norm': float(base_gradient),
@@ -163,9 +197,16 @@ def main():
             extra = f' generator={float(gan_loss.detach()):.5f} discriminator={discriminator_loss:.5f}' if adversary else ''
             print(f'step {step}/{args.steps} loss={float(loss):.6f} minutes={(time.monotonic()-started)/60:.2f}{extra}', flush=True)
         if step % 2000 == 0 or step == args.steps:
-            torch.save({'model': model.state_dict(), 'channels': model.core.conv_1.eval_conv.out_channels,
-                'scale': 2, 'frames': 1, 'version': model.version, 'step': step,
-                'architecture': 'shipping_direct2x_area', 'experiment': experiment}, args.out / f'step{step:06d}.pth')
+            if args.architecture == 'anchored_detail' and state_digest(model.anchor.state_dict()) != anchor_hash:
+                raise ValueError('frozen reconstruction weights changed during detail training')
+            anchor = model.anchor if args.architecture == 'anchored_detail' else model
+            checkpoint = {'model': model.state_dict(), 'channels': anchor.core.conv_1.eval_conv.out_channels,
+                'scale': 2, 'frames': 1, 'version': anchor.version, 'step': step,
+                'architecture': 'shipping_direct2x_area', 'experiment': experiment}
+            if args.architecture == 'anchored_detail':
+                checkpoint.update(architecture='anchored_detail2x', detail_channels=args.detail_channels,
+                                  detail_blocks=args.detail_blocks)
+            torch.save(checkpoint, args.out / f'step{step:06d}.pth')
             if adversary:
                 torch.save({'discriminator': adversary.discriminator.state_dict(),
                     'optimizer': adversary.optimizer.state_dict(), 'step': step}, args.out / f'discriminator{step:06d}.pth')

@@ -53,3 +53,8 @@ PixRestore's tiled teacher improves perceptual quality but loses real detail rel
 [CDA-VSR, CVPR 2026](https://github.com/sspBIT/CDA-VSR) uses bitstream motion vectors, residual maps and adaptive reconstruction for online VSR. Its released source was inspected at commit `5630821e5df4e110878d0caae39bcc53f658e9a9`. This is a concrete quality/performance research direction, but Lucid's current browser bridge supplies decoded pixels rather than those coded-domain inputs. The implementation also requires MMCV deformable convolution. Neither missing input priors nor that operator may be replaced silently while claiming a reproduction.
 
 The checked source selects its heavy reconstruction branch only for the initial frame without supplied history; its public test YAML also passes `spynet_path`, absent from the model constructor. These integration issues need resolution before a faithful benchmark. No CDA weights were downloaded, no model was executed, and no author-reported speed is attributed to the Mac.
+
+
+## September 5 follow-up: PixelIR
+
+[PixelIR (August 31, 2026)](https://arxiv.org/html/2608.30782v1) freezes a fidelity flow, learns a conditional detail residual, then distills both into a pixel-space student. Its 32.9M-parameter student reports 8.5 ms for 128→512 restoration on RTX PRO 6000 (BF16, batch one), not Mac video. This suggests an architectural hypothesis for Lucid's fidelity/perception conflict, not proof of its cause. No verified author code/checkpoint was located in the inspected paper or targeted search; none was executed. The broader-data experiment retains its separately frozen PixRestore recipe.
