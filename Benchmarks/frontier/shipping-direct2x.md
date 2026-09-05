@@ -106,3 +106,21 @@ Native stage exports on four_people H.264 1Mbps confirm correct frame mapping: e
 ### Model-scale radius probe: rejected as-is
 
 Deriving the postfilter radius from the actual model scale (two rather than four) is not sufficient to preserve appearance. Under unchanged Standard sharpening 0.75, the 2× native result scores 0.302294 LPIPS / 0.153359 DISTS / 0.359013 fine correlation. Compared with shipping's matching H.264 native result, every source exceeds the 0.01 fine-correlation loss limit; detail energy rises to 1.013344. This configuration is rejected. It has not been enabled in production, whose only bundled graph remains 4×. A predeclared development sweep of candidate sharpening 0.0, 0.2 and 0.4 is now evaluating the proper scale-two radius, with all other Standard settings and the frozen weights fixed. This is native postprocessing calibration, independent of the ongoing frozen weight holdout.
+
+
+### Frozen native calibration
+
+The declared sharpening sweep completed at radius two. Against unchanged Standard shipping, gain 0.0 improves LPIPS/DISTS 4.62%/6.52%; gain 0.2 improves 6.01%/6.82%; gain 0.4 improves **7.94%/7.27%**. All three settings improve fine correlation on every development source. The selected 0.4 setting has fine-correlation changes **+0.000873 crowd / +0.004548 four_people / +0.014244 Johnny**, with no per-source perceptual regression. This transfers the model's quality into native delivery without the previous oversharpening. It is still a development-selected configuration, not release validation.
+
+`quality-holdout-native-candidate.json` freezes sharpness 0.4, radius two, all other Standard settings and the selected checkpoint before native holdout output or the raw-weight holdout result was inspected. These diagnostics use fixed grain phase zero; actual browser playback still requires measurement. The currently bundled model and user profile defaults remain unchanged.
+
+
+## Untouched eight-source result: perceptual win, joint gate fails
+
+The frozen 80% candidate completed the 960-frame CUDA spatial evaluation (eight sources × two codecs × two bitrates × 30 fixed full frames). Each input and reference PNG was SHA-verified. No candidate parameter was changed after seeing these scores. Shipping measures 0.350455 LPIPS / 0.122085 DISTS / 0.526791 fine correlation; candidate measures **0.339440 / 0.111349 / 0.522112**. Source-balanced perceptual distances improve **3.14% / 8.79%**. The source-bootstrap descriptive 95% intervals are +0.84% to +6.35% LPIPS and +5.00% to +14.14% DISTS (10,000 draws, seed 20260905, resampling whole source identities).
+
+The joint spatial gate nevertheless **fails**: Rush Hour loses 0.015592 fine correlation and Sunflower loses 0.013215, both beyond the frozen 0.01 limit. Six other source guards pass. Old Town and Tractor regress slightly in LPIPS (1.30% and 0.34%), within the predeclared 2% per-source cap; DISTS improves on all eight. `quality-holdout-gate.json` recomputes the gate from all rows and rejects missing, duplicate, nonfinite or substituted evidence. `quality-holdout-evaluation.json` contains all 2,880 model/frame records, including Lanczos.
+
+No shipping model is replaced. The observed perceptual improvement generalizes to this source set, but it is not a joint detail-fidelity win or a world-class/RTX-parity result. The native candidate configuration was independently frozen before this result was inspected; it still needs the corresponding full native holdout. Subsequent model tuning cannot reuse these sources while describing them as untouched candidate validation. The browser/native implementation and expanded resolution coverage still require delivery evidence.
+
+A VP9-in-MP4 AVFoundation probe fails with AVFoundation error -11833 (required decoder unavailable) on this host. Native holdout ingestion must therefore use the actual decoded NV12 bytes (or the real browser decoder), rather than silently transcoding the VP9 input through another lossy codec. The successful H.264 native screen does not establish VP9 native quality coverage.

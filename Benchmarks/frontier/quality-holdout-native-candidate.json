@@ -1,0 +1,84 @@
+{
+  "frozen_utc": "2026-09-05T04:12:44.534564+00:00",
+  "candidate_sha256": "98886f65c0877f3813f46c6c9895597a8969a6b9f027446ebad5b1d803959852",
+  "radius": 2,
+  "tuning": {
+    "micro": 0,
+    "taaGamma": 1.25,
+    "mid": 0,
+    "stageSiting": 1,
+    "grain": 0.01,
+    "fine": 0,
+    "saturation": 1,
+    "cdefSecondary": 2,
+    "stageCdef": 0,
+    "taaFeedback": 0.5,
+    "presharpen": 0,
+    "stageTaa": 1,
+    "stageOklab": 1,
+    "scalerFactor": 2,
+    "skinProtect": 1,
+    "contrast": 0.2,
+    "sourceDeblock": 0,
+    "sharpness": 0.4,
+    "stageMotion": 1,
+    "blackPoint": 0.02,
+    "deblock": 0,
+    "cdefPrimary": 4,
+    "stageLoopFilter": 0,
+    "grainPhase": 0,
+    "debandThreshold": 0.008,
+    "stageDeband": 1,
+    "temporal": 0.5,
+    "whitePoint": 0.99,
+    "adaptive": 1,
+    "loopFilterQuant": 32,
+    "lobeScale": 0.3
+  },
+  "development_sweep": [
+    {
+      "sharpness": 0.0,
+      "perceptual_gains": {
+        "lpips": 0.04620177776292922,
+        "dists": 0.06515153024488218
+      },
+      "fine_correlation_deltas": {
+        "crowd_run": 0.011309005271965461,
+        "four_people": 0.018297728855467543,
+        "johnny": 0.0303721971645034
+      },
+      "report_sha256": "8aef1aae8399ac1d8c88df24ec4bae86e027dc08dda2803e4869d796287f06eb"
+    },
+    {
+      "sharpness": 0.2,
+      "perceptual_gains": {
+        "lpips": 0.06011444806539212,
+        "dists": 0.06815178560256441
+      },
+      "fine_correlation_deltas": {
+        "crowd_run": 0.007572873639591277,
+        "four_people": 0.01376287384499053,
+        "johnny": 0.025115318814757814
+      },
+      "report_sha256": "90f41cbf572ae3b5d81be28458b5c57632ccdff574eb01a2925b601f74923320"
+    },
+    {
+      "sharpness": 0.4,
+      "perceptual_gains": {
+        "lpips": 0.07940529806290753,
+        "dists": 0.0727318236535317
+      },
+      "fine_correlation_deltas": {
+        "crowd_run": 0.0008731448462309943,
+        "four_people": 0.004548406637011393,
+        "johnny": 0.014244158638151705
+      },
+      "report_sha256": "351bedb18127f371e4c5b80bcb87476a49aeec9edb72bc917924354897814895"
+    }
+  ],
+  "selection": "Lowest development LPIPS among tested gains satisfying 3% LPIPS/DISTS improvements, <=2% per-source regression and <=0.01 fine-correlation loss; selected sharpness0.4.",
+  "holdout_native_outputs_computed": false,
+  "holdout_raw_weight_report_inspected": false,
+  "status": "native candidate frozen, experimental only; no shipping change",
+  "limitations": "H264 development frames only; native diagnostic frame-grain phase is fixed at zero. Actual browser cadence and rendering remain unverified."
+}

@@ -8,12 +8,14 @@ PNG files and receipts have SHA256 identities. No GPU or external code runs.
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
+import io
 import json
 from pathlib import Path
 import random
 import struct
 import time
 import urllib.request
+import zipfile
 import zlib
 
 REVISION='62dc25d16e6f43d2214f1b365023abda86f7a0ae'
@@ -21,6 +23,40 @@ URL=f'https://huggingface.co/datasets/snah/REDS/resolve/{REVISION}/train_sharp.z
 ARCHIVE_SIZE=34261573976
 ARCHIVE_SHA256='620294c1c3f23ed26c5ea228633770469c0b28e57d31eb41dc77deb401c6681b'
 EXCLUDED={'000','011','015','020'}
+
+
+class RemoteArchive(io.RawIOBase):
+    """Seekable bounded range reader for Python's ZIP64 central-directory parser."""
+    def __init__(self):
+        super().__init__()
+        self.position=0
+
+    def seekable(self):return True
+    def readable(self):return True
+    def tell(self):return self.position
+
+    def seek(self,offset,whence=0):
+        base={0:0,1:self.position,2:ARCHIVE_SIZE}.get(whence)
+        if base is None or not 0<=base+offset<=ARCHIVE_SIZE:raise ValueError('invalid archive seek')
+        self.position=base+offset
+        return self.position
+
+    def read(self,size=-1):
+        length=ARCHIVE_SIZE-self.position if size<0 else min(size,ARCHIVE_SIZE-self.position)
+        if length>8*1024*1024:raise ValueError('refuse unbounded archive download')
+        data=read_range(self.position,length) if length else b''
+        self.position+=len(data)
+        return data
+
+
+def build_index(path):
+    with RemoteArchive() as stream,zipfile.ZipFile(stream) as archive:
+        rows=[{'name':entry.filename,'crc':entry.CRC,'size':entry.file_size,
+            'compressed_size':entry.compress_size,'offset':entry.header_offset,
+            'compression':entry.compress_type} for entry in archive.infolist()]
+    path.parent.mkdir(parents=True,exist_ok=True)
+    path.write_text(json.dumps(rows)+'\n')
+    return rows
 
 
 def digest(path):
@@ -91,7 +127,7 @@ def main():
     args=ap.parse_args()
     if not 1<=args.sequences<=60 or not 40<=args.frames<=100 or not 1<=args.workers<=4:
         ap.error('1..60 sequences, 40..100 frames, 1..4 workers required')
-    index=json.loads(args.index.read_text())
+    index=json.loads(args.index.read_text()) if args.index.exists() else build_index(args.index)
     names=sorted({Path(r['name']).parent.name for r in index if r['name'].endswith('.png')}-EXCLUDED)
     selected=random.Random(20260905).sample(names,60)[:args.sequences]
     rows=[r for r in index if r['name'].endswith('.png') and Path(r['name']).parent.name in selected

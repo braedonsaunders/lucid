@@ -1,0 +1,12 @@
+# Additional clean training footage
+
+The official [REDS dataset page](https://seungjunnah.github.io/Datasets/reds.html) supplies the archive under CC BY 4.0 and identifies the standard sequence rate as 24 fps. `reds-archive-receipt.json` records the immutable Hugging Face revision and LFS archive identity. This is established training data for the current 2026-supervision work, not a new dataset or technique.
+
+The first subset contains 64 consecutive sharp frames from each of eight seeded sequences, excluding REDS4 IDs 000, 011, 015 and 020. All 512 PNGs passed exact ZIP name/size/CRC checks and have local SHA256 receipts. The whole 34 GB archive was neither downloaded nor hashed locally. The range reader reconstructs the ZIP64 central directory without fetching full media; its 24,242 parsed entries match the previously inspected index exactly. `reds-training-subset-receipts.json` preserves selection, provenance and each frame identity.
+
+`materialize_reds_sources.py` encodes lossless RGB FFV1 masters at 24 fps, then decodes and checks **every frame byte-for-byte** against its PNG. The first two seeded sequences are fixed as development validation and the other six as training. The same selection order supports a later larger subset without moving these two validation identities into training. Each sequence is a distinct source ID; filming/camera-family independence is not independently verified. This is development data, not an untouched release benchmark, and it does not replace the separate eight-source quality holdout.
+
+The subsequent full-frame codec bank uses H.264 and VP9, source 640×360, reference 1280×720, random 8/16/24-frame codec warmup, aligned 256px LR / 512px HR crops, 16 consecutive frames, two compression windows and four spatial patches per window. Seed 20260916 is fixed. Existing training banks and checkpoints remain intact. Fetching, lossless validation and codec preparation use CPU/network only; they do not interrupt the RTX 4080 quality evaluation.
+
+
+All eight lossless masters passed their complete RGB round trip. Codec-bank construction completed with exit zero: **48 training sequences / 16 development-validation sequences**, with 16 frames each. `reds-master-receipts.json`, `reds-stream-bank-manifest.json` and `reds-stream-bank-result.json` record these results. These new sources have not yet contributed to a training run. The pinned bank is ready for a controlled data-diversity experiment; it has not altered the completed frozen checkpoint or holdout.
