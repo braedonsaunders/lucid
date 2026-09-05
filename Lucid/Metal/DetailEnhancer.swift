@@ -679,6 +679,20 @@ kernel void motion_blocks(texture2d<float, access::read> source [[texture(0)]],
     if (valid < 0.5f) { field.write(float4(0), gid); return; }
     int2 limit = int2(source.get_width(), source.get_height()) - 1;
     int2 centre = min(int2(gid) * 8 + 4, limit);
+    float stationaryError = 0.0f;
+    for (int py = -4; py <= 4; py += 2) {
+        for (int px = -4; px <= 4; px += 2) {
+            const uint2 at = uint2(clamp(centre + int2(px, py), int2(0), limit));
+            stationaryError += abs(source.read(at).r - previous.read(at).r);
+        }
+    }
+    stationaryError /= 25.0f;
+    // Do not chase quantization noise across repeated textures. A stationary
+    // match already within the codec-noise floor needs no displacement search.
+    if (stationaryError <= 6.5f / 255.0f) {
+        field.write(float4(0, 0, 1, stationaryError), gid);
+        return;
+    }
     float best = 1e6f, error = 1.0f;
     int2 displacement = int2(0);
     for (int pass = 0; pass < 2; ++pass) {
@@ -702,7 +716,15 @@ kernel void motion_blocks(texture2d<float, access::read> source [[texture(0)]],
             }
         }
     }
-    field.write(float4(float2(displacement), saturate(1.0f - error / 0.045f), error), gid);
+    // A displacement must explain more than a small photometric fluctuation.
+    if (stationaryError - error < 2.0f / 255.0f) {
+        displacement = int2(0);
+        error = stationaryError;
+    }
+    // Quantization noise is evidence to average, not evidence of a bad match.
+    // A flat confidence region keeps stationary codec noise from disabling TAA.
+    const float confidence = 1.0f - smoothstep(6.0f / 255.0f, 16.0f / 255.0f, error);
+    field.write(float4(float2(displacement), confidence, error), gid);
 }
 
 struct TaaParams {
@@ -754,8 +776,10 @@ kernel void taa_luma(texture2d<float, access::read>  source      [[texture(0)]],
     const float2 at = float2(gid) + 0.5f + (params.motion > 0.5f ? motion.xy : float2(0));
     const float previous = history.sample(pixelSampler, at).r;
     const float rawDifference = abs(rawCurrent.read(gid).r - rawHistory.sample(pixelSampler, at).r);
+    const bool inBounds = all(at >= float2(0.5f)) && all(at <= float2(width, height) - 0.5f);
     const float confidence = params.motion > 0.5f
-        ? motion.z * saturate(1.0f - rawDifference / 0.06f) : 1.0f;
+        ? (inBounds ? motion.z * (1.0f - smoothstep(8.0f / 255.0f, 24.0f / 255.0f, rawDifference)) : 0.0f)
+        : 1.0f;
     const float clipped = clamp(previous, min(lo, centre), max(hi, centre));
 
     // Where the clipped history still disagrees in luma, trust it less.

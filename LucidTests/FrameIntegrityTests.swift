@@ -128,6 +128,39 @@ struct MetalFrameIntegrityTests {
         let error = zip(result, reference).map { abs($0 - $1) }.reduce(0, +) / Double(result.count)
         #expect(error < 2)
     }
+    @Test func staticNoiseDoesNotLoseHistoryWhenMotionIsEnabled() throws {
+        let device = try #require(MTLCreateSystemDefaultDevice())
+        var residuals: [Double] = []
+        var flickers: [Double] = []
+        for motion in [false, true] {
+            var settings = DetailSettings.off
+            settings.stageTaa = true; settings.stageMotion = motion; settings.taaFeedback = 0.9
+            let enhancer = try DetailEnhancer(device: device, settings: settings)
+            var errors: [Double] = [], changes: [Double] = [], previous: [Double] = []
+            for frame in 0..<24 {
+                func truth(_ x: Int, _ y: Int) -> Int { 64 + (x * 17 + y * 29) % 120 }
+                let input = try nv12 { x, y in
+                    let noise = ((x * 13 + y * 7 + frame) % 2 == 0) ? 3 : -3
+                    return UInt8(truth(x, y) + noise)
+                }
+                let values = lumaBytes(try enhancer.preprocess(input, timestamp: CMTime(value: Int64(frame), timescale: 30)))
+                if frame >= 8 {
+                    // Ignore matcher boundary conditions; measure the stationary interior.
+                    for y in 8..<56 { for x in 8..<56 {
+                        let i = y * 64 + x
+                        errors.append(pow(values[i] - Double(truth(x, y)), 2))
+                        changes.append(abs(values[i] - previous[i]))
+                    } }
+                }
+                previous = values
+            }
+            residuals.append(errors.reduce(0, +) / Double(errors.count))
+            flickers.append(changes.reduce(0, +) / Double(changes.count))
+        }
+        #expect(residuals[1] <= residuals[0] * 1.05 + 0.05)
+        #expect(flickers[1] <= flickers[0] * 1.05 + 0.05)
+        #expect(residuals[1] < 3.0) // raw input MSE is 9; require at least a 2/3 reduction.
+    }
     @Test func everyBundledModelActuallyPredicts() throws {
         let configuration = MLModelConfiguration(); configuration.computeUnits = .cpuAndGPU
         for variant in LearnedUpscaler.variants {

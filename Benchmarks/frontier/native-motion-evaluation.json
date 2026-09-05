@@ -1,0 +1,226 @@
+{
+  "purpose": "legacy native motion regression screening",
+  "complete": true,
+  "limitations": [
+    "Dinner overlaps training; no independent quality promotion claim",
+    "1440p native output resized to legacy 1080p reference with Lanczos, consistently for all variants",
+    "app builds and concurrent work differ; timings must not be used for performance claims"
+  ],
+  "tuning": {
+    "sharpness": 0.75,
+    "fine": 0.0,
+    "deblock": 0.0,
+    "sourceDeblock": 0.0,
+    "temporal": 0.5,
+    "blackPoint": 0.02,
+    "whitePoint": 0.99,
+    "contrast": 0.2,
+    "saturation": 1.0,
+    "micro": 0.0,
+    "lobeScale": 0.3,
+    "mid": 0.0,
+    "scalerFactor": 2,
+    "stageSiting": 1,
+    "stageDeband": 1,
+    "stageOklab": 1,
+    "stageLoopFilter": 0,
+    "stageTaa": 1,
+    "stageCdef": 0,
+    "loopFilterQuant": 32,
+    "cdefPrimary": 4,
+    "cdefSecondary": 2,
+    "debandThreshold": 0.008,
+    "grain": 0.01,
+    "taaGamma": 1.25,
+    "taaFeedback": 0.5,
+    "skinProtect": 1.0,
+    "adaptive": 1.0,
+    "grainPhase": 0.0,
+    "stageMotion": 1,
+    "presharpen": 0.0
+  },
+  "rows": [
+    {
+      "build": "shipping",
+      "executable_sha256": "16191f0875390d89d7c962ae081eefe2cfa3d6e9cc78475b2ab2fa3d50b5c117",
+      "scene": "crowdrun",
+      "source_sha256": "3e87f1fc90d3f43b99abcbf5e51f576a5421150b37bc630d48085b40b9556004",
+      "reference_sha256": "db4cdd46c282e0aca3a9b7f585a55318210e52e22b4a57237e44360bfad74bf6",
+      "motion": 0,
+      "metrics": {
+        "lpips": 0.5480429530143738,
+        "dists": 0.2520946264266968,
+        "psnr_y": 20.191540375584125,
+        "detail_energy": 0.32294195542313975,
+        "fine_correlation": 0.09320146003788762,
+        "static_flicker": 2.035650144923817,
+        "static_coverage": 0.22299707140852976,
+        "temporal_residual_l1": 11.704214529557662
+      },
+      "output_fingerprint": "3b8e74faf32f0045ffe71429f5d6acb4ea19382667e2bb2f8b71a6fc3cec84c4",
+      "bench_log": "  captured input (as decoded): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  captured input (after siting prepare): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\nbench chroma flag=left resampled=none\n   \ud83e\udde9 Native tiled SR: 640x360 as 1x1 cores with 0px context overlap\n   \ud83e\udde9 Native tiled SR: 1280x720 as 2x1 cores with 32px context overlap\ninput 640x360 \u2192 4\u00d7 = 2560x1440; temporal wants \u0000\u0000\u0000\u0000\n   \ud83e\udde0 SPAN compute units: cpuAndGPU\nbench upscaler: SPAN 4\u00d7 on cpuAndGPU, 640x360\n  captured input (after siting): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  low-latency 4\u00d7: 2560x1440 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\n  temporal 4\u00d7: 2560x1440 RGhA matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  reference: 1920x1080 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\nframe 0\nframe 1\nframe 2\nframe 3\nframe 4\nframe 5\nframe 6\nframe 7\nframe 8\nframe 9\nframe 10\nframe 11\nframes 12  \u00b7  low-latency 4\u00d7: 12.3 ms  \u00b7  detail stage: 1.0 ms  \u00b7  temporal 4\u00d7: 134.8 ms\n"
+    },
+    {
+      "build": "shipping",
+      "executable_sha256": "16191f0875390d89d7c962ae081eefe2cfa3d6e9cc78475b2ab2fa3d50b5c117",
+      "scene": "crowdrun",
+      "source_sha256": "3e87f1fc90d3f43b99abcbf5e51f576a5421150b37bc630d48085b40b9556004",
+      "reference_sha256": "db4cdd46c282e0aca3a9b7f585a55318210e52e22b4a57237e44360bfad74bf6",
+      "motion": 1,
+      "metrics": {
+        "lpips": 0.536161869764328,
+        "dists": 0.2493332028388977,
+        "psnr_y": 20.152464178698906,
+        "detail_energy": 0.3510293993165456,
+        "fine_correlation": 0.09452958084618883,
+        "static_flicker": 2.479161110791293,
+        "static_coverage": 0.22299707140852976,
+        "temporal_residual_l1": 12.211921605196865
+      },
+      "output_fingerprint": "3b8e74faf32f0045ffe71429f5d6acb4ea19382667e2bb2f8b71a6fc3cec84c4",
+      "bench_log": "  captured input (as decoded): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  captured input (after siting prepare): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\nbench chroma flag=left resampled=none\n   \ud83e\udde9 Native tiled SR: 640x360 as 1x1 cores with 0px context overlap\n   \ud83e\udde9 Native tiled SR: 1280x720 as 2x1 cores with 32px context overlap\ninput 640x360 \u2192 4\u00d7 = 2560x1440; temporal wants \u0000\u0000\u0000\u0000\n   \ud83e\udde0 SPAN compute units: cpuAndGPU\nbench upscaler: SPAN 4\u00d7 on cpuAndGPU, 640x360\n  captured input (after siting): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  low-latency 4\u00d7: 2560x1440 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\n  temporal 4\u00d7: 2560x1440 RGhA matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  reference: 1920x1080 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\nframe 0\nframe 1\nframe 2\nframe 3\nframe 4\nframe 5\nframe 6\nframe 7\nframe 8\nframe 9\nframe 10\nframe 11\nframes 12  \u00b7  low-latency 4\u00d7: 15.5 ms  \u00b7  detail stage: 2.2 ms  \u00b7  temporal 4\u00d7: 124.1 ms\n"
+    },
+    {
+      "build": "shipping",
+      "executable_sha256": "16191f0875390d89d7c962ae081eefe2cfa3d6e9cc78475b2ab2fa3d50b5c117",
+      "scene": "dinner",
+      "source_sha256": "46dc5904736e09c9e746011555eee9852b8e7ba7ff2d46eb53209144e53c7b80",
+      "reference_sha256": "8682005775229ff06b59ec2427169fd653e3b4a97ac1f9f755be7e5b0017e990",
+      "motion": 0,
+      "metrics": {
+        "lpips": 0.2605002336204052,
+        "dists": 0.23721788823604584,
+        "psnr_y": 29.534258513246357,
+        "detail_energy": 0.36268399856771893,
+        "fine_correlation": 0.07452400294520305,
+        "static_flicker": 0.38080208138986066,
+        "static_coverage": 0.8388603482744107,
+        "temporal_residual_l1": 1.190776911648837
+      },
+      "output_fingerprint": "86a97b64835602455063aacd2a51ce521b757bd6cebf131d99c637092ff68707",
+      "bench_log": "  captured input (as decoded): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  captured input (after siting prepare): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\nbench chroma flag=left resampled=none\n   \ud83e\udde9 Native tiled SR: 640x360 as 1x1 cores with 0px context overlap\n   \ud83e\udde9 Native tiled SR: 1280x720 as 2x1 cores with 32px context overlap\ninput 640x360 \u2192 4\u00d7 = 2560x1440; temporal wants \u0000\u0000\u0000\u0000\n   \ud83e\udde0 SPAN compute units: cpuAndGPU\nbench upscaler: SPAN 4\u00d7 on cpuAndGPU, 640x360\n  captured input (after siting): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  low-latency 4\u00d7: 2560x1440 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\n  temporal 4\u00d7: 2560x1440 RGhA matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  reference: 1920x1080 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\nframe 0\nframe 1\nframe 2\nframe 3\nframe 4\nframe 5\nframe 6\nframe 7\nframe 8\nframe 9\nframe 10\nframe 11\nframes 12  \u00b7  low-latency 4\u00d7: 11.5 ms  \u00b7  detail stage: 1.5 ms  \u00b7  temporal 4\u00d7: 116.8 ms\n"
+    },
+    {
+      "build": "shipping",
+      "executable_sha256": "16191f0875390d89d7c962ae081eefe2cfa3d6e9cc78475b2ab2fa3d50b5c117",
+      "scene": "dinner",
+      "source_sha256": "46dc5904736e09c9e746011555eee9852b8e7ba7ff2d46eb53209144e53c7b80",
+      "reference_sha256": "8682005775229ff06b59ec2427169fd653e3b4a97ac1f9f755be7e5b0017e990",
+      "motion": 1,
+      "metrics": {
+        "lpips": 0.2595726475119591,
+        "dists": 0.2341594099998474,
+        "psnr_y": 29.610910855957272,
+        "detail_energy": 0.38446915349837213,
+        "fine_correlation": 0.08144433189150467,
+        "static_flicker": 0.40530645847320557,
+        "static_coverage": 0.8388603482744107,
+        "temporal_residual_l1": 1.215955382043665
+      },
+      "output_fingerprint": "86a97b64835602455063aacd2a51ce521b757bd6cebf131d99c637092ff68707",
+      "bench_log": "  captured input (as decoded): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  captured input (after siting prepare): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\nbench chroma flag=left resampled=none\n   \ud83e\udde9 Native tiled SR: 640x360 as 1x1 cores with 0px context overlap\n   \ud83e\udde9 Native tiled SR: 1280x720 as 2x1 cores with 32px context overlap\ninput 640x360 \u2192 4\u00d7 = 2560x1440; temporal wants \u0000\u0000\u0000\u0000\n   \ud83e\udde0 SPAN compute units: cpuAndGPU\nbench upscaler: SPAN 4\u00d7 on cpuAndGPU, 640x360\n  captured input (after siting): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  low-latency 4\u00d7: 2560x1440 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\n  temporal 4\u00d7: 2560x1440 RGhA matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  reference: 1920x1080 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\nframe 0\nframe 1\nframe 2\nframe 3\nframe 4\nframe 5\nframe 6\nframe 7\nframe 8\nframe 9\nframe 10\nframe 11\nframes 12  \u00b7  low-latency 4\u00d7: 11.9 ms  \u00b7  detail stage: 1.3 ms  \u00b7  temporal 4\u00d7: 118.2 ms\n"
+    },
+    {
+      "build": "candidate",
+      "executable_sha256": "d58b9a03732482e0e5899e135d61fc631cdae76ce7998cd58e76e508439826fc",
+      "scene": "crowdrun",
+      "source_sha256": "3e87f1fc90d3f43b99abcbf5e51f576a5421150b37bc630d48085b40b9556004",
+      "reference_sha256": "db4cdd46c282e0aca3a9b7f585a55318210e52e22b4a57237e44360bfad74bf6",
+      "motion": 0,
+      "metrics": {
+        "lpips": 0.5480429530143738,
+        "dists": 0.2520946264266968,
+        "psnr_y": 20.191540375584125,
+        "detail_energy": 0.32294195542313975,
+        "fine_correlation": 0.09320146003788762,
+        "static_flicker": 2.035650144923817,
+        "static_coverage": 0.22299707140852976,
+        "temporal_residual_l1": 11.704214529557662
+      },
+      "output_fingerprint": "3b8e74faf32f0045ffe71429f5d6acb4ea19382667e2bb2f8b71a6fc3cec84c4",
+      "bench_log": "  captured input (as decoded): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  captured input (after siting prepare): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\nbench chroma flag=left resampled=none\n   \ud83e\udde9 Native tiled SR: 640x360 as 1x1 cores with 0px context overlap\n   \ud83e\udde9 Native tiled SR: 1280x720 as 2x1 cores with 32px context overlap\ninput 640x360 \u2192 4\u00d7 = 2560x1440; temporal wants \u0000\u0000\u0000\u0000\n   \ud83e\udde0 SPAN compute units: cpuAndGPU\nbench upscaler: SPAN 4\u00d7 on cpuAndGPU, 640x360\n  captured input (after siting): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  low-latency 4\u00d7: 2560x1440 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\n  temporal 4\u00d7: 2560x1440 RGhA matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  reference: 1920x1080 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\nframe 0\nframe 1\nframe 2\nframe 3\nframe 4\nframe 5\nframe 6\nframe 7\nframe 8\nframe 9\nframe 10\nframe 11\nframes 12  \u00b7  low-latency 4\u00d7: 19.0 ms  \u00b7  detail stage: 1.5 ms  \u00b7  temporal 4\u00d7: 118.4 ms\n"
+    },
+    {
+      "build": "candidate",
+      "executable_sha256": "d58b9a03732482e0e5899e135d61fc631cdae76ce7998cd58e76e508439826fc",
+      "scene": "crowdrun",
+      "source_sha256": "3e87f1fc90d3f43b99abcbf5e51f576a5421150b37bc630d48085b40b9556004",
+      "reference_sha256": "db4cdd46c282e0aca3a9b7f585a55318210e52e22b4a57237e44360bfad74bf6",
+      "motion": 1,
+      "metrics": {
+        "lpips": 0.5366730690002441,
+        "dists": 0.2493915557861328,
+        "psnr_y": 20.159657285712075,
+        "detail_energy": 0.34854773897319313,
+        "fine_correlation": 0.094436631347906,
+        "static_flicker": 2.3236653696406973,
+        "static_coverage": 0.22299707140852976,
+        "temporal_residual_l1": 12.102974371476607
+      },
+      "output_fingerprint": "3b8e74faf32f0045ffe71429f5d6acb4ea19382667e2bb2f8b71a6fc3cec84c4",
+      "bench_log": "  captured input (as decoded): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  captured input (after siting prepare): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\nbench chroma flag=left resampled=none\n   \ud83e\udde9 Native tiled SR: 640x360 as 1x1 cores with 0px context overlap\n   \ud83e\udde9 Native tiled SR: 1280x720 as 2x1 cores with 32px context overlap\ninput 640x360 \u2192 4\u00d7 = 2560x1440; temporal wants \u0000\u0000\u0000\u0000\n   \ud83e\udde0 SPAN compute units: cpuAndGPU\nbench upscaler: SPAN 4\u00d7 on cpuAndGPU, 640x360\n  captured input (after siting): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  low-latency 4\u00d7: 2560x1440 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\n  temporal 4\u00d7: 2560x1440 RGhA matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  reference: 1920x1080 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\nframe 0\nframe 1\nframe 2\nframe 3\nframe 4\nframe 5\nframe 6\nframe 7\nframe 8\nframe 9\nframe 10\nframe 11\nframes 12  \u00b7  low-latency 4\u00d7: 20.3 ms  \u00b7  detail stage: 1.3 ms  \u00b7  temporal 4\u00d7: 117.4 ms\n"
+    },
+    {
+      "build": "candidate",
+      "executable_sha256": "d58b9a03732482e0e5899e135d61fc631cdae76ce7998cd58e76e508439826fc",
+      "scene": "dinner",
+      "source_sha256": "46dc5904736e09c9e746011555eee9852b8e7ba7ff2d46eb53209144e53c7b80",
+      "reference_sha256": "8682005775229ff06b59ec2427169fd653e3b4a97ac1f9f755be7e5b0017e990",
+      "motion": 0,
+      "metrics": {
+        "lpips": 0.2605002336204052,
+        "dists": 0.23721788823604584,
+        "psnr_y": 29.534258513246357,
+        "detail_energy": 0.36268399856771893,
+        "fine_correlation": 0.07452400294520305,
+        "static_flicker": 0.38080208138986066,
+        "static_coverage": 0.8388603482744107,
+        "temporal_residual_l1": 1.190776911648837
+      },
+      "output_fingerprint": "86a97b64835602455063aacd2a51ce521b757bd6cebf131d99c637092ff68707",
+      "bench_log": "  captured input (as decoded): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  captured input (after siting prepare): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\nbench chroma flag=left resampled=none\n   \ud83e\udde9 Native tiled SR: 640x360 as 1x1 cores with 0px context overlap\n   \ud83e\udde9 Native tiled SR: 1280x720 as 2x1 cores with 32px context overlap\ninput 640x360 \u2192 4\u00d7 = 2560x1440; temporal wants \u0000\u0000\u0000\u0000\n   \ud83e\udde0 SPAN compute units: cpuAndGPU\nbench upscaler: SPAN 4\u00d7 on cpuAndGPU, 640x360\n  captured input (after siting): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  low-latency 4\u00d7: 2560x1440 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\n  temporal 4\u00d7: 2560x1440 RGhA matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  reference: 1920x1080 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\nframe 0\nframe 1\nframe 2\nframe 3\nframe 4\nframe 5\nframe 6\nframe 7\nframe 8\nframe 9\nframe 10\nframe 11\nframes 12  \u00b7  low-latency 4\u00d7: 11.6 ms  \u00b7  detail stage: 1.5 ms  \u00b7  temporal 4\u00d7: 116.6 ms\n"
+    },
+    {
+      "build": "candidate",
+      "executable_sha256": "d58b9a03732482e0e5899e135d61fc631cdae76ce7998cd58e76e508439826fc",
+      "scene": "dinner",
+      "source_sha256": "46dc5904736e09c9e746011555eee9852b8e7ba7ff2d46eb53209144e53c7b80",
+      "reference_sha256": "8682005775229ff06b59ec2427169fd653e3b4a97ac1f9f755be7e5b0017e990",
+      "motion": 1,
+      "metrics": {
+        "lpips": 0.2604026719927788,
+        "dists": 0.23649655282497406,
+        "psnr_y": 29.55590795588993,
+        "detail_energy": 0.38036351273443186,
+        "fine_correlation": 0.08068683313638714,
+        "static_flicker": 0.38055021925406024,
+        "static_coverage": 0.8388603482744107,
+        "temporal_residual_l1": 1.1936496983874927
+      },
+      "output_fingerprint": "86a97b64835602455063aacd2a51ce521b757bd6cebf131d99c637092ff68707",
+      "bench_log": "  captured input (as decoded): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  captured input (after siting prepare): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\nbench chroma flag=left resampled=none\n   \ud83e\udde9 Native tiled SR: 640x360 as 1x1 cores with 0px context overlap\n   \ud83e\udde9 Native tiled SR: 1280x720 as 2x1 cores with 32px context overlap\ninput 640x360 \u2192 4\u00d7 = 2560x1440; temporal wants \u0000\u0000\u0000\u0000\n   \ud83e\udde0 SPAN compute units: cpuAndGPU\nbench upscaler: SPAN 4\u00d7 on cpuAndGPU, 640x360\n  captured input (after siting): 640x360 420v matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  low-latency 4\u00d7: 2560x1440 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\n  temporal 4\u00d7: 2560x1440 RGhA matrix=ITU_R_601_4 primaries=SMPTE_C transfer=ITU_R_709_2 chroma=Left\n  reference: 1920x1080 420v matrix=ITU_R_709_2 primaries=ITU_R_709_2 transfer=ITU_R_709_2 chroma=Left\nframe 0\nframe 1\nframe 2\nframe 3\nframe 4\nframe 5\nframe 6\nframe 7\nframe 8\nframe 9\nframe 10\nframe 11\nframes 12  \u00b7  low-latency 4\u00d7: 11.5 ms  \u00b7  detail stage: 1.4 ms  \u00b7  temporal 4\u00d7: 117.9 ms\n"
+    }
+  ],
+  "comparison": {
+    "crowdrun": {
+      "flicker_change_vs_shipping_percent": -6.272111178001049,
+      "flicker_change_vs_motion_off_percent": 14.14856209133417,
+      "lpips_change_vs_shipping": 0.0005111992359161377,
+      "dists_change_vs_shipping": 5.835294723510742e-05
+    },
+    "dinner": {
+      "flicker_change_vs_shipping_percent": -6.108029788718983,
+      "flicker_change_vs_motion_off_percent": -0.06613990524452218,
+      "lpips_change_vs_shipping": 0.0008300244808197021,
+      "dists_change_vs_shipping": 0.002337142825126648
+    }
+  },
+  "decision": "Retain bounded stationary-history improvement; motion-enabled Crowd Run remains worse than motion off and requires further work.",
+  "native_tests": {
+    "count": 31,
+    "result": "passed",
+    "log": ".build/frontier-temporal-tests.log",
+    "xcresult": ".build/frontier/DerivedData/Logs/Test/Test-Lucid-2026.09.04_21-13-39--0400.xcresult"
+  },
+  "shader_sha256": "0d96cae27701180eb5e9ef26f3377ca57917a984a3dbc1fa2bd4a8d7ef589771"
+}
