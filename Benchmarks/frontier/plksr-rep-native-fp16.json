@@ -1,0 +1,43 @@
+{
+  "complete": true,
+  "weights_sha256": "2990afbf1460cf4b6cb6b34a5c2994ec6f4d3a64328565c87bd2fa85b23484af",
+  "source_sha256": {
+    "plksr/archs/plksr_arch.py": "e465706c387207971ccb01bb1aa151112817299725acd59c42fe45560db0b79c",
+    "plksr/archs/plksr_rep_arch.py": "e52c6af7bacc8968ea54ac63c1064dda2665d56586924b4d36b7f886d942081e",
+    "scripts/inference_ntire.py": "056f15f40727aa59c4c5a6373ff8775a6d2879a528787fb044bb563ac6ba297b",
+    "LICENSE": "6a285070bc9a9048e4a275cdb343fda8cfd92b05bfe65307609c26a5ff6870b8"
+  },
+  "profiler_sha256": "dadcb5d4ede6d5f0ae5a89d1c4b002dc164ef4837995ce7bc45b7a7c53548d09",
+  "loader_sha256": "d3eec53cd1d0c5d1b00adcb0fcee5dfe088eba09e6fb36a8eb48b5040279d401",
+  "platform": "macOS-26.5.1-arm64-arm-64bit",
+  "torch": "2.14.0",
+  "coremltools": "9.0",
+  "input_size": [
+    640,
+    360
+  ],
+  "output_scale": 4,
+  "scope": "warmed native prediction only; excludes capture, transport, downsampling and display",
+  "precision": "FP16; published reflect16/crop64; author deployment fusion",
+  "rows": [
+    {
+      "compute_units": "CPU_AND_GPU",
+      "max_rgb_error": 5.44580078125,
+      "mean_rgb_error": 0.2637563645839691,
+      "samples_ms": [],
+      "correctness_pass": false
+    },
+    {
+      "compute_units": "CPU_AND_NE",
+      "max_rgb_error": 48.04322814941406,
+      "mean_rgb_error": 0.9300139546394348,
+      "samples_ms": [],
+      "correctness_pass": false
+    }
+  ],
+  "package_sha256": {
+    "Manifest.json": "d35f032f6752a94d5dafa905e7f8a0bc1e17e05d2dac29c0e00d278fc764ebbe",
+    "Data/com.apple.CoreML/model.mlmodel": "41cc0babd93b80c96674efe5840948e114967bd5a29a0f5d4dc48988c83e7b80",
+    "Data/com.apple.CoreML/weights/weight.bin": "1507b6166e8c2909264182be7370aa58fb4bdcd0a4d7f96925dc83cd19d38be1"
+  }
+}

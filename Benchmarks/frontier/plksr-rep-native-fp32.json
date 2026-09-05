@@ -1,0 +1,59 @@
+{
+  "complete": true,
+  "weights_sha256": "2990afbf1460cf4b6cb6b34a5c2994ec6f4d3a64328565c87bd2fa85b23484af",
+  "source_sha256": {
+    "plksr/archs/plksr_arch.py": "e465706c387207971ccb01bb1aa151112817299725acd59c42fe45560db0b79c",
+    "plksr/archs/plksr_rep_arch.py": "e52c6af7bacc8968ea54ac63c1064dda2665d56586924b4d36b7f886d942081e",
+    "scripts/inference_ntire.py": "056f15f40727aa59c4c5a6373ff8775a6d2879a528787fb044bb563ac6ba297b",
+    "LICENSE": "6a285070bc9a9048e4a275cdb343fda8cfd92b05bfe65307609c26a5ff6870b8"
+  },
+  "profiler_sha256": "dafb26282bedb97a319ce0b0679969d0dfffff93cc9430ea9b44addf6d3bdb0d",
+  "loader_sha256": "d3eec53cd1d0c5d1b00adcb0fcee5dfe088eba09e6fb36a8eb48b5040279d401",
+  "platform": "macOS-26.5.1-arm64-arm-64bit",
+  "torch": "2.14.0",
+  "coremltools": "9.0",
+  "input_size": [
+    640,
+    360
+  ],
+  "output_scale": 4,
+  "scope": "warmed native prediction only; excludes capture, transport, downsampling and display",
+  "precision": "fp32; published reflect16/crop64; author deployment fusion",
+  "rows": [
+    {
+      "compute_units": "CPU_AND_GPU",
+      "max_rgb_error": 0.5008392333984375,
+      "mean_rgb_error": 0.24874013662338257,
+      "samples_ms": [
+        297.2271250000631,
+        296.44379199999094,
+        296.5532919988618,
+        297.08258400023624,
+        296.0862919990177,
+        297.53516699929605,
+        297.2762080007669,
+        297.2921660002612,
+        297.31837500003166,
+        296.8663749998086,
+        296.45033400083776,
+        296.9332499997108,
+        297.5837499998306,
+        296.7758340000728,
+        296.3837909992435,
+        296.9154999991588,
+        296.9467919992894,
+        297.08437499903084,
+        296.27954100033094,
+        296.9421670004522
+      ],
+      "correctness_pass": true,
+      "mean_ms": 296.8988354998146,
+      "p95_ms": 297.5375961493228
+    }
+  ],
+  "package_sha256": {
+    "Manifest.json": "3ac808e6e4f7645103be58937f41eda9ca88c447affb7736a8d9f8c2e7ed04cc",
+    "Data/com.apple.CoreML/model.mlmodel": "05bc7237eae5285b96675a091ef695cb5b022b9859d484a35089834bf6c74835",
+    "Data/com.apple.CoreML/weights/weight.bin": "9f1aa2a39d5e37914f61ccc36860001a71fe7b46da075c7658c2a125342ed81b"
+  }
+}

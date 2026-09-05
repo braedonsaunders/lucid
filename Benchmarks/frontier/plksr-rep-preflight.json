@@ -1,0 +1,43 @@
+{
+  "repository": "https://github.com/Innocentlove321/ntire2026-mobile-realworld-sr-vipsl19",
+  "revision": "ef4442ca57d7037593a1e608be294c351d0dc3d9",
+  "weights_sha256": "2990afbf1460cf4b6cb6b34a5c2994ec6f4d3a64328565c87bd2fa85b23484af",
+  "source_sha256": {
+    "plksr/archs/plksr_arch.py": "e465706c387207971ccb01bb1aa151112817299725acd59c42fe45560db0b79c",
+    "plksr/archs/plksr_rep_arch.py": "e52c6af7bacc8968ea54ac63c1064dda2665d56586924b4d36b7f886d942081e",
+    "scripts/inference_ntire.py": "056f15f40727aa59c4c5a6373ff8775a6d2879a528787fb044bb563ac6ba297b",
+    "LICENSE": "6a285070bc9a9048e4a275cdb343fda8cfd92b05bfe65307609c26a5ff6870b8"
+  },
+  "deployment_equivalence": [
+    {
+      "size": [
+        48,
+        32
+      ],
+      "max": 3.293156623840332e-06,
+      "mean": 3.6735457342729205e-07
+    },
+    {
+      "size": [
+        64,
+        64
+      ],
+      "max": 3.2186508178710938e-06,
+      "mean": 3.5761956951319007e-07
+    },
+    {
+      "size": [
+        80,
+        96
+      ],
+      "max": 3.635883331298828e-06,
+      "mean": 3.462094184669695e-07
+    }
+  ],
+  "strict_load": true,
+  "training_parameters": 3381232,
+  "deployment_parameters": 3182320,
+  "precision": "CPU FP32",
+  "padding": "published16 source pixels reflect, crop64 output pixels",
+  "scope": "small tensors, not video quality or Mac runtime"
+}
