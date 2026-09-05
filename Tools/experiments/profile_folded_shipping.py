@@ -43,6 +43,8 @@ def main():
     ap.add_argument('--expected-checkpoint-sha256', help='Reject a substituted baseline before conversion')
     ap.add_argument('--direct-checkpoint', type=Path,
                     help='Optional trained 2x checkpoint; otherwise use the exact area-folded initialization')
+    ap.add_argument('--include-area-control', action='store_true',
+                    help='Also interleave the unmodified folded 2x graph to measure added candidate cost')
     ap.add_argument('--anchored-probe', action='store_true',
                     help='Also measure a nonzero untrained frozen-base detail branch; no quality claim')
     ap.add_argument('--residual-lowpass', action='store_true', help='Measure the fixed sigma-1 anchored residual filter')
@@ -55,6 +57,8 @@ def main():
     args = ap.parse_args()
     if args.residual_lowpass and not args.anchored_probe:
         ap.error('--residual-lowpass requires --anchored-probe')
+    if args.include_area_control and not args.direct_checkpoint:
+        ap.error('--include-area-control requires --direct-checkpoint')
     if args.samples < 20 or args.out.exists():
         ap.error('fresh output directory and at least 20 samples required')
     if args.expected_checkpoint_sha256 and digest(args.checkpoint) != args.expected_checkpoint_sha256:
@@ -74,6 +78,8 @@ def main():
     freeze_convolutions(folded)
     direct_label = 'direct2x_trained' if args.direct_checkpoint else 'direct2x_area'
     models = {'shipping4x': model, direct_label: folded}
+    if args.include_area_control:
+        models['direct2x_area'] = fold_head(model)
     if args.anchored_probe:
         from architectures.anchored_detail import AnchoredDetail
         torch.manual_seed(20260905)
@@ -123,7 +129,7 @@ def main():
                 convert_to='mlprogram', compute_precision=precision,
                 minimum_deployment_target=ct.target.macOS15)
             converted.user_defined_metadata['lucid.checkpoint_sha256'] = digest(
-                args.direct_checkpoint if label != 'shipping4x' and args.direct_checkpoint else args.checkpoint)
+                args.direct_checkpoint if label not in ('shipping4x', 'direct2x_area') and args.direct_checkpoint else args.checkpoint)
             converted.user_defined_metadata['lucid.output_scale'] = '4' if label == 'shipping4x' else '2'
             converted.user_defined_metadata['lucid.transformation'] = (
                 'untrained frozen-base detail probe' if label == 'anchored_detail_untrained' else
