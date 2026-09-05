@@ -44,6 +44,12 @@ def main():
         model=ct.models.MLModel(str(package),skip_model_load=True)
         if model.user_defined_metadata.get('lucid.checkpoint_sha256')!=expected[label]:
             raise ValueError('Core ML package does not identify frozen checkpoint')
+        spec=model.get_spec().description
+        image_in=next(x.type.imageType for x in spec.input if x.name=='input')
+        image_out=next(x.type.imageType for x in spec.output if x.name=='output')
+        scale=4 if label=='shipping4x' else 2
+        if (image_in.width,image_in.height,image_out.width,image_out.height)!=(640,360,640*scale,360*scale):
+            raise ValueError('Core ML graph geometry differs from frozen arm')
     args.out.mkdir(parents=True)
     tuning=args.out/'candidate-tuning.json';tuning.write_text(json.dumps(config['tuning'],indent=2)+'\n')
     report={'purpose':'frozen native spatial holdout; no browser cadence or release claim',

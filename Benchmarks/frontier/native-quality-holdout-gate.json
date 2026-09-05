@@ -1,0 +1,162 @@
+{
+  "spatial_gate_pass": false,
+  "failure_reasons": [
+    "rush_hour: fine correlation drop exceeds limit",
+    "sunflower: fine correlation drop exceeds limit",
+    "tractor: fine correlation drop exceeds limit"
+  ],
+  "frames_per_variant": 960,
+  "source_balanced": {
+    "shipping4x": {
+      "lpips": 0.3287723479637255,
+      "dists": 0.13451804220676422,
+      "fine_correlation": 0.4895045033830396
+    },
+    "candidate": {
+      "lpips": 0.3051162809521581,
+      "dists": 0.12045041117817164,
+      "fine_correlation": 0.48786518680487834
+    }
+  },
+  "per_source": {
+    "shipping4x": {
+      "ducks_take_off": {
+        "lpips": 0.473703267176946,
+        "dists": 0.18262003858884177,
+        "fine_correlation": 0.3061806760481151
+      },
+      "old_town_cross": {
+        "lpips": 0.36243146335085236,
+        "dists": 0.13378440340360007,
+        "fine_correlation": 0.5320888628678264
+      },
+      "park_joy": {
+        "lpips": 0.5706823074569305,
+        "dists": 0.2178465043505033,
+        "fine_correlation": 0.26673351147346785
+      },
+      "in_to_tree": {
+        "lpips": 0.47532106935977936,
+        "dists": 0.1454266354441643,
+        "fine_correlation": 0.43585646957854934
+      },
+      "pedestrian_area": {
+        "lpips": 0.2025613340859612,
+        "dists": 0.09828516393899918,
+        "fine_correlation": 0.5865707685274278
+      },
+      "rush_hour": {
+        "lpips": 0.18429613498349984,
+        "dists": 0.09720401763916016,
+        "fine_correlation": 0.5945723063321605
+      },
+      "sunflower": {
+        "lpips": 0.1112715570256114,
+        "dists": 0.10450706084569296,
+        "fine_correlation": 0.6821637474374693
+      },
+      "tractor": {
+        "lpips": 0.2499116502702236,
+        "dists": 0.0964705134431521,
+        "fine_correlation": 0.5118696847993004
+      }
+    },
+    "candidate": {
+      "ducks_take_off": {
+        "lpips": 0.42983987083037695,
+        "dists": 0.17351880917946497,
+        "fine_correlation": 0.3107378991070975
+      },
+      "old_town_cross": {
+        "lpips": 0.3276103034615517,
+        "dists": 0.1073627769947052,
+        "fine_correlation": 0.5371056015755631
+      },
+      "park_joy": {
+        "lpips": 0.5444033159563939,
+        "dists": 0.2093892474969228,
+        "fine_correlation": 0.2720961341527858
+      },
+      "in_to_tree": {
+        "lpips": 0.4420037147899469,
+        "dists": 0.1273156722386678,
+        "fine_correlation": 0.4523471043334041
+      },
+      "pedestrian_area": {
+        "lpips": 0.18367188305904467,
+        "dists": 0.08539439936478933,
+        "fine_correlation": 0.6006274298731891
+      },
+      "rush_hour": {
+        "lpips": 0.16289823626478514,
+        "dists": 0.07601489772399267,
+        "fine_correlation": 0.5700383509461139
+      },
+      "sunflower": {
+        "lpips": 0.10797736669580142,
+        "dists": 0.09338304152091344,
+        "fine_correlation": 0.6604838920239211
+      },
+      "tractor": {
+        "lpips": 0.242525556559364,
+        "dists": 0.09122444490591684,
+        "fine_correlation": 0.49948508242695205
+      }
+    }
+  },
+  "perceptual_improvements": {
+    "lpips": 0.07195272704071043,
+    "dists": 0.10457802386812609
+  },
+  "per_source_changes": {
+    "ducks_take_off": {
+      "lpips": 0.09259677816447154,
+      "dists": 0.04983697013594268,
+      "fine_correlation": 0.004557223058982374
+    },
+    "old_town_cross": {
+      "lpips": 0.09607653697436302,
+      "dists": 0.19749407058449286,
+      "fine_correlation": 0.005016738707736668
+    },
+    "park_joy": {
+      "lpips": 0.04604837254836369,
+      "dists": 0.03882209117284352,
+      "fine_correlation": 0.005362622679317919
+    },
+    "in_to_tree": {
+      "lpips": 0.07009441978809894,
+      "dists": 0.1245367683174523,
+      "fine_correlation": 0.01649063475485474
+    },
+    "pedestrian_area": {
+      "lpips": 0.09325299476404703,
+      "dists": 0.13115676931882125,
+      "fine_correlation": 0.014056661345761223
+    },
+    "rush_hour": {
+      "lpips": 0.11610606332373963,
+      "dists": 0.21798605067771526,
+      "fine_correlation": -0.024533955386046635
+    },
+    "sunflower": {
+      "lpips": 0.029604963010014806,
+      "dists": 0.10644275357819499,
+      "fine_correlation": -0.02167985541354822
+    },
+    "tractor": {
+      "lpips": 0.029554819484698625,
+      "dists": 0.05438002089961569,
+      "fine_correlation": -0.012384602372348341
+    }
+  },
+  "status": "Native sender-output spatial holdout only. The separate raw-weight fidelity gate failed; browser cadence, rendering, broader content and release requirements remain.",
+  "evidence_sha256": {
+    "Benchmarks/frontier/native-quality-holdout-evaluation.json": "cbc36beadf23e61ea9f01bea1888c5aa365e432003cbdef173cbb203f5254aa4",
+    ".build/native-quality-holdout-rgb/manifest.json": "b4d14c204a928bbec654a42cf6c725a0021d1076add6dd56937cbb44bc08ed5f",
+    "Benchmarks/frontier/quality-holdout-native-candidate.json": "3ad29eb3e53f37a7856f50c86fbba65fdba61be6cb413832d450ae7e8013a121",
+    "Benchmarks/frontier/quality-holdout-spec.json": "d5f7f1c3270b4101ae78e7079241fb71cb566caeae264fd09abf50fff6237908",
+    ".build/quality-holdout-sequences-2x/sequences.json": "788123b0973b0a636dda6a21c1e2f8e9a5e2d58fc565f3dcbaad0a0853815076",
+    "/Users/braedonsaunders/Documents/Code/lucid/Tools/frontier_eval/gate_native_holdout.py": "76d8e74ad91584a5e00dc17bab8216d28a5a00145f1e99306c2c9f7c6d84c452"
+  }
+}
