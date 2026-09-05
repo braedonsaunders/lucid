@@ -14,9 +14,11 @@ def main():
     ap.add_argument('--references',type=Path,required=True)
     ap.add_argument('--report',type=Path,required=True)
     ap.add_argument('--device',default='cuda')
+    ap.add_argument('--development-presentation',action='store_true')
     args=ap.parse_args()
     source=args.frames/'manifest.json';manifest=json.loads(source.read_text())
-    if not manifest['complete'] or manifest['split']!='quality-holdout':raise ValueError('complete frozen native holdout required')
+    split='development-presentation' if args.development_presentation else 'quality-holdout'
+    if not manifest['complete'] or manifest['split']!=split:raise ValueError('complete matching frozen native split required')
     expected=set()
     for row in manifest['rows']:
         key=row['sequence_id'],row['variant'],row['frame']
@@ -24,7 +26,7 @@ def main():
         expected.add(key)
         if digest(args.frames/row['file'])!=row['image_sha256']:raise ValueError('native image changed')
         if digest(args.references/row['reference'])!=row['reference_sha256']:raise ValueError('reference changed')
-    report={'purpose':'native sender-output spatial holdout; no browser presentation/cadence claim','split':'quality-holdout',
+    report={'purpose':'native sender-output spatial '+split+'; no browser presentation/cadence claim','split':split,
         'manifest_sha256':digest(source),'native_config_sha256':manifest['native_config_sha256'],
         'checkpoint_sha256':manifest['checkpoint_sha256'],'code_sha256':digest(__file__),
         'scorer_sha256':digest(Path(__file__).with_name('evaluate_sequences.py')),

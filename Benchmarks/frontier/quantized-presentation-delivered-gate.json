@@ -1,0 +1,87 @@
+{
+  "spatial_gate_pass": false,
+  "failure_reasons": [
+    "crowd_run: fine correlation drop exceeds limit",
+    "four_people: lpips regression exceeds limit",
+    "four_people: fine correlation drop exceeds limit",
+    "johnny: dists regression exceeds limit",
+    "johnny: fine correlation drop exceeds limit"
+  ],
+  "frames_per_variant": 48,
+  "source_balanced": {
+    "shipping4x": {
+      "lpips": 0.27349909860640764,
+      "dists": 0.12593108788132668,
+      "fine_correlation": 0.5258513564517759
+    },
+    "candidate": {
+      "lpips": 0.26320497691631317,
+      "dists": 0.125241885582606,
+      "fine_correlation": 0.49001825617662464
+    }
+  },
+  "per_source": {
+    "shipping4x": {
+      "crowd_run": {
+        "lpips": 0.39452760480344296,
+        "dists": 0.1649707295000553,
+        "fine_correlation": 0.35634315484479623
+      },
+      "four_people": {
+        "lpips": 0.19690733589231968,
+        "dists": 0.09933047369122505,
+        "fine_correlation": 0.6348000146508805
+      },
+      "johnny": {
+        "lpips": 0.2290623551234603,
+        "dists": 0.11349206045269966,
+        "fine_correlation": 0.586410899859651
+      }
+    },
+    "candidate": {
+      "crowd_run": {
+        "lpips": 0.35005701798945665,
+        "dists": 0.16036273911595345,
+        "fine_correlation": 0.32637444176685904
+      },
+      "four_people": {
+        "lpips": 0.20986269507557154,
+        "dists": 0.09807383641600609,
+        "fine_correlation": 0.5947042611908856
+      },
+      "johnny": {
+        "lpips": 0.22969521768391132,
+        "dists": 0.11728908121585846,
+        "fine_correlation": 0.5489760655721293
+      }
+    }
+  },
+  "perceptual_improvements": {
+    "lpips": 0.0376385945787292,
+    "dists": 0.0054728527349034994
+  },
+  "per_source_changes": {
+    "crowd_run": {
+      "lpips": 0.11271856841587025,
+      "dists": 0.027932169531324824,
+      "fine_correlation": -0.029968713077937192
+    },
+    "four_people": {
+      "lpips": -0.06579419260609254,
+      "dists": 0.012651075027843905,
+      "fine_correlation": -0.04009575345999494
+    },
+    "johnny": {
+      "lpips": -0.0027628396648149423,
+      "dists": -0.033456267760168856,
+      "fine_correlation": -0.0374348342875217
+    }
+  },
+  "status": "native delivered development noninferiority only; no release or browser cadence claim",
+  "thresholds": {
+    "source_balanced_lpips_improvement_min": -0.005,
+    "source_balanced_dists_improvement_min": -0.005,
+    "per_source_perceptual_regression_max": 0.005,
+    "per_source_fine_correlation_drop_max": 0.002
+  }
+}

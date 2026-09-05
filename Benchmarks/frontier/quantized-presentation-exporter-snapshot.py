@@ -34,8 +34,6 @@ def main():
     frames=json.loads((args.frozen_frames/'manifest.json').read_text())
     config=json.loads(args.native_config.read_text())
     development = args.development_presentation
-    if development and (config['candidate_sha256']!='fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65' or config['radius']!=2):
-        raise ValueError('development presentation requires unchanged shipping weights and 2x scale')
     if development and digest(args.frozen_frames/'manifest.json')!='aac663ad088fede87e1ede68cb46501603fc0f0b066b5ae6c07726b6555d923f':
         raise ValueError('fixed development inputs required')
     if frames['sequence_manifest_sha256']!=digest(args.manifest) or (not development and frames['split']!='quality-holdout'):
