@@ -1,0 +1,144 @@
+{
+  "spatial_gate_pass": false,
+  "failure_reasons": [
+    "lpips: aggregate improvement below minimum",
+    "dists: aggregate improvement below minimum"
+  ],
+  "frames_per_variant": 48,
+  "source_balanced": {
+    "lanczos": {
+      "lpips": 0.3455616074303786,
+      "dists": 0.12805385887622833,
+      "fine_correlation": 0.5093240648945621
+    },
+    "unfiltered": {
+      "lpips": 0.298570625949651,
+      "dists": 0.12700794513026872,
+      "fine_correlation": 0.5578116668023095
+    },
+    "folded": {
+      "lpips": 0.2968404204584658,
+      "dists": 0.12807190294067064,
+      "fine_correlation": 0.5574970448070634
+    },
+    "shipping": {
+      "lpips": 0.3024238742267092,
+      "dists": 0.12832974269986153,
+      "fine_correlation": 0.5643192119145054
+    },
+    "filtered": {
+      "lpips": 0.29862028267234564,
+      "dists": 0.1273523805042108,
+      "fine_correlation": 0.5568184137407185
+    }
+  },
+  "per_source": {
+    "lanczos": {
+      "crowd_run": {
+        "lpips": 0.4957118332386017,
+        "dists": 0.17144159227609634,
+        "fine_correlation": 0.3584202039433989
+      },
+      "four_people": {
+        "lpips": 0.25478572119027376,
+        "dists": 0.10224039480090141,
+        "fine_correlation": 0.6186566818904616
+      },
+      "johnny": {
+        "lpips": 0.28618726786226034,
+        "dists": 0.11047958955168724,
+        "fine_correlation": 0.5508953088498255
+      }
+    },
+    "unfiltered": {
+      "crowd_run": {
+        "lpips": 0.42123566567897797,
+        "dists": 0.16286000609397888,
+        "fine_correlation": 0.3782376301851279
+      },
+      "four_people": {
+        "lpips": 0.2151808333583176,
+        "dists": 0.10188161209225655,
+        "fine_correlation": 0.6633075528163693
+      },
+      "johnny": {
+        "lpips": 0.25929537881165743,
+        "dists": 0.11628221720457077,
+        "fine_correlation": 0.6318898174054315
+      }
+    },
+    "folded": {
+      "crowd_run": {
+        "lpips": 0.41976002138108015,
+        "dists": 0.16420666500926018,
+        "fine_correlation": 0.37838015731904534
+      },
+      "four_people": {
+        "lpips": 0.21353825507685542,
+        "dists": 0.10259933397173882,
+        "fine_correlation": 0.6620778379763838
+      },
+      "johnny": {
+        "lpips": 0.25722298491746187,
+        "dists": 0.11740970984101295,
+        "fine_correlation": 0.6320331391257613
+      }
+    },
+    "shipping": {
+      "crowd_run": {
+        "lpips": 0.4320258032530546,
+        "dists": 0.1641482375562191,
+        "fine_correlation": 0.3826510771160185
+      },
+      "four_people": {
+        "lpips": 0.21655134484171867,
+        "dists": 0.10291698202490807,
+        "fine_correlation": 0.6708610856042104
+      },
+      "johnny": {
+        "lpips": 0.25869447458535433,
+        "dists": 0.11792400851845741,
+        "fine_correlation": 0.6394454730232871
+      }
+    },
+    "filtered": {
+      "crowd_run": {
+        "lpips": 0.4206250077113509,
+        "dists": 0.16262761875987053,
+        "fine_correlation": 0.3778523657465675
+      },
+      "four_people": {
+        "lpips": 0.21544046234339476,
+        "dists": 0.10267726331949234,
+        "fine_correlation": 0.661438661803724
+      },
+      "johnny": {
+        "lpips": 0.25979537796229124,
+        "dists": 0.1167522594332695,
+        "fine_correlation": 0.6311642136718638
+      }
+    }
+  },
+  "perceptual_improvements": {
+    "lpips": 0.01257702145404116,
+    "dists": 0.007616022405161238
+  },
+  "per_source_changes": {
+    "crowd_run": {
+      "lpips": 0.026389154202962728,
+      "dists": 0.00926369249519221,
+      "fine_correlation": -0.004798711369450981
+    },
+    "four_people": {
+      "lpips": 0.005129880394582065,
+      "dists": 0.002329243441648088,
+      "fine_correlation": -0.009422423800486412
+    },
+    "johnny": {
+      "lpips": -0.0042556122572834365,
+      "dists": 0.009936476040029674,
+      "fine_correlation": -0.00828125935142332
+    }
+  },
+  "status": "development-only final checkpoint screen; not a release holdout"
+}

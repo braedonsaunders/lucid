@@ -56,3 +56,12 @@ The 123-second initial run delivered 7,300 changing-timestamp draws (**59.35 fps
 `surface-capture-sourcepts/` and `surface-capture-sourcepts-10min/` preserve the complete reports, traces, gates and executed instrumentation. The long test's extension matches the committed product scripts byte-for-byte after the documented isolated-port substitutions. Three JS probe tests verify timestamp association, loop-zero values, missing/foreign evidence and bounded retention; six analyzer tests include a synthetic 50-draw-fps/25-source-fps trace that must fail source cadence. All owned browser/native/fixture processes were closed by the harness and their absence was verified.
 
 This closes the sustained **360p60 local installed-Chrome cadence/latency screen** for the shipping model with the direct surface route. Other resolutions, third-party sites, Safari, physical scanout and a full browser memory gate remain unverified.
+
+
+## Sustained 480p30 coverage
+
+A second source resolution now passes the installed-Chrome cadence/latency screen. The 20-second DrivingPOV performance fixture uses 864×480 coded frames at 30 fps; its source/clip hashes and exact encoding command are in `browser-480p30-fixture.json`. The standard shipping route reconstructs at 3456×1920 and delivers a 1280×710 canvas for this 640-CSS-pixel-wide video box. This is not a 4K delivery result or a quality holdout.
+
+Over **617.4114 seconds**, the trace records 18,516 changing-source-timestamp draws (**29.9897 fps**) and 609 repeated-timestamp draws. Capture-to-draw p95 is **39.2998 ms**, p99 50.3999 ms. Duration, fresh-source cadence ≥28.5 fps, p95 ≤50 ms and Off all pass. Native RSS rose from 268.25 to 274.41 MiB over 20 samples, with a 274.45 MiB peak; full browser-process memory and repeated-session growth are not established.
+
+`surface-capture-480p30-10min/` preserves the full report, actual trace, gate and executed harness/probe/analyzer. All owned browser, native-test and fixture-server processes were closed after measurement. Together with the 360p60 result, this establishes two useful local installed-Chrome playback screens. Higher-resolution, third-party-site, Safari and physical-scanout coverage remain open.

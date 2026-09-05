@@ -1,0 +1,123 @@
+{
+  "report_sha256": "5e37deae1f2847d362c11094809f848dcab0590cf7c553ab6f42d60faba8f05a",
+  "metric": "capture to canvas draw submission acknowledgment; not physical scanout",
+  "limits": {
+    "minimum_seconds": 600,
+    "minimum_fps": 28.5,
+    "maximum_p95_ms": 50,
+    "require_source_timestamps": true
+  },
+  "runs": [
+    {
+      "variant": "shipping",
+      "seconds": 617.4114001464844,
+      "actual_draws": 19125,
+      "actual_fps": 30.97610441832218,
+      "median_ms": 29.599853515625,
+      "p95_ms": 39.2998046875,
+      "p99_ms": 50.39990234375,
+      "max_ms": 62.499755859375,
+      "source_cadence": {
+        "changed_timestamp_draws": 18516,
+        "repeated_timestamp_draws": 609,
+        "changed_timestamp_fps": 29.989728073707372,
+        "backward_timestamp_changes": 31,
+        "scope": "consecutive source PTS changes; loops/seek resets counted, not pixel uniqueness or physical scanout"
+      },
+      "gates": {
+        "duration": true,
+        "cadence": true,
+        "latency": true,
+        "off": true,
+        "source_cadence": true
+      },
+      "pass": true,
+      "minute_bins": [
+        {
+          "start_second": 0,
+          "seconds": 60.0,
+          "draws": 1857,
+          "fps": 30.95,
+          "p95_ms": 38.099853515625
+        },
+        {
+          "start_second": 60,
+          "seconds": 60.0,
+          "draws": 1854,
+          "fps": 30.9,
+          "p95_ms": 37.2998046875
+        },
+        {
+          "start_second": 120,
+          "seconds": 60.0,
+          "draws": 1857,
+          "fps": 30.95,
+          "p95_ms": 41.099609375
+        },
+        {
+          "start_second": 180,
+          "seconds": 60.0,
+          "draws": 1868,
+          "fps": 31.133333333333333,
+          "p95_ms": 41.099609375
+        },
+        {
+          "start_second": 240,
+          "seconds": 60.0,
+          "draws": 1854,
+          "fps": 30.9,
+          "p95_ms": 40.2998046875
+        },
+        {
+          "start_second": 300,
+          "seconds": 60.0,
+          "draws": 1860,
+          "fps": 31.0,
+          "p95_ms": 35.399658203125
+        },
+        {
+          "start_second": 360,
+          "seconds": 60.0,
+          "draws": 1859,
+          "fps": 30.983333333333334,
+          "p95_ms": 38.499755859375
+        },
+        {
+          "start_second": 420,
+          "seconds": 60.0,
+          "draws": 1858,
+          "fps": 30.966666666666665,
+          "p95_ms": 40.099853515625
+        },
+        {
+          "start_second": 480,
+          "seconds": 60.0,
+          "draws": 1859,
+          "fps": 30.983333333333334,
+          "p95_ms": 37.499755859375
+        },
+        {
+          "start_second": 540,
+          "seconds": 60.0,
+          "draws": 1860,
+          "fps": 31.0,
+          "p95_ms": 37.19970703125
+        },
+        {
+          "start_second": 600,
+          "seconds": 17.411400146484375,
+          "draws": 539,
+          "fps": 30.956729238620838,
+          "p95_ms": 37.39990234375
+        }
+      ],
+      "native_rss_mib": {
+        "samples": 20,
+        "first": 268.25,
+        "last": 274.40625,
+        "peak": 274.453125
+      }
+    }
+  ],
+  "pass": true
+}

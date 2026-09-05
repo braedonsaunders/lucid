@@ -1,0 +1,145 @@
+{
+  "spatial_gate_pass": false,
+  "failure_reasons": [
+    "lpips: aggregate improvement below minimum",
+    "dists: aggregate improvement below minimum",
+    "sintel: fine correlation drop exceeds limit"
+  ],
+  "frames_per_variant": 96,
+  "source_balanced": {
+    "lanczos": {
+      "lpips": 0.40222197367499274,
+      "dists": 0.22276637516915798,
+      "fine_correlation": 0.3040961481273848
+    },
+    "unfiltered": {
+      "lpips": 0.36020080496867496,
+      "dists": 0.2220019573966662,
+      "fine_correlation": 0.3132845110928513
+    },
+    "folded": {
+      "lpips": 0.35854115926971036,
+      "dists": 0.22164260099331537,
+      "fine_correlation": 0.31160950197325704
+    },
+    "shipping": {
+      "lpips": 0.36410116745779914,
+      "dists": 0.2224731333553791,
+      "fine_correlation": 0.32143244640958385
+    },
+    "filtered": {
+      "lpips": 0.358977438416332,
+      "dists": 0.22247164448102316,
+      "fine_correlation": 0.31009535017480294
+    }
+  },
+  "per_source": {
+    "lanczos": {
+      "sintel": {
+        "lpips": 0.2696159854531288,
+        "dists": 0.2091157976537943,
+        "fine_correlation": 0.32946662473652005
+      },
+      "reds_154": {
+        "lpips": 0.5052469009533525,
+        "dists": 0.26318140141665936,
+        "fine_correlation": 0.2450867044727926
+      },
+      "reds_073": {
+        "lpips": 0.4318030346184969,
+        "dists": 0.1960019264370203,
+        "fine_correlation": 0.3377351151728416
+      }
+    },
+    "unfiltered": {
+      "sintel": {
+        "lpips": 0.2709931982681155,
+        "dists": 0.2153795287013054,
+        "fine_correlation": 0.3130947516755661
+      },
+      "reds_154": {
+        "lpips": 0.45368923246860504,
+        "dists": 0.2630955334752798,
+        "fine_correlation": 0.26455305031979476
+      },
+      "reds_073": {
+        "lpips": 0.35591998416930437,
+        "dists": 0.18753081001341343,
+        "fine_correlation": 0.3622057312831931
+      }
+    },
+    "folded": {
+      "sintel": {
+        "lpips": 0.2722201286815107,
+        "dists": 0.21457506716251373,
+        "fine_correlation": 0.3091957187373663
+      },
+      "reds_154": {
+        "lpips": 0.45012065675109625,
+        "dists": 0.2628534883260727,
+        "fine_correlation": 0.2642232532230018
+      },
+      "reds_073": {
+        "lpips": 0.3532826923765242,
+        "dists": 0.1874992474913597,
+        "fine_correlation": 0.3614095339594031
+      }
+    },
+    "shipping": {
+      "sintel": {
+        "lpips": 0.2692622817121446,
+        "dists": 0.21591424942016602,
+        "fine_correlation": 0.32653072984915327
+      },
+      "reds_154": {
+        "lpips": 0.45876778941601515,
+        "dists": 0.2634068951010704,
+        "fine_correlation": 0.2698841119849202
+      },
+      "reds_073": {
+        "lpips": 0.3642734312452376,
+        "dists": 0.1880982555449009,
+        "fine_correlation": 0.3678824973946781
+      }
+    },
+    "filtered": {
+      "sintel": {
+        "lpips": 0.27176077105104923,
+        "dists": 0.21559017151594162,
+        "fine_correlation": 0.30629185388965224
+      },
+      "reds_154": {
+        "lpips": 0.4522252669557929,
+        "dists": 0.2637352291494608,
+        "fine_correlation": 0.263337622112524
+      },
+      "reds_073": {
+        "lpips": 0.3529462772421539,
+        "dists": 0.18808953277766705,
+        "fine_correlation": 0.3606565745222326
+      }
+    }
+  },
+  "perceptual_improvements": {
+    "lpips": 0.01407226754377544,
+    "dists": 6.692378236805574e-06
+  },
+  "per_source_changes": {
+    "sintel": {
+      "lpips": -0.009279017183608573,
+      "dists": 0.0015009565375824208,
+      "fine_correlation": -0.020238875959501024
+    },
+    "reds_154": {
+      "lpips": 0.014261076324801447,
+      "dists": -0.0012464899533644047,
+      "fine_correlation": -0.0065464898723961995
+    },
+    "reds_073": {
+      "lpips": 0.031095196716276585,
+      "dists": 4.637346161762146e-05,
+      "fine_correlation": -0.0072259228724455005
+    }
+  },
+  "status": "fixed bank-validation patches, not a full-frame release holdout"
+}
