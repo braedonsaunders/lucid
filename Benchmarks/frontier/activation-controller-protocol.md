@@ -22,4 +22,15 @@ A fresh nonzero native preflight after the correction again passes RGB limits. C
 
 ## Full training verification
 
-Both arms completed 8,000 steps on the RTX 4080: static 7.114 minutes and dynamic 7.095 minutes, excluding initialization/cache loading. Their ten initialization/data/probe fields match each other and their verified smokes. Independent CPU hashing of downloaded final tensors confirms that reconstruction weights and masks retain their initial digest; the learned controllers differ from initialization and match their completion receipts. `activation-controller-verify.py` reproduces these checks. The two final checkpoint SHA256 values are `3ec428fe291d56bf03819736908a6c6f885d90caca9ab20db93d0faf074c6dff` (static) and `ba014dd0ffd442556a671a4fab61a1ed6bfb2c52745dc97b6df7490c52e30bba` (dynamic). Quality remains pending until the frozen evaluation completes.
+Both arms completed 8,000 steps on the RTX 4080: static 7.114 minutes and dynamic 7.095 minutes, excluding initialization/cache loading. Their ten initialization/data/probe fields match each other and their verified smokes. Independent CPU hashing of downloaded final tensors confirms that reconstruction weights and masks retain their initial digest; the learned controllers differ from initialization and match their completion receipts. `activation-controller-verify.py` reproduces these checks. The two final checkpoint SHA256 values are `3ec428fe291d56bf03819736908a6c6f885d90caca9ab20db93d0faf074c6dff` (static) and `ba014dd0ffd442556a671a4fab61a1ed6bfb2c52745dc97b6df7490c52e30bba` (dynamic). Both frozen evaluations completed successfully; their outcome follows.
+
+## Quality outcome: reject both final controllers
+
+| Arm | Development LPIPS / DISTS improvement | Bank-validation LPIPS / DISTS improvement | Detail guards |
+|---|---:|---:|---|
+| Static | 4.64% / 5.48% | 6.06% / 3.24% | Fail all three full-frame sources and both REDS validation sources |
+| Dynamic | 5.70% / 6.24% | 8.86% / 4.42% | Same failed source guards |
+
+The input-conditioned controller adds perceptual gains over the matched static control, but increases detail loss on the two face sources. Both remain rejected; no final-model native export or 720p promotion is justified. Frozen weights alone have again not guaranteed final image fidelity. Original folding results suggest smaller initial detail losses, but their shipping controls differ from the current scorer beyond the predeclared 1e-5 tolerance. A fresh zero-controller evaluation is required to isolate that initial loss; the old report is not silently reused as a matched baseline.
+
+The fresh diagnostic now confirms the cause: shipping controls reproduce exactly, and the untouched folded reconstruction loses only 0.00428/0.00879/0.00742 fine correlation on CrowdRun/FourPeople/Johnny. All pass the original 0.01 guard. Controller training adds the disqualifying losses. The diagnostic uses the verified frozen reconstruction with the controller's final projection zeroed, not a substituted checkpoint or altered evaluator. `activation-controller-fidelity-diagnosis.json` records the matched comparison.
