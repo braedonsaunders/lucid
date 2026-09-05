@@ -32,6 +32,39 @@
 
   const session = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2));
   const gate = new LucidCaptureGate(session);
+  let captureLink = null;
+  function releaseCaptureCredits(link) {
+    for (const sequence of link.pending) gate.acknowledge(sequence);
+    link.pending.clear();
+  }
+  function closeCaptureLink() {
+    if (captureLink) { releaseCaptureCredits(captureLink); captureLink.port.close(); }
+    captureLink = null;
+  }
+  function connectCaptureLink(frame) {
+    closeCaptureLink();
+    const channel = new MessageChannel();
+    const link = captureLink = {port: channel.port1, ready: false, pending: new Set()};
+    link.port.onmessage = event => {
+      const message = event.data;
+      if (captureLink !== link || message?.session !== session) return;
+      if (message.type === 'captureReady') {
+        link.ready = message.ready === true;
+        if (!link.ready) releaseCaptureCredits(link);
+      } else if (message.type === 'captureReleased') {
+        link.pending.delete(message.seq); gate.acknowledge(message.seq);
+      } else if (message.type === 'accepted') {
+        link.pending.delete(message.seq); bridgeMessage(message);
+      }
+    };
+    link.port.onmessageerror = () => { if (captureLink === link) closeCaptureLink(); };
+    try {
+      frame.contentWindow.postMessage({lucid: 'capture-port', session},
+        runtime.getURL('').replace(/\/$/, ''), [channel.port2]);
+    } catch {
+      channel.port2.close(); closeCaptureLink();
+    }
+  }
   let binaryMessaging = false;
   const blockedSources = new WeakMap();
   function sourceBlock(video) {
@@ -59,9 +92,10 @@
   // Most large sites set a Content-Security-Policy that forbids connecting to
   // ws://127.0.0.1, and that policy applies to this content script as well as
   // to the page. The extension's service worker is not bound by it, so when we
-  // are running as an extension every byte - reports and video frames alike -
-  // goes through the worker. Only a page that loads this file directly (the
-  // test lab) opens its own socket.
+  // are running as an extension the worker carries control messages and
+  // fallback frames. The extension-origin drawing iframe receives frame buffers
+  // by transfer and forwards them on its authenticated socket when available.
+  // A page that loads this file directly opens its own socket.
   // True while the document is in the back/forward cache. A frozen page must
   // not hold an extension port open or try to reopen one.
   let frozen = false;
@@ -93,10 +127,9 @@
     };
     connect();
     send = (message) => { if (port) { try { port.postMessage(message); } catch (e) { port = null; connect(); } } };
-    // Runtime ports serialise as JSON, so an ArrayBuffer does not survive the
-    // trip - it arrives as {}. Decoded frames are small (a 640x360 NV12 frame
-    // is ~340 kB) so base64 is an acceptable price for being able to reach the
-    // app at all on a site whose CSP blocks a direct socket.
+    // Fallback while the surface is unavailable: modern runtime ports clone
+    // typed arrays, while older JSON-only ports require base64. Normal capture
+    // transfers its buffer to the extension surface without this extra copy.
     releasePort = () => { try { if (port) port.disconnect(); } catch (e) {} port = null; };
     reconnectPort = () => { if (!port) connect(); };
     sendBinary = (buffer) => {
@@ -248,6 +281,7 @@
       frame.setAttribute('tabindex', '-1');
       frame.allowTransparency = 'true';
       frame.style.cssText = 'position:absolute; pointer-events:none; margin:0; padding:0; border:0; background:transparent; colorScheme:normal;';
+      frame.addEventListener('load', () => { if (surface === frame) connectCaptureLink(frame); });
       frame.src = runtime.getURL('surface.html') + '#' + session;
       const host = video.parentElement || document.body;
       if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
@@ -276,6 +310,7 @@
   }
 
   function removeSurface() {
+    closeCaptureLink();
     if (surface && surface.parentElement) surface.parentElement.removeChild(surface);
     surface = null; surfaceCtx = null; surfaceFor = null; lastNV12 = null; drawing = false; everDrew = false;
   }
@@ -569,9 +604,18 @@
     });
   }
 
-  function deliverFrame(packet) {
-    if (runtime) { sendBinary(packet); return; }
-    if (frameSocket && frameSocket.readyState === 1) frameSocket.send(packet);
+  function deliverFrame(packet, sequence) {
+    if (captureLink?.ready) {
+      try {
+        captureLink.pending.add(sequence);
+        captureLink.port.postMessage({t: 'capture', session, bytes: packet}, [packet.buffer]);
+        stats.socket = 'surface-transfer';
+        return true;
+      } catch { closeCaptureLink(); return false; }
+    }
+    if (runtime) { stats.socket = 'port'; return sendBinary(packet); }
+    if (frameSocket?.readyState === 1) { frameSocket.send(packet); return true; }
+    return false;
   }
 
   function header(width, height, format, planes, timestamp, sequence, captureTime, colorSpace, reservedBytes = 0) {
@@ -627,7 +671,7 @@
             if (!gate.allowed) { gate.acknowledge(sequence); return; }
             const head = header(frame.codedWidth, frame.codedHeight, frame.format, planes, frame.timestamp, sequence, captureTime, colorSpace, payloadOffset);
             packet.set(new Uint8Array(head), 0);
-            deliverFrame(packet);
+            if (!deliverFrame(packet, sequence)) { gate.acknowledge(sequence); return; }
             stats.sent++; stats.last = `${frame.format} ${frame.codedWidth}x${frame.codedHeight}`;
             const now = performance.now();
             fpsWindow.push(now); while (fpsWindow.length && now - fpsWindow[0] > 1000) fpsWindow.shift();
@@ -649,7 +693,7 @@
       const packet = new Uint8Array(head.byteLength + data.byteLength);
       packet.set(new Uint8Array(head), 0);
       packet.set(data, head.byteLength);
-      deliverFrame(packet);
+      if (!deliverFrame(packet, sequence)) { gate.acknowledge(sequence); return; }
       stats.sent++; stats.last = `RGBA ${width}x${height}`;
       if (stats.sent % 30 === 1) publishStats();
     } catch (e) {

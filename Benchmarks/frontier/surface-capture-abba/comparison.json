@@ -1,0 +1,278 @@
+{
+  "purpose": "short installed transport ABBA; not a sustained release gate",
+  "runs": [
+    {
+      "label": "control",
+      "analysis": {
+        "report_sha256": "197054b8f6f78622e4e8c4a18f15b2d9d8766b055c7dc3aff86d62368677e328",
+        "metric": "capture to canvas draw submission acknowledgment; not physical scanout",
+        "limits": {
+          "minimum_seconds": 60,
+          "minimum_fps": 57,
+          "maximum_p95_ms": 50
+        },
+        "runs": [
+          {
+            "variant": "shipping",
+            "seconds": 61.14540014648438,
+            "actual_draws": 1549,
+            "actual_fps": 25.333058517715195,
+            "median_ms": 36.400146484375,
+            "p95_ms": 55.5,
+            "p99_ms": 88.300048828125,
+            "max_ms": 150.39990234375,
+            "gates": {
+              "duration": true,
+              "cadence": false,
+              "latency": false,
+              "off": true
+            },
+            "pass": false,
+            "minute_bins": [
+              {
+                "start_second": 0,
+                "seconds": 60.0,
+                "draws": 1525,
+                "fps": 25.416666666666668,
+                "p95_ms": 55
+              },
+              {
+                "start_second": 60,
+                "seconds": 1.145400146484375,
+                "draws": 24,
+                "fps": 20.953376052608526,
+                "p95_ms": 59.099853515625
+              }
+            ],
+            "native_rss_mib": {
+              "samples": 2,
+              "first": 184.671875,
+              "last": 185.125,
+              "peak": 185.125
+            }
+          }
+        ],
+        "pass": false
+      },
+      "load_before": [
+        19.69677734375,
+        31.154296875,
+        32.51123046875
+      ],
+      "load_after": [
+        59.22265625,
+        39.51708984375,
+        35.4765625
+      ]
+    },
+    {
+      "label": "candidate",
+      "analysis": {
+        "report_sha256": "3ab69ff5589e93d24529e375dc0c7e2e7e90f504708494d558c0427dfb0be63d",
+        "metric": "capture to canvas draw submission acknowledgment; not physical scanout",
+        "limits": {
+          "minimum_seconds": 60,
+          "minimum_fps": 57,
+          "maximum_p95_ms": 50
+        },
+        "runs": [
+          {
+            "variant": "shipping",
+            "seconds": 61.316300048828126,
+            "actual_draws": 3541,
+            "actual_fps": 57.749733711593635,
+            "median_ms": 32.300048828125,
+            "p95_ms": 42.10009765625,
+            "p99_ms": 45.000244140625,
+            "max_ms": 96.900146484375,
+            "gates": {
+              "duration": true,
+              "cadence": true,
+              "latency": true,
+              "off": true
+            },
+            "pass": true,
+            "minute_bins": [
+              {
+                "start_second": 0,
+                "seconds": 60.0,
+                "draws": 3465,
+                "fps": 57.75,
+                "p95_ms": 42.10009765625
+              },
+              {
+                "start_second": 60,
+                "seconds": 1.316300048828125,
+                "draws": 76,
+                "fps": 57.73759567027385,
+                "p95_ms": 42
+              }
+            ],
+            "native_rss_mib": {
+              "samples": 2,
+              "first": 183.28125,
+              "last": 185.140625,
+              "peak": 185.140625
+            }
+          }
+        ],
+        "pass": true
+      },
+      "load_before": [
+        59.22265625,
+        39.51708984375,
+        35.4765625
+      ],
+      "load_after": [
+        81.88232421875,
+        53.0087890625,
+        41.11376953125
+      ]
+    },
+    {
+      "label": "candidate",
+      "analysis": {
+        "report_sha256": "e6bef2731d82717c580e6c3d3d43d494f58f415e493366f324ce98e637f9e9cd",
+        "metric": "capture to canvas draw submission acknowledgment; not physical scanout",
+        "limits": {
+          "minimum_seconds": 60,
+          "minimum_fps": 57,
+          "maximum_p95_ms": 50
+        },
+        "runs": [
+          {
+            "variant": "shipping",
+            "seconds": 61.056,
+            "actual_draws": 3659,
+            "actual_fps": 59.92859014675053,
+            "median_ms": 24.900146484375,
+            "p95_ms": 33.699951171875,
+            "p99_ms": 40.60009765625,
+            "max_ms": 42.699951171875,
+            "gates": {
+              "duration": true,
+              "cadence": true,
+              "latency": true,
+              "off": true
+            },
+            "pass": true,
+            "minute_bins": [
+              {
+                "start_second": 0,
+                "seconds": 60.0,
+                "draws": 3595,
+                "fps": 59.916666666666664,
+                "p95_ms": 33.699951171875
+              },
+              {
+                "start_second": 60,
+                "seconds": 1.056,
+                "draws": 64,
+                "fps": 60.60606060606061,
+                "p95_ms": 32.199951171875
+              }
+            ],
+            "native_rss_mib": {
+              "samples": 2,
+              "first": 196.484375,
+              "last": 196.59375,
+              "peak": 196.59375
+            }
+          }
+        ],
+        "pass": true
+      },
+      "load_before": [
+        81.88232421875,
+        53.0087890625,
+        41.11376953125
+      ],
+      "load_after": [
+        35.984375,
+        45.79443359375,
+        39.42138671875
+      ]
+    },
+    {
+      "label": "control",
+      "analysis": {
+        "report_sha256": "926d284ae37f60168b8ee23710687744e5d2643f2b25f3eadc679ddbd78f26ae",
+        "metric": "capture to canvas draw submission acknowledgment; not physical scanout",
+        "limits": {
+          "minimum_seconds": 60,
+          "minimum_fps": 57,
+          "maximum_p95_ms": 50
+        },
+        "runs": [
+          {
+            "variant": "shipping",
+            "seconds": 61.12080004882812,
+            "actual_draws": 830,
+            "actual_fps": 13.579665176779924,
+            "median_ms": 41.7001953125,
+            "p95_ms": 58.400146484375,
+            "p99_ms": 92.100341796875,
+            "max_ms": 132.30029296875,
+            "gates": {
+              "duration": true,
+              "cadence": false,
+              "latency": false,
+              "off": true
+            },
+            "pass": false,
+            "minute_bins": [
+              {
+                "start_second": 0,
+                "seconds": 60.0,
+                "draws": 816,
+                "fps": 13.6,
+                "p95_ms": 58.500244140625
+              },
+              {
+                "start_second": 60,
+                "seconds": 1.120800048828125,
+                "draws": 14,
+                "fps": 12.491077257391254,
+                "p95_ms": 57.400146484375
+              }
+            ],
+            "native_rss_mib": {
+              "samples": 2,
+              "first": 197.59375,
+              "last": 198.453125,
+              "peak": 198.453125
+            }
+          }
+        ],
+        "pass": false
+      },
+      "load_before": [
+        35.984375,
+        45.79443359375,
+        39.42138671875
+      ],
+      "load_after": [
+        89.369140625,
+        57.96630859375,
+        44.462890625
+      ]
+    }
+  ],
+  "complete": true,
+  "pooled": {
+    "control": {
+      "actual_fps": 19.4575442452591,
+      "seconds": 122.2662001953125,
+      "draws": 2379,
+      "p95_ms": 57.39990234375,
+      "p99_ms": 91.7001953125
+    },
+    "candidate": {
+      "actual_fps": 58.8368445892339,
+      "seconds": 122.37230004882812,
+      "draws": 7200,
+      "p95_ms": 41.10009765625,
+      "p99_ms": 43.10009765625
+    }
+  }
+}

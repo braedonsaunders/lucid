@@ -4,7 +4,7 @@
 // sent. Lives at the extension's origin so the page's CSP cannot stop it
 // connecting; see surface.html for why that is the whole point of this file.
 (() => {
-  const BRIDGE_URL = 'ws://127.0.0.1:47811';
+  const BRIDGE_URL = 'ws://127.0.0.1:48111';
   const ENHANCED_MAGIC = 0x4c554345; // 'LUCE'
   const session = location.hash.slice(1);
   if (!session) return;
@@ -43,7 +43,7 @@
     if (length > 8192 || length + 8 >= bytes.byteLength) return;
     let header;
     try { header = JSON.parse(new TextDecoder().decode(bytes.subarray(8, 8+length))); } catch { return; }
-    if (!header || header.session !== session || !Number.isSafeInteger(header.seq) || header.seq < 0) return;
+    if (header.session !== session || !Number.isSafeInteger(header.seq) || header.seq < 0) return;
     if (frozen || !enabled || socket?.readyState !== 1 || socket.bufferedAmount > 2 * 1024 * 1024) {
       capturePort?.postMessage({type: 'captureReleased', session, seq: header.seq});
       return;

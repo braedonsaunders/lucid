@@ -1,0 +1,133 @@
+{
+  "purpose": "within-session capture route comparison; not a sustained release gate",
+  "validated_trace": {
+    "report_sha256": "4bc919805fa2603526d3aa8e976e868bf954c08e4c8a3456c9c96cb73686856d",
+    "metric": "capture to canvas draw submission acknowledgment; not physical scanout",
+    "limits": {
+      "minimum_seconds": 240,
+      "minimum_fps": 57,
+      "maximum_p95_ms": 50
+    },
+    "runs": [
+      {
+        "variant": "shipping",
+        "seconds": 266.8616999511719,
+        "actual_draws": 13965,
+        "actual_fps": 52.330476807107196,
+        "median_ms": 29.300048828125,
+        "p95_ms": 42.10009765625,
+        "p99_ms": 59.2001953125,
+        "max_ms": 149.300048828125,
+        "gates": {
+          "duration": true,
+          "cadence": false,
+          "latency": true,
+          "off": true
+        },
+        "pass": false,
+        "minute_bins": [
+          {
+            "start_second": 0,
+            "seconds": 60.0,
+            "draws": 2271,
+            "fps": 37.85,
+            "p95_ms": 48.400146484375
+          },
+          {
+            "start_second": 60,
+            "seconds": 60.0,
+            "draws": 3518,
+            "fps": 58.63333333333333,
+            "p95_ms": 40.900146484375
+          },
+          {
+            "start_second": 120,
+            "seconds": 60.0,
+            "draws": 3512,
+            "fps": 58.53333333333333,
+            "p95_ms": 41.400146484375
+          },
+          {
+            "start_second": 180,
+            "seconds": 60.0,
+            "draws": 3124,
+            "fps": 52.06666666666667,
+            "p95_ms": 44.400146484375
+          },
+          {
+            "start_second": 240,
+            "seconds": 26.861699951171875,
+            "draws": 1540,
+            "fps": 57.33069771456574,
+            "p95_ms": 39.900146484375
+          }
+        ],
+        "native_rss_mib": {
+          "samples": 8,
+          "first": 197.3125,
+          "last": 196.515625,
+          "peak": 198.421875
+        }
+      }
+    ],
+    "pass": false
+  },
+  "runs": [
+    {
+      "phases": [
+        {
+          "phase": 0,
+          "route": "worker",
+          "start": 1788587891385.2,
+          "end": 1788587952411.9,
+          "seconds": 61.02669995117188,
+          "actual_draws": 2328,
+          "actual_fps": 38.14723722342283,
+          "p95_ms": 48.30029296875
+        },
+        {
+          "phase": 1,
+          "route": "surface",
+          "start": 1788587959610.5,
+          "end": 1788588021079.7,
+          "seconds": 61.46919995117187,
+          "actual_draws": 3610,
+          "actual_fps": 58.72859908486864,
+          "p95_ms": 40.900146484375
+        },
+        {
+          "phase": 2,
+          "route": "surface",
+          "start": 1788588028853,
+          "end": 1788588090291.9,
+          "seconds": 61.43889990234375,
+          "actual_draws": 3600,
+          "actual_fps": 58.59479915366565,
+          "p95_ms": 41.2001953125
+        },
+        {
+          "phase": 3,
+          "route": "worker",
+          "start": 1788588097247.5,
+          "end": 1788588158246.9,
+          "seconds": 60.99939990234375,
+          "actual_draws": 3196,
+          "actual_fps": 52.39395805723659,
+          "p95_ms": 43.5
+        }
+      ],
+      "pooled": {
+        "worker": {
+          "seconds": 122.02609985351563,
+          "actual_fps": 45.269003980551716,
+          "p95_ms": 46.400146484375
+        },
+        "surface": {
+          "seconds": 122.90809985351562,
+          "actual_fps": 58.66171561185166,
+          "p95_ms": 41.10009765625
+        }
+      }
+    }
+  ]
+}

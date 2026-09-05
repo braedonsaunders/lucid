@@ -25,6 +25,33 @@
   // Height, in device pixels, of the strip at the bottom left clear so the
   // browser's own video controls show through. The content script measures it.
   let gap = 0;
+  let capturePort = null;
+  function captureReady() {
+    capturePort?.postMessage({type: 'captureReady', session,
+      ready: !frozen && enabled && socket?.readyState === 1});
+  }
+  function receiveCapture(event) {
+    const message = event.data;
+    if (message?.t !== 'capture' || message.session !== session || !(message.bytes instanceof Uint8Array)) return;
+    const bytes = message.bytes;
+    // This channel forwards only decoded-frame packets for this iframe's own
+    // active session. It never forwards hello, tokens, attach or control JSON.
+    if (bytes.byteLength < 8 || bytes.byteLength > 32 * 1024 * 1024) return;
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    if (view.getUint32(0, false) !== 0x4c554346) return;
+    const length = view.getUint32(4, false);
+    if (length > 8192 || length + 8 >= bytes.byteLength) return;
+    let header;
+    try { header = JSON.parse(new TextDecoder().decode(bytes.subarray(8, 8+length))); } catch { return; }
+    if (!header || header.session !== session || !Number.isSafeInteger(header.seq) || header.seq < 0) return;
+    if (frozen || !enabled || socket?.readyState !== 1 || socket.bufferedAmount > 2 * 1024 * 1024) {
+      capturePort?.postMessage({type: 'captureReleased', session, seq: header.seq});
+      return;
+    }
+    try { socket.send(bytes); } catch {
+      capturePort?.postMessage({type: 'captureReleased', session, seq: header.seq});
+    }
+  }
 
   async function connect() {
     if (frozen || connecting) return;
@@ -49,17 +76,19 @@
       // has no way to know this connection belongs to that session.
       socket.send(JSON.stringify({ type: 'attach', session }));
     };
-    socket.onclose = () => { connecting = false; socket = null; retry(); };
+    socket.onclose = () => { connecting = false; socket = null; captureReady(); retry(); };
     socket.onerror = () => {};
     socket.onmessage = (event) => {
       if (!(event.data instanceof ArrayBuffer)) {
         try {
           const message = JSON.parse(event.data);
+          if (message.type === 'accepted' && message.session === session) capturePort?.postMessage(message);
           if (message.type === 'status') {
             comparing = message.comparing === true;
             canvas.style.visibility = comparing ? 'hidden' : '';
             enabled = message.enabled && message.activeSession === session;
             if (!enabled) clear();
+            captureReady();
           }
         } catch {}
         return;
@@ -142,6 +171,14 @@
   addEventListener('message', (event) => {
     if (event.source !== parent) return;
     const message = event.data;
+    if (message?.lucid === 'capture-port' && message.session === session && event.ports.length === 1) {
+      // A page owns its input video. Bind its port only to this session and let
+      // authenticated native status remain the authority for enablement.
+      capturePort?.close(); capturePort = event.ports[0];
+      capturePort.onmessage = receiveCapture;
+      captureReady();
+      return;
+    }
     if (message?.lucid === 'clear') { clear(); return; }
     if (message?.lucid === 'compare') {
       comparing = message.active === true;
@@ -175,6 +212,7 @@
   addEventListener('pagehide', (event) => {
     if (!event.persisted) return;
     frozen = true;
+    captureReady();
     if (socket) { try { socket.close(); } catch (e) {} socket = null; }
   });
   addEventListener('pageshow', (event) => {

@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "Lucid Companion",
+  "version": "0.9.0",
+  "description": "Lets the Lucid native video enhancer see the page's video and draw the enhanced result back into it. Draws nothing of its own.",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "alarms"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "stream-policy.js",
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "surface.html",
+        "surface.js",
+        "bridge-auth.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "message_serialization": "structured_clone"
+}

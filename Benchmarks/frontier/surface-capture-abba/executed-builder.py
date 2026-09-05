@@ -13,7 +13,7 @@ def replace(text, before, after, count=1):
     return text.replace(before, after)
 
 
-def build(source, out, allow_route_switch=False):
+def build(source, out):
     if out.exists():
         raise ValueError('fresh experimental extension directory required')
     shutil.copytree(source, out)
@@ -60,11 +60,6 @@ def build(source, out, allow_route_switch=False):
     return false;
   }''')
     content = replace(content, 'deliverFrame(packet);', 'if (!deliverFrame(packet)) { gate.acknowledge(sequence); return; }', count=2)
-    if allow_route_switch:
-        content = replace(content, '    if (captureLink?.ready) {',
-                          "    if (captureLink?.ready && document.documentElement.dataset.lucidCaptureMode !== 'worker') {")
-        content = replace(content, '    if (runtime) return sendBinary(packet);',
-                          "    if (runtime) { stats.socket = 'port'; return sendBinary(packet); }")
     (out/'content.js').write_text(content)
     surface = (out/'surface.js').read_text()
     surface = replace(surface, '  let gap = 0;', '''  let gap = 0;
@@ -116,7 +111,6 @@ def build(source, out, allow_route_switch=False):
         if path.suffix in ('.js', '.html', '.json'):
             path.write_text(path.read_text().replace('47811', '48111').replace('47812', '48112'))
     receipt = {'purpose': 'isolated transferable input experiment; production extension unchanged',
-               'allow_route_switch': allow_route_switch,
                'source_files': original, 'builder_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
     (out/'experiment.json').write_text(json.dumps(receipt, indent=2)+'\n')
 
@@ -125,6 +119,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
-    parser.add_argument('--allow-route-switch', action='store_true', help='Benchmark-only DOM selector for within-session route comparisons')
     args = parser.parse_args()
-    build(args.source, args.out, args.allow_route_switch)
+    build(args.source, args.out)

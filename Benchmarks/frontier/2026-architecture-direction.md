@@ -58,3 +58,10 @@ The checked source selects its heavy reconstruction branch only for the initial 
 ## September 5 follow-up: PixelIR
 
 [PixelIR (August 31, 2026)](https://arxiv.org/html/2608.30782v1) freezes a fidelity flow, learns a conditional detail residual, then distills both into a pixel-space student. Its 32.9M-parameter student reports 8.5 ms for 128→512 restoration on RTX PRO 6000 (BF16, batch one), not Mac video. This suggests an architectural hypothesis for Lucid's fidelity/perception conflict, not proof of its cause. No verified author code/checkpoint was located in the inspected paper or targeted search; none was executed. The broader-data experiment retains its separately frozen PixRestore recipe.
+
+
+## September 5 measured outcome
+
+The calibrated model's subsequent eight-source native evaluation failed the fine-detail guards on RushHour, Sunflower and Tractor despite aggregate perceptual gains; it remains experimental. Broader data, reference-detail losses and a bounded adversarial gradient have also failed to establish a joint winner. See [native quality holdout](native-quality-holdout.md), [bounded adversary](bounded-adversary-protocol.md) and [detail regions](detail-regions.md). These results supersede the earlier development-screen success as the promotion decision.
+
+A separate input-transport change now improves installed Chrome performance with existing shipping weights: [59.47 canvas draw acknowledgments/s at 40.60 ms p95 over 621 s](surface-capture-transport.md). This is an engineering performance gain, not a new reconstruction model or proof of RTX parity. Distinct source-frame cadence, higher resolution coverage and quality remain under evaluation. Flicker work remains deferred.

@@ -14,8 +14,8 @@
 
   const runtime = (globalThis.browser && browser.runtime && browser.runtime.id) ? browser.runtime
                 : (globalThis.chrome && chrome.runtime && chrome.runtime.id) ? chrome.runtime : null;
-  const BRIDGE_URL = 'ws://127.0.0.1:47811';
-  const TOKEN_URL = 'http://127.0.0.1:47812/token';
+  const BRIDGE_URL = 'ws://127.0.0.1:48111';
+  const TOKEN_URL = 'http://127.0.0.1:48112/token';
   async function fetchBridgeToken() {
     const response = await fetch(TOKEN_URL, { cache: 'no-store' });
     if (!response.ok) throw new Error('token ' + response.status);
@@ -92,10 +92,9 @@
   // Most large sites set a Content-Security-Policy that forbids connecting to
   // ws://127.0.0.1, and that policy applies to this content script as well as
   // to the page. The extension's service worker is not bound by it, so when we
-  // are running as an extension the worker carries control messages and
-  // fallback frames. The extension-origin drawing iframe receives frame buffers
-  // by transfer and forwards them on its authenticated socket when available.
-  // A page that loads this file directly opens its own socket.
+  // are running as an extension every byte - reports and video frames alike -
+  // goes through the worker. Only a page that loads this file directly (the
+  // test lab) opens its own socket.
   // True while the document is in the back/forward cache. A frozen page must
   // not hold an extension port open or try to reopen one.
   let frozen = false;
@@ -613,7 +612,7 @@
         return true;
       } catch { closeCaptureLink(); return false; }
     }
-    if (runtime) { stats.socket = 'port'; return sendBinary(packet); }
+    if (runtime) return sendBinary(packet);
     if (frameSocket?.readyState === 1) { frameSocket.send(packet); return true; }
     return false;
   }
