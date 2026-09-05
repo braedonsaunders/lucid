@@ -60,22 +60,7 @@ xcodebuild -project Lucid.xcodeproj -scheme Lucid -configuration Release \
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $version" "$app/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $version" "$app/Contents/Info.plist"
 
-# The learned upscaler's models. Compiled here so the app does not pay for
-# compilation on its first frame, and only the sizes it can actually use.
-# The sizes are listed rather than globbed: Model/ also holds the ones that
-# were converted to measure against, and shipping those would be dead weight.
-# This list is LearnedUpscaler.variants - keep the two in step.
-resources="$app/Contents/Resources"
-mkdir -p "$resources"
-for size in 256x144 320x180 432x240 480x270 640x360 864x480; do
-  model="$repo/Model/SPAN_x4_ch32utc_$size.mlpackage"
-  [[ -d "$model" ]] || { echo "  missing $(basename "$model")"; continue; }
-  name="$(basename "${model%.mlpackage}")"
-  if [[ ! -d "$resources/$name.mlmodelc" ]]; then
-    xcrun coremlcompiler compile "$model" "$resources" >/dev/null 2>&1 || true
-  fi
-done
-
+# Xcode verifies hashes and compiles the shipping ladder through package_models.py.
 # ---- sign -----------------------------------------------------------------
 # A secure timestamp is required for notarisation and harmless without it.
 #
@@ -87,8 +72,8 @@ done
 echo "▸ signing"
 find "$app/Contents" \
   \( -name '*.dylib' -o -name '*.framework' -o -name '*.appex' -o -name '*.xpc' -o -name '*.bundle' \) \
-  -print0 2>/dev/null | while IFS= read -r -d '' item; do
-  codesign --force --options runtime --timestamp --sign "$identity" "$item" 2>/dev/null || true
+  -depth -print0 2>/dev/null | while IFS= read -r -d '' item; do
+  codesign --force --options runtime --timestamp --sign "$identity" "$item"
 done
 codesign --force --options runtime --timestamp --sign "$identity" "$app"
 codesign --verify --strict --verbose=2 "$app" 2>&1 | tail -2
@@ -98,19 +83,21 @@ echo "▸ building disk image"
 rm -rf "$staging" "$dmg"
 mkdir -p "$staging"
 cp -R "$app" "$staging/"
+cp -R "$repo/BrowserExtension" "$staging/BrowserExtension"
 ln -s /Applications "$staging/Applications"
 cat > "$staging/Read me first.txt" <<'NOTE'
-Lucid enhances low-bitrate video in your browser.
+Lucid enhances supported 144p–480p SDR browser video locally on Apple silicon.
 
 1. Drag Lucid to Applications and open it.
-2. Grant Screen Recording when asked. Lucid needs it to place the enhanced
-   picture over the video; it is not used to record anything.
-3. Load the browser companion: in Chrome open chrome://extensions, turn on
-   Developer mode, choose "Load unpacked", and pick the BrowserExtension
-   folder from the Lucid source.
+2. Open chrome://extensions or edge://extensions, enable Developer mode,
+   choose Load unpacked, and select the included BrowserExtension folder.
+3. Reload your video tab and turn Lucid on in the menu bar.
 
-Lucid lives in the menu bar and the Dock menu. There is an on/off switch and
-four quality settings, and that is the whole interface.
+Decoded browser playback does not need Screen Recording permission.
+Screen-capture fallback requests it only when that path is needed.
+Hold the comparison control to see the original; release to return to Lucid.
+Protected video, HDR and unsupported source sizes remain in the browser.
+
 NOTE
 
 hdiutil create -volname "Lucid $version" -srcfolder "$staging" -ov -format UDZO "$dmg" >/dev/null

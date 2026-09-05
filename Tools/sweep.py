@@ -23,6 +23,7 @@ missed.
 
   .venv-convert/bin/python Tools/sweep.py --frames 8
 """
+from reference_pairs import resolve_reference
 import argparse, json, os, sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -93,7 +94,8 @@ def sweep(label, key, values, base, clip, reference, frames, learned):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--clip", default="bbb-360p-350k.mp4")
+    parser.add_argument("--clip", default="crowdrun-360p-350k.mp4")
+    parser.add_argument("--reference")
     parser.add_argument("--frames", type=int, default=8)
     parser.add_argument("--passes", type=int, default=2)
     parser.add_argument("--tuning", default=os.path.join(ROOT, "Tools/tuning.json"))
@@ -102,10 +104,10 @@ def main():
     args = parser.parse_args()
 
     clip = os.path.join(ROOT, "TestSite", args.clip)
-    reference = os.path.join(ROOT, "TestSite", "bbb-1080p60-1700k.mp4")
-    for path in (clip, reference):
-        if not os.path.exists(path):
-            raise SystemExit(f"missing {path}")
+    try:
+        reference = resolve_reference(clip, args.reference)
+    except ValueError as error:
+        raise SystemExit(str(error))
 
     with open(args.tuning) as fh:
         base = json.load(fh)

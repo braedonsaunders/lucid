@@ -2,10 +2,11 @@
 //  DetailEnhancer.swift
 //  Lucid
 //
-//  Runs the luma detail kernel over a reconstructed frame. Chroma is copied
-//  untouched, so this can only change sharpness, never colour.
+//  Source-resolution temporal restoration, reconstructed luma detail,
+//  and optional color grading on the GPU.
 //
 
+import CoreMedia
 import CoreVideo
 import Foundation
 import Metal
@@ -62,6 +63,7 @@ struct DetailSettings: Equatable, Sendable {
     var stageLoopFilter = false
     var stageCdef = false
     var stageDeband = false
+    var stageMotion = true
     var stageTaa = false
     var stageOklab = false
     /// Blind quantiser for the loop filter: higher filters harder.
@@ -74,7 +76,7 @@ struct DetailSettings: Equatable, Sendable {
     var grain: Float = 0.010
     /// Whether the grain pattern moves between frames. Above zero it advances,
     /// which is what film grain does; at zero it is fixed, which cannot shimmer.
-    var grainPhase: Float = 1.0
+    var grainPhase: Float = 0.0
     var taaGamma: Float = 1.25
     var taaFeedback: Float = 0.90
     var skinProtect: Float = 1.0
@@ -343,6 +345,7 @@ kernel void grade_luma(texture2d<float, access::read>  source      [[texture(0)]
                        texture2d<float, access::write> destination [[texture(1)]],
                        constant float4&                params      [[buffer(0)]],
                        device const uint*              stats       [[buffer(1)]],
+                       constant float&                noisePhase  [[buffer(2)]],
                        uint2                           gid         [[thread_position_in_grid]])
 {
     if (gid.x >= source.get_width() || gid.y >= source.get_height()) { return; }
@@ -358,7 +361,7 @@ kernel void grade_luma(texture2d<float, access::read>  source      [[texture(0)]
     // eye still finds the residual; a little noise decorrelates it. Interleaved
     // gradient noise is not true blue noise but has none of white noise's
     // low-frequency energy, and the per-frame offset keeps it from standing
-    // still. params.w carries strength, and the frame index rides in its sign.
+    // still. Strength and noise phase are independent uniforms.
     // Grain is scaled to how much real detail this frame has, and that is not
     // a refinement - a fixed amount is wrong by an order of magnitude between
     // clips. Measured on two valid pairs: on a textured clip the stage moved
@@ -372,7 +375,7 @@ kernel void grade_luma(texture2d<float, access::read>  source      [[texture(0)]
     // transform grid so blocking does not count as texture. Grain is held to a
     // fraction of it, with a floor so a genuinely flat gradient still gets
     // enough noise to break banding, which is what the stage is for.
-    float grain = abs(params.w);
+    float grain = max(params.w, 0.0f);
     if (grain > 0.0f && stats[3] > 0u) {
         // /8192 because measure_frame accumulates uint(step * 8192) to keep an
         // integer atomic useful - so this buffer is not in luma units. Every
@@ -388,7 +391,7 @@ kernel void grade_luma(texture2d<float, access::read>  source      [[texture(0)]
         grain *= scale;
     }
     if (grain > 0.0f) {
-        const float2 p = float2(gid) + fract(params.w * 100.0f) * 5.588238f;
+        const float2 p = float2(gid) + noisePhase * 5.588238f;
         const float ign = fract(52.9829189f * fract(0.06711056f * p.x + 0.00583715f * p.y));
         y = clamp(y + (ign - 0.5f) * grain, 0.0f, 1.0f);
     }
@@ -665,22 +668,60 @@ kernel void deband_plane(texture2d<float, access::read>  source      [[texture(0
     destination.write(float4(result.r, result.g, centre.b, centre.a), gid);
 }
 
+// Bounded block correspondence at source resolution. No CPU readback or
+// inference on optical flow is required. Unreliable matches reject history.
+kernel void motion_blocks(texture2d<float, access::read> source [[texture(0)]],
+                          texture2d<float, access::read> previous [[texture(1)]],
+                          texture2d<float, access::write> field [[texture(2)]],
+                          constant float& valid [[buffer(0)]],
+                          uint2 gid [[thread_position_in_grid]]) {
+    if (gid.x >= field.get_width() || gid.y >= field.get_height()) return;
+    if (valid < 0.5f) { field.write(float4(0), gid); return; }
+    int2 limit = int2(source.get_width(), source.get_height()) - 1;
+    int2 centre = min(int2(gid) * 8 + 4, limit);
+    float best = 1e6f, error = 1.0f;
+    int2 displacement = int2(0);
+    for (int pass = 0; pass < 2; ++pass) {
+        int2 origin = pass == 0 ? int2(0) : displacement;
+        int radius = pass == 0 ? 8 : 1;
+        int step = pass == 0 ? 2 : 1;
+        for (int y = -radius; y <= radius; y += step) {
+            for (int x = -radius; x <= radius; x += step) {
+                int2 delta = origin + int2(x, y);
+                float cost = 0.0f;
+                for (int py = -4; py <= 4; py += 2) {
+                    for (int px = -4; px <= 4; px += 2) {
+                        int2 a = clamp(centre + int2(px, py), int2(0), limit);
+                        int2 b = clamp(a + delta, int2(0), limit);
+                        cost += abs(source.read(uint2(a)).r - previous.read(uint2(b)).r);
+                    }
+                }
+                cost /= 25.0f;
+                float regularized = cost + 0.00015f * dot(float2(delta), float2(delta));
+                if (regularized < best) { best = regularized; error = cost; displacement = delta; }
+            }
+        }
+    }
+    field.write(float4(float2(displacement), saturate(1.0f - error / 0.045f), error), gid);
+}
+
 struct TaaParams {
     float feedbackMin;
     float feedbackMax;
     float gamma;        // how many standard deviations the history may sit from the mean
     float valid;        // 0 on the first frame after a reset
+    float motion;
 };
 
-// Temporal accumulation with neighbourhood clipping. Instead of asking whether
-// a pixel moved, this asks whether the history is still a plausible value for
-// this neighbourhood: if it is, it is kept almost entirely, and if it is not it
-// is pulled to the edge of the plausible range. Static areas integrate their
-// noise away and moving areas degrade to a slight blur rather than smearing.
+// Reproject accumulated luma using source-frame correspondence, then clip
+// against the current neighbourhood. Cuts and disocclusions reject history.
 kernel void taa_luma(texture2d<float, access::read>  source      [[texture(0)]],
-                     texture2d<float, access::read>  history     [[texture(1)]],
+                     texture2d<float, access::sample> history     [[texture(1)]],
                      texture2d<float, access::write> destination [[texture(2)]],
                      texture2d<float, access::write> historyOut  [[texture(3)]],
+                     texture2d<float, access::read> motionField [[texture(4)]],
+                     texture2d<float, access::sample> rawHistory [[texture(5)]],
+                     texture2d<float, access::read> rawCurrent [[texture(6)]],
                      constant TaaParams&             params      [[buffer(0)]],
                      uint2                           gid         [[thread_position_in_grid]])
 {
@@ -708,13 +749,19 @@ kernel void taa_luma(texture2d<float, access::read>  source      [[texture(0)]],
     const float lo = mean - params.gamma * sigma;
     const float hi = mean + params.gamma * sigma;
 
-    const float previous = history.read(gid).r;
-    const float clipped = clamp(previous, lo, hi);
+    constexpr sampler pixelSampler(coord::pixel, address::clamp_to_edge, filter::linear);
+    const float4 motion = motionField.read(gid / 8);
+    const float2 at = float2(gid) + 0.5f + (params.motion > 0.5f ? motion.xy : float2(0));
+    const float previous = history.sample(pixelSampler, at).r;
+    const float rawDifference = abs(rawCurrent.read(gid).r - rawHistory.sample(pixelSampler, at).r);
+    const float confidence = params.motion > 0.5f
+        ? motion.z * saturate(1.0f - rawDifference / 0.06f) : 1.0f;
+    const float clipped = clamp(previous, min(lo, centre), max(hi, centre));
 
     // Where the clipped history still disagrees in luma, trust it less.
     const float difference = abs(centre - clipped) / max(max(centre, clipped), 0.2f);
     const float keep = mix(params.feedbackMin, params.feedbackMax, (1.0f - difference) * (1.0f - difference));
-    const float result = mix(centre, clipped, keep);
+    const float result = mix(centre, clipped, keep * confidence);
 
     destination.write(float4(result, 0, 0, 1), gid);
     historyOut.write(float4(result, 0, 0, 1), gid);
@@ -886,7 +933,7 @@ private struct DeblockParams {
 private struct LoopFilterParams { var alpha: Float; var beta: Float; var tc0: Float; var vertical: Int32 }
 private struct CdefParams { var primary: Float; var secondary: Float; var damping: Float }
 private struct DebandParams2 { var threshold: Float; var radius: Float; var iterations: Float; var frame: Float }
-private struct TaaParams { var feedbackMin: Float; var feedbackMax: Float; var gamma: Float; var valid: Float }
+private struct TaaParams { var feedbackMin: Float; var feedbackMax: Float; var gamma: Float; var valid: Float; var motion: Float }
 private struct OklabParams { var saturation: Float; var skinProtect: Float }
 
 private struct DetailParams {
@@ -902,9 +949,14 @@ private struct DetailParams {
 }
 
 final class DetailEnhancer: @unchecked Sendable {
-    enum Failure: Error { case library, pipeline, textureCache, texture, pool }
+    enum Failure: Error { case library, pipeline, textureCache, texture, pool, execution }
 
-    var settings: DetailSettings
+    var settings: DetailSettings {
+        didSet {
+            if settings.stageTaa != oldValue.stageTaa || settings.stageMotion != oldValue.stageMotion
+                || settings.temporal != oldValue.temporal { historyValid = false }
+        }
+    }
 
     private let device: MTLDevice
     private let queue: MTLCommandQueue
@@ -920,6 +972,10 @@ final class DetailEnhancer: @unchecked Sendable {
     /// Four counters the analysis pass fills in and the deblocker reads, so the
     /// measurement never has to make a round trip through the CPU.
     private var frameStats: MTLBuffer?
+    private let motionPipeline: MTLComputePipelineState
+    private var motionField: MTLTexture?
+    private var rawHistory: MTLTexture?
+    private var historyTimestamp: CMTime = .invalid
     private let taaPipeline: MTLComputePipelineState
     private let oklabPipeline: MTLComputePipelineState
     private let lumaGainPipeline: MTLComputePipelineState
@@ -975,6 +1031,7 @@ final class DetailEnhancer: @unchecked Sendable {
         cdefFilterPipeline = try makeStage("cdef_filter")
         debandPipeline = try makeStage("deband_plane")
         measurePipeline = try makeStage("measure_frame")
+        motionPipeline = try makeStage("motion_blocks")
         taaPipeline = try makeStage("taa_luma")
         oklabPipeline = try makeStage("oklab_chroma")
         lumaGainPipeline = try makeStage("apply_luma_gain")
@@ -999,7 +1056,7 @@ final class DetailEnhancer: @unchecked Sendable {
     /// Cleans compression damage out of a source frame before it is scaled.
     /// Luma is filtered, chroma is copied. Returns `source` unchanged when
     /// deblocking is off.
-    func preprocess(_ source: CVPixelBuffer, sourceRect: CGRect = .zero, radius: Int = 1) throws -> CVPixelBuffer {
+    func preprocess(_ source: CVPixelBuffer, sourceRect: CGRect = .zero, radius: Int = 1, timestamp: CMTime = .invalid) throws -> CVPixelBuffer {
         let runsBilateral = settings.sourceDeblock > 0 || settings.presharpen > 0
             || (settings.temporal > 0 && !settings.stageTaa)
         guard runsBilateral || settings.stageLoopFilter || settings.stageCdef
@@ -1030,9 +1087,21 @@ final class DetailEnhancer: @unchecked Sendable {
             descriptor.storageMode = .private
             guard let a = device.makeTexture(descriptor: descriptor), let b = device.makeTexture(descriptor: descriptor) else { throw Failure.texture }
             history = [a, b]
+            let rawDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: lumaFormat, width: width, height: height, mipmapped: false)
+            rawDescriptor.usage = [.shaderRead, .shaderWrite]; rawDescriptor.storageMode = .private
+            rawHistory = device.makeTexture(descriptor: rawDescriptor)
+            let fieldDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba16Float, width: (width + 7) / 8, height: (height + 7) / 8, mipmapped: false)
+            fieldDescriptor.usage = [.shaderRead, .shaderWrite]; fieldDescriptor.storageMode = .private
+            motionField = device.makeTexture(descriptor: fieldDescriptor)
+            guard rawHistory != nil, motionField != nil else { throw Failure.texture }
             historyValid = false
         }
         if sourceRect != historyRect { historyValid = false; historyRect = sourceRect }
+        if timestamp.isNumeric, historyTimestamp.isNumeric {
+            let gap = CMTimeGetSeconds(timestamp - historyTimestamp)
+            if gap <= 0 || gap > 0.25 { historyValid = false }
+        }
+        historyTimestamp = timestamp
 
         // Scratch pair for ping-ponging between stages.
         if scratch.count != 2 || scratch[0].width != width || scratch[0].height != height {
@@ -1168,6 +1237,15 @@ final class DetailEnhancer: @unchecked Sendable {
         }
 
         if settings.stageTaa {
+            guard let field = motionField, let raw = rawHistory,
+                  let encoder = commandBuffer.makeComputeCommandEncoder() else { throw Failure.texture }
+            encoder.setComputePipelineState(motionPipeline)
+            encoder.setTexture(inLuma, index: 0); encoder.setTexture(raw, index: 1)
+            encoder.setTexture(field, index: 2)
+            var motionValid: Float = historyValid && settings.stageMotion ? 1 : 0
+            encoder.setBytes(&motionValid, length: MemoryLayout<Float>.stride, index: 0)
+            encoder.dispatchThreadgroups(grid(field.width, field.height), threadsPerThreadgroup: threads)
+            encoder.endEncoding()
             let gamma = settings.taaGamma, feedback = settings.taaFeedback
             let valid: Float = historyValid ? 1 : 0
             passes.append { src, dst in
@@ -1177,7 +1255,10 @@ final class DetailEnhancer: @unchecked Sendable {
                 e.setTexture(self.history[self.historyIndex], index: 1)
                 e.setTexture(dst, index: 2)
                 e.setTexture(self.history[1 - self.historyIndex], index: 3)
-                var p = TaaParams(feedbackMin: max(0, feedback - 0.05), feedbackMax: feedback, gamma: gamma, valid: valid)
+                e.setTexture(self.motionField, index: 4)
+                e.setTexture(self.rawHistory, index: 5)
+                e.setTexture(inLuma, index: 6)
+                var p = TaaParams(feedbackMin: max(0, feedback - 0.05), feedbackMax: feedback, gamma: gamma, valid: valid, motion: self.settings.stageMotion ? 1 : 0)
                 e.setBytes(&p, length: MemoryLayout<TaaParams>.stride, index: 0)
                 e.dispatchThreadgroups(grid(width, height), threadsPerThreadgroup: threads)
                 e.endEncoding()
@@ -1191,8 +1272,14 @@ final class DetailEnhancer: @unchecked Sendable {
             pass(current, destination)
             current = destination
         }
+        if let raw = rawHistory, let blit = commandBuffer.makeBlitCommandEncoder() {
+            blit.copy(from: inLuma, sourceSlice: 0, sourceLevel: 0, sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0),
+                      sourceSize: MTLSize(width: width, height: height, depth: 1),
+                      to: raw, destinationSlice: 0, destinationLevel: 0, destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+            blit.endEncoding()
+        }
         historyIndex = 1 - historyIndex
-        historyValid = true
+        historyValid = settings.stageTaa || runsBilateral
 
         if CVPixelBufferGetPlaneCount(source) > 1 {
             for plane in 1..<CVPixelBufferGetPlaneCount(source) {
@@ -1222,6 +1309,7 @@ final class DetailEnhancer: @unchecked Sendable {
         }
         commandBuffer.commit()
         commandBuffer.waitUntilCompleted()
+        guard commandBuffer.status == .completed else { historyValid = false; throw Failure.execution }
         withExtendedLifetime(retained) {}
         if let attachments = CVBufferCopyAttachments(source, .shouldPropagate) {
             CVBufferSetAttachments(out, attachments, .shouldPropagate)
@@ -1248,7 +1336,7 @@ final class DetailEnhancer: @unchecked Sendable {
     /// Returns an enhanced copy of `reconstructed`. Luma is filtered, chroma is
     /// copied.
     func process(_ reconstructed: CVPixelBuffer) throws -> CVPixelBuffer {
-        let doesGrade = settings.blackPoint > 0 || settings.whitePoint < 1 || settings.contrast > 0
+        let doesGrade = settings.blackPoint > 0 || settings.whitePoint < 1 || settings.contrast > 0 || (settings.stageDeband && settings.grain > 0) || settings.saturation != 1
         let doesDetail = settings.sharpness > 0 || settings.fine != 0 || settings.micro != 0 || settings.mid != 0 || settings.deblock > 0 || doesGrade
         let width = CVPixelBufferGetWidth(reconstructed)
         let height = CVPixelBufferGetHeight(reconstructed)
@@ -1256,6 +1344,12 @@ final class DetailEnhancer: @unchecked Sendable {
         let lumaFormat = MetalTileCompositor.metalFormat(for: format, plane: 0)
 
         guard doesDetail else { return reconstructed }
+        if frameStats == nil {
+            var zero = SIMD4<UInt32>.zero
+            frameStats = device.makeBuffer(bytes: &zero, length: MemoryLayout<SIMD4<UInt32>>.stride, options: .storageModeShared)
+            guard frameStats != nil else { throw Failure.execution }
+        }
+
 
         guard let commandBuffer = queue.makeCommandBuffer() else { return reconstructed }
         var retained: [CVMetalTexture] = []
@@ -1327,23 +1421,13 @@ final class DetailEnhancer: @unchecked Sendable {
                 encoder.setComputePipelineState(lumaGradePipeline)
                 encoder.setTexture(currentLuma, index: 0)
                 encoder.setTexture(outLuma, index: 1)
-                // w carries grain strength; its fractional part phases the
-                // noise so it does not stand still between frames.
-                // Grain exists to cover the residual of debanding, so it
-                // follows that switch rather than running on its own.
-                // The phase advance is behind a switch because it is a
-                // measured trade, not a free improvement. Re-randomising the
-                // pattern every frame stops it reading as a fixed dirty-lens
-                // texture - but it is per-frame random noise, and it accounts
-                // for 26% of the frame-to-frame shimmer in the output (2.31 to
-                // 1.72 with grain off entirely). Sharpening, by comparison,
-                // contributes 1.4%.
-                let phase = settings.grainPhase > 0
-                    ? frameIndex.truncatingRemainder(dividingBy: 64) / 100
+                // Strength and phase are independent shader arguments. Packing
+                // phase into strength made animated grain 64× stronger per cycle.
+                var phase = settings.grainPhase > 0
+                    ? frameIndex.truncatingRemainder(dividingBy: 64) * 0.61803398875
                     : 0
-                let grainTerm = settings.stageDeband && settings.grain > 0
-                    ? settings.grain + phase
-                    : 0
+                let grainTerm = settings.stageDeband ? max(0, settings.grain) : 0
+                encoder.setBytes(&phase, length: MemoryLayout<Float>.stride, index: 2)
                 var params = SIMD4<Float>(settings.blackPoint, settings.whitePoint, settings.contrast, grainTerm)
                 encoder.setBytes(&params, length: MemoryLayout<SIMD4<Float>>.stride, index: 0)
                 // The same per-frame statistics the adaptive deblocker uses, so
@@ -1436,6 +1520,7 @@ final class DetailEnhancer: @unchecked Sendable {
 
         commandBuffer.commit()
         commandBuffer.waitUntilCompleted()
+        guard commandBuffer.status == .completed else { historyValid = false; throw Failure.execution }
         withExtendedLifetime(retained) {}
 
         if let attachments = CVBufferCopyAttachments(reconstructed, .shouldPropagate) {

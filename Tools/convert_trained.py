@@ -33,11 +33,14 @@ def main():
     parser.add_argument("--weights", default="Model/weights/span_ch32u.pth")
     parser.add_argument("--channels", type=int, default=32)
     parser.add_argument("--suffix", default="")
+    parser.add_argument("--sizes", help="comma-separated WxH shapes; defaults to shipping ladder")
     args = parser.parse_args()
 
     state = torch.load(args.weights, map_location="cpu", weights_only=False)
     channels = state.get("channels", args.channels)
     frames = state.get("frames", 1)
+    if frames != 1:
+        raise SystemExit("Temporal checkpoints require a multi-input runtime; cannot export them as one RGB image")
     model = Unshuffled(channels, frames=frames,
                        version=state.get("version", 1)).eval()
     model.load_state_dict(state["model"] if "model" in state else state)
@@ -48,12 +51,8 @@ def main():
 
     # convert_span's converter carries the fp16 policy and the image in/out
     # wrapper; reuse it rather than restating the conversion rules here.
-    import runpy
-    ns = runpy.run_path(os.path.join(os.path.dirname(__file__), "convert_span.py"),
-                        run_name="not_main")
-    globals_for_convert = dict(ns)
-    exec(compile(open(os.path.join(os.path.dirname(__file__), "convert_span.py")).read()
-                 .split("if __name__")[0], "convert_span", "exec"), globals_for_convert)
+    import convert_span
+    globals_for_convert = convert_span.__dict__
     # Name the packages after the checkpoint they came from. Deriving the label
     # instead - from the channel count and the frame count - cannot express what
     # a checkpoint was trained *with*, so two models that differ only in their
@@ -66,13 +65,19 @@ def main():
     globals_for_convert["CHANNELS"] = label
     globals_for_convert["SCALE"] = 4
 
-    for width, height in LADDER:
+    sizes = [tuple(map(int, size.lower().split("x"))) for size in args.sizes.split(",")] if args.sizes else LADDER
+    if any(len(size) != 2 or min(size) <= 0 or any(n % 2 for n in size) for size in sizes):
+        raise SystemExit("Shapes must have two positive even dimensions")
+    failures = []
+    for width, height in sizes:
         try:
             path = globals_for_convert["convert"](model, width, height, None, args.suffix)
             print(f"  wrote {path}")
         except Exception as error:
+            failures.append((width, height))
             print(f"  FAILED {width}x{height}: {repr(error)[:200]}")
 
+    if failures: raise SystemExit(f"Conversion failed for {failures}")
 
 if __name__ == "__main__":
     main()

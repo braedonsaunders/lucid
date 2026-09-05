@@ -1,0 +1,24 @@
+{
+  "hardware": "Apple M4 Pro",
+  "scope": "prepared NV12 input \u2192 preprocessing \u2192 Core ML conversion/prediction \u2192 detail; excludes decoding, source normalization, browser transport and presentation",
+  "rows": [
+    {
+      "clip": "TestSite/bbb-240p-200k.mp4",
+      "warmup": 8,
+      "frames": 60,
+      "result": "pipeline-ms compute=cpuAndGPU n=60  total mean 9.57  p50 8.96  p95 12.62  max 13.19  |  preprocess 0.67  span 7.87  detail 1.03"
+    },
+    {
+      "clip": "TestSite/crowdrun-360p-350k.mp4",
+      "warmup": 8,
+      "frames": 60,
+      "result": "pipeline-ms compute=cpuAndGPU n=60  total mean 12.59  p50 12.74  p95 14.14  max 15.24  |  preprocess 0.52  span 10.81  detail 1.26"
+    },
+    {
+      "clip": "TestSite/bbb-480p-800k-3min.mp4",
+      "warmup": 8,
+      "frames": 60,
+      "result": "pipeline-ms compute=cpuAndGPU n=60  total mean 17.90  p50 17.81  p95 18.36  max 22.16  |  preprocess 0.60  span 15.74  detail 1.56"
+    }
+  ]
+}

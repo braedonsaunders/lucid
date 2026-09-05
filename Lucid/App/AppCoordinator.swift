@@ -17,8 +17,10 @@ final class AppCoordinator {
     static let shared = AppCoordinator()
 
     let appState = AppState()
+    private var comparing = false
     private var menuBar: MenuBarController?
     private var bridge: BrowserBridgeServer?
+    private let frameRouter = DecodedFrameRouter()
     fileprivate var session: EnhancementSession?
     private var reports: [String: (report: BrowserVideoReport, received: ContinuousClock.Instant)] = [:]
     private var sweepTimer: Timer?
@@ -38,13 +40,19 @@ final class AppCoordinator {
     }
 
     static let staleReportAge: Duration = .seconds(3)
-    static let debugLogging = ProcessInfo.processInfo.environment["LUCID_DEBUG"] == "1"
+    nonisolated static let debugLogging = ProcessInfo.processInfo.environment["LUCID_DEBUG"] == "1"
 
     private init() {
         let menuBar = MenuBarController(appState: appState)
         menuBar.onToggleEnabled = { [weak self] enabled in
             guard let self else { return }
             if !enabled { self.stopSession(reason: "Paused") } else { self.evaluate() }
+            self.broadcastStatus()
+        }
+        menuBar.onCompare = { [weak self] original in
+            guard let self else { return }
+            self.comparing = original
+            self.session?.setComparing(original)
             self.broadcastStatus()
         }
         menuBar.onOpenTestPage = { [weak self] in self?.openTestPage() }
@@ -103,17 +111,18 @@ final class AppCoordinator {
             }
         )
         // Decoded frames straight from the page, at the video's own resolution.
-        bridge.onFrame = { frame in
+        let router = frameRouter
+        bridge.onFrame = { frame in router.accept(frame) }
+        bridge.onPresentation = { metrics in
             Task { @MainActor in
-                let coordinator = AppCoordinator.shared
-                if AppCoordinator.debugLogging, coordinator.framesSeen == 0 {
-                    print("   🎞 first decoded frame: session \(frame.header.session.prefix(8)) \(frame.header.w)x\(frame.header.h) \(frame.header.format), app session \(coordinator.session?.id.prefix(8) ?? "none")")
-                }
-                coordinator.framesSeen += 1
-                coordinator.noteFrameArrived()
-                coordinator.session?.accept(frame)
+                let owner = AppCoordinator.shared
+                guard owner.session?.id == metrics.session else { return }
+                owner.presentation = metrics
+                owner.appState.statsLine = String(format: "%.0f fps presented · %.0f ms p95", metrics.framesPerSecond, metrics.p95Milliseconds)
+                owner.menuBar?.refresh()
             }
         }
+
         do {
             try bridge.start()
             self.bridge = bridge
@@ -145,19 +154,8 @@ final class AppCoordinator {
     }
 
     private var lastStats = PipelineStats()
+    private var presentation = PresentationMetrics()
 
-    fileprivate var framesSeen = 0
-    private var frameArrivals: [ContinuousClock.Instant] = []
-    fileprivate var arrivalRate = 0
-
-    /// Frames per second arriving from the page, so a shortfall can be pinned
-    /// on the page or on the pipeline rather than guessed at.
-    fileprivate func noteFrameArrived() {
-        let now = ContinuousClock.now
-        frameArrivals.append(now)
-        frameArrivals.removeAll { now - $0 > .seconds(1) }
-        arrivalRate = frameArrivals.count
-    }
     private var shooter: ComparisonShooter?
 
     /// Captures the same frame once per engine. The page should pause the video
@@ -203,6 +201,9 @@ final class AppCoordinator {
     }
 
     private func handleControl(_ control: BridgeControl) {
+        if let original = control.comparing {
+            comparing = original; session?.setComparing(original)
+        }
         if let enabled = control.enabled, enabled != appState.enabled {
             appState.enabled = enabled
             if !enabled { stopSession(reason: "Paused") } else { evaluate() }
@@ -235,6 +236,7 @@ final class AppCoordinator {
                 case "cdefPrimary": t.cdefPrimary = value
                 case "loopFilterQuant": t.loopFilterQuant = value
                 case "stageCdef": t.stageCdef = value
+                case "stageMotion": t.stageMotion = value
                 case "stageTaa": t.stageTaa = value
                 case "stageLoopFilter": t.stageLoopFilter = value
                 case "stageOklab": t.stageOklab = value
@@ -278,7 +280,10 @@ final class AppCoordinator {
     private func broadcastStatus() {
         bridge?.broadcast(BridgeStatus(
             enabled: appState.enabled,
+            activeSession: session?.id,
+            captureIntervalMilliseconds: max(0, lastStats.processingMilliseconds * 1.05),
             enhancing: appState.isEnhancing,
+            comparing: comparing,
             engine: engine.rawValue,
             engines: (EngineKind.comparisonPathEnabled ? EngineKind.allCases : EngineKind.shipping).map(\.rawValue),
             engineLabels: (EngineKind.comparisonPathEnabled ? EngineKind.allCases : EngineKind.shipping).map(\.label),
@@ -288,6 +293,8 @@ final class AppCoordinator {
             latency: latencySeconds,
             sourceFPS: lastStats.sourceFPS,
             outputFPS: lastStats.outputFPS,
+            presentedFPS: presentation.framesPerSecond,
+            presentationP95Milliseconds: presentation.p95Milliseconds,
             processingMilliseconds: lastStats.processingMilliseconds,
             tileCount: lastStats.tileCount,
             outputWidth: Int(lastStats.outputSize.width),
@@ -313,6 +320,7 @@ final class AppCoordinator {
     // MARK: - Session policy
 
     private func evaluate() {
+        appState.connectedBrowsers = Set(reports.values.map { $0.report.browser })
         guard appState.enabled, !stopping else { return }
 
         if let session {
@@ -340,7 +348,7 @@ final class AppCoordinator {
         let candidates = reports.values.map(\.report).filter { Self.isEnhanceable($0) }
         guard let best = candidates.max(by: { area($0) < area($1) }) else {
             if appState.statusLine != "Waiting for browser video" {
-                appState.statusLine = reports.isEmpty ? "Waiting for browser video" : "Video not enhanceable"
+                appState.statusLine = reports.values.compactMap { $0.report.unsupportedReason }.first ?? (reports.isEmpty ? "Waiting for browser video" : "Video not enhanceable")
                 menuBar?.refresh()
             }
             return
@@ -356,7 +364,7 @@ final class AppCoordinator {
     /// Only playing, visible, sub-1080p video that is displayed larger than its
     /// decoded size benefits from 2× reconstruction. Everything else is left alone.
     static func isEnhanceable(_ report: BrowserVideoReport, keeping: Bool = false) -> Bool {
-        guard report.type == .video, report.visible, let video = report.video else { return false }
+        guard report.type == .video, report.visible, report.unsupportedReason == nil, let video = report.video else { return false }
         guard !video.ended, !video.pip else { return false }
         // The window Lucid works in, and the reasons for each end of it.
         //
@@ -381,14 +389,19 @@ final class AppCoordinator {
 
     private func startSession(for report: BrowserVideoReport) {
         guard session == nil else { return }
-        let snapshot = WindowSnapshot.capture()
-        guard let window = WindowTracker.matchWindow(for: report, in: snapshot) else {
-            if appState.statusLine != "Browser window not found" {
-                print("   🔍 No on-screen \(report.browser) window matches \"\(report.title)\" at \(Int(report.screenX)),\(Int(report.screenY)) \(Int(report.outerWidth))x\(Int(report.outerHeight))")
+        let window: WindowInfo
+        if report.frames == true && report.draws == true {
+            // A decoded-frame session drawn in the page has no dependency on
+            // macOS window enumeration or Screen Recording permission.
+            window = WindowTracker.pageGeometry(for: report)
+        } else {
+            let snapshot = WindowSnapshot.capture()
+            guard let matched = WindowTracker.matchWindow(for: report, in: snapshot) else {
+                appState.statusLine = "Browser window not found"
+                menuBar?.refresh()
+                return
             }
-            appState.statusLine = "Browser window not found"
-            menuBar?.refresh()
-            return
+            window = matched
         }
         do {
             let session = try EnhancementSession(
@@ -399,6 +412,9 @@ final class AppCoordinator {
                 onEnded: { [weak self] reason in self?.sessionEnded(reason) }
             )
             self.session = session
+            session.setPageRenders(report.draws == true)
+            session.setComparing(comparing)
+            frameRouter.install(session: session.id, source: session.decoded)
             print("   🎯 Session \(report.session.prefix(8)): \(report.browser) window [\(window.id)] video \(report.video!.iw)x\(report.video!.ih) at \(report.video!.rect)")
             appState.isEnhancing = true
             // 4×, not 2×: the tiled 2×-per-pass scaler was replaced by SPAN and
@@ -424,11 +440,13 @@ final class AppCoordinator {
         guard let session else { return }
         print("   ⏹ Session \(session.id.prefix(8)) stopped: \(reason)")
         self.session = nil
+        frameRouter.install(session: nil, source: nil)
         appState.isEnhancing = false
         appState.statusLine = reason
         appState.statsLine = ""
         menuBar?.refresh()
         lastStats = PipelineStats()
+        presentation = PresentationMetrics()
         broadcastStatus()
         stopping = true
         Task { @MainActor [weak self] in
@@ -444,14 +462,12 @@ final class AppCoordinator {
     }
 
     private func updateStats(_ stats: PipelineStats) {
-        appState.statsLine = String(
-            format: "%.0f → %.0f fps · %.1f ms · %d tile%@ · %.0f×%.0f",
-            stats.sourceFPS, stats.outputFPS, stats.processingMilliseconds, stats.tileCount,
-            stats.tileCount == 1 ? "" : "s", stats.outputSize.width, stats.outputSize.height
-        )
+        appState.statsLine = comparing ? "Showing original video" : presentation.samples > 0
+            ? String(format: "%.0f fps presented · %.0f ms p95", presentation.framesPerSecond, presentation.p95Milliseconds)
+            : String(format: "%.0f fps processed · %.1f ms", stats.outputFPS, stats.processingMilliseconds)
         if let error = stats.lastError { appState.lastError = error }
         if AppCoordinator.debugLogging {
-            print("   📊 page \(arrivalRate)/s · \(appState.statsLine)\(stats.lastError.map { " · ⚠️ \($0)" } ?? "")")
+            print("   📊 \(appState.statsLine)\(stats.lastError.map { " · ⚠️ \($0)" } ?? "")")
         }
         lastStats = stats
         menuBar?.refresh()
@@ -509,7 +525,7 @@ final class EnhancementSession {
     private let capture: CaptureSession
     /// Frames handed over by the page, at the video's own resolution. Preferred
     /// over reading the screen, which only ever shows an already-stretched copy.
-    private let decoded = DecodedFrameSource()
+    fileprivate nonisolated let decoded = DecodedFrameSource()
     private let sender = EnhancedFrameSender()
     private var sentFrames = 0
     /// True while the page is drawing the result itself. The overlay window is
@@ -517,9 +533,7 @@ final class EnhancementSession {
     private(set) var pageRenders = false
     private var usingDecodedFrames = false
     private var decodedTask: Task<Void, Never>?
-    private var lastDecodedFrame = ContinuousClock.now
     private var screenCaptureRunning = false
-    private var rejectedFrames = 0
     private let pipeline: EnhancementPipeline
     private let backingScale: CGFloat
     private var report: BrowserVideoReport
@@ -567,12 +581,12 @@ final class EnhancementSession {
         // sharpening stage cost 0.021 of fine-band correlation on its own and
         // turned the scaler's invented foliage texture into something crunchy.
         // Strong turns it back on for anyone who wants it.
-        var sharpness: Float = 0.0
+        var sharpness: Float = 0.75
         // 0.3, measured. On the bicubic-trained model any detail gain
         // amplified invented texture and cost fine-band correlation; the model
         // trained on real codec degradation gives a clean enough base that a
         // little gain now recovers rather than exaggerates. 0.5 overshoots.
-        var fine: Float = 0.3
+        var fine: Float = 0.0
         // The post-upscale deblock is flat to four decimals across its whole
         // range now and every non-zero value is very slightly worse, so it is
         // off: the model removes blocking itself.
@@ -588,7 +602,7 @@ final class EnhancementSession {
         var sourceDeblock: Float = 0.0
         var temporal: Float = 0.50
         var blackPoint: Float = 0.020
-        var whitePoint: Float = 0.975
+        var whitePoint: Float = 0.990
         // 0.2: buys fine-band correlation (0.2866 -> 0.2886) and spends PSNR
         // (26.39 -> 25.71). A deliberate trade, chosen by eye, not measured -
         // the reference has no grade so no metric can pick this.
@@ -619,6 +633,7 @@ final class EnhancementSession {
         var stageDeband: Float = 1
         var stageOklab: Float = 1
         var stageLoopFilter: Float = 0
+        var stageMotion: Float = 1
         var stageTaa: Float = 1
         var stageCdef: Float = 0
         var loopFilterQuant: Float = 32
@@ -626,14 +641,7 @@ final class EnhancementSession {
         var cdefSecondary: Float = 2
         var debandThreshold: Float = 0.008
         var grain: Float = 0.010
-        // 0: the grain pattern is fixed rather than re-randomised each frame.
-        // Measured as a trade, not an improvement. Moving grain scores better on
-        // every per-frame metric (DISTS 0.2461 against 0.2511, LPIPS 0.5548
-        // against 0.5640) and costs 15% more frame-to-frame shimmer (2.31
-        // against 1.96 on the flicker metric). Braedon's report on real video
-        // was "it flickers", so steadiness wins - and a per-frame metric is
-        // structurally incapable of seeing the axis he was describing, which is
-        // the same reason the temporal stage measured harmful on every clip.
+        // Frozen grain is the default. Animated phase never changes amplitude.
         var grainPhase: Float = 0.0
         var taaGamma: Float = 1.25
         // The gentlest setting the control offers: enough to steady the image
@@ -676,6 +684,7 @@ final class EnhancementSession {
             cdefPrimary = try f(.cdefPrimary, cdefPrimary)
             loopFilterQuant = try f(.loopFilterQuant, loopFilterQuant)
             stageCdef = try f(.stageCdef, stageCdef)
+            stageMotion = try f(.stageMotion, stageMotion)
             stageTaa = try f(.stageTaa, stageTaa)
             stageLoopFilter = try f(.stageLoopFilter, stageLoopFilter)
             stageOklab = try f(.stageOklab, stageOklab)
@@ -690,7 +699,7 @@ final class EnhancementSession {
             case off, subtle, standard, strong
             var label: String {
                 switch self {
-                case .off: return "Off"
+                case .off: return "Clean"
                 case .subtle: return "Subtle"
                 case .standard: return "Standard"
                 case .strong: return "Strong"
@@ -698,9 +707,9 @@ final class EnhancementSession {
             }
             var detail: String {
                 switch self {
-                case .off: return "Upscaling only, no grade"
-                case .subtle: return "Barely there"
-                case .standard: return "Recommended"
+                case .off: return "Reconstruction with the original color and contrast"
+                case .subtle: return "Gentle detail and a light touch on contrast"
+                case .standard: return "Balanced detail for everyday streaming"
                 case .strong: return "For very soft sources"
                 }
             }
@@ -750,6 +759,49 @@ final class EnhancementSession {
             }
         }
 
+        /// Shared by live playback and every diagnostic. No hidden benchmark defaults.
+        nonisolated func detailSettings(radius: Int = 4, frame: Float = 0) -> DetailSettings {
+            let t = self
+            return DetailSettings(
+                sharpness: t.sharpness,
+                fine: t.fine,
+                micro: t.micro,
+                lobeScale: t.lobeScale,
+                mid: t.mid,
+                flatThreshold: 0.004,
+                edgeThreshold: 0.030,
+                deblock: t.deblock,
+                sourceDeblock: t.sourceDeblock,
+                sourceDeblockRadius: 1.6,
+                presharpen: t.presharpen,
+                adaptive: t.adaptive,
+                temporal: t.temporal,
+                motionLow: 0.02,
+                motionHigh: 0.08,
+                radius: max(1, radius),
+                blackPoint: t.blackPoint,
+                whitePoint: t.whitePoint,
+                contrast: t.contrast,
+                saturation: t.saturation,
+                stageLoopFilter: t.stageLoopFilter > 0.5,
+                stageCdef: t.stageCdef > 0.5,
+                stageDeband: t.stageDeband > 0.5,
+                stageMotion: t.stageMotion > 0.5,
+                stageTaa: t.stageTaa > 0.5,
+                stageOklab: t.stageOklab > 0.5,
+                loopFilterQuant: t.loopFilterQuant,
+                cdefPrimary: t.cdefPrimary,
+                cdefSecondary: t.cdefSecondary,
+                debandThreshold: t.debandThreshold,
+                grain: t.grain,
+                grainPhase: t.grainPhase,
+                taaGamma: t.taaGamma,
+                taaFeedback: t.taaFeedback,
+                skinProtect: t.skinProtect,
+                frame: frame
+            )
+        }
+
         static func load() -> Tuning {
             var t = Tuning()
             let env = ProcessInfo.processInfo.environment
@@ -775,11 +827,13 @@ final class EnhancementSession {
             t.taaFeedback = f("LUCID_TAAFEEDBACK", t.taaFeedback)
             t.taaGamma = f("LUCID_TAAGAMMA", t.taaGamma)
             t.grain = f("LUCID_GRAIN", t.grain)
+            t.grainPhase = f("LUCID_GRAINPHASE", t.grainPhase)
             t.debandThreshold = f("LUCID_DEBANDTHRESHOLD", t.debandThreshold)
             t.cdefSecondary = f("LUCID_CDEFSECONDARY", t.cdefSecondary)
             t.cdefPrimary = f("LUCID_CDEFPRIMARY", t.cdefPrimary)
             t.loopFilterQuant = f("LUCID_LOOPFILTERQUANT", t.loopFilterQuant)
             t.stageCdef = f("LUCID_STAGECDEF", t.stageCdef)
+            t.stageMotion = f("LUCID_STAGEMOTION", t.stageMotion)
             t.stageTaa = f("LUCID_STAGETAA", t.stageTaa)
             t.stageLoopFilter = f("LUCID_STAGELOOPFILTER", t.stageLoopFilter)
             t.stageOklab = f("LUCID_STAGEOKLAB", t.stageOklab)
@@ -801,9 +855,9 @@ final class EnhancementSession {
                 "micro": t.micro, "lobeScale": t.lobeScale, "mid": t.mid,
                 "presharpen": t.presharpen, "adaptive": t.adaptive,
                 "stageSiting": t.stageSiting, "stageDeband": t.stageDeband, "stageOklab": t.stageOklab,
-                "stageLoopFilter": t.stageLoopFilter, "stageTaa": t.stageTaa, "stageCdef": t.stageCdef,
+                "stageMotion": t.stageMotion, "stageLoopFilter": t.stageLoopFilter, "stageTaa": t.stageTaa, "stageCdef": t.stageCdef,
                 "loopFilterQuant": t.loopFilterQuant, "cdefPrimary": t.cdefPrimary, "cdefSecondary": t.cdefSecondary,
-                "debandThreshold": t.debandThreshold, "grain": t.grain, "taaGamma": t.taaGamma,
+                "debandThreshold": t.debandThreshold, "grain": t.grain, "grainPhase": t.grainPhase, "taaGamma": t.taaGamma,
                 "taaFeedback": t.taaFeedback, "skinProtect": t.skinProtect]
     }
 
@@ -812,46 +866,7 @@ final class EnhancementSession {
 
     nonisolated static func detailSettings(for report: BrowserVideoReport, outputScale: Double = 1) -> DetailSettings {
         guard let video = report.video, video.iw > 0 else { return .off }
-        let stretch = video.rect.w * report.dpr / Double(video.iw)
-        let strength = Float(min(max((stretch - 1.2) / 2.0, 0), 1))
-        let t = tuning
-        return DetailSettings(
-            sharpness: t.sharpness,
-            fine: t.fine * (0.7 + 0.3 * strength),
-            micro: t.micro,
-            lobeScale: t.lobeScale,
-            mid: t.mid,
-            flatThreshold: 0.004,
-            edgeThreshold: 0.030,
-            deblock: t.deblock,
-            sourceDeblock: t.sourceDeblock,
-            sourceDeblockRadius: 1.6,
-            presharpen: t.presharpen,
-            adaptive: t.adaptive,
-            temporal: t.temporal,
-            motionLow: 0.02,
-            motionHigh: 0.08,
-            radius: max(1, Int(outputScale.rounded())),
-            blackPoint: t.blackPoint,
-            whitePoint: t.whitePoint,
-            contrast: t.contrast,
-            saturation: t.saturation,
-            stageLoopFilter: t.stageLoopFilter > 0.5,
-            stageCdef: t.stageCdef > 0.5,
-            stageDeband: t.stageDeband > 0.5,
-            stageTaa: t.stageTaa > 0.5,
-            stageOklab: t.stageOklab > 0.5,
-            loopFilterQuant: t.loopFilterQuant,
-            cdefPrimary: t.cdefPrimary,
-            cdefSecondary: t.cdefSecondary,
-            debandThreshold: t.debandThreshold,
-            grain: t.grain,
-            grainPhase: t.grainPhase,
-            taaGamma: t.taaGamma,
-            taaFeedback: t.taaFeedback,
-            skinProtect: t.skinProtect,
-            frame: Float(frameCounter)
-        )
+        return tuning.detailSettings(radius: max(1, Int(outputScale.rounded())), frame: Float(frameCounter))
     }
 
     /// Decoded video pixels per window point for the current engine.
@@ -894,6 +909,7 @@ final class EnhancementSession {
             windowID: browserWindow.id, pid: browserWindow.pid, report: report
         )
         // The learned engine has a fixed input size, so it takes the box exactly.
+        if engine == .learned { controller.margin = .zero }
 
         let rect = controller.captureRect(for: box, in: browserWindow.bounds.size)
         let scale = engine.rescales ? CGFloat(video.iw) / box.width : backingScale
@@ -922,25 +938,16 @@ final class EnhancementSession {
         // under the page's own scroll, clipping and stacking, which no overlay
         // window can match.
         let sessionID = report.session
-        let handler: @Sendable (CVPixelBuffer) -> Void = { [weak self] buffer in
-            guard let self else { return }
-            Task { @MainActor in
-                // CSP-restricted sites cannot receive the in-page canvas frames
-                // (ArrayBuffers do not survive the service-worker JSON hop), so
-                // the overlay window presents there instead. Packing and
-                // queueing ~10MB frames nobody reads is pure waste and feeds
-                // the nw_write_request_list_remove_head crash: skip it.
-                guard self.pageRenders else { return }
-                self.sentFrames += 1
-                guard let packet = self.sender.packet(for: buffer, sequence: self.sentFrames, session: sessionID) else {
-                    if AppCoordinator.debugLogging, self.sentFrames % 60 == 1 { print("   ⚠️ could not pack enhanced frame") }
-                    return
-                }
-                if AppCoordinator.debugLogging, self.sentFrames % 120 == 1 {
-                    print("   🖼 sent enhanced frame \(self.sentFrames), \(packet.count / 1024) kB")
-                }
-                AppCoordinator.shared.sendEnhanced(packet, session: sessionID)
-            }
+        let handler: @Sendable (EnhancedFrame) async -> Bool = { [weak self] enhanced in
+            let buffer = enhanced.pixelBuffer, frame = enhanced.source
+            guard let self else { return true }
+            let renders = await MainActor.run { !self.stopped && self.pageRenders }
+            guard renders else { return false }
+            // Packing runs on the pipeline executor, and is awaited: no queue of
+            // full-size pixel buffers can build up on the UI thread.
+            guard let packet = self.sender.packet(for: buffer, sequence: frame.sequence, session: sessionID, sourceTimestamp: frame.presentationTimestamp.seconds * 1_000_000, captureTime: frame.captureTimeMilliseconds) else { return true }
+            await MainActor.run { AppCoordinator.shared.sendEnhanced(packet, session: sessionID) }
+            return true
         }
         Task { await pipeline.setEnhancedFrameHandler(handler) }
 
@@ -1034,6 +1041,7 @@ final class EnhancementSession {
 
     private func startScreenCapture() async {
         guard !screenCaptureRunning else { return }
+        guard windowID != 0 else { end("Browser cannot provide decoded frames"); return }
         if !ScreenCapturePermission.isGranted {
             if AppCoordinator.shared.screenCaptureDenied {
                 end("Screen Recording permission required")
@@ -1059,20 +1067,6 @@ final class EnhancementSession {
         }
     }
 
-    /// A decoded frame arrived from the page.
-    func accept(_ frame: DecodedFrame) {
-        guard frame.header.session == id else {
-            if AppCoordinator.debugLogging, rejectedFrames == 0 {
-                print("   ⚠️ frame session \(frame.header.session.prefix(8)) != app session \(id.prefix(8))")
-            }
-            rejectedFrames += 1
-            return
-        }
-        lastDecodedFrame = .now
-        decoded.accept(frame)
-        if !usingDecodedFrames, !screenCaptureRunning { usingDecodedFrames = true }
-    }
-
     /// Rebuilds the stages so a settings change takes effect on the next frame.
     func reloadTuning() {
         let report = self.report
@@ -1087,6 +1081,8 @@ final class EnhancementSession {
         }
     }
 
+    func setComparing(_ original: Bool) { window.alphaValue = original ? 0 : 1 }
+
     var videoScreenRect: CGRect { controller.videoScreenRect }
     var overlayWindowID: CGWindowID { CGWindowID(window.windowNumber) }
     func setCapturable(_ capturable: Bool) { controller.setCapturable(capturable) }
@@ -1094,6 +1090,7 @@ final class EnhancementSession {
     /// The page reports whether it is drawing the frames itself.
     func setPageRenders(_ renders: Bool) {
         guard renders != pageRenders else { return }
+        if !renders && windowID == 0 { end("Browser drawing unavailable"); return }
         pageRenders = renders
         controller.setForcedHidden(renders)
         print(renders ? "   🖼 the page is drawing the enhanced frames" : "   🪟 falling back to the overlay window")

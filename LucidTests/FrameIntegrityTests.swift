@@ -1,0 +1,172 @@
+import CoreMedia
+import CoreML
+import CoreVideo
+import Metal
+import Testing
+@testable import Lucid
+
+private func nv12(_ w: Int = 64, _ h: Int = 64, luma: (Int, Int) -> UInt8) throws -> CVPixelBuffer {
+    var result: CVPixelBuffer?
+    let attributes: [String: Any] = [kCVPixelBufferIOSurfacePropertiesKey as String: [:], kCVPixelBufferMetalCompatibilityKey as String: true]
+    #expect(CVPixelBufferCreate(nil, w, h, kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, attributes as CFDictionary, &result) == kCVReturnSuccess)
+    let buffer = try #require(result)
+    CVPixelBufferLockBaseAddress(buffer, [])
+    for p in 0..<2 {
+        let pointer = CVPixelBufferGetBaseAddressOfPlane(buffer, p)!.assumingMemoryBound(to: UInt8.self)
+        let stride = CVPixelBufferGetBytesPerRowOfPlane(buffer, p)
+        for y in 0..<(p == 0 ? h : h / 2) { for x in 0..<w { pointer[y * stride + x] = p == 0 ? luma(x, y) : 128 } }
+    }
+    CVPixelBufferUnlockBaseAddress(buffer, [])
+    VideoColorInfo.rec709.apply(to: buffer)
+    return buffer
+}
+private func lumaBytes(_ buffer: CVPixelBuffer) -> [Double] {
+    CVPixelBufferLockBaseAddress(buffer, .readOnly); defer { CVPixelBufferUnlockBaseAddress(buffer, .readOnly) }
+    let base = CVPixelBufferGetBaseAddressOfPlane(buffer, 0)!.assumingMemoryBound(to: UInt8.self)
+    let stride = CVPixelBufferGetBytesPerRowOfPlane(buffer, 0)
+    return (0..<CVPixelBufferGetHeight(buffer)).flatMap { y in (0..<CVPixelBufferGetWidth(buffer)).map { x in Double(base[y * stride + x]) } }
+}
+struct FrameLayoutTests {
+    @Test @MainActor func pageRenderingNeedsNoNativeWindow() {
+        let r = BrowserVideoReport(type: .video, browser: "chrome", session: "test", title: "Video", url: nil,
+            visible: true, screenX: 22, screenY: 55, outerWidth: 1200, outerHeight: 800,
+            innerWidth: 1200, innerHeight: 700, dpr: 2, video: nil,
+            frames: true, draws: true, moving: false, hover: false, cutouts: [], ts: 0)
+        let geometry = WindowTracker.pageGeometry(for: r)
+        #expect(geometry.id == 0)
+        #expect(geometry.bounds.width == 1200)
+    }
+    @Test func malformedPlanesNeverReadRecycledBytes() {
+        var h = DecodedFrame.Header(session: "s", w: 64, h: 64, format: "NV12", planes: [.init(offset: 0, stride: 64), .init(offset: 4096, stride: 64)], seq: 1, ts: 0)
+        #expect(DecodedFrameSource.validLayout(h, payloadCount: 6144))
+        #expect(!DecodedFrameSource.validLayout(h, payloadCount: 6143))
+        h.planes[1].offset = Int.max
+        #expect(!DecodedFrameSource.validLayout(h, payloadCount: 6144))
+        h.planes[1].offset = 4096; h.planes[0].stride = Int.max
+        #expect(!DecodedFrameSource.validLayout(h, payloadCount: 6144))
+        h.ts = .nan
+        #expect(!DecodedFrameSource.validLayout(h, payloadCount: 6144))
+    }
+    @Test func bgraAndRgbaProduceTheSameRed() async throws {
+        var results: [[Double]] = []
+        for format in ["RGBA", "BGRA"] {
+            let source = DecodedFrameSource(); let stream = source.stream()
+            let pixel: [UInt8] = format == "RGBA" ? [255, 0, 0, 255] : [0, 0, 255, 255]
+            let h = DecodedFrame.Header(session: "s", w: 64, h: 64, format: format, planes: [.init(offset: 0, stride: 256)], seq: 7, ts: 1234,
+                colorSpace: .init(primaries: "bt709", transfer: "iec61966-2-1", matrix: "rgb", fullRange: true))
+            source.accept(.init(header: h, payload: Data(Array(repeating: pixel, count: 4096).flatMap { $0 })))
+            source.finish()
+            var iterator = stream.makeAsyncIterator()
+            let next = await iterator.next(); let frame = try #require(next)
+            #expect(frame.sequence == 7)
+            #expect(VideoColorInfo.read(from: frame.pixelBuffer) == .rec709)
+            results.append(lumaBytes(frame.pixelBuffer))
+        }
+        #expect(results[0] == results[1])
+        #expect(results[0][0] > 45 && results[0][0] < 90)
+    }
+    @Test func hdrIsDeclined() async {
+        let source = DecodedFrameSource(); let stream = source.stream()
+        let h = DecodedFrame.Header(session: "s", w: 64, h: 64, format: "NV12", planes: [.init(offset: 0, stride: 64), .init(offset: 4096, stride: 64)], seq: 1, ts: 0,
+            colorSpace: .init(primaries: "bt2020", transfer: "smpte2084", matrix: "bt2020-ncl", fullRange: false))
+        source.accept(.init(header: h, payload: Data(repeating: 128, count: 6144))); source.finish()
+        var iterator = stream.makeAsyncIterator(); let frame = await iterator.next()
+        #expect(frame == nil)
+    }
+}
+@Suite(.serialized)
+struct MetalFrameIntegrityTests {
+    @Test func standaloneGradeAndTemporalToggleAreInitialized() throws {
+        let device = try #require(MTLCreateSystemDefaultDevice())
+        var settings = DetailSettings.off; settings.stageDeband = true; settings.grain = 0.02
+        let enhancer = try DetailEnhancer(device: device, settings: settings)
+        let input = try nv12 { _, _ in 128 }
+        let standalone = lumaBytes(try enhancer.process(input))
+        #expect(standalone.allSatisfy { abs($0 - 128) <= 4 })
+        _ = try enhancer.preprocess(input)
+        settings.stageTaa = true; settings.grain = 0; enhancer.settings = settings
+        let light = try nv12 { _, _ in 190 }
+        #expect(lumaBytes(try enhancer.preprocess(light)).allSatisfy { abs($0 - 190) <= 1 })
+    }
+    @Test func movingGrainNeverChangesItsAmplitude() throws {
+        let device = try #require(MTLCreateSystemDefaultDevice())
+        var settings = DetailSettings.off
+        settings.stageDeband = true; settings.grain = 0.04; settings.grainPhase = 1
+        let enhancer = try DetailEnhancer(device: device, settings: settings)
+        let input = try nv12 { _, _ in 128 }
+        var deviations: [Double] = []
+        for _ in 0..<64 {
+            _ = try enhancer.preprocess(input)
+            let values = lumaBytes(try enhancer.process(input))
+            deviations.append(values.map { abs($0 - 128) }.reduce(0, +) / Double(values.count))
+        }
+        #expect((deviations.min() ?? 0) > 0.01)
+        #expect((deviations.max() ?? 100) < 3)
+        #expect((deviations.max() ?? 100) - (deviations.min() ?? 0) < 0.7)
+    }
+    @Test func motionRejectsCutsAndTimestampDiscontinuities() throws {
+        let device = try #require(MTLCreateSystemDefaultDevice())
+        var settings = DetailSettings.off; settings.stageTaa = true; settings.stageMotion = true; settings.taaFeedback = 0.9
+        let enhancer = try DetailEnhancer(device: device, settings: settings)
+        let dark = try nv12 { _, _ in 32 }; let light = try nv12 { _, _ in 210 }
+        _ = try enhancer.preprocess(dark, timestamp: CMTime(value: 1, timescale: 30))
+        let cut = try enhancer.preprocess(light, timestamp: CMTime(value: 2, timescale: 30))
+        #expect(lumaBytes(cut).allSatisfy { abs($0 - 210) <= 1 })
+        let seek = try enhancer.preprocess(dark, timestamp: CMTime(value: 1, timescale: 30))
+        #expect(lumaBytes(seek).allSatisfy { abs($0 - 32) <= 1 })
+    }
+    @Test func translatedTextureKeepsItsEdges() throws {
+        let device = try #require(MTLCreateSystemDefaultDevice())
+        var settings = DetailSettings.off; settings.stageTaa = true; settings.stageMotion = true; settings.taaFeedback = 0.9
+        let enhancer = try DetailEnhancer(device: device, settings: settings)
+        func pattern(_ x: Int, _ y: Int) -> UInt8 { UInt8(32 + ((max(0, x) * 29 + y * 53) % 170)) }
+        let before = try nv12(luma: pattern)
+        let after = try nv12 { x, y in pattern(x - 4, y) }
+        _ = try enhancer.preprocess(before, timestamp: CMTime(value: 1, timescale: 30))
+        let result = lumaBytes(try enhancer.preprocess(after, timestamp: CMTime(value: 2, timescale: 30)))
+        let reference = lumaBytes(after)
+        let error = zip(result, reference).map { abs($0 - $1) }.reduce(0, +) / Double(result.count)
+        #expect(error < 2)
+    }
+    @Test func everyBundledModelActuallyPredicts() throws {
+        let configuration = MLModelConfiguration(); configuration.computeUnits = .cpuAndGPU
+        for variant in LearnedUpscaler.variants {
+            let name = "SPAN_x4_ch32utc_\(variant.width)x\(variant.height)"
+            let url = try #require(Bundle.main.url(forResource: name, withExtension: "mlmodelc"))
+            let model = try MLModel(contentsOf: url, configuration: configuration)
+            let key = try #require(model.modelDescription.inputDescriptionsByName.keys.first)
+            var buffer: CVPixelBuffer?
+            #expect(CVPixelBufferCreate(nil, variant.width, variant.height, kCVPixelFormatType_32BGRA, [kCVPixelBufferIOSurfacePropertiesKey: [:]] as CFDictionary, &buffer) == kCVReturnSuccess)
+            let image = try #require(buffer)
+            CVPixelBufferLockBaseAddress(image, []); memset(CVPixelBufferGetBaseAddress(image), 128, CVPixelBufferGetDataSize(image)); CVPixelBufferUnlockBaseAddress(image, [])
+            let output = try model.prediction(from: MLDictionaryFeatureProvider(dictionary: [key: MLFeatureValue(pixelBuffer: image)]))
+            let outputKey = try #require(output.featureNames.first)
+            let result = try #require(output.featureValue(for: outputKey)?.imageBufferValue)
+            #expect(CVPixelBufferGetWidth(result) == variant.width * 4)
+            #expect(CVPixelBufferGetHeight(result) == variant.height * 4)
+            CVPixelBufferLockBaseAddress(result, .readOnly)
+            let pixel = CVPixelBufferGetBaseAddress(result)!.assumingMemoryBound(to: UInt8.self)
+            #expect(pixel[0] > 32 && pixel[0] < 224)
+            CVPixelBufferUnlockBaseAddress(result, .readOnly)
+        }
+    }
+}
+
+struct PresentationMetricTests {
+    @Test func duplicatesAndInvalidLatenciesNeverInflatePresentationRate() {
+        let start = ContinuousClock.now
+        var window = PresentationWindow(now: start)
+        #expect(window.record(.init(session: "s", seq: 1, latencyMilliseconds: 12), now: start) == nil)
+        #expect(window.record(.init(session: "s", seq: 1, latencyMilliseconds: 12), now: start) == nil)
+        #expect(window.record(.init(session: "s", seq: 2, latencyMilliseconds: .nan), now: start) == nil)
+        let result = window.record(.init(session: "s", seq: 2, latencyMilliseconds: 40), now: start.advanced(by: .seconds(1)))
+        #expect(result?.samples == 2)
+        #expect(result?.framesPerSecond == 2)
+        #expect(result?.p95Milliseconds == 40)
+    }
+    @Test @MainActor func shippedSettingsMatchTheBenchFile() throws {
+        let path = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("Tools/tuning.json")
+        let file = try JSONDecoder().decode(EnhancementSession.Tuning.self, from: Data(contentsOf: path))
+        #expect(file.detailSettings() == EnhancementSession.Tuning().detailSettings())
+    }
+}

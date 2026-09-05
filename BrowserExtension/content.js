@@ -31,6 +31,26 @@
   const HOVER_TIMEOUT_MS = 3000;
 
   const session = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2));
+  const gate = new LucidCaptureGate(session);
+  let binaryMessaging = false;
+  const blockedSources = new WeakMap();
+  function sourceBlock(video) {
+    const block = blockedSources.get(video);
+    return block && block.src === video.currentSrc && block.w === video.videoWidth && block.h === video.videoHeight ? block.reason : null;
+  }
+  function bridgeMessage(message) {
+    if (!message) return;
+    if (message.type === 'status') {
+      gate.status(message);
+      if (surface) surface.style.visibility = message.comparing ? 'hidden' : '';
+      if (!gate.allowed) { stopStreaming(); clearEnhanced(); }
+      else if (current) { startStreaming(current); sendFrame(current); }
+    } else if (message.type === 'accepted' && message.session === session) {
+      gate.acknowledge(message.seq);
+    } else if (message.type === 'transport') {
+      binaryMessaging = message.binary === true;
+    } else if (message.type === 'nudge' && current && gate.allowed) sendFrame(current);
+  }
   const ua = navigator.userAgent;
   const browserName = /Edg\//.test(ua) ? 'edge' : /Chrome\//.test(ua) ? 'chrome' : /Safari\//.test(ua) ? 'safari' : 'unknown';
 
@@ -58,18 +78,14 @@
         port = runtime.connect({ name: 'lucid' });
         port.onMessage.addListener((message) => {
           if (!message) return;
-          // Enhanced frames are megabytes and would have to be base64'd back
-          // through the same JSON channel, which is far too expensive at frame
-          // rate. On these sites the app presents through its own overlay
-          // instead, so nothing binary is expected in this direction.
-          if (message.type === 'nudge' && current) sendFrame(current);
+          bridgeMessage(message);
         });
         port.onDisconnect.addListener(() => {
           // Reading lastError acknowledges it. Chrome severs extension ports
           // when a page enters the back/forward cache, and without this the
           // browser logs "Unchecked runtime.lastError" every time that happens.
           void (runtime.lastError && runtime.lastError.message);
-          port = null;
+          port = null; gate.reset();
           // Do not reconnect from a frozen page; pageshow does that instead.
           if (!frozen) setTimeout(connect, 1000);
         });
@@ -87,11 +103,12 @@
       if (!port) return false;
       try {
         const bytes = new Uint8Array(buffer);
+        if (binaryMessaging) { port.postMessage({ t: 'frame', bytes, session }); return true; }
         let binary = '';
         for (let i = 0; i < bytes.length; i += 0x8000) {
           binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
         }
-        port.postMessage({ t: 'b64', b: btoa(binary) });
+        port.postMessage({ t: 'b64', b: btoa(binary), session });
         return true;
       } catch (e) { port = null; connect(); return false; }
     };
@@ -122,12 +139,13 @@
         };
         socket.onclose = () => {
           connecting = false;
-          reportReady = false;
+          reportReady = false; gate.reset();
           socket = null;
           setTimeout(connect, backoff);
           backoff = Math.min(backoff * 2, 10000);
         };
         socket.onerror = () => {};
+        socket.onmessage = event => { try { bridgeMessage(JSON.parse(event.data)); } catch {} };
       } catch (e) {
         connecting = false;
         socket = null;
@@ -182,6 +200,7 @@
       codedWidth: width,
       codedHeight: height,
       timestamp: 0,
+      colorSpace: { primaries: "bt709", transfer: "bt709", matrix: "bt709", fullRange: false },
       layout: [
         { offset: 0, stride: width },
         { offset: width * height, stride: width },
@@ -491,8 +510,13 @@
     const headerLength = view.getUint32(4, false);
     try {
       const meta = JSON.parse(new TextDecoder().decode(new Uint8Array(buffer, 8, headerLength)));
-      if (meta.session !== session) return;
+      if (meta.session !== session || !gate.allowed) return;
+      const latency = meta.captureTime ? performance.timeOrigin + performance.now() - meta.captureTime : 0;
+      if (latency > 150 || latency < 0) return;
       drawEnhanced(meta.w, meta.h, new Uint8Array(buffer, 8 + headerLength), meta.format);
+      if (meta.captureTime && frameSocket?.readyState === 1) frameSocket.send(JSON.stringify({
+        type: 'presented', session, seq: meta.seq, latencyMilliseconds: performance.timeOrigin + performance.now() - meta.captureTime
+      }));
       stats.drawn = (stats.drawn || 0) + 1;
       if (stats.drawn % 30 === 1) publishStats();
     } catch (e) { stats.errors++; stats.last = 'draw ' + (e && e.message || e); publishStats(); }
@@ -535,7 +559,7 @@
         stats.rxType = 'text';
         try {
           const message = JSON.parse(event.data);
-          if (message && message.type === 'nudge' && current) sendFrame(current);
+          bridgeMessage(message);
         } catch (e) {}
       };
     }).catch(() => {
@@ -550,8 +574,8 @@
     if (frameSocket && frameSocket.readyState === 1) frameSocket.send(packet);
   }
 
-  function header(width, height, format, planes, timestamp) {
-    const meta = JSON.stringify({ session, w: width, h: height, format, planes, seq: ++frameSeq, ts: timestamp });
+  function header(width, height, format, planes, timestamp, sequence, captureTime, colorSpace) {
+    const meta = JSON.stringify({ session, w: width, h: height, format, planes, seq: sequence, ts: timestamp, captureTime, colorSpace });
     const metaBytes = new TextEncoder().encode(meta);
     const head = new ArrayBuffer(8 + metaBytes.length);
     const view = new DataView(head);
@@ -562,6 +586,7 @@
   }
 
   async function sendFrame(video) {
+    if (!gate.ready || document.visibilityState !== 'visible' || sourceBlock(video)) return;
     if (runtime ? !transportReady() : (!frameSocket || frameSocket.readyState !== 1)) return;
     // Allow a couple of copies in flight: the copy resolves on a microtask, so
     // a limit of one refuses the very next frame callback and halves the rate.
@@ -570,6 +595,9 @@
     if (framesInFlight > 2 || (frameSocket && frameSocket.bufferedAmount > 6 << 20)) return;
     const width = video.videoWidth, height = video.videoHeight;
     if (!width || !height) return;
+    const sequence = ++frameSeq;
+    if (!gate.reserve(sequence)) return;
+    const captureTime = performance.timeOrigin + performance.now();
     framesInFlight++;
     try {
       if (typeof VideoFrame === 'function') {
@@ -577,13 +605,21 @@
         try { frame = new VideoFrame(video); } catch (e) { frame = null; }
         if (frame) {
           try {
+            const colorSpace = frame.colorSpace.toJSON();
+            if (['smpte2084', 'arib-std-b67'].includes(colorSpace.transfer)) {
+              const reason = 'HDR video stays with the browser';
+              blockedSources.set(video, { src: video.currentSrc, w: width, h: height, reason });
+              stats.last = reason; gate.reset(); stopStreaming(); clearEnhanced(); lastKey = ''; publishStats();
+              return;
+            }
             const size = frame.allocationSize();
             const buffer = new ArrayBuffer(size);
             const t0 = performance.now();
             const layout = await frame.copyTo(buffer);
             stats.copyMs = (stats.copyMs * 0.8 + (performance.now() - t0) * 0.2).toFixed(1);
             const planes = layout.map(p => ({ offset: p.offset, stride: p.stride }));
-            const head = header(frame.codedWidth, frame.codedHeight, frame.format, planes, frame.timestamp);
+            if (!gate.allowed) { gate.acknowledge(sequence); return; }
+            const head = header(frame.codedWidth, frame.codedHeight, frame.format, planes, frame.timestamp, sequence, captureTime, colorSpace);
             const packet = new Uint8Array(head.byteLength + size);
             packet.set(new Uint8Array(head), 0);
             packet.set(new Uint8Array(buffer), head.byteLength);
@@ -605,7 +641,7 @@
       }
       canvasCtx.drawImage(video, 0, 0, width, height);
       const data = canvasCtx.getImageData(0, 0, width, height).data;
-      const head = header(width, height, 'RGBA', [{ offset: 0, stride: width * 4 }], performance.now() * 1000);
+      const head = header(width, height, 'RGBA', [{ offset: 0, stride: width * 4 }], video.currentTime * 1000000, sequence, captureTime, {primaries: 'bt709', transfer: 'iec61966-2-1', matrix: 'rgb', fullRange: true});
       const packet = new Uint8Array(head.byteLength + data.byteLength);
       packet.set(new Uint8Array(head), 0);
       packet.set(data, head.byteLength);
@@ -613,6 +649,7 @@
       stats.sent++; stats.last = `RGBA ${width}x${height}`;
       if (stats.sent % 30 === 1) publishStats();
     } catch (e) {
+      gate.acknowledge(sequence);
       stats.errors++; stats.last = 'ERR ' + (e && e.message || e); publishStats();
       // Cross-origin video without CORS cannot be read; let the app fall back
       // to screen capture.
@@ -642,7 +679,7 @@
   function pumpIdle(video) {
     clearInterval(idleTimer);
     idleTimer = setInterval(() => {
-      if (!current || document.visibilityState !== 'visible') return;
+      if (!gate.allowed || !current || document.visibilityState !== 'visible') return;
       if (!current.paused && !current.ended) return;   // the frame callback has it
       if (current.readyState < 2) return;
       if (!streaming) { streaming = true; stats.streaming = true; openFrameSocket(); }
@@ -651,13 +688,22 @@
   }
 
   function startStreaming(video) {
-    if (streaming) return;
+    if (!gate.allowed || streaming) return;
     streaming = true; stats.streaming = true; publishStats();
     openFrameSocket();
     pump(video);
   }
 
-  function stopStreaming() { streaming = false; stats.streaming = false; publishStats(); }
+  function stopStreaming() {
+    streaming = false; stats.streaming = false;
+    if (current && rvfcHandle && current.cancelVideoFrameCallback) current.cancelVideoFrameCallback(rvfcHandle);
+    rvfcHandle = 0; publishStats();
+  }
+  function clearEnhanced() {
+    if (surface?.tagName === 'IFRAME') surface.contentWindow?.postMessage({ lucid: 'clear' }, '*');
+    if (surfaceCtx && surface) surfaceCtx.clearRect(0, 0, surface.width, surface.height);
+    lastNV12 = null;
+  }
 
   // ---- reporting loop -------------------------------------------------------
   let current = null, lastKey = '', lastSent = 0, lastCutoutAt = 0, cutouts = [];
@@ -747,7 +793,10 @@
 
     const message = {
       type: 'video', browser: browserName, session, title: document.title, url: location.href.slice(0, 512),
-      frames: streaming,
+      // Capability must be advertised before admission; streaming starts only
+      // after the native app grants capture, so using it here is circular.
+      frames: typeof VideoFrame === 'function',
+      unsupportedReason: sourceBlock(video),
       draws: drawing,
       visible: true,
       screenX: window.screenX, screenY: window.screenY, outerWidth: window.outerWidth, outerHeight: window.outerHeight,
@@ -755,7 +804,7 @@
       video: v, moving, hover, cutouts, ts: now
     };
     const key = JSON.stringify([message.title, message.screenX, message.screenY, message.outerWidth, message.outerHeight,
-      message.innerWidth, message.innerHeight, message.dpr, v, moving, hover, cutouts]);
+      message.innerWidth, message.innerHeight, message.dpr, message.unsupportedReason, v, moving, hover, cutouts]);
     if (key !== lastKey || now - lastSent > HEARTBEAT_MS) { send(message); lastKey = key; lastSent = now; }
     requestAnimationFrame(tick);
   }

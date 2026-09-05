@@ -15,7 +15,7 @@ them hides which end of the ladder is failing.
       --corpus .build/eval-corpus \\
       Model/weights/span_ch32u.pth Model/weights/span_ch32u_animation_only.pth
 """
-import argparse, collections, os, sys, warnings
+import argparse, collections, hashlib, json, os, sys, warnings
 warnings.filterwarnings("ignore")
 
 import numpy as np
@@ -26,32 +26,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from train_span import Unshuffled, bank_frames  # noqa: E402
 
 
-# ---- the perceptual scoreboard -----------------------------------------------
-#
-# This project spent its whole life optimising fine-band correlation with ground
-# truth. That metric was chosen for a good reason - Apple's scaler fooled us by
-# inventing mottled foliage that looked like detail and was not - but it is
-# scale-invariant and correlation-based, so it CANNOT reward invented detail by
-# construction. Every downstream decision followed from that: sharpening off,
-# deband off, grain off, GAN and diffusion losses never considered. The right
-# answer to "our upscaler invents bad detail" is "invent good detail", not
-# "never invent detail".
-#
-# So correlation is demoted to a guard - is this still the same scene - and the
-# objective is now perceptual:
-#
-#   LPIPS    lower is better. Deep-feature distance; rewards detail that is
-#            plausible, not detail that is identical.
-#   DISTS    lower is better. Explicitly tolerant of texture that differs
-#            pixel-wise but matches statistically, which is exactly what a good
-#            hallucinated texture does.
-#   detail   fine-band energy as a fraction of the reference's. 1.0 means as
-#            much high-frequency structure as the truth. Under the old metric
-#            this number was untrustworthy because it cannot tell recovered
-#            from invented - under this one that is the point.
-#   BRISQUE  lower is better, and needs no reference at all, so it says whether
-#            the picture looks good on its own terms.
-
+# Distances, fidelity and texture energy must be judged together. Added texture
+# can improve perceptual metrics while inventing details; no one score is truth.
 _lpips = None
 _dists = None
 
@@ -145,11 +121,28 @@ def main():
     parser.add_argument("--corpus", default=".build/eval-corpus")
     parser.add_argument("--device", default="mps")
     parser.add_argument("checkpoints", nargs="+")
+    parser.add_argument("--report", help="write per-frame metrics, hashes and environment as JSON")
+    parser.add_argument("--no-anchor", action="store_true", help="omit Lanczos when reusing a frozen baseline")
+    parser.add_argument("--limit-per-tier", type=int, default=0, help="smoke subset, not a promotion benchmark")
     args = parser.parse_args()
 
     device = torch.device(args.device if args.device != "mps"
                           or torch.backends.mps.is_available() else "cpu")
     names = sorted(os.listdir(os.path.join(args.corpus, "lr")))
+    names = [n for n in names if n.lower().endswith((".png", ".jpg", ".jpeg"))]
+    if args.limit_per_tier:
+        counts = collections.Counter(); selected = []
+        for name in names:
+            with Image.open(os.path.join(args.corpus, "lr", name)) as im: tier = im.size
+            if counts[tier] < args.limit_per_tier: selected.append(name); counts[tier] += 1
+        names = selected
+    if not names: raise SystemExit("Empty evaluation corpus")
+    def digest(path):
+        h = hashlib.sha256()
+        with open(path, "rb") as f:
+            for block in iter(lambda: f.read(1024 * 1024), b""): h.update(block)
+        return h.hexdigest()
+    manifest = {name: {side: digest(os.path.join(args.corpus, side, name)) for side in ("lr", "hr")} for name in names}
     _, available = bank_frames(args.corpus)
     history = f", {len(available)} history frame(s)" if available else ", no history"
     print(f"{len(names)} pairs from {args.corpus}, on {device}{history}\n")
@@ -157,7 +150,7 @@ def main():
     # The anchor first: whatever a model scores only means something relative to
     # doing nothing clever.
     rows = collections.defaultdict(lambda: collections.defaultdict(list))
-    for name in names:
+    for name in ([] if args.no_anchor else names):
         lr = Image.open(os.path.join(args.corpus, "lr", name)).convert("RGB")
         hr = Image.open(os.path.join(args.corpus, "hr", name)).convert("RGB")
         tier = f"{lr.width}x{lr.height}"
@@ -177,15 +170,17 @@ def main():
 
     for path in args.checkpoints:
         if not os.path.exists(path):
-            print(f"missing: {path}"); continue
+            raise SystemExit(f"missing: {path}")
         model, step, frames = load(path, device)
         label = labels[path]
+        print(f"Evaluating {label}@{step}", flush=True)
         with torch.no_grad():
-            for name in names:
+            for index, name in enumerate(names):
                 hr = Image.open(os.path.join(args.corpus, "hr", name)).convert("RGB")
                 x, lr = stack_input(args.corpus, name, frames, available)
                 y = model(x.to(device)).clamp(0, 1)[0].permute(1, 2, 0).cpu().numpy()
                 out = Image.fromarray((y * 255).round().astype(np.uint8))
+                if index % 20 == 0: print(f"  {index + 1}/{len(names)}", flush=True)
                 rows[f"{label}@{step}"][f"{lr.width}x{lr.height}"].append(score(out, hr, device))
 
     tiers = sorted({t for v in rows.values() for t in v},
@@ -207,6 +202,20 @@ def main():
         print(f"{label:26s} {'ALL':10s} {m[0]:8.4f} {m[1]:8.4f} {m[2]:8.1f} "
               f"{m[3]:7.2f} {m[4]:7.4f} {m[5]:7.2f}\n")
 
+    if args.report:
+        metrics = ["lpips", "dists", "brisque", "detail_energy", "fine_correlation", "psnr_y"]
+        def clean(x):
+            if isinstance(x, dict): return {k: clean(v) for k, v in x.items()}
+            if isinstance(x, (tuple, list)): return [clean(v) for v in x]
+            if isinstance(x, (float, np.floating)): return float(x) if np.isfinite(x) else None
+            return x
+        report = {"schema": 1, "torch": str(torch.__version__), "device": str(device),
+            "subset": bool(args.limit_per_tier), "corpus": manifest,
+            "checkpoints": {path: digest(path) for path in args.checkpoints},
+            "metric_names": metrics, "rows": rows}
+        from pathlib import Path
+        Path(args.report).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.report).write_text(json.dumps(clean(report), indent=2) + "\n")
 
 if __name__ == "__main__":
     main()

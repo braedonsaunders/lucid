@@ -228,17 +228,10 @@ final class TiledVideoToolboxUpscaler {
         for (key, value) in defaults where CVBufferCopyAttachment(buffer, key, nil) == nil {
             CVBufferSetAttachment(buffer, key, value, .shouldPropagate)
         }
-        // Siting is a control, not a default. Fill-if-missing made the toggle
-        // inert: AVAssetReader and recycled pool buffers already carry a
-        // chroma location. Always write these two. That is not enough on its
-        // own — VT samples 4:2:0 from the source, so LearnedUpscaler tags the
-        // source before the 420→RGB convert. Tagging only this buffer after
-        // the transfer leaves the attachment correct and the pixels wrong.
-        let siting = chromaSitingLeft
-            ? kCVImageBufferChromaLocation_Left
-            : kCVImageBufferChromaLocation_Center
-        CVBufferSetAttachment(buffer, kCVImageBufferChromaLocationTopFieldKey, siting, .shouldPropagate)
-        CVBufferSetAttachment(buffer, kCVImageBufferChromaLocationBottomFieldKey, siting, .shouldPropagate)
+        for key in [kCVImageBufferChromaLocationTopFieldKey, kCVImageBufferChromaLocationBottomFieldKey]
+        where CVBufferCopyAttachment(buffer, key, nil) == nil {
+            CVBufferSetAttachment(buffer, key, kCVImageBufferChromaLocation_Left, .shouldPropagate)
+        }
     }
 
     /// Tag plus, when the flag is centre, a real chroma resample.
@@ -253,9 +246,13 @@ final class TiledVideoToolboxUpscaler {
     /// shifts chroma half a luma pixel (0.25 of a chroma texel), which is
     /// the whole difference the control is supposed to be.
     static func prepareSource(_ source: CVPixelBuffer) -> CVPixelBuffer {
-        let prepared = writableCopy(source) ?? source
-        ensureColorDescription(prepared)
-        if !chromaSitingLeft { shiftChromaToCenter(prepared) }
+        ensureColorDescription(source)
+        guard !chromaSitingLeft else { return source }
+        guard let prepared = writableCopy(source) else { return source }
+        shiftChromaToCenter(prepared)
+        for key in [kCVImageBufferChromaLocationTopFieldKey, kCVImageBufferChromaLocationBottomFieldKey] {
+            CVBufferSetAttachment(prepared, key, kCVImageBufferChromaLocation_Center, .shouldPropagate)
+        }
         return prepared
     }
 
@@ -310,7 +307,7 @@ final class TiledVideoToolboxUpscaler {
     /// 0.5 luma pixel = 0.25 of a 4:2:0 chroma texel.
     private static func shiftChromaToCenter(_ buffer: CVPixelBuffer) {
         let planes = CVPixelBufferGetPlaneCount(buffer)
-        guard planes >= 2 else { return }
+        guard planes == 2 else { return }
         CVPixelBufferLockBaseAddress(buffer, [])
         defer { CVPixelBufferUnlockBaseAddress(buffer, []) }
         guard let base = CVPixelBufferGetBaseAddressOfPlane(buffer, 1) else { return }
@@ -322,7 +319,7 @@ final class TiledVideoToolboxUpscaler {
         var scratch = [UInt8](repeating: 0, count: stride * height)
         scratch.withUnsafeMutableBufferPointer { dst in
             for y in 0..<height {
-                let fy = min(Float(height - 1), Float(y) + 0.25)
+                let fy = min(Float(height - 1), Float(y))
                 let y0 = Int(fy)
                 let y1 = min(height - 1, y0 + 1)
                 let wy = fy - Float(y0)

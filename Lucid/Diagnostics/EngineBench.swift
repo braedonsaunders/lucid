@@ -125,30 +125,7 @@ enum EngineBench {
         // samples chroma from the source, so ensureColorDescription must
         // overwrite siting on that buffer before the 420→RGB convert.
         TiledVideoToolboxUpscaler.chromaSitingLeft = t.stageSiting > 0.5
-        let detail = try DetailEnhancer(device: compositor.device, settings: DetailSettings(
-            sharpness: t.sharpness, fine: t.fine,
-            micro: t.micro, lobeScale: t.lobeScale, mid: t.mid,
-            flatThreshold: 0.004, edgeThreshold: 0.030, deblock: t.deblock,
-            sourceDeblock: t.sourceDeblock, sourceDeblockRadius: 1.6, presharpen: t.presharpen, adaptive: t.adaptive,
-            temporal: t.temporal, motionLow: 0.02, motionHigh: 0.08,
-            radius: ProcessInfo.processInfo.environment["LUCID_RADIUS"].flatMap(Int.init) ?? 4,
-            blackPoint: t.blackPoint, whitePoint: t.whitePoint,
-            contrast: t.contrast, saturation: t.saturation,
-            stageLoopFilter: t.stageLoopFilter > 0.5,
-            stageCdef: t.stageCdef > 0.5,
-            stageDeband: t.stageDeband > 0.5,
-            stageTaa: t.stageTaa > 0.5,
-            stageOklab: t.stageOklab > 0.5,
-            loopFilterQuant: t.loopFilterQuant,
-            cdefPrimary: t.cdefPrimary,
-            cdefSecondary: t.cdefSecondary,
-            debandThreshold: t.debandThreshold,
-            grain: t.grain,
-            grainPhase: t.grainPhase,
-            taaGamma: t.taaGamma,
-            taaFeedback: t.taaFeedback,
-            skinProtect: t.skinProtect
-        ))
+        let detail = try DetailEnhancer(device: compositor.device, settings: t.detailSettings(radius: ProcessInfo.processInfo.environment["LUCID_RADIUS"].flatMap(Int.init) ?? 4))
         var detailTimes: [Double] = []
         var lowLatencyTimes: [Double] = []
         var temporalTimes: [Double] = []
@@ -204,13 +181,13 @@ enum EngineBench {
 
             let pts = CMTime(value: CMTimeValue(index), timescale: 30)
 
-            let cleaned = try detail.preprocess(frame)
+            let cleaned = try detail.preprocess(frame, timestamp: CMSampleBufferGetPresentationTimeStamp(sample))
             let startLowLatency = ContinuousClock.now
             let lowLatencyOutput: CVPixelBuffer
             if useLearned {
                 if learned == nil {
                     learned = try LearnedUpscaler(width: width, height: height)
-                    print("bench upscaler: SPAN 4× on the Neural Engine, \(width)x\(height)")
+                    print("bench upscaler: SPAN 4× on \(LearnedUpscaler.computeUnitsLabel), \(width)x\(height)")
                 }
                 lowLatencyOutput = try learned!.upscale(cleaned)
             } else {

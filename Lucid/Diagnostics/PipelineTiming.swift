@@ -55,29 +55,7 @@ enum PipelineTiming {
         let compositor = try MetalTileCompositor()
         let t = EnhancementSession.Tuning.load()
         TiledVideoToolboxUpscaler.chromaSitingLeft = t.stageSiting > 0.5
-        let detail = try DetailEnhancer(device: compositor.device, settings: DetailSettings(
-            sharpness: t.sharpness, fine: t.fine,
-            micro: t.micro, lobeScale: t.lobeScale, mid: t.mid,
-            flatThreshold: 0.004, edgeThreshold: 0.030, deblock: t.deblock,
-            sourceDeblock: t.sourceDeblock, sourceDeblockRadius: 1.6, presharpen: t.presharpen, adaptive: t.adaptive,
-            temporal: t.temporal, motionLow: 0.02, motionHigh: 0.08,
-            radius: 4,
-            blackPoint: t.blackPoint, whitePoint: t.whitePoint,
-            contrast: t.contrast, saturation: t.saturation,
-            stageLoopFilter: t.stageLoopFilter > 0.5,
-            stageCdef: t.stageCdef > 0.5,
-            stageDeband: t.stageDeband > 0.5,
-            stageTaa: t.stageTaa > 0.5,
-            stageOklab: t.stageOklab > 0.5,
-            loopFilterQuant: t.loopFilterQuant,
-            cdefPrimary: t.cdefPrimary,
-            cdefSecondary: t.cdefSecondary,
-            debandThreshold: t.debandThreshold,
-            grain: t.grain,
-            taaGamma: t.taaGamma,
-            taaFeedback: t.taaFeedback,
-            skinProtect: t.skinProtect
-        ))
+        let detail = try DetailEnhancer(device: compositor.device, settings: t.detailSettings(radius: 4))
 
         var learned: LearnedUpscaler?
         var preprocess: [Double] = []
@@ -106,7 +84,7 @@ enum PipelineTiming {
             }
             let started = ContinuousClock.now
             let t0 = ContinuousClock.now
-            let cleaned = try detail.preprocess(frame)
+            let cleaned = try detail.preprocess(frame, timestamp: CMSampleBufferGetPresentationTimeStamp(sample))
             let t1 = ContinuousClock.now
             let reconstructed = try learned!.upscale(cleaned)
             let t2 = ContinuousClock.now

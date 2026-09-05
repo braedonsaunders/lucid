@@ -29,8 +29,10 @@ final class EnhancedFrameSender: @unchecked Sendable {
     /// Physical width of the video box, from the page. Frames within
     /// `sendWholeFactor` of this are sent at reconstructed size; only a
     /// much larger frame is scaled down to the box.
-    var maximumWidth = 1280 {
-        didSet { if maximumWidth != oldValue { lock.lock(); pool = nil; lock.unlock() } }
+    private var boxWidth = 1280
+    var maximumWidth: Int {
+        get { lock.lock(); defer { lock.unlock() }; return boxWidth }
+        set { lock.lock(); defer { lock.unlock() }; if boxWidth != newValue { pool = nil }; boxWidth = newValue }
     }
 
     private let lock = NSLock()
@@ -57,14 +59,14 @@ final class EnhancedFrameSender: @unchecked Sendable {
     }
 
     /// Packs NV12 at the on-screen size. Returns nil when nothing needs sending.
-    func packet(for buffer: CVPixelBuffer, sequence: Int, session: String) -> Data? {
+    func packet(for buffer: CVPixelBuffer, sequence: Int, session: String, sourceTimestamp: Double = 0, captureTime: Double = 0) -> Data? {
         lock.lock(); defer { lock.unlock() }
 
         let sourceWidth = CVPixelBufferGetWidth(buffer)
         let sourceHeight = CVPixelBufferGetHeight(buffer)
         guard sourceWidth > 0, sourceHeight > 0 else { return nil }
         let (width, height) = Self.sendSize(
-            sourceWidth: sourceWidth, sourceHeight: sourceHeight, boxWidth: maximumWidth
+            sourceWidth: sourceWidth, sourceHeight: sourceHeight, boxWidth: boxWidth
         )
 
         let nv12: CVPixelBuffer
@@ -99,8 +101,15 @@ final class EnhancedFrameSender: @unchecked Sendable {
         }
 
         guard let packed = Self.tightNV12(nv12, width: width, height: height, into: &scratch) else { return nil }
-        let header = #"{"session":"\#(session)","w":\#(width),"h":\#(height),"seq":\#(sequence),"format":"NV12"}"#
-        let headerBytes = Array(header.utf8)
+        struct Header: Encodable {
+            let session: String
+            let w: Int, h: Int, seq: Int
+            let ts: Double, captureTime: Double
+            let format = "NV12"
+            let colorSpace = VideoColorInfo.rec709
+        }
+        guard let headerBytes = try? JSONEncoder().encode(Header(session: session, w: width, h: height,
+            seq: sequence, ts: sourceTimestamp, captureTime: captureTime)) else { return nil }
         var packet = Data(capacity: 8 + headerBytes.count + packed)
         withUnsafeBytes(of: UInt32(0x4c554345).bigEndian) { packet.append(contentsOf: $0) }  // 'LUCE'
         withUnsafeBytes(of: UInt32(headerBytes.count).bigEndian) { packet.append(contentsOf: $0) }

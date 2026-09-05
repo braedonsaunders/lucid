@@ -3,12 +3,10 @@
 
 Two things make this worth doing rather than fine-tuning a stock checkpoint.
 
-The architecture has no pretrained weights. Every published efficient-SR model
-runs its trunk at the input resolution; measured on an M4 Pro's Neural Engine
-that trunk is activation-bandwidth bound, so the cost is `channels x LR_area`
-and the way to make it cheap is fewer pixels, not fewer channels. Folding a 2x2
-block into the channel dimension first and letting the head do x8 takes 640x360
-from 27.9 ms to 12.6 ms at slightly more capacity. Nobody ships weights for that.
+Lucid folds 2x2 source pixels into channels before its SPAN trunk. This
+reduces the trunk's activation area and has measured faster on Apple silicon
+than the corresponding full-resolution trunk. It is an engineering adaptation,
+not a claim that pixel unshuffle or efficient restoration is a new invention.
 
 And the degradation is the whole point. Stock checkpoints are trained on bicubic
 downsampling, which is not what a 240 kbps VP9 stream does to a picture. That
@@ -30,23 +28,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 # coremltools at module scope, which is an Apple-only dependency and has no place
 # on a training box - training runs wherever it is fastest, and conversion only
 # ever happens on the Mac.
-def _load_span():
-    import importlib.util, types
-    root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Model", "SPAN")
-    registry = types.ModuleType("basicsr.utils.registry")
-    registry.ARCH_REGISTRY = type("R", (), {"register": staticmethod(lambda *a, **k: (lambda c: c))})()
-    for name, module in (("basicsr", types.ModuleType("basicsr")),
-                         ("basicsr.utils", types.ModuleType("basicsr.utils")),
-                         ("basicsr.utils.registry", registry)):
-        sys.modules.setdefault(name, module)
-    spec = importlib.util.spec_from_file_location(
-        "span_arch", os.path.join(root, "basicsr", "archs", "span_arch.py"))
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module.SPAN
+from architectures.span_arch import SPAN
 
-
-SPAN = _load_span()
 
 LR_PATCH = 64          # even, so the 2x unshuffle is exact
 SCALE = 4
@@ -93,19 +76,10 @@ class Unshuffled(nn.Module):
 
 
 def spanv2_attention(core, channels):
-    """Turns SPAN's blocks into SPANV2's.
+    """Experimental learned sigmoid attention, inspired by SPANV2.
 
-    SPAN's attention is `sigmoid(out3) - 0.5` - genuinely parameter-free, which
-    is what the P in the name stands for. SPANV2, which won NTIRE 2026, replaces
-    exactly that with a learned 1x1 projection: full channel mixing for C^2
-    parameters per block, so 1024 on a 32-channel block and about 5K across the
-    five of them. The thing SPAN was named for is the thing its successor
-    removed, and it came out both smaller and faster: 0.139M against 0.151M
-    parameters and 5.256 ms against 7.65 ms.
-
-    Done by rebinding rather than by editing the vendored architecture, so the
-    upstream checkout stays exactly as published and a v1 checkpoint still
-    loads into a v1 model.
+    This preserves the six-block SPAN topology and sigmoid for checkpoint
+    compatibility. It is not the published five-block, linear-attention SPANV2.
     """
     def forward(self, x):
         out1 = self.c1_r(x)
@@ -389,6 +363,7 @@ def fine_band_correlation(a, b):
 # ---- training ---------------------------------------------------------------
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"): sys.stdout.reconfigure(encoding="utf-8", errors="backslashreplace")
     parser = argparse.ArgumentParser()
     parser.add_argument("--corpus", default=".build/corpus4")
     parser.add_argument("--bank-dir", default=".build/bank")
@@ -398,7 +373,7 @@ def main():
                         help="reject pairs whose HR and LR are not the same frame")
     parser.add_argument("--channels", type=int, default=32)
     parser.add_argument("--version", type=int, default=1, choices=(1, 2),
-                        help="2 uses SPANV2's learned attention (NTIRE 2026 winner)")
+                        help="2 uses experimental learned sigmoid attention (not published SPANV2)")
     parser.add_argument("--fft", type=float, default=0.0,
                         help="weight on the frequency-domain loss; 0.05 is what "
                              "the NTIRE 2026 winner used")
@@ -418,16 +393,23 @@ def main():
     parser.add_argument("--init", default="",
                         help="start from these weights but at step 0, with a "
                              "fresh optimiser - a fine-tune, not a resume")
+    parser.add_argument("--motion-temporal", action="store_true", help="align temporal supervision and reject occlusions")
+    parser.add_argument("--seed", type=int, default=20260904)
     args = parser.parse_args()
+    random.seed(args.seed); np.random.seed(args.seed); torch.manual_seed(args.seed)
+    if torch.cuda.is_available(): torch.cuda.manual_seed_all(args.seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
 
     if args.bank:
         build_bank(args.corpus, args.bank_dir, args.per_pair,
-                   min_correlation=args.min_correlation)
+                   min_correlation=args.min_correlation, seed=args.seed)
         return
 
     lr_bank, hr_bank, frames = load_bank(args.bank_dir)
     count = len(lr_bank)
     # A held-out tail, taken by index so the same patches are never trained on.
+    if count <= 256: raise SystemExit("Patch bank needs more than 256 entries for train/validation separation")
     validation = max(256, count // 40)
     train_count = count - validation
     print(f"{train_count} training patches, {validation} held out")
@@ -442,8 +424,10 @@ def main():
     # the same fine-tune, the same data, the same number of extra steps, without
     # the term being tested. Without it a change cannot be attributed.
     input_frames = args.input_frames or (1 if args.temporal > 0 else frames)
-    suffix = ("tc" if args.temporal > 0 else "t" if input_frames > 1 else "")
+    suffix = ("mtc" if args.temporal > 0 and args.motion_temporal else "tc" if args.temporal > 0 else "t" if input_frames > 1 else "")
 
+    from motion_loss import aligned_temporal_loss
+    consistency_loss = aligned_temporal_loss if args.motion_temporal else temporal_loss
     device = pick_device(args.device)
     model = Unshuffled(args.channels, frames=input_frames, version=args.version).to(device)
     parameters = sum(p.numel() for p in model.parameters())
@@ -461,7 +445,7 @@ def main():
     schedule = torch.optim.lr_scheduler.CosineAnnealingLR(optimiser, T_max=args.steps, eta_min=args.lr / 100)
     start = 0
     if args.resume and os.path.exists(args.resume):
-        state = torch.load(args.resume, map_location=device)
+        state = torch.load(args.resume, map_location=device, weights_only=False)
         model.load_state_dict(state["model"]); optimiser.load_state_dict(state["optimiser"])
         schedule.load_state_dict(state["schedule"]); start = state["step"]
         print(f"resumed from {args.resume} at step {start}")
@@ -471,7 +455,14 @@ def main():
         print(f"fine-tuning from {args.init} (step {state.get('step', '?')}) at a fresh step 0")
 
     os.makedirs(args.out, exist_ok=True)
-    rng = np.random.default_rng(0)
+    rng = np.random.default_rng(args.seed)
+    if args.resume and "rng" in state:
+        saved_rng = state["rng"]
+        rng.bit_generator.state = saved_rng["numpy_generator"]
+        random.setstate(saved_rng["python"])
+        torch.set_rng_state(saved_rng["torch"].cpu())
+        if device.type == "cuda" and saved_rng.get("cuda"):
+            torch.cuda.set_rng_state_all([s.cpu() for s in saved_rng["cuda"]])
 
     def batch(indices):
         lr = torch.from_numpy(np.ascontiguousarray(lr_bank[indices])).to(device)
@@ -502,7 +493,7 @@ def main():
             loss = loss + args.fft * fft_loss(output, hr)
         if args.temporal > 0:
             previous = lr[:, -6:-3]
-            loss = loss + args.temporal * temporal_loss(output, model(previous),
+            loss = loss + args.temporal * consistency_loss(output, model(previous),
                                                         current, previous)
         optimiser.zero_grad(set_to_none=True)
         loss.backward()
@@ -539,7 +530,11 @@ def main():
             torch.save({"model": model.state_dict(), "optimiser": optimiser.state_dict(),
                         "schedule": schedule.state_dict(), "step": step + 1,
                         "channels": args.channels, "frames": input_frames,
-                        "version": args.version},
+                        "version": args.version, "arguments": vars(args),
+                        "environment": {"torch": str(torch.__version__), "device": str(device)},
+                        "rng": {"numpy_generator": rng.bit_generator.state,
+                                "python": random.getstate(), "torch": torch.get_rng_state(),
+                                "cuda": torch.cuda.get_rng_state_all() if device.type == "cuda" else []}},
                        os.path.join(args.out,
                                     f"span_ch{args.channels}u{suffix}"
                                     f"{'v2' if args.version == 2 else ''}.pth"))

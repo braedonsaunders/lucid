@@ -19,25 +19,8 @@ import importlib.util
 import torch
 import coremltools as ct
 
-def load_arch():
-    """Loads span_arch.py on its own. Importing it through the basicsr package
-    pulls in the whole training stack - OpenCV and the rest - for a file that
-    only needs torch. The one package symbol it wants is a registry decorator,
-    so a no-op stands in for it."""
-    root = os.path.join(os.path.dirname(__file__), "..", "Model", "SPAN")
-    registry = type(sys)("basicsr.utils.registry")
-    registry.ARCH_REGISTRY = type("R", (), {"register": staticmethod(lambda *a, **k: (lambda c: c))})()
-    for name, module in (("basicsr", type(sys)("basicsr")),
-                         ("basicsr.utils", type(sys)("basicsr.utils")),
-                         ("basicsr.utils.registry", registry)):
-        sys.modules.setdefault(name, module)
-    spec = importlib.util.spec_from_file_location(
-        "span_arch", os.path.join(root, "basicsr", "archs", "span_arch.py"))
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module.SPAN
+from architectures.span_arch import SPAN
 
-SPAN = load_arch()
 
 # The sizes a browser video actually arrives at, and whether the parameter cost
 # fits the 8 ms budget there (measured 3.5 TMAC/s on this M4 Pro).

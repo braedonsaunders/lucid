@@ -28,6 +28,7 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
     private let appState: AppState
     /// One menu per host. An NSMenu cannot be attached in two places at once.
     private var menus: [NSMenu] = []
+    var onCompare: ((Bool) -> Void)?
     var onToggleEnabled: ((Bool) -> Void)?
     var onOpenTestPage: (() -> Void)?
     var onStrengthChanged: ((EnhancementSession.Tuning.Strength) -> Void)?
@@ -73,6 +74,7 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
         panel.onTuningChange = { [weak self] tuning in
             self?.onTuningChanged?(tuning)
         }
+        panel.onCompare = { [weak self] original in self?.onCompare?(original) }
         panel.onOpenLab = { [weak self] in self?.onOpenTestPage?() }
         panel.onReset = { [weak self] in
             guard let self else { return }
@@ -140,6 +142,7 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
         panel.strength = strength
         panel.status = appState.statusLine
         panel.stats = appState.statsLine
+        panel.connected = !appState.connectedBrowsers.isEmpty
         panel.enhancing = appState.isEnhancing
         panel.tuning = EnhancementSession.tuning
     }
@@ -216,7 +219,8 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
         if popover?.isShown == true {
             panel.status = appState.statusLine
             panel.stats = appState.statsLine
-            panel.enhancing = appState.isEnhancing
+            panel.connected = !appState.connectedBrowsers.isEmpty
+        panel.enhancing = appState.isEnhancing
             panel.enabled = appState.enabled
         }
         statusItem?.button?.appearsDisabled = !appState.enabled

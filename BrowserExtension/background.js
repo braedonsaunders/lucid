@@ -6,7 +6,7 @@
 // most large sites set a Content-Security-Policy that forbids connecting to
 // ws://127.0.0.1 and that policy binds the content script too. The worker is
 // governed by the extension's own policy, so it can always reach the app.
-importScripts('bridge-auth.js');
+if (typeof importScripts === 'function') importScripts('bridge-auth.js');
 
 const runtime = (globalThis.browser && browser.runtime) ? browser.runtime : chrome.runtime;
 const BRIDGE_URL = 'ws://127.0.0.1:47811';
@@ -14,6 +14,7 @@ const BRIDGE_URL = 'ws://127.0.0.1:47811';
 let socket = null;
 let connecting = false;
 let bridgeReady = false;
+let lastStatus = null;
 let backoff = 1000;
 const pending = [];
 const portSessions = new Map();
@@ -60,15 +61,16 @@ async function connect() {
   };
   socket.onmessage = (event) => {
     if (!(event.data instanceof ArrayBuffer)) {
-      // Text from the app is a nudge or a status; every port wants it.
+      let message; try { message = JSON.parse(event.data); } catch { return; }
+      if (message.type === 'status') lastStatus = message;
+      // Small status and credit acknowledgments travel through runtime ports.
       for (const port of portSessions.keys()) {
-        try { port.postMessage(JSON.parse(event.data)); } catch (e) {}
+        try { port.postMessage(message); } catch (e) {}
       }
       return;
     }
-    // Enhanced frames are megabytes each. Base64 through a JSON port at frame
-    // rate is not affordable, so on sites that force us through the worker the
-    // app draws with its own overlay window instead and we simply drop these.
+    // Enhanced frames go directly to the authenticated surface iframe.
+    // This worker carries input frames and small control messages only.
   };
   socket.onclose = () => {
     connecting = false;
@@ -97,17 +99,27 @@ function deliver(message) {
 runtime.onConnect.addListener((port) => {
   if (port.name !== 'lucid') return;
   portSessions.set(port, new Set());
+  const version = /(?:Chrome|Edg)\/(\d+)/.exec(navigator.userAgent);
+  const binary = !version || Number(version[1]) >= 148;
+  port.postMessage({ type: 'transport', binary });
+  if (lastStatus) port.postMessage(lastStatus);
   port.onMessage.addListener((message) => {
     if (!message) return;
-    if (message.t === 'b64' && typeof message.b === 'string') {
-      // A decoded video frame, base64 because runtime ports are JSON only.
+    if (message.t === 'frame' || (message.t === 'b64' && typeof message.b === 'string')) {
+      // Typed-array input on modern browsers; base64 on older JSON ports.
       // Dropping it when the socket is down is right: a stale frame is worth
       // nothing and queueing them costs memory.
       if (socket && socket.readyState === 1 && bridgeReady) {
-        const binary = atob(message.b);
-        const bytes = new Uint8Array(binary.length);
-        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-        socket.send(bytes.buffer);
+        if (socket.bufferedAmount > (2 << 20)) return;
+        if (!lastStatus?.enabled || lastStatus.activeSession !== message.session) return;
+        if (message.t === 'frame') {
+          if (message.bytes instanceof Uint8Array) socket.send(message.bytes);
+        } else {
+          const binary = atob(message.b);
+          const bytes = new Uint8Array(binary.length);
+          for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+          socket.send(bytes);
+        }
       } else { connect(); }
       return;
     }

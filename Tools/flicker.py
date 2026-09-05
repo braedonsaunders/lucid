@@ -37,7 +37,7 @@ import numpy as np
 from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-APP = os.path.join(ROOT, ".build/release/Build/Products/Release/Lucid.app/Contents/MacOS/Lucid")
+APP = os.environ.get("LUCID_APP", os.path.join(ROOT, ".build/release/Build/Products/Release/Lucid.app/Contents/MacOS/Lucid"))
 
 # Pixels the reference moves by less than this between frames are treated as
 # static. In 0-255 luma: below roughly one level is sensor and codec noise in the

@@ -53,6 +53,8 @@ struct SessionPolicyTests {
     }
 
     @Test @MainActor func enhanceableRejectsWrongSizesAndStates() {
+        var hdr = report(); hdr.unsupportedReason = "HDR video stays with the browser"
+        #expect(!AppCoordinator.isEnhanceable(hdr))
         #expect(AppCoordinator.isEnhanceable(report(iw: 100, ih: 56)) == false)   // below 128x72
         // The ceiling is the learned upscaler's table, not a round number: it is
         // wherever a variant stops fitting the frame budget, and it moves when

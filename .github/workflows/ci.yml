@@ -21,6 +21,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install zsh
         run: sudo apt-get update && sudo apt-get install -y zsh
+      - name: Browser transport and companion parity
+        run: |
+          node --test Tools/stream-policy.test.js
+          python3 Tools/sync_safari.py --check
+          python3 -m unittest discover -s Tools -p 'test_*.py'
       - name: Check ladder
         run: zsh Tools/check-ladder.sh
 
@@ -54,11 +59,8 @@ jobs:
           sw_vers
           xcodebuild -version
 
-      # LucidTests is pure geometry, policy and layout arithmetic: no capture,
-      # no Metal, no VideoToolbox, so it runs on a hosted runner with no
-      # permissions and no GPU. LucidUITests is deliberately not run - it only
-      # asserts that the app launches without a window, needs a real session,
-      # and would be a flake generator here.
+      # Frame integrity includes real Metal/Core ML tests. A physical Apple
+      # silicon runner is required for those; hosted VMs run the pure tests.
       - name: Unit tests
         run: |
           xcodebuild \
@@ -66,7 +68,7 @@ jobs:
             -scheme Lucid \
             -configuration Debug \
             -derivedDataPath "$RUNNER_TEMP/DerivedData" \
-            test -only-testing:LucidTests \
+            test -only-testing:LucidTests -skip-testing:LucidTests/MetalFrameIntegrityTests \
             CODE_SIGNING_ALLOWED=NO \
             SDK_STAT_CACHE_ENABLE=NO \
             COMPILATION_CACHE_ENABLE_CACHING=NO

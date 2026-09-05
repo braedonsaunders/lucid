@@ -25,17 +25,19 @@ it, and every stage that synthesised texture was scored as loss.
 
   .venv-convert/bin/python Tools/ablate.py --clip sintel-scene-360p-300k.mp4
 """
+from reference_pairs import resolve_reference
 import argparse, hashlib, json, os, re, shutil, subprocess, sys, tempfile, time
 
 import numpy as np
 from PIL import Image, ImageFilter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-APP = os.path.join(ROOT, ".build/release/Build/Products/Release/Lucid.app/Contents/MacOS/Lucid")
+APP = os.environ.get("LUCID_APP", os.path.join(ROOT, ".build/release/Build/Products/Release/Lucid.app/Contents/MacOS/Lucid"))
 
 # Every stage, with the value that turns it on and the default it ships with.
 # `None` for a continuous control means "use whatever tuning.json says".
 STAGES = [
+    ("stageMotion", "motion-aligned temporal history", 1.0),
     ("stageLoopFilter", "deblock (H.264 loop filter)", 0.0),
     ("stageCdef",       "CDEF directional filter",     0.0),
     ("stageDeband",     "deband + grain",              0.0),
@@ -207,21 +209,10 @@ def main():
     # A soft reference rewards softness, so every setting measured against one
     # is biased toward doing less. Both bad pairs are refused rather than
     # quietly scored.
-    known = {"crowdrun-360p-350k.mp4": "crowdrun-1080p.mp4",
-             "dinner-360p-350k.mp4": "dinner-1080p.mp4"}
-    refused = {"bbb-360p-350k.mp4", "bbb-360p-900k.mp4", "low-bitrate-test.mp4"}
-    if os.path.basename(clip) in refused and not args.reference:
-        raise SystemExit(
-            f"{os.path.basename(clip)} has no valid reference on this machine - its "
-            "1080p counterpart carries less fine detail than the 360p input, so any "
-            "score against it is biased toward softness. Use crowdrun-360p-350k.mp4 "
-            "or dinner-360p-350k.mp4, both built from clean 4K masters.")
-    reference = args.reference or os.path.join(
-        ROOT, "TestSite", known.get(os.path.basename(clip), ""))
-    if not os.path.exists(clip):
-        raise SystemExit(f"no clip at {clip}")
-    if not os.path.exists(reference):
-        raise SystemExit(f"no reference at {reference}")
+    try:
+        reference = resolve_reference(clip, args.reference)
+    except ValueError as error:
+        raise SystemExit(str(error))
 
     with open(args.tuning) as fh:
         base = json.load(fh)

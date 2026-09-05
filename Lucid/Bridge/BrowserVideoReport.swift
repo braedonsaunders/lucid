@@ -62,6 +62,7 @@ struct BrowserVideoReport: Codable, Sendable, Equatable {
     var video: Video?
     /// True while the page is scrolling, resizing, or the video box is animating.
     /// True when the page is streaming decoded frames over the bridge.
+    var unsupportedReason: String? = nil
     var frames: Bool?
     /// True when the page is drawing the enhanced frames itself.
     var draws: Bool?

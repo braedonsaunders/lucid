@@ -19,6 +19,10 @@ final class ControlPanelModel {
     var status: String = ""
     var stats: String = ""
     var enhancing: Bool = false
+    var comparing = false
+    var connected = false
+    var onCompare: ((Bool) -> Void)?
+    func compare(_ original: Bool) { comparing = original; onCompare?(original) }
 
     /// Applied on every change, so a slider moves the picture as it is dragged.
     var onTuningChange: ((EnhancementSession.Tuning) -> Void)?
@@ -47,66 +51,108 @@ final class ControlPanelModel {
 
 struct ControlPanel: View {
     @Bindable var model: ControlPanelModel
-    @State private var showAdjustments = true
+    @State private var showAdjustments = false
     @State private var showStages = false
 
+    private let accent = Color(red: 0.28, green: 0.86, blue: 0.75)
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             header
-            Divider()
             ScrollView {
-                VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: 18) {
+                    activity
                     quality
-                    section("Adjustments", isOpen: $showAdjustments) { adjustments }
-                    section("Stages", isOpen: $showStages) { stages }
-                }
-                .padding(14)
-            }
-            .frame(maxHeight: 430)
-            Divider()
+                    compareControl
+                    if !model.connected { connectionHelp }
+                    section("Picture adjustments", isOpen: $showAdjustments) { adjustments }
+                    if AppCoordinator.debugLogging { section("Developer controls", isOpen: $showStages) { stages } }
+                }.padding(20)
+            }.frame(maxHeight: 470)
+            Divider().opacity(0.35)
             footer
         }
-        .frame(width: 320)
+        .frame(width: 360)
+        .background(.regularMaterial)
+        .tint(accent)
+        .onDisappear { model.compare(false) }
     }
 
-    // MARK: - Header
-
     private var header: some View {
-        HStack(spacing: 10) {
-            ZStack {
-                Circle()
-                    .strokeBorder(Color.primary.opacity(0.35), lineWidth: 1.6)
-                    .frame(width: 22, height: 22)
-                Circle()
-                    .fill(model.enhancing ? Color.accentColor : Color.secondary.opacity(0.45))
-                    .frame(width: 7, height: 7)
+        HStack(spacing: 13) {
+            Image(systemName: "camera.aperture")
+                .font(.system(size: 32, weight: .ultraLight))
+                .foregroundStyle(accent)
+                .symbolEffect(.pulse, options: .repeating, isActive: model.enhancing)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Lucid").font(.system(size: 24, weight: .semibold, design: .rounded))
+                Text("A clearer kind of watching.")
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
             }
-            VStack(alignment: .leading, spacing: 1) {
-                HStack(alignment: .firstTextBaseline, spacing: 5) {
-                    Text("Lucid").font(.system(size: 13, weight: .semibold))
-                    // The build, next to the name. This app gets replaced
-                    // several times an hour during tuning and "am I looking at
-                    // the version I just installed" should not need Get Info.
-                    Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")
-                        .font(.system(size: 10, weight: .regular).monospacedDigit())
-                        .foregroundStyle(.tertiary)
-                }
-                Text(model.status.isEmpty ? "Idle" : model.status)
-                    .font(.system(size: 10.5))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-            }
-            Spacer(minLength: 6)
-            Toggle("", isOn: Binding(
+            Spacer()
+            Toggle("Enhance browser video", isOn: Binding(
                 get: { model.enabled },
                 set: { model.enabled = $0; model.onEnabledChange?($0) }
-            ))
-            .toggleStyle(.switch)
-            .labelsHidden()
+            )).toggleStyle(.switch).labelsHidden()
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 11)
+        .padding(20)
+        .background(LinearGradient(colors: [accent.opacity(0.12), .clear], startPoint: .topLeading, endPoint: .bottomTrailing))
+    }
+
+    private var activity: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            HStack(spacing: 6) {
+                Circle().fill(model.enhancing ? accent : Color.secondary).frame(width: 5, height: 5)
+                Text(model.enhancing ? "ENHANCING LIVE" : model.enabled ? "READY WHEN YOU ARE" : "PAUSED")
+                    .font(.system(size: 9, weight: .semibold)).tracking(1.5)
+                    .foregroundStyle(model.enhancing ? accent : Color.secondary)
+            }
+            Text(model.status.isEmpty ? "Play a browser video to begin" : model.status)
+                .font(.system(size: 13, weight: .medium)).lineLimit(2)
+            if !model.stats.isEmpty {
+                Text(model.stats).font(.system(size: 10, design: .monospaced))
+                    .foregroundStyle(.secondary).lineLimit(2)
+            } else {
+                Text("Restores compressed video locally on your Mac.")
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(14)
+        .background(.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 13))
+        .overlay(RoundedRectangle(cornerRadius: 13).strokeBorder(.primary.opacity(0.055)))
+    }
+
+    private var compareControl: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "rectangle.lefthalf.inset.filled")
+            Text(model.comparing ? "Original video" : "Hold to see original")
+                .font(.system(size: 12, weight: .medium))
+            Spacer()
+            Image(systemName: "hand.draw").foregroundStyle(.secondary)
+        }
+        .padding(12)
+        .background(model.comparing ? accent.opacity(0.18) : Color.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 10))
+        .contentShape(RoundedRectangle(cornerRadius: 10))
+        .gesture(DragGesture(minimumDistance: 0).onChanged { _ in model.compare(true) }.onEnded { _ in model.compare(false) })
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(model.comparing ? "Show enhanced video" : "Compare original video")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction { model.compare(!model.comparing) }
+        .disabled(!model.enhancing)
+        .opacity(model.enhancing ? 1 : 0.45)
+    }
+
+    private var connectionHelp: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Label("Connect your browser", systemImage: "puzzlepiece.extension")
+                .font(.system(size: 12, weight: .medium))
+            Text("Enable the Lucid companion in Chrome, Edge, or Safari, then play a 144p–480p video. Enhancement starts automatically.")
+                .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            Button("Open companion setup") {
+                if let url = Bundle.main.url(forResource: "CompanionSetup", withExtension: "html") { NSWorkspace.shared.open(url) }
+            }.buttonStyle(.link).font(.system(size: 11))
+        }
     }
 
     // MARK: - Quality
@@ -124,13 +170,8 @@ struct ControlPanel: View {
             }
             .pickerStyle(.segmented)
             .labelsHidden()
-            if !model.stats.isEmpty {
-                Text(model.stats)
-                    .font(.system(size: 10, design: .monospaced))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-            }
+            Text(model.strength.detail).font(.system(size: 11)).foregroundStyle(.secondary)
+
         }
     }
 
@@ -154,6 +195,7 @@ struct ControlPanel: View {
         VStack(alignment: .leading, spacing: 7) {
             stage("Chroma siting", model.flag(\.stageSiting),
                   "4:2:0 chroma is left-sited; without this colour lands half a pixel off")
+            stage("Motion alignment", model.flag(\.stageMotion), "Reprojects history and rejects unreliable motion")
             stage("Temporal", model.flag(\.stageTaa),
                   "Steadies compression noise between frames")
             stage("Oklab colour", model.flag(\.stageOklab),
@@ -173,8 +215,9 @@ struct ControlPanel: View {
         HStack(spacing: 10) {
             Button("Reset") { model.onReset?() }
                 .buttonStyle(.link)
-            Button("Test Lab") { model.onOpenLab?() }
-                .buttonStyle(.link)
+            if AppCoordinator.debugLogging {
+                Button("Test Lab") { model.onOpenLab?() }.buttonStyle(.link)
+            }
             Spacer()
             Button("Quit") { NSApplication.shared.terminate(nil) }
                 .buttonStyle(.link)

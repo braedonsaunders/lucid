@@ -27,6 +27,10 @@ struct CapturedFrame: @unchecked Sendable {
     /// Empty until the controller programs a crop; presentation treats empty
     /// as "the whole buffer".
     var sourceRect: CGRect = .zero
+    var fromBrowser = false
+    var sequence: Int = 0
+    var captureTimeMilliseconds: Double = 0
+    var receivedAt = ContinuousClock.now
 
     var size: CGSize { contentRect.size }
 
@@ -88,4 +92,10 @@ struct CapturedFrame: @unchecked Sendable {
             sourceRect: sourceRect
         )
     }
+}
+
+/// Pixel storage remains owned while asynchronous presentation crosses executors.
+struct EnhancedFrame: @unchecked Sendable {
+    let pixelBuffer: CVPixelBuffer
+    let source: CapturedFrame
 }

@@ -77,6 +77,12 @@ enum WindowTracker {
     /// Frame fallback uses a *relative* tolerance (a fraction of the reported
     /// window size) instead of an absolute point count, so small and
     /// large windows match with the same strictness.
+    static func pageGeometry(for report: BrowserVideoReport) -> WindowInfo {
+        WindowInfo(id: 0, pid: 0, ownerName: report.browser, title: report.title, layer: 0, alpha: 1,
+            bounds: CGRect(x: report.screenX, y: report.screenY,
+                           width: max(1, report.outerWidth), height: max(1, report.outerHeight)))
+    }
+
     static func matchWindow(for report: BrowserVideoReport, in snapshot: WindowSnapshot) -> WindowInfo? {
         let candidates = candidateWindows(for: report, in: snapshot)
         guard !candidates.isEmpty else { return nil }

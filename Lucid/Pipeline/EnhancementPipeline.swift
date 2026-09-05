@@ -43,9 +43,9 @@ actor EnhancementPipeline {
     private var generation = 0
     private let presenter: FramePresenter
     /// Set when the page draws the result itself, which is the preferred path.
-    private var onEnhancedFrame: (@Sendable (CVPixelBuffer) -> Void)?
+    private var onEnhancedFrame: (@Sendable (EnhancedFrame) async -> Bool)?
 
-    func setEnhancedFrameHandler(_ handler: @escaping @Sendable (CVPixelBuffer) -> Void) {
+    func setEnhancedFrameHandler(_ handler: @escaping @Sendable (EnhancedFrame) async -> Bool) {
         onEnhancedFrame = handler
     }
     private let onStats: @Sendable (PipelineStats) -> Void
@@ -146,7 +146,7 @@ actor EnhancementPipeline {
             let cleaned: CVPixelBuffer
             if let detail = stages.detail {
                 do {
-                    cleaned = try detail.preprocess(frame.pixelBuffer, sourceRect: frame.sourceRect, radius: stages.preprocessRadius)
+                    cleaned = try detail.preprocess(frame.pixelBuffer, sourceRect: frame.fromBrowser ? .zero : frame.sourceRect, radius: stages.preprocessRadius, timestamp: frame.presentationTimestamp)
                 } catch {
                     print("   ⚠️ detail preprocess failed: \(error)")
                     cleaned = frame.pixelBuffer
@@ -179,10 +179,12 @@ actor EnhancementPipeline {
             let elapsed = (ContinuousClock.now - started).milliseconds
             processingEMA = processingEMA == 0 ? elapsed : processingEMA * 0.9 + elapsed * 0.1
             lastOutputSize = CGSize(width: CVPixelBufferGetWidth(output), height: CVPixelBufferGetHeight(output))
-            if let onEnhancedFrame {
-                onEnhancedFrame(output)
-            } else {
-                presenter.present(output, capturePTS: frame.presentationTimestamp, sourceRect: frame.sourceRect)
+            let handled = await onEnhancedFrame?(EnhancedFrame(pixelBuffer: output, source: frame)) ?? false
+            try Task.checkCancellation()
+            if !handled {
+                // Decoded media PTS is not the host clock used by the display layer.
+                presenter.present(output, capturePTS: frame.fromBrowser ? .invalid : frame.presentationTimestamp,
+                                  sourceRect: frame.sourceRect)
             }
             outputFrames += 1
             lastError = nil

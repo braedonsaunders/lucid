@@ -1,0 +1,30 @@
+17394 training patches, 446 held out
+ch32umtc: 1057K parameters, 1 input frame, L1 + 0.05 x FFT + 0.15 x temporal, on cuda
+fine-tuning from baseline.pth (step 6000) at a fresh step 0
+  step 200/2000  loss 0.01717  lr 1.95e-05  30.8 it/s
+  step 400/2000  loss 0.01698  lr 1.81e-05  30.6 it/s
+  step 600/2000  loss 0.01713  lr 1.59e-05  32.3 it/s
+  step 800/2000  loss 0.01710  lr 1.32e-05  33.0 it/s
+  step 1000/2000  loss 0.01671  lr 1.01e-05  33.0 it/s
+  step 1200/2000  loss 0.01682  lr 7.04e-06  33.4 it/s
+  step 1400/2000  loss 0.01697  lr 4.28e-06  33.5 it/s
+  step 1600/2000  loss 0.01684  lr 2.09e-06  33.4 it/s
+  step 1800/2000  loss 0.01722  lr 6.85e-07  33.6 it/s
+  step 2000/2000  loss 0.01701  lr 2.00e-07  33.9 it/s
+  ── step 2000: PSNR 33.96 dB  fine 0.8584
+done in 1.0 min → weights/span_ch32umtc.pth
+17394 training patches, 446 held out
+ch32utc: 1057K parameters, 1 input frame, L1 + 0.05 x FFT + 0.15 x temporal, on cuda
+fine-tuning from baseline.pth (step 6000) at a fresh step 0
+  step 200/2000  loss 0.01664  lr 1.95e-05  39.8 it/s
+  step 400/2000  loss 0.01645  lr 1.81e-05  39.6 it/s
+  step 600/2000  loss 0.01660  lr 1.59e-05  38.7 it/s
+  step 800/2000  loss 0.01658  lr 1.32e-05  39.3 it/s
+  step 1000/2000  loss 0.01619  lr 1.01e-05  40.1 it/s
+  step 1200/2000  loss 0.01630  lr 7.04e-06  39.9 it/s
+  step 1400/2000  loss 0.01644  lr 4.28e-06  39.7 it/s
+  step 1600/2000  loss 0.01632  lr 2.09e-06  40.1 it/s
+  step 1800/2000  loss 0.01670  lr 6.85e-07  40.2 it/s
+  step 2000/2000  loss 0.01650  lr 2.00e-07  39.9 it/s
+  ── step 2000: PSNR 33.97 dB  fine 0.8584
+done in 0.8 min → control/span_ch32utc.pth

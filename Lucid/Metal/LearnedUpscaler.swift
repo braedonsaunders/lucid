@@ -303,7 +303,7 @@ final class LearnedUpscaler: @unchecked Sendable {
     func upscale(_ source: CVPixelBuffer) throws -> CVPixelBuffer {
         let sourceFormat = CVPixelBufferGetPixelFormatType(source)
         let rgb: CVPixelBuffer
-        if sourceFormat == inputFormat {
+        if sourceFormat == inputFormat, CVPixelBufferGetWidth(source) == inputWidth, CVPixelBufferGetHeight(source) == inputHeight {
             rgb = source
         } else {
             rgb = try convert(source, to: inputFormat, width: inputWidth, height: inputHeight, pool: &rgbPool)

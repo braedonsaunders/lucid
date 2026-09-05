@@ -18,6 +18,32 @@ final class LucidAppDelegate: NSObject, NSApplicationDelegate {
 @main
 enum LucidMain {
     static func main() {
+        if let index = CommandLine.arguments.firstIndex(of: "--panel-snapshot"), CommandLine.arguments.count > index + 1 {
+            let app = NSApplication.shared
+            app.setActivationPolicy(.prohibited)
+            let model = ControlPanelModel()
+            model.enhancing = true; model.connected = true
+            model.status = "Browser video · 360p → 1440p"
+            model.stats = "Native enhancement · Apple silicon"
+            app.appearance = NSAppearance(named: .darkAqua)
+            let view = NSHostingView(rootView: ControlPanel(model: model).environment(\.colorScheme, .dark))
+            let size = NSSize(width: 360, height: 430)
+            let window = NSWindow(contentRect: NSRect(origin: NSPoint(x: -10000, y: -10000), size: size), styleMask: .borderless, backing: .buffered, defer: false)
+            window.contentView = view
+            view.frame = NSRect(origin: .zero, size: size)
+            window.orderFrontRegardless()
+            RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.2))
+            view.layoutSubtreeIfNeeded()
+            if let bitmap = view.bitmapImageRepForCachingDisplay(in: view.bounds) {
+                view.cacheDisplay(in: view.bounds, to: bitmap)
+                window.orderOut(nil)
+                if let data = bitmap.representation(using: .png, properties: [:]) {
+                    do { try data.write(to: URL(fileURLWithPath: CommandLine.arguments[index + 1])); exit(0) }
+                    catch { print(error); exit(1) }
+                }
+            }
+            exit(1)
+        }
         // Offline engine comparison; must run before any app state is created.
         if CommandLine.arguments.contains("--bench") {
             if #available(macOS 26.0, *) {

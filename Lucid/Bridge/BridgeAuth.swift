@@ -18,7 +18,7 @@ import Network
 import Security
 
 enum BridgeAuth {
-    static let tokenHTTPPort: UInt16 = 47812
+    static let tokenHTTPPort: UInt16 = ProcessInfo.processInfo.environment["LUCID_TOKEN_PORT"].flatMap(UInt16.init) ?? 47812
 
     /// 32 random bytes as 64 hex chars. `LUCID_BRIDGE_TOKEN` overrides for tests.
     static func issue() -> String {
@@ -29,7 +29,7 @@ enum BridgeAuth {
             token = generate()
         }
         do {
-            try write(token)
+            if ProcessInfo.processInfo.environment["LUCID_EPHEMERAL"] != "1" { try write(token) }
         } catch {
             print("   ⚠️ could not write bridge.token: \(error)")
         }

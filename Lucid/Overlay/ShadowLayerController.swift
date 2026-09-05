@@ -43,7 +43,7 @@ final class ShadowLayerController {
     var onResized: (() -> Void)?
     var onWindowLost: (() -> Void)?
 
-    static let tickInterval: TimeInterval = 1.0 / 120.0
+    static let tickInterval: TimeInterval = 1.0 / 30.0
 
     init(window: ShadowLayerWindow, presenter: FramePresenter, windowID: CGWindowID, pid: pid_t, report: BrowserVideoReport) {
         self.window = window
@@ -54,7 +54,7 @@ final class ShadowLayerController {
     }
 
     func start() {
-        guard timer == nil else { return }
+        guard timer == nil, !forcedHidden else { return }
         let timer = Timer(timeInterval: Self.tickInterval, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in self?.tick() }
         }
@@ -85,7 +85,8 @@ final class ShadowLayerController {
     /// can photograph the page underneath without restarting anything.
     func setForcedHidden(_ hidden: Bool) {
         forcedHidden = hidden
-        tick()
+        if hidden { timer?.invalidate(); timer = nil; hide() }
+        else { start() }
     }
 
     func update(report: BrowserVideoReport) {
@@ -110,6 +111,7 @@ final class ShadowLayerController {
     }
 
     private func tick() {
+        guard !forcedHidden else { hide(); return }
         let snapshot = WindowSnapshot.capture()
         guard let browser = snapshot.window(id: windowID) else {
             hide()

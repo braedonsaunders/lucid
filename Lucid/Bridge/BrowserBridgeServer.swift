@@ -17,7 +17,7 @@ import Foundation
 import Network
 
 final class BrowserBridgeServer: @unchecked Sendable {
-    static let defaultPort: UInt16 = 47811
+    static let defaultPort: UInt16 = ProcessInfo.processInfo.environment["LUCID_BRIDGE_PORT"].flatMap(UInt16.init) ?? 47811
 
     private let port: UInt16
     private let token: String
@@ -25,11 +25,14 @@ final class BrowserBridgeServer: @unchecked Sendable {
     private let queue = DispatchQueue(label: "com.lucid.bridge", qos: .userInteractive)
     private var listener: NWListener?
     private var connections: [ObjectIdentifier: NWConnection] = [:]
+    private var activeSession: String?
     private var authenticated: Set<ObjectIdentifier> = []
     private var authTimeouts: [ObjectIdentifier: DispatchWorkItem] = [:]
     private let decoder = JSONDecoder()
     private let onReport: @Sendable (BrowserVideoReport) -> Void
     /// Decoded frames straight from the browser, at the video's own resolution.
+    var onPresentation: (@Sendable (PresentationMetrics) -> Void)?
+    private var presentation = PresentationWindow()
     var onFrame: (@Sendable (DecodedFrame) -> Void)?
     private let onDisconnect: @Sendable (Set<String>) -> Void
     private let onControl: @Sendable (BridgeControl) -> Void
@@ -78,6 +81,9 @@ final class BrowserBridgeServer: @unchecked Sendable {
     /// display it; the extension ignores it).
     func broadcast(_ status: BridgeStatus) {
         queue.async { [self] in
+            let next = status.enabled ? status.activeSession : nil
+            if activeSession != next { presentation = PresentationWindow() }
+            activeSession = next
             guard !connections.isEmpty, let data = try? JSONEncoder().encode(status) else { return }
             let metadata = NWProtocolWebSocket.Metadata(opcode: .text)
             let context = NWConnection.ContentContext(identifier: "status", metadata: [metadata])
@@ -316,7 +322,7 @@ final class BrowserBridgeServer: @unchecked Sendable {
 
     /// Binary frame packet: 'LUCF', big-endian header length, JSON header,
     /// then the planes exactly as the browser laid them out.
-    private func handleBinary(_ data: Data) {
+    private func handleBinary(_ data: Data, key: ObjectIdentifier) {
         guard data.count > 8 else { return }
         let magic = data.withUnsafeBytes { $0.loadUnaligned(fromByteOffset: 0, as: UInt32.self).bigEndian }
         guard magic == 0x4c554346 else { return }
@@ -324,8 +330,16 @@ final class BrowserBridgeServer: @unchecked Sendable {
         guard data.count >= 8 + headerLength else { return }
         let headerData = data.subdata(in: 8..<(8 + headerLength))
         guard let header = try? decoder.decode(DecodedFrame.Header.self, from: headerData) else { return }
+        sendText(FrameAccepted(session: header.session, seq: header.seq), to: key)
+        guard header.session == activeSession else { return }
         let payload = data.subdata(in: (8 + headerLength)..<data.count)
         onFrame?(DecodedFrame(header: header, payload: payload))
+    }
+
+    private func sendText<T: Encodable>(_ message: T, to key: ObjectIdentifier) {
+        guard let connection = connections[key], let data = try? JSONEncoder().encode(message) else { return }
+        let context = NWConnection.ContentContext(identifier: "ack", metadata: [NWProtocolWebSocket.Metadata(opcode: .text)])
+        connection.send(content: data, contentContext: context, isComplete: true, completion: .contentProcessed { _ in })
     }
 
     private func handle(_ data: Data, key: ObjectIdentifier) {
@@ -334,10 +348,15 @@ final class BrowserBridgeServer: @unchecked Sendable {
             return
         }
         if data.count > 8, data.withUnsafeBytes({ $0.loadUnaligned(fromByteOffset: 0, as: UInt32.self).bigEndian }) == 0x4c554346 {
-            handleBinary(data)
+            handleBinary(data, key: key)
             return
         }
         if let probe = try? decoder.decode(MessageProbe.self, from: data) {
+            if probe.type == "presented", let ack = try? decoder.decode(PresentationAck.self, from: data),
+               ack.session == activeSession, attachedByConnection[key]?.contains(ack.session) == true {
+                if let metrics = presentation.record(ack) { onPresentation?(metrics) }
+                return
+            }
             if probe.type == "control" {
                 if let control = try? decoder.decode(BridgeControl.self, from: data) { onControl(control) }
                 return
@@ -367,6 +386,8 @@ final class BrowserBridgeServer: @unchecked Sendable {
 }
 
 
+private struct FrameAccepted: Encodable { var type = "accepted"; let session: String; let seq: Int }
+
 private struct MessageProbe: Decodable {
     let type: String
     let session: String?
@@ -375,6 +396,7 @@ private struct MessageProbe: Decodable {
 
 /// Commands a page or tool may send: `{"type":"control", ...}`.
 struct BridgeControl: Codable, Sendable {
+    var comparing: Bool?
     var enabled: Bool?
     /// Latency budget in seconds.
     var latency: Double?
@@ -405,6 +427,8 @@ struct DecodedFrame: @unchecked Sendable {
         var planes: [Plane]
         var seq: Int
         var ts: Double
+        var captureTime: Double?
+        var colorSpace: VideoColorInfo?
     }
     var header: Header
     var payload: Data
@@ -414,7 +438,10 @@ struct DecodedFrame: @unchecked Sendable {
 struct BridgeStatus: Codable, Sendable {
     var type = "status"
     var enabled: Bool
+    var activeSession: String? = nil
+    var captureIntervalMilliseconds: Double = 0
     var enhancing: Bool
+    var comparing: Bool = false
     var engine: String = ""
     var engines: [String] = EngineKind.shipping.map(\.rawValue)
     var engineLabels: [String] = EngineKind.shipping.map(\.label)
@@ -424,6 +451,8 @@ struct BridgeStatus: Codable, Sendable {
     var latency: Double
     var sourceFPS: Double
     var outputFPS: Double
+    var presentedFPS: Double = 0
+    var presentationP95Milliseconds: Double = 0
     var processingMilliseconds: Double
     var tileCount: Int
     var outputWidth: Int
