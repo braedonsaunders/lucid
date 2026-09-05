@@ -1,0 +1,27 @@
+{
+  "files": {
+    "Tools/frontier_eval/score_checkpoint_frames.py": "bb652063f0b90905fff4a9a4dabacc32b818a98748f58822b94fd8add46ae090",
+    "Tools/frontier_eval/evaluate_sequences.py": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75",
+    "Tools/eval_checkpoint.py": "bd55db152b6a58a1eb78f8bceea280546599304fcad248394b95f4af4a485e31",
+    "Tools/train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+    "Tools/architectures/span_arch.py": "0fd7c3c6bddcf6fd9c547793a58e9ded66a99e75c106fa20aa3e1cd059f6a806",
+    "Tools/frontier_eval/build_sequences.py": "738047a728cb4f572c162c13b00cfa50d5d033a7241fef9c9e9e53b118d0f0cd",
+    "Tools/frontier_eval/export_spatial_frames.py": "13abd2748c0ff01ab8f2e28e22601520932a9005beaba34c6394ead5d3a7b909",
+    "Tools/frontier_eval/fetch_sources.py": "b50f2622424399e1971a629cb485201b3acb35121715226e8f5557775040272b",
+    "Tools/frontier_eval/gate_resolution_screen.py": "7a8768ce31d1130eca42389057cfa6d555767800451b697bef6fe9d29f7816e4",
+    "Tools/frontier_eval/gate_frozen_holdout.py": "cfc05cc6c7dc64a703070afd1b6147f38cae1ed3031413ca6f417c8e6ce1769b",
+    "Benchmarks/frontier/coverage-720-protocol.md": "2703c70b1284b5c71f175eb75b660e7020563fc315cace155135f9663b180487",
+    "Benchmarks/frontier/coverage-720-command.ps1": "0e5d2cd2066659a33cb2d2f48f083a4a7e2d2095d89a3fdfe29c6504fccd43b1",
+    ".build/coverage-720-input.tar": "65ba0e8ca55b3f6bbfd209b447fb078313fd38ac0f4e3f782fa744789a518679",
+    ".build/coverage-720-fetch.py": "8dc4c9080cee212ef368414e35eaa8e78412ed636bc9bec60413df3cbe322a55",
+    ".build/coverage-720-sources/SVT_MultiFormat_v10.pdf": "9fd39b9db02375a086f8e65129177d4db37f275712cc3ace56fb71d007f9f13f"
+  },
+  "source": "https://media.xiph.org/video/derf/",
+  "commands": [
+    "python3 .build/coverage-720-fetch.py",
+    "python3 Tools/frontier_eval/build_sequences.py --source crowd_run .build/coverage-720-sources/crowd_run.mkv --source ducks_take_off .build/coverage-720-sources/ducks_take_off.mkv --source park_joy .build/coverage-720-sources/park_joy.mkv --out .build/coverage-720-sequences --frames 16 --width 1280 --scale 2 --bitrates 1400000 4000000",
+    "python3 Tools/frontier_eval/export_spatial_frames.py --manifest .build/coverage-720-sequences/sequences.json --out .build/coverage-720-frames --stride 4"
+  ],
+  "native_reference": "shipping-direct2x-swift720.json",
+  "production_admission": false
+}
