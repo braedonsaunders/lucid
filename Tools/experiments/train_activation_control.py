@@ -30,10 +30,16 @@ def main():
     ap.add_argument('--steps', type=int, default=8000)
     ap.add_argument('--seed', type=int, default=20260914)
     ap.add_argument('--local-fidelity-constraint', action='store_true')
+    ap.add_argument('--deterministic', action='store_true')
     args = ap.parse_args()
     if args.out.exists() or args.steps < 1:
         ap.error('fresh output and positive steps required')
     torch.set_num_threads(4)
+    if args.deterministic:
+        torch.use_deterministic_algorithms(True)
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cuda.matmul.allow_tf32 = False
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
     probe = json.loads(args.probe.read_text())
@@ -84,6 +90,7 @@ def main():
                    'detail_target': 'reference', 'border_excluded': 8, 'temporal_loss': False},
         'limitation': 'pooled conditioning is learned on crops; full-frame generalization must be measured',
         'precision': 'CUDA BF16 autocast, FP32 AdamW', 'torch': str(torch.__version__),
+        'deterministic_algorithms': torch.are_deterministic_algorithms_enabled(),
         'gpu': torch.cuda.get_device_name(), 'purpose': 'matched experimental controllers; no promotion',
         'source_hashes': {str(p): digest(p) for p in [Path(__file__),
             Path(__file__).with_name('train_presented_detail.py'), Path(__file__).with_name('dino_adversary.py'),
@@ -97,6 +104,9 @@ def main():
             'multiplier_rate': penalty.rate, 'quadratic_rho': penalty.rho,
             'scope': 'training data only; no inference operations or fidelity guarantee',
             'code_sha256': digest(Path(__file__).with_name('local_fidelity_constraint.py'))}
+    if args.deterministic:
+        experiment['deterministic_resize_sha256'] = digest(Path(__file__).with_name('deterministic_resize.py'))
+        experiment['dino_supervision_sha256'] = digest(Path(__file__).with_name('dino_supervision.py'))
     experiment_path.write_text(json.dumps(experiment, indent=2)+'\n')
     started = time.monotonic()
     parameters = list(model.controller.parameters())

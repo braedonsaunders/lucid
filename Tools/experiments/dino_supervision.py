@@ -62,6 +62,8 @@ class DinoSupervision(nn.Module):
             'layers': list(self.layers), 'size': size, 'temperature': temperature,
             'normalization': 'ImageNet RGB; raw intermediate patch tokens; cosine distance',
             'weighting': 'softmax((1-mean_LQ_HQ_cosine)/temperature), detached',
+            'resize': 'deterministic separable matrix bicubic' if torch.are_deterministic_algorithms_enabled()
+                      else 'PyTorch bicubic antialias',
             'inference_cost': 'none; used only for training'}
 
     def train(self, mode=True):
@@ -70,8 +72,12 @@ class DinoSupervision(nn.Module):
         return self
 
     def features(self, image):
-        image = F.interpolate(image.float(), (self.size, self.size), mode='bicubic',
-                              align_corners=False, antialias=True).clamp(0, 1)
+        if torch.are_deterministic_algorithms_enabled():
+            from deterministic_resize import bicubic
+            image = bicubic(image, (self.size, self.size)).clamp(0, 1)
+        else:
+            image = F.interpolate(image.float(), (self.size, self.size), mode='bicubic',
+                                  align_corners=False, antialias=True).clamp(0, 1)
         return self.encoder.get_intermediate_layers((image-self.mean)/self.std,
                                                     n=self.layers, norm=False)
 
