@@ -156,22 +156,27 @@ final class DecodedFrameSource: @unchecked Sendable {
         return true
     }
 
-    /// All enhancement shaders have one explicit contract: video-range Rec.709 NV12.
+    /// Normalize gamut/matrix/range while retaining sRGB or 709 encoding.
+    /// Converting sRGB into the 709 curve darkens browser canvas midtones.
     private func normalize(_ source: CVPixelBuffer) -> CVPixelBuffer? {
         let w = CVPixelBufferGetWidth(source), h = CVPixelBufferGetHeight(source)
         let color = VideoColorInfo.read(from: source)
         guard color.supportsSDREnhancement else { return nil }
+        let srgb = color.transfer == "iec61966-2-1"
+        let normalizedColor = VideoColorInfo(primaries: "bt709", transfer: srgb ? "iec61966-2-1" : "bt709",
+                                             matrix: "bt709", fullRange: false)
         if CVPixelBufferGetPixelFormatType(source) == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
-           color.matrix == "bt709", color.primaries == "bt709", color.transfer == "bt709" { return source }
+           color == normalizedColor { return source }
         if transfer == nil {
             VTPixelTransferSessionCreate(allocator: kCFAllocatorDefault, pixelTransferSessionOut: &transfer)
             if let transfer {
                 VTSessionSetProperty(transfer, key: kVTPixelTransferPropertyKey_DestinationColorPrimaries, value: kCVImageBufferColorPrimaries_ITU_R_709_2)
-                VTSessionSetProperty(transfer, key: kVTPixelTransferPropertyKey_DestinationTransferFunction, value: kCVImageBufferTransferFunction_ITU_R_709_2)
                 VTSessionSetProperty(transfer, key: kVTPixelTransferPropertyKey_DestinationYCbCrMatrix, value: kCVImageBufferYCbCrMatrix_ITU_R_709_2)
             }
         }
         guard let transfer else { return nil }
+        VTSessionSetProperty(transfer, key: kVTPixelTransferPropertyKey_DestinationTransferFunction,
+                             value: srgb ? kCVImageBufferTransferFunction_sRGB : kCVImageBufferTransferFunction_ITU_R_709_2)
         if normalizedPool == nil || normalizedSize != CGSize(width: w, height: h) {
             normalizedPool = nil
             let attrs: [String: Any] = [kCVPixelBufferWidthKey as String: w, kCVPixelBufferHeightKey as String: h,
@@ -184,7 +189,7 @@ final class DecodedFrameSource: @unchecked Sendable {
         var output: CVPixelBuffer?
         guard CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pool, &output) == kCVReturnSuccess, let output,
               VTPixelTransferSessionTransferImage(transfer, from: source, to: output) == noErr else { return nil }
-        VideoColorInfo.rec709.apply(to: output)
+        normalizedColor.apply(to: output)
         return output
     }
 

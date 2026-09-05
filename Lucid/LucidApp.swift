@@ -18,6 +18,11 @@ final class LucidAppDelegate: NSObject, NSApplicationDelegate {
 @main
 enum LucidMain {
     static func main() {
+        if CommandLine.arguments.contains("--color-probe") {
+            Task.detached { await ColorProbe.run() }
+            RunLoop.main.run()
+            exit(2)
+        }
         if let index = CommandLine.arguments.firstIndex(of: "--panel-snapshot"), CommandLine.arguments.count > index + 1 {
             let app = NSApplication.shared
             app.setActivationPolicy(.prohibited)

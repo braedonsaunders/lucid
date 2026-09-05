@@ -59,11 +59,55 @@ struct FrameLayoutTests {
             var iterator = stream.makeAsyncIterator()
             let next = await iterator.next(); let frame = try #require(next)
             #expect(frame.sequence == 7)
-            #expect(VideoColorInfo.read(from: frame.pixelBuffer) == .rec709)
+            #expect(VideoColorInfo.read(from: frame.pixelBuffer) == .init(
+                primaries: "bt709", transfer: "iec61966-2-1", matrix: "bt709", fullRange: false))
             results.append(lumaBytes(frame.pixelBuffer))
         }
         #expect(results[0] == results[1])
         #expect(results[0][0] > 45 && results[0][0] < 90)
+    }
+    @Test func browserMidtonesKeepTheirTransferAcrossPooledFrames() async throws {
+        let source = DecodedFrameSource(), stream = source.stream()
+        var iterator = stream.makeAsyncIterator()
+        for transfer in ["iec61966-2-1", "bt709", "iec61966-2-1"] {
+            let color = VideoColorInfo(primaries: "bt709", transfer: transfer, matrix: "rgb", fullRange: true)
+            let header = DecodedFrame.Header(session: "s", w: 64, h: 64, format: "RGBA",
+                planes: [.init(offset: 0, stride: 256)], seq: 1, ts: 0, colorSpace: color)
+            source.accept(.init(header: header, payload: Data(Array(repeating: [UInt8(128),128,128,255], count: 4096).flatMap { $0 })))
+            let next = await iterator.next(); let frame = try #require(next)
+            #expect(VideoColorInfo.read(from: frame.pixelBuffer).transfer == transfer)
+            // Neutral 128 RGB is 126 in video-range Y; the old sRGB->709
+            // conversion incorrectly produced 116, which Chrome drew dark.
+            #expect(lumaBytes(frame.pixelBuffer).allSatisfy { abs($0 - 126) <= 1 })
+        }
+        source.finish()
+    }
+    @Test func senderPreservesTransferAndDescribesActualRange() throws {
+        let sender = EnhancedFrameSender()
+        for full in [true, false, true] {
+            var buffer: CVPixelBuffer?
+            let format = full ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
+            #expect(CVPixelBufferCreate(nil, 64, 64, format,
+                [kCVPixelBufferIOSurfacePropertiesKey: [:]] as CFDictionary, &buffer) == kCVReturnSuccess)
+            let input = try #require(buffer)
+            CVPixelBufferLockBaseAddress(input, [])
+            for plane in 0..<2 {
+                memset(CVPixelBufferGetBaseAddressOfPlane(input, plane), 128,
+                       CVPixelBufferGetBytesPerRowOfPlane(input, plane) * CVPixelBufferGetHeightOfPlane(input, plane))
+            }
+            CVPixelBufferUnlockBaseAddress(input, [])
+            VideoColorInfo(primaries: "bt709", transfer: "iec61966-2-1", matrix: "bt709", fullRange: full).apply(to: input)
+            for width in [64, 32] {
+                sender.maximumWidth = width
+                let packet = try #require(sender.packet(for: input, sequence: 1, session: "s"))
+                let count = packet[4..<8].reduce(0) { ($0 << 8) | Int($1) }
+                let header = try #require(JSONSerialization.jsonObject(with: packet.subdata(in: 8..<(8 + count))) as? [String: Any])
+                let color = try #require(header["colorSpace"] as? [String: Any])
+                #expect(color["transfer"] as? String == "iec61966-2-1")
+                #expect(color["fullRange"] as? Bool == (full && width == 64))
+                #expect(abs(Int(packet[8 + count]) - (full && width == 32 ? 126 : 128)) <= 1)
+            }
+        }
     }
     @Test func hdrIsDeclined() async {
         let source = DecodedFrameSource(); let stream = source.stream()
@@ -76,6 +120,18 @@ struct FrameLayoutTests {
 }
 @Suite(.serialized)
 struct MetalFrameIntegrityTests {
+    @Test func learnedOutputPreservesInputEncoding() throws {
+        let model = try LearnedUpscaler(width: 256, height: 144)
+        for transfer in ["iec61966-2-1", "bt709", "iec61966-2-1"] {
+            let input = try nv12(256, 144) { _, _ in 126 }
+            let color = VideoColorInfo(primaries: "bt709", transfer: transfer, matrix: "bt709", fullRange: false)
+            color.apply(to: input)
+            let output = try model.upscale(input)
+            #expect(VideoColorInfo.read(from: output) == color)
+            let values = lumaBytes(output)
+            #expect(abs(values.reduce(0, +) / Double(values.count) - 126) < 5)
+        }
+    }
     @Test func standaloneGradeAndTemporalToggleAreInitialized() throws {
         let device = try #require(MTLCreateSystemDefaultDevice())
         var settings = DetailSettings.off; settings.stageDeband = true; settings.grain = 0.02

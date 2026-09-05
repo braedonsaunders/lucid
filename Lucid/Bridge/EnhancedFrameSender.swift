@@ -94,22 +94,29 @@ final class EnhancedFrameSender: @unchecked Sendable {
             guard let pool else { return nil }
             var converted: CVPixelBuffer?
             guard CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pool, &converted) == kCVReturnSuccess,
-                  let converted,
-                  VTPixelTransferSessionTransferImage(transfer, from: buffer, to: converted) == noErr
+                  let converted
             else { return nil }
+            CVBufferRemoveAllAttachments(converted)
+            guard VTPixelTransferSessionTransferImage(transfer, from: buffer, to: converted) == noErr else { return nil }
+            if let attachments = CVBufferCopyAttachments(buffer, .shouldPropagate) {
+                CVBufferSetAttachments(converted, attachments, .shouldPropagate)
+            }
             nv12 = converted
         }
 
+        TiledVideoToolboxUpscaler.ensureColorDescription(nv12)
+        let color = VideoColorInfo.read(from: nv12)
+        guard color.supportsSDREnhancement else { return nil }
         guard let packed = Self.tightNV12(nv12, width: width, height: height, into: &scratch) else { return nil }
         struct Header: Encodable {
             let session: String
             let w: Int, h: Int, seq: Int
             let ts: Double, captureTime: Double
             let format = "NV12"
-            let colorSpace = VideoColorInfo.rec709
+            let colorSpace: VideoColorInfo
         }
         guard let headerBytes = try? JSONEncoder().encode(Header(session: session, w: width, h: height,
-            seq: sequence, ts: sourceTimestamp, captureTime: captureTime)) else { return nil }
+            seq: sequence, ts: sourceTimestamp, captureTime: captureTime, colorSpace: color)) else { return nil }
         var packet = Data(capacity: 8 + headerBytes.count + packed)
         withUnsafeBytes(of: UInt32(0x4c554345).bigEndian) { packet.append(contentsOf: $0) }  // 'LUCE'
         withUnsafeBytes(of: UInt32(headerBytes.count).bigEndian) { packet.append(contentsOf: $0) }

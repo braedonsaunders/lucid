@@ -315,6 +315,12 @@ final class LearnedUpscaler: @unchecked Sendable {
               let value = result.featureValue(for: outputName)?.imageBufferValue
         else { throw Failure.prediction }
 
+        // The image model predicts RGB samples in its input encoding. Core ML
+        // returns an untagged image; defaulting it to 709 would lose sRGB here.
+        var predictedColor = VideoColorInfo.read(from: source)
+        predictedColor.matrix = "rgb"; predictedColor.fullRange = true
+        guard predictedColor.apply(to: value) else { throw Failure.prediction }
+
         // Back to the pipeline's own format so every stage after this one is
         // unchanged by the choice of upscaler.
         return try convert(value, to: sourceFormat,
@@ -346,7 +352,9 @@ final class LearnedUpscaler: @unchecked Sendable {
         // location; tagging only the destination (after the transfer) cannot
         // change what the model sees.
         TiledVideoToolboxUpscaler.ensureColorDescription(source)
-        VTPixelTransferSessionTransferImage(transfer, from: source, to: destination)
+        CVBufferRemoveAllAttachments(destination)
+        guard VTPixelTransferSessionTransferImage(transfer, from: source, to: destination) == noErr
+        else { throw Failure.pixelBuffer }
         if let attachments = CVBufferCopyAttachments(source, .shouldPropagate) {
             CVBufferSetAttachments(destination, attachments, .shouldPropagate)
         }

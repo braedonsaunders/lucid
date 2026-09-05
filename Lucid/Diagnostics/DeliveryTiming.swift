@@ -16,6 +16,53 @@ import CoreVideo
 import Foundation
 import Network
 
+/// Offline bridge color probe. Does not construct app state or bind any port.
+enum ColorProbe {
+    static func run() async {
+        do {
+            guard let index = CommandLine.arguments.firstIndex(of: "--color-probe"),
+                  CommandLine.arguments.count > index + 1 else {
+                throw NSError(domain: "color-probe", code: 1)
+            }
+            let colors: [[UInt8]] = [[0,0,0], [16,16,16], [32,32,32], [64,64,64],
+                [128,128,128], [192,192,192], [235,235,235], [255,255,255],
+                [180,70,60], [60,160,90], [70,90,180], [110,130,150]]
+            let width = colors.count * 32, height = 32
+            let spaces: [(String, VideoColorInfo)] = [
+                ("srgb", .init(primaries: "bt709", transfer: "iec61966-2-1", matrix: "rgb", fullRange: true)),
+                ("p3", .init(primaries: "smpte432", transfer: "iec61966-2-1", matrix: "rgb", fullRange: true)),
+                ("rec709", .init(primaries: "bt709", transfer: "bt709", matrix: "rgb", fullRange: true))]
+            var rows: [[String: Any]] = []
+            for (name, color) in spaces {
+                var bytes = [UInt8](repeating: 255, count: width * height * 4)
+                for y in 0..<height { for x in 0..<width {
+                    for channel in 0..<3 { bytes[(y * width + x) * 4 + channel] = colors[x / 32][channel] }
+                }}
+                let input = Data(bytes)
+                let header = DecodedFrame.Header(session: "color-probe", w: width, h: height, format: "RGBA",
+                    planes: [.init(offset: 0, stride: width * 4)], seq: 1, ts: 0, colorSpace: color)
+                let source = DecodedFrameSource(), stream = source.stream()
+                source.accept(.init(header: header, payload: input)); source.finish()
+                var iterator = stream.makeAsyncIterator()
+                guard let frame = await iterator.next() else { throw NSError(domain: "color-probe", code: 2) }
+                let sender = EnhancedFrameSender(); sender.maximumWidth = width
+                guard let packet = sender.packet(for: frame.pixelBuffer, sequence: 1, session: "color-probe") else {
+                    throw NSError(domain: "color-probe", code: 3)
+                }
+                let wireColor = try JSONSerialization.jsonObject(with: JSONEncoder().encode(color))
+                rows.append(["id": name, "width": width, "height": height, "format": "RGBA",
+                    "colorSpace": wireColor, "sourceBase64": input.base64EncodedString(),
+                    "packetBase64": packet.base64EncodedString()])
+            }
+            let result: [String: Any] = ["purpose": "Native normalization and delivery color parity; enhancement bypassed",
+                                        "patchWidth": 32, "colors": colors, "cases": rows]
+            try JSONSerialization.data(withJSONObject: result, options: [.sortedKeys]).write(
+                to: URL(fileURLWithPath: CommandLine.arguments[index + 1]), options: .atomic)
+            exit(0)
+        } catch { print("color-probe failed: \(error)"); exit(1) }
+    }
+}
+
 enum DeliveryTiming {
     static func run() {
         setvbuf(stdout, nil, _IOLBF, 0)
