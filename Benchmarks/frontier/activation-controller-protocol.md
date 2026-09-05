@@ -13,3 +13,9 @@ Evaluate final unblended checkpoints on the frozen 48 full-frame development pai
 ## Nonzero native preflight
 
 Three controller tests and four checkpoint/subspace regression tests pass. The random nonzero controller passes native RGB conversion checks at both sizes. In an interleaved 20-sample comparison after ten warmups, controller versus folded-baseline inference means are 6.640 versus 6.477 ms at 360p and 21.178 versus 21.013 ms at 720p. The respective p95 pairs are 8.612/8.018 and 21.389/21.352 ms. The observed mean overhead is about 0.16 ms in this short probe, not a sustained playback measurement or evidence of trained quality.
+
+## CUDA identity preflight correction
+
+The first static smoke stopped before optimization: adding a zero FP32 shift promoted BF16 block outputs and changed downstream residual-sum rounding. The correction casts gain and shift to each block's activation dtype before application. A new BF16 identity regression passes alongside the three previous controller tests. The failed smoke is preserved separately; no training or quality result was selected from it.
+
+A fresh nonzero native preflight after the correction again passes RGB limits. Controller/folded means are 5.877/5.567 ms at 360p and 21.501/21.088 ms at 720p; p95 values are 6.156/5.904 and 22.888/21.842 ms. The variation across short probes is retained rather than selecting the best timing. Fresh CUDA runs use `activation-controller-20260905-r2`, with the same experimental recipe.

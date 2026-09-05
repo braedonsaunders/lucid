@@ -61,6 +61,14 @@ class ActivationTests(unittest.TestCase):
         fixed = self.model.coefficients(features)
         self.assertTrue(torch.equal(fixed[0], fixed[1]))
 
+    def test_zero_controller_preserves_autocast_residual_dtype(self):
+        x = torch.rand(2, 3, 24, 32)
+        with torch.no_grad(), torch.autocast('cpu', dtype=torch.bfloat16):
+            expected = self.anchor(x)
+            actual = self.model(x)
+        self.assertEqual(actual.dtype, torch.bfloat16)
+        self.assertTrue(torch.equal(actual, expected))
+
     def test_nonzero_checkpoint_roundtrip(self):
         torch.nn.init.normal_(self.model.controller[-1].weight, std=.01)
         x = torch.rand(1, 3, 24, 32)

@@ -1,0 +1,15 @@
+{
+  "archive_sha256": "ee5b563c2d0c615845edc00e4a72454410b877538486e92aae9596d5647cb5b2",
+  "source_hashes": {
+    "Benchmarks/frontier/activation-controller-command-r2.ps1": "034d53e403c246ca2df8f7069b6bbdb40c626ad5605d9add197a3550c76a1170",
+    "Benchmarks/frontier/activation-control-probe.json": "1fbfface8ca3189f1dcb8875f9373d3853e41b4541a0e4e6f4e932252dd63ef5",
+    "Benchmarks/frontier/activation-controller-native-profile-r2.json": "dfc8dd4e025bcbe6faf06b1739ebbfe872620d7e36f8c8126539578bbd97c67f",
+    "Tools/architectures/activation_control.py": "a7cc35057ff019da90e60037a02b04b590110d65515d0cccaa5be566a48a4e12",
+    "Tools/experiments/train_activation_control.py": "11624c0b184adb7eae0cfe84bc28c3a1ebd0041070161094ee3cc73ef7d3cee9"
+  },
+  "fix": "keep gain/shift in backbone activation dtype; first smoke failed before optimization; same model/training recipe",
+  "tests_passed": {
+    "controller": 4,
+    "previous_subspace_regression": 4
+  }
+}

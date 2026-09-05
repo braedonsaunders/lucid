@@ -62,6 +62,10 @@ class ActivationControl(nn.Module):
             current, auxiliary, _ = block(current)
             scale = 1 + .5 * (coefficients[:, i, 0] @ self.masks[i])
             shift = .2 * (coefficients[:, i, 1] @ self.masks[i]) * self.shift_units[i]
+            # Preserve the backbone's autocast dtype: a zero FP32 shift would
+            # otherwise promote the residual stream and change later BF16 sums.
+            scale = scale.to(current.dtype)
+            shift = shift.to(current.dtype)
             current = current * scale[:, :, None, None] + shift[:, :, None, None]
             if i == 0:
                 first = current
