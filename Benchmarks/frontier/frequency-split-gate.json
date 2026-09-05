@@ -1,0 +1,99 @@
+{
+  "spatial_gate_pass": false,
+  "failure_reasons": [
+    "lpips: aggregate improvement below minimum"
+  ],
+  "frames_per_variant": 48,
+  "source_balanced": {
+    "candidate": {
+      "lpips": 0.2814392774986724,
+      "dists": 0.11536118636528651,
+      "fine_correlation": 0.5519096548401057
+    },
+    "shipping": {
+      "lpips": 0.3024238742267092,
+      "dists": 0.12832974269986153,
+      "fine_correlation": 0.5643192119145054
+    },
+    "frequency_split": {
+      "lpips": 0.2946243113838136,
+      "dists": 0.11893341690301895,
+      "fine_correlation": 0.5644768344347505
+    }
+  },
+  "per_source": {
+    "candidate": {
+      "crowd_run": {
+        "lpips": 0.4070244636386633,
+        "dists": 0.15209100395441055,
+        "fine_correlation": 0.3739570579562506
+      },
+      "four_people": {
+        "lpips": 0.1945998347364366,
+        "dists": 0.08654950559139252,
+        "fine_correlation": 0.657647336281235
+      },
+      "johnny": {
+        "lpips": 0.24269353412091732,
+        "dists": 0.10744304955005646,
+        "fine_correlation": 0.6241245702828315
+      }
+    },
+    "shipping": {
+      "crowd_run": {
+        "lpips": 0.4320258032530546,
+        "dists": 0.1641482375562191,
+        "fine_correlation": 0.3826510771160185
+      },
+      "four_people": {
+        "lpips": 0.21655134484171867,
+        "dists": 0.10291698202490807,
+        "fine_correlation": 0.6708610856042104
+      },
+      "johnny": {
+        "lpips": 0.25869447458535433,
+        "dists": 0.11792400851845741,
+        "fine_correlation": 0.6394454730232871
+      }
+    },
+    "frequency_split": {
+      "crowd_run": {
+        "lpips": 0.42331710923463106,
+        "dists": 0.15455064922571182,
+        "fine_correlation": 0.3824201987668321
+      },
+      "four_people": {
+        "lpips": 0.20823531271889806,
+        "dists": 0.09148900583386421,
+        "fine_correlation": 0.6711149171038198
+      },
+      "johnny": {
+        "lpips": 0.25232051219791174,
+        "dists": 0.11076059564948082,
+        "fine_correlation": 0.6398953874335994
+      }
+    }
+  },
+  "perceptual_improvements": {
+    "lpips": 0.025790169056060352,
+    "dists": 0.07322017171669049
+  },
+  "per_source_changes": {
+    "crowd_run": {
+      "lpips": 0.02015780991054028,
+      "dists": 0.05846903063592257,
+      "fine_correlation": -0.00023087834918639194
+    },
+    "four_people": {
+      "lpips": 0.038402126428256356,
+      "dists": 0.11104072395241871,
+      "fine_correlation": 0.00025383149960933604
+    },
+    "johnny": {
+      "lpips": 0.024638958360664764,
+      "dists": 0.06074600888296111,
+      "fine_correlation": 0.00044991441031227986
+    }
+  },
+  "status": "fixed development diagnostic only; two-model cost is not deployable performance evidence"
+}
