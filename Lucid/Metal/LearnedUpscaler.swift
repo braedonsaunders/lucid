@@ -222,6 +222,9 @@ final class LearnedUpscaler: @unchecked Sendable {
     }
 
     let scale: Int
+    /// The quantized presentation graph changes output geometry without
+    /// retraining reconstruction. Keep nominal sharpening gain for that graph.
+    let detailReferenceRadius: Int
     let inputWidth: Int
     let inputHeight: Int
     private let model: MLModel
@@ -239,6 +242,14 @@ final class LearnedUpscaler: @unchecked Sendable {
         let scale = outputWidth / inputWidth
         guard [2, 4].contains(scale), outputHeight / inputHeight == scale else { return nil }
         return scale
+    }
+
+    static func detailReferenceRadius(scale: Int, metadata: [String: String]) -> Int {
+        guard scale == 2,
+              metadata["lucid.transformation"] == "quantized 4x-to-2x bicubic presentation",
+              metadata["lucid.checkpoint_sha256"] == "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65"
+        else { return 4 }
+        return 2
     }
 
     init(width: Int, height: Int) throws {
@@ -313,6 +324,8 @@ final class LearnedUpscaler: @unchecked Sendable {
                 outputWidth: outputConstraint.pixelsWide, outputHeight: outputConstraint.pixelsHigh)
         else { throw Failure.noModel }
         scale = reconstructionScale
+        detailReferenceRadius = Self.detailReferenceRadius(scale: reconstructionScale,
+            metadata: model.modelDescription.metadata[.creatorDefinedKey] as? [String: String] ?? [:])
         inputName = input.key
         outputName = output.key
         inputFormat = constraint.pixelFormatType

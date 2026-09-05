@@ -995,7 +995,8 @@ final class EnhancementSession {
             }
             // Match detail's spatial radius to the loaded reconstruction graph.
             let outputScale = learned.map { Double($0.scale) } ?? (kind.rescales ? pow(2, Double(built)) : stretch)
-            let settings = detailSettings(for: report, outputScale: outputScale)
+            var settings = detailSettings(for: report, outputScale: outputScale)
+            if let learned { settings.referenceRadius = learned.detailReferenceRadius }
             let detail = kind.usesDetail ? try? DetailEnhancer(device: compositor.device, settings: settings) : nil
             let label: String
             if let learned {
@@ -1075,6 +1076,7 @@ final class EnhancementSession {
                 // Radius and the stage layout were fixed when the pipeline was
                 // built; only the tunable parts change here.
                 updated.radius = current.radius
+                updated.referenceRadius = current.referenceRadius
                 return updated
             }
         }

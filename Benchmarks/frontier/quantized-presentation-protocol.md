@@ -51,3 +51,9 @@ The wider native export completes all 960 pairs. All 960 shipping NV12 payloads 
 ## 480p graph preflight
 
 The same unchanged-weight transformation converts at 864×480 and passes the existing native-versus-FP32 RGB limits: maximum two levels, mean 0.0631. In 60 interleaved native CPU+GPU graph samples, shipping averages 16.24 ms (p95 16.74), quantized presentation 10.06 ms (p95 10.26), and the historical area-folded control 9.48 ms. These synthetic image-request timings exclude native color conversion, detail processing, sender downscaling and browser delivery. Source-quality and actual delivered-size checks at this resolution remain required; this does not admit a model to the app. `quantized-presentation-native-480.json` retains all samples and code identities.
+
+## Isolated browser comparison support
+
+The app now reads the quantized transformation's metadata and preserves nominal gain only for the known shipping-weight 2× presentation graph. Existing/default models retain reference radius four. Settings reload preserves the model's reference radius as well as its geometric radius. The offline ablation's explicit flag remains separate so earlier experiments are reproducible. No candidate is added to product resources or selected by default.
+
+The browser harness accepts a declared candidate resource stem and sharpness, keeping historical defaults intact and recording the choice. Invalid/nonfinite gains and path-like stems are rejected before starting processes. All 37 native tests pass, including metadata/scale/weight discrimination and unit gain; a separate Release build succeeds. The initial attempt to run tests in Release failed because its module is not testable; the normal Debug test configuration passes. A separate local app copy holds the 360p/480p candidate packages and fresh companion scripts with isolated ports. Actual browser execution remains conditional on the broader spatial screen.

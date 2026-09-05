@@ -1,0 +1,53 @@
+{
+  "native_tests": {
+    "devicesAndConfigurations": [
+      {
+        "device": {
+          "architecture": "arm64",
+          "deviceId": "00006040-001E10281A31801C",
+          "deviceName": "My Mac",
+          "modelName": "MacBook Pro",
+          "osBuildNumber": "25F80",
+          "osVersion": "26.5.1",
+          "platform": "macOS"
+        },
+        "expectedFailures": 0,
+        "failedTests": 0,
+        "passedTests": 37,
+        "skippedTests": 0,
+        "testPlanConfiguration": {
+          "configurationId": "1",
+          "configurationName": "Test Scheme Action"
+        }
+      }
+    ],
+    "environmentDescription": "Lucid \u00b7 Built with macOS 26.5.1",
+    "expectedFailures": 0,
+    "failedTests": 0,
+    "finishTime": 1788624852.27,
+    "passedTests": 37,
+    "result": "Passed",
+    "skippedTests": 0,
+    "startTime": 1788624830.067,
+    "statistics": [],
+    "testFailures": [],
+    "title": "Test - Lucid",
+    "topInsights": [
+      {
+        "category": "Longest Test Runs",
+        "impact": "100% of duration",
+        "text": "1 longest test run with outlier durations exceeding 0.51s (three standard deviations)"
+      }
+    ],
+    "totalTestCount": 37
+  },
+  "release_build_succeeded": true,
+  "harness_invalid_parameters_rejected": 3,
+  "source_sha256": {
+    "Lucid/Metal/LearnedUpscaler.swift": "06c2b78e4d5bb28d53f8f4d881cc703f1a389fff4e8cf5d59e906f2b4300a8cc",
+    "Lucid/App/AppCoordinator.swift": "6e95812194972a329d937adede34f4df52d92178464a22ea317e64a54530c9a6",
+    "LucidTests/FrameIntegrityTests.swift": "eb569de264932d7553927468c871e27563302cd239590303010254c532262a29",
+    "Tools/frontier_eval/run_browser_candidate.py": "7f8a5bd1511733130033fccfe9828024da1b3605e3543aaae1f1cfd897e66939"
+  },
+  "limitation": "Opt-in isolated browser comparison support; no candidate bundled or production selection changed. Initial Release test invocation could not use @testable because release module disables testability; the Debug suite passes and the separate Release build succeeds."
+}

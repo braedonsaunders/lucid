@@ -24,10 +24,14 @@ def main():
     ap.add_argument('--extension',type=Path,
                     help='Install this unpacked companion through Chrome CDP in the owned browser profile')
     ap.add_argument('--samples',type=int,default=30)
+    ap.add_argument('--candidate-model-stem',default='direct2x_trained_')
+    ap.add_argument('--candidate-sharpness',type=float,default=.4)
     ap.add_argument('--order',nargs='+',choices=['shipping','candidate'],default=['shipping','candidate','candidate','shipping'])
     ap.add_argument('--presentation-trace',action='store_true',help='Record actual draw acknowledgments in the extension iframe')
     ap.add_argument('--out',type=Path,required=True)
     args=ap.parse_args()
+    if not 0 <= args.candidate_sharpness <= 2 or not args.candidate_model_stem.replace('_','').isalnum():
+        ap.error('bounded sharpness and an alphanumeric/underscore model stem required')
     if args.out.exists():ap.error('fresh browser evidence directory required')
     if args.extension and not (args.extension/'manifest.json').is_file():
         ap.error('extension manifest required')
@@ -46,6 +50,7 @@ def main():
         'script_sha256':digest(__file__),'browser_config_sha256':digest(args.config),
         'scope':'Real companion scripts and MessageChannels, isolated native app/ports; not installed-extension or third-party CSP coverage',
         'order':args.order,'samples_per_run':args.samples,'warmup_seconds':5,
+        'candidate_model_stem':args.candidate_model_stem,'candidate_sharpness':args.candidate_sharpness,
         'presentation_trace':args.presentation_trace,'runs':[],'complete':False}
     probe_path=Path(__file__).with_name('browser_draw_probe.js')
     if args.presentation_trace:report['presentation_probe_sha256']=digest(probe_path)
@@ -74,7 +79,7 @@ def main():
             session=f'lucid-cadence-{os.getpid()}-{index}'
             app_log=(args.out/f'{index}-{label}-app.log').open('w')
             native_env={**env,'LUCID_EPHEMERAL':'1','LUCID_BRIDGE_PORT':'48111','LUCID_TOKEN_PORT':'48112',
-                'LUCID_COMPUTE_UNITS':'gpu','LUCID_MODEL_STEM':'direct2x_trained_' if label=='candidate' else 'SPAN_x4_ch32utc_'}
+                'LUCID_COMPUTE_UNITS':'gpu','LUCID_MODEL_STEM':args.candidate_model_stem if label=='candidate' else 'SPAN_x4_ch32utc_'}
             app=subprocess.Popen([str(args.app.resolve()),'-strength','standard'],env=native_env,stdout=app_log,stderr=subprocess.STDOUT)
             cli('open','about:blank' if args.extension else 'http://127.0.0.1:48113','--browser','chrome','--config',str(args.config.resolve()),*(['--headed'] if args.headed else []))
             installation=None
@@ -100,7 +105,7 @@ def main():
               await page.waitForFunction(() => window.latestStatus?.enhancing && window.latestStatus?.presentedFPS>0, null, {timeout:30000});
               await page.waitForTimeout(5000);
               return await page.evaluate(() => ({purpose:'setup',status:window.latestStatus,browser:navigator.userAgent,video:{w:document.querySelector('video').videoWidth,h:document.querySelector('video').videoHeight},viewport:[innerWidth,innerHeight,devicePixelRatio]}));
-            }'''.replace('GAIN','.4' if label=='candidate' else '.75'))
+            }'''.replace('GAIN',str(args.candidate_sharpness) if label=='candidate' else '.75'))
             if app.poll() is not None:raise RuntimeError('native process ended during setup')
             chunks=[]
             for start in range(0,args.samples,30):

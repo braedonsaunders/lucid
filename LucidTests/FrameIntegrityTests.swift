@@ -7,6 +7,23 @@ import Testing
 @testable import Lucid
 
 struct LearnedReconstructionGeometryTests {
+    @Test func nominalDetailGainIsLimitedToTheVerifiedPresentationTransform() {
+        var metadata = [
+            "lucid.transformation": "quantized 4x-to-2x bicubic presentation",
+            "lucid.checkpoint_sha256": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65"
+        ]
+        let reference = LearnedUpscaler.detailReferenceRadius(scale: 2, metadata: metadata)
+        #expect(reference == 2)
+        #expect(DetailEnhancer.gainNormalisation(radius: 2, reference: reference) == 1)
+        #expect(LearnedUpscaler.detailReferenceRadius(scale: 4, metadata: metadata) == 4)
+        #expect(LearnedUpscaler.detailReferenceRadius(scale: 2, metadata: [:]) == 4)
+        metadata["lucid.checkpoint_sha256"] = "unverified"
+        #expect(LearnedUpscaler.detailReferenceRadius(scale: 2, metadata: metadata) == 4)
+        metadata["lucid.checkpoint_sha256"] = "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65"
+        metadata["lucid.transformation"] = "area phase folding"
+        #expect(LearnedUpscaler.detailReferenceRadius(scale: 2, metadata: metadata) == 4)
+    }
+
     @Test func supportedScalesComeFromBothImageDimensions() {
         #expect(LearnedUpscaler.reconstructionScale(inputWidth: 640, inputHeight: 360, outputWidth: 1280, outputHeight: 720) == 2)
         #expect(LearnedUpscaler.reconstructionScale(inputWidth: 640, inputHeight: 360, outputWidth: 2560, outputHeight: 1440) == 4)
