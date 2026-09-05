@@ -125,6 +125,8 @@ def main():
     ap.add_argument('--dino-size', type=int, default=224)
     ap.add_argument('--teacher-cache', type=Path)
     ap.add_argument('--teacher-weight', type=float, default=0)
+    ap.add_argument('--teacher-policy', choices=('reference_checked', 'unfiltered'), default='reference_checked',
+                    help='Controlled ablation: unfiltered retains reference losses but omits the local teacher gate')
     ap.add_argument('--blocks', type=int, default=4)
     ap.add_argument('--batch', type=int, default=4)
     ap.add_argument('--crop', type=int, default=96)
@@ -219,9 +221,13 @@ def main():
         if args.teacher_weight:
             selected = step % frames
             restored = sampled[2][:, selected].to(device)
-            with torch.no_grad():
-                floor = model.floor(lr[:, selected]).clamp(0, 1)
-            distilled, coverage = reference_checked_loss(output[:, selected], hr[:, selected], restored, floor)
+            if args.teacher_policy == 'reference_checked':
+                with torch.no_grad():
+                    floor = model.floor(lr[:, selected]).clamp(0, 1)
+                distilled, coverage = reference_checked_loss(output[:, selected], hr[:, selected], restored, floor)
+            else:
+                distilled = (output[:, selected] - restored).abs().mean()
+                coverage = output.new_tensor(1)
             loss = loss + args.teacher_weight*distilled
         if not torch.isfinite(loss):
             raise RuntimeError(f'nonfinite training loss at step {step+1}')

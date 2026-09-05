@@ -12,4 +12,26 @@ For a selected frame, the teacher's and fixed Lanczos floor's local mean absolut
 
 The teacher is cached offline and discarded from student inference. The learned graph, persistent Core ML state, parameter count and deployment interface are unchanged. This does not establish that the compressed student preserves the teacher's quality; that is the experiment's measured question.
 
-Eighteen experiment tests pass, including aligned cache augmentation, rejection of wrong-bank or validation targets, rejection of changed cache bytes, and gradient checks for useful versus harmful teacher regions. The remote command is `causal-pixrestore-distillation-command.ps1`; launch/source identities are in `causal-pixrestore-distillation-launch.json`. Completion, matched development scores and independent evaluation remain pending.
+Eighteen experiment tests pass, including aligned cache augmentation, rejection of wrong-bank or validation targets, rejection of changed cache bytes, and gradient checks for useful versus harmful teacher regions. The remote command is `causal-pixrestore-distillation-command.ps1`; launch/source identities are in `causal-pixrestore-distillation-launch.json`.
+
+## Matched pilot result
+
+The RTX 4080 cached all 2,560 training targets, then completed the candidate/control in 3.74/3.60 minutes, both with exit code zero. `causal-pixrestore-matched-evaluation.json` records the completed development screen:
+
+| Variant | LPIPS ↓ | DISTS ↓ | Fine correlation ↑ |
+|---|---:|---:|---:|
+| Lanczos | 0.345604 | 0.128056 | 0.509324 |
+| Matched control | 0.338843 | 0.127766 | 0.512886 |
+| Teacher weight 1 | 0.338704 | 0.127661 | 0.512914 |
+
+The teacher adds only **0.041% LPIPS** and **0.082% DISTS** improvement over the control. Most improvement over the initialization comes from further ordinary training. This candidate is not promoted.
+
+`causal-teacher-gradient-diagnostic.json` examines four training-only sequences at fixed initialization, in FP32 on CPU. Confidence averages 0.010–0.050; the added teacher gradient norm is only 4.6–15.1% of the L1 gradient norm. This comparison omits the other reference/DINO terms and is not a full-objective gradient ratio. A weight-10 run tests whether stronger supervision within the same gate helps, reusing the exact completed control rather than spending GPU time repeating it. `causal-pixrestore-strong-command.ps1` records that arm.
+
+The gate itself favors pixel accuracy, while the teacher's advantage is perceptual. A separate `--teacher-policy unfiltered` ablation is available to test whether the gate discards useful guidance. It retains all original reference losses. Such an experimental arm still needs controlled quality and detail evaluation; omitting a training gate is not a shipping promotion.
+
+## Core ML conversion and resolution coverage
+
+The weight-1 checkpoint converts successfully with persistent state at all four tested input sizes. Thirty-sample synchronous Python/Core ML mean/p95 times on M4 Pro are 2.842/3.042 ms at 640×360, 5.006/5.923 at 960×540, 8.670/9.584 at 1280×720, and 13.847/14.470 at 1920×1080; every output dimension is doubled. The six-frame independently evolved Torch/Core ML checks include history resets and stay below 0.725 RGB levels. `causal-pixrestore-native.json` records samples, checkpoint identity and converter checks.
+
+These are graph timings, not browser cadence or full app latency. The separate native Swift state-representation comparison establishes the Swift benefit; the new graph profiles establish conversion across resolutions. Useful reconstruction quality remains the blocker to enabling this route.

@@ -1,0 +1,46 @@
+{
+  "rows": [
+    {
+      "source": "fast_netflix_Aerial",
+      "pixel_loss": 0.03229701519012451,
+      "teacher_loss": 9.369292092742398e-05,
+      "teacher_confidence": 0.009768945164978504,
+      "pixel_gradient_norm": 0.012446964159607887,
+      "teacher_gradient_norm": 0.000567243027035147
+    },
+    {
+      "source": "fast_netflix_Dancers",
+      "pixel_loss": 0.010608128271996975,
+      "teacher_loss": 0.00014189854846335948,
+      "teacher_confidence": 0.022130124270915985,
+      "pixel_gradient_norm": 0.0148361437022686,
+      "teacher_gradient_norm": 0.0007490523857995868
+    },
+    {
+      "source": "fast_netflix_Narrator",
+      "pixel_loss": 0.02838391810655594,
+      "teacher_loss": 0.00030617715674452484,
+      "teacher_confidence": 0.016017872840166092,
+      "pixel_gradient_norm": 0.011493925005197525,
+      "teacher_gradient_norm": 0.0017393167363479733
+    },
+    {
+      "source": "fast_netflix_Tango",
+      "pixel_loss": 0.014855499379336834,
+      "teacher_loss": 0.0006556458538398147,
+      "teacher_confidence": 0.05002106726169586,
+      "pixel_gradient_norm": 0.015879731625318527,
+      "teacher_gradient_norm": 0.001729727373458445
+    }
+  ],
+  "scope": "four training-only sequences, float32 CPU; relative to L1 gradient only, not full DINO objective",
+  "seed": 20260914,
+  "checkpoint_sha256": "6c368e6a1dd15ddcc62dd5e89df2f6f395c92ec7761e45bad18bb143308c817d",
+  "bank_sha256": "8f4cdf3b012339b1b6301cc2f70854d310ea1637056743a265f9e1c82a317e03",
+  "teacher_file_sha256": {
+    ".build/teacher-gradient-cache/fast_netflix_Narrator-stream-000-00.npz": "429155d036932e809df3f95c3c6b363a47867228a804177256a7c0a102eb9f3e",
+    ".build/teacher-gradient-cache/fast_netflix_Tango-stream-000-00.npz": "8d70669b317fedc2e4c43f84f100a62b98d65692cc35ea3cd97feb589e379b9f",
+    ".build/teacher-gradient-cache/fast_netflix_Dancers-stream-000-00.npz": "e65b11db661668a5cb6e8c1e21b971c3e56fe18674bf8b31e5f41f08b60e173b",
+    ".build/teacher-gradient-cache/fast_netflix_Aerial-stream-000-00.npz": "4ca8a06a11ef0381883036a131bdb5839b39ceffb33f4b07316118147f3610fe"
+  }
+}
