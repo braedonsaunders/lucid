@@ -1,0 +1,38 @@
+{
+  "scope": "Isolated tensor-output test app and port-adjusted extension; shipping untouched",
+  "extension_port_substitutions": {
+    "bridge-auth.js": {
+      "before": "905097d23ff6b5dbd8f88ed8ea33b8c9abd28341cb1f2cabd71922328d88faed",
+      "after": "46b8838600bbf96fab6d4dc0d7c065c447c8fef1f72c8f40016f8509f4085b92"
+    },
+    "background.js": {
+      "before": "ec35a5d1a7660c8650173a7d343a6fa6865d69b9159bb1549fae4dc758a616f1",
+      "after": "655b15256d7a5cbc047a12519ec0cd86b36e0a69c1faa4e634a53b55f7a3b613"
+    },
+    "surface.js": {
+      "before": "640edd79362ef9c27b543de53aff567a4e01fb43ce29b2e7d223731ae17b3ad7",
+      "after": "38d87b28d2afcfd17eefb9fe1fbfd9895c064ebcb53369a01dd3c25354d5be7e"
+    },
+    "content.js": {
+      "before": "c5fce6b8b534fdbd8635417137be9b7f4a293326005f6b5c0b4be2e80805e980",
+      "after": "27999fcca52a17db1d513ffa3598971eb447db050a23babff772f4b9530c8d4f"
+    }
+  },
+  "source_app": ".build/tensor-browser-tests/Build/Products/Release/Lucid.app",
+  "app_sha256": "4e2e4f0b6dff2a9aa33f538993dbbf3fa801ec7da3996588962153228acdf27e",
+  "browser_config_sha256": "63ad908be5d05c4e208c4a9d24de6632b579cb432341e7a0e7b1dca34518864e",
+  "fixture_sha256": "b3940fb85ad2f6b373219ad9e2b7119473995fef2f64aaa1432eec4167c0d378",
+  "candidate_models": {
+    "640x360": {
+      "Manifest.json": "cc07a35d5a661e8eb8177684767ae91e3ba61e91ada368b6315cdca68cf4bd1a",
+      "Data/com.apple.CoreML/model.mlmodel": "0b3fb86740d3d0263b52061dacdc0a8d980ed15ed318e184bd73f8cb57cde0b4",
+      "Data/com.apple.CoreML/weights/weight.bin": "3b43b4c514cb65db9bbf54d2b0941dc7392c26f2099e12a77dab6faa085cdfb8"
+    },
+    "864x480": {
+      "Manifest.json": "5c33fc11ce4a3b624a861a2fd0d28556ef2aee9c98a73aa461936023f4f3469b",
+      "Data/com.apple.CoreML/model.mlmodel": "6e72a764f45d1cef22d988f414b774d7ea95848d6fa6c30b2b63bc5d73a99d72",
+      "Data/com.apple.CoreML/weights/weight.bin": "3b43b4c514cb65db9bbf54d2b0941dc7392c26f2099e12a77dab6faa085cdfb8"
+    }
+  },
+  "browser_config_note": "Restores installed-extension launch setting from the prior successful browser-installed-config.json; first copied quantized preflight config omitted it."
+}

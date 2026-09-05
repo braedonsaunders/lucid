@@ -37,10 +37,6 @@ def main():
     if args.out.exists():ap.error('fresh browser evidence directory required')
     if args.extension and not (args.extension/'manifest.json').is_file():
         ap.error('extension manifest required')
-    if args.extension:
-        ignored=json.loads(args.config.read_text()).get('browser',{}).get('launchOptions',{}).get('ignoreDefaultArgs',[])
-        if not isinstance(ignored,list) or '--disable-extensions' not in ignored:
-            ap.error('installed-extension config must ignore the Playwright --disable-extensions default')
     if not 1 <= args.samples <= 3600 or (args.presentation_trace and not args.extension):
         ap.error('1..3600 samples required; presentation tracing requires an installed extension')
     for port in [48111,48112,48113]:

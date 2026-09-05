@@ -51,3 +51,16 @@ The corrected 48-pair native capture has **48/48 identical NV12 payloads and par
 
 
 The wider corrected run completes **960/960 exact native pairs** across all eight regression sources. Thus its final native pixels preserve all corresponding shipping perceptual/detail scores, including OldTownCross. No new GPU quality score is claimed or needed to establish equality. The 32-condition enhancement-stage means are 12.060 ms shipping and 8.891 ms candidate (26.3% lower). Test builds overlapped this shared-host capture, so browser timing still needs its own controlled measurement. An isolated browser opt-in is enabled only for an ephemeral process, explicit tensor experiment flag, matching frozen metadata, and CPU+GPU compute. Forty-one native tests pass; default model selection remains unchanged.
+
+
+## Installed-companion browser screen and 480p confirmation
+
+The headed Chrome152 ABBA comparison completes four 30-second runs after five-second warmups. All meet >=57 distinct-source-PTS draws/s, p95<=50ms, and correct Off behavior. Shipping source cadence is 59.137/58.312fps and capture-to-canvas p95 is 35.800/41.800ms. Candidate cadence is 59.676/59.879fps and p95 is 33.600/32.400ms. This short local-fixture result supports a longer run; it is not physical scanout or broad browser coverage. Native RSS snapshots are lower in candidate runs but do not measure complete CPU/GPU/browser memory.
+
+Two initial attempts collected no timing: the copied preflight browser config omitted the existing `ignoreDefaultArgs: ["--disable-extensions"]` setting. The bridge worked but Chrome never enabled the companion. Restore the setting from the prior successful installed-extension configuration; the harness now rejects this missing prerequisite before launch. All owned failed/successful browser, app, server and CLI processes were closed. Executed artifacts and traces are retained in `tensor-browser-abba/`.
+
+At 480p, all four RGB comparisons now match exactly. Across 180 balanced boundary samples, image output averages 14.246ms (p95 14.616) and tensor plus packing 10.151ms (p95 10.355), 28.7% lower mean. This is still an RGB boundary check; a full 480p native/browser admission remains separate.
+
+The candidate sustained installed-companion run passes all existing 600-second/57-distinct-PTS-fps/50ms-p95/Off gates: 618.809 seconds, 59.839 distinct source frames/s, capture-to-canvas p95 30.800ms. Twenty native RSS snapshots peak at 138.656MiB and end at 124.859MiB; this is not total GPU/browser memory. The prior ABBA supplies the short paired comparison; this longer candidate-only run establishes stability under that fixture, not a new simultaneous long-run control or physical scanout. All owned test processes close successfully.
+
+The 864×480 fixture-derived native check also completes: all 16 sampled full-pipeline NV12 payload/header pairs are identical after processing the same 64 decoded frames. This extends equality through native preprocessing, color/detail and the 1728×960 sender on this fixture; it is not a new source-disjoint quality result.

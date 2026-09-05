@@ -1,0 +1,173 @@
+{
+  "report_sha256": "eda1fcdf81dd5a3caa716f9b5ac61d46fb6fdc45bc215cf55e2f3256c7e8c270",
+  "metric": "capture to canvas draw submission acknowledgment; not physical scanout",
+  "limits": {
+    "minimum_seconds": 30,
+    "minimum_fps": 57,
+    "maximum_p95_ms": 50,
+    "require_source_timestamps": true
+  },
+  "runs": [
+    {
+      "variant": "shipping",
+      "seconds": 30.03210009765625,
+      "actual_draws": 1796,
+      "actual_fps": 59.80267760695705,
+      "median_ms": 25.300048828125,
+      "p95_ms": 35.800048828125,
+      "p99_ms": 41.60009765625,
+      "max_ms": 44.699951171875,
+      "source_cadence": {
+        "changed_timestamp_draws": 1776,
+        "repeated_timestamp_draws": 20,
+        "changed_timestamp_fps": 59.136723513338374,
+        "backward_timestamp_changes": 1,
+        "scope": "consecutive source PTS changes; loops/seek resets counted, not pixel uniqueness or physical scanout"
+      },
+      "gates": {
+        "duration": true,
+        "cadence": true,
+        "latency": true,
+        "off": true,
+        "source_cadence": true
+      },
+      "pass": true,
+      "minute_bins": [
+        {
+          "start_second": 0,
+          "seconds": 30.03210009765625,
+          "draws": 1796,
+          "fps": 59.80267760695705,
+          "p95_ms": 35.800048828125
+        }
+      ],
+      "native_rss_mib": {
+        "samples": 1,
+        "first": 198.921875,
+        "last": 198.921875,
+        "peak": 198.921875
+      }
+    },
+    {
+      "variant": "candidate",
+      "seconds": 30.028599853515626,
+      "actual_draws": 1815,
+      "actual_fps": 60.44237856090074,
+      "median_ms": 24.60009765625,
+      "p95_ms": 33.60009765625,
+      "p99_ms": 39.400146484375,
+      "max_ms": 43.30029296875,
+      "source_cadence": {
+        "changed_timestamp_draws": 1792,
+        "repeated_timestamp_draws": 23,
+        "changed_timestamp_fps": 59.67644208326949,
+        "backward_timestamp_changes": 1,
+        "scope": "consecutive source PTS changes; loops/seek resets counted, not pixel uniqueness or physical scanout"
+      },
+      "gates": {
+        "duration": true,
+        "cadence": true,
+        "latency": true,
+        "off": true,
+        "source_cadence": true
+      },
+      "pass": true,
+      "minute_bins": [
+        {
+          "start_second": 0,
+          "seconds": 30.028599853515626,
+          "draws": 1815,
+          "fps": 60.44237856090074,
+          "p95_ms": 33.60009765625
+        }
+      ],
+      "native_rss_mib": {
+        "samples": 1,
+        "first": 123.6875,
+        "last": 123.6875,
+        "peak": 123.6875
+      }
+    },
+    {
+      "variant": "candidate",
+      "seconds": 30.027300048828124,
+      "actual_draws": 1818,
+      "actual_fps": 60.544904038781574,
+      "median_ms": 24.599853515625,
+      "p95_ms": 32.39990234375,
+      "p99_ms": 35,
+      "max_ms": 41.10009765625,
+      "source_cadence": {
+        "changed_timestamp_draws": 1798,
+        "repeated_timestamp_draws": 20,
+        "changed_timestamp_fps": 59.87884348829993,
+        "backward_timestamp_changes": 1,
+        "scope": "consecutive source PTS changes; loops/seek resets counted, not pixel uniqueness or physical scanout"
+      },
+      "gates": {
+        "duration": true,
+        "cadence": true,
+        "latency": true,
+        "off": true,
+        "source_cadence": true
+      },
+      "pass": true,
+      "minute_bins": [
+        {
+          "start_second": 0,
+          "seconds": 30.027300048828124,
+          "draws": 1818,
+          "fps": 60.544904038781574,
+          "p95_ms": 32.39990234375
+        }
+      ],
+      "native_rss_mib": {
+        "samples": 1,
+        "first": 138.25,
+        "last": 138.25,
+        "peak": 138.25
+      }
+    },
+    {
+      "variant": "shipping",
+      "seconds": 30.028199951171874,
+      "actual_draws": 1768,
+      "actual_fps": 58.87798812033028,
+      "median_ms": 33.4002685546875,
+      "p95_ms": 41.80029296875,
+      "p99_ms": 43.600341796875,
+      "max_ms": 50.900390625,
+      "source_cadence": {
+        "changed_timestamp_draws": 1751,
+        "repeated_timestamp_draws": 17,
+        "changed_timestamp_fps": 58.31185361917326,
+        "backward_timestamp_changes": 1,
+        "scope": "consecutive source PTS changes; loops/seek resets counted, not pixel uniqueness or physical scanout"
+      },
+      "gates": {
+        "duration": true,
+        "cadence": true,
+        "latency": true,
+        "off": true,
+        "source_cadence": true
+      },
+      "pass": true,
+      "minute_bins": [
+        {
+          "start_second": 0,
+          "seconds": 30.028199951171874,
+          "draws": 1768,
+          "fps": 58.87798812033028,
+          "p95_ms": 41.80029296875
+        }
+      ],
+      "native_rss_mib": {
+        "samples": 1,
+        "first": 196.09375,
+        "last": 196.09375,
+        "peak": 196.09375
+      }
+    }
+  ],
+  "pass": true
+}
