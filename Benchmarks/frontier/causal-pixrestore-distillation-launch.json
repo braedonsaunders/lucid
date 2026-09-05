@@ -1,0 +1,25 @@
+{
+  "bank_sha256": "8f4cdf3b012339b1b6301cc2f70854d310ea1637056743a265f9e1c82a317e03",
+  "sources": 21,
+  "sequences": 168,
+  "training_sequences": 160,
+  "validation_sequences": 8,
+  "lr_patch": 256,
+  "hr_patch": 512,
+  "frames": 16,
+  "builder_sha256": "e9fc0f38115aa282016fbef873f25c69ebd80b55ef630807fca1aa599f318c05",
+  "seed": 20260907,
+  "launch": {
+    "ProcessId": 21232,
+    "ReturnValue": 0
+  },
+  "initial_checkpoint_sha256": "6c368e6a1dd15ddcc62dd5e89df2f6f395c92ec7761e45bad18bb143308c817d",
+  "files_sha256": {
+    "Tools/experiments/cache_pixrestore_teacher.py": "2bc7f6a1cd85c3bdd489a0e645d7d0ea31c443b875cdce26456c854b9504b088",
+    "Tools/experiments/teacher_distillation.py": "458ed0acdb2865f2c7fa6662fcdc412f8a02de59fe937ce6ee5911f507c3671a",
+    "Tools/experiments/train_causal_detail.py": "368ec3e850d190423df9b6688d330b735893c6bd2e0466fc376c6911f6a9c536",
+    "Benchmarks/frontier/causal-pixrestore-distillation-command.ps1": "6cb491dad6272b7efffb574c78536b0df3c4f25db7fdff1a0ffd2929ae304b92"
+  },
+  "experiment": "reference-checked PixRestore output distillation versus same-objective control; 4000 steps each",
+  "limitation": "same source identities as previous bank, larger context but no increase in independent scene diversity; final metrics pending"
+}

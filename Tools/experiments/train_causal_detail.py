@@ -53,23 +53,31 @@ def load_bank(directory):
     return manifest, result
 
 
-def batch(data, rng, count, frames, crop):
-    sources, references = [], []
+def batch(data, rng, count, frames, crop, teachers=None):
+    sources, references, targets = [], [], []
     for _ in range(count):
-        lr, hr, _ = data[int(rng.integers(len(data)))]
+        lr, hr, identity = data[int(rng.integers(len(data)))]
         t = int(rng.integers(lr.shape[0]-frames+1))
         y, x = (int(rng.integers(lr.shape[d]-crop+1)) for d in (1, 2))
         a = lr[t:t+frames, y:y+crop, x:x+crop]
         b = hr[t:t+frames, y*2:(y+crop)*2, x*2:(x+crop)*2]
+        c = teachers[identity][t:t+frames, y*2:(y+crop)*2, x*2:(x+crop)*2] if teachers is not None else None
         for axis in (1, 2):
             if rng.random() < 0.5:
                 a, b = np.flip(a, axis), np.flip(b, axis)
+                if c is not None:
+                    c = np.flip(c, axis)
         if rng.random() < 0.5:
             a, b = np.swapaxes(a, 1, 2), np.swapaxes(b, 1, 2)
+            if c is not None:
+                c = np.swapaxes(c, 1, 2)
         sources.append(a.copy()); references.append(b.copy())
+        if c is not None:
+            targets.append(c.copy())
     def tensor(images):
         return torch.from_numpy(np.stack(images)).permute(0, 1, 4, 2, 3).float().div_(255)
-    return tensor(sources), tensor(references)
+    pair = tensor(sources), tensor(references)
+    return (*pair, tensor(targets)) if teachers is not None else pair
 
 
 def sequence(model, frames, no_history):
@@ -115,6 +123,8 @@ def main():
     ap.add_argument('--dino-repository', type=Path)
     ap.add_argument('--dino-checkpoint', type=Path)
     ap.add_argument('--dino-size', type=int, default=224)
+    ap.add_argument('--teacher-cache', type=Path)
+    ap.add_argument('--teacher-weight', type=float, default=0)
     ap.add_argument('--blocks', type=int, default=4)
     ap.add_argument('--batch', type=int, default=4)
     ap.add_argument('--crop', type=int, default=96)
@@ -130,6 +140,12 @@ def main():
         ap.error('DINO weight must be finite and nonnegative')
     if args.dino_weight and (not args.dino_repository or not args.dino_checkpoint):
         ap.error('DINO supervision requires a pinned local repository and checkpoint')
+    if not math.isfinite(args.teacher_weight) or args.teacher_weight < 0 or (args.teacher_weight and not args.teacher_cache):
+        ap.error('teacher weight must be finite, nonnegative, and accompanied by a cache')
+    if args.teacher_weight and args.architecture != 'causal_detail_v2':
+        ap.error('reference-checked distillation requires the v2 fixed reconstruction floor')
+    if args.out.exists():
+        ap.error('preserve existing training output; use a fresh directory')
     random.seed(args.seed); np.random.seed(args.seed); torch.manual_seed(args.seed)
     torch.set_num_threads(4)
     device = torch.device(args.device)
@@ -137,6 +153,10 @@ def main():
         torch.cuda.manual_seed_all(args.seed)
     torch.backends.cudnn.benchmark = False
     manifest, data = load_bank(args.bank)
+    targets = None
+    if args.teacher_cache:
+        from teacher_distillation import load_teacher_cache, reference_checked_loss
+        targets, _ = load_teacher_cache(args.teacher_cache, digest(args.bank/'manifest.json'), data, digest)
     if args.crop > manifest['lr_patch']:
         ap.error('crop exceeds bank dimensions')
     rng = np.random.default_rng(args.seed)
@@ -161,6 +181,8 @@ def main():
         'init_sha256': digest(args.init) if args.init else None,
         'dino': teacher.metadata if teacher is not None else None,
         'dino_code_sha256': digest(Path(__file__).with_name('dino_supervision.py')) if teacher is not None else None,
+        'teacher_cache_sha256': digest(args.teacher_cache/'manifest.json') if args.teacher_cache else None,
+        'distillation_code_sha256': digest(Path(__file__).with_name('teacher_distillation.py')) if args.teacher_cache else None,
         'dino_frame_selection': 'one frame per sequence; zero-based step modulo curriculum frame count',
         'blocks': args.blocks, 'no_history': args.no_history, 'arguments': {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
         'bank_sha256': digest(args.bank/'manifest.json'), 'torch': str(torch.__version__),
@@ -174,7 +196,8 @@ def main():
     for step in range(args.steps):
         # Identical curriculum and frames for the recurrent and control runs.
         frames = min(manifest['frames'], 3 if step < args.steps//5 else (7 if step < args.steps*3//5 else 12))
-        lr, hr = batch(data['train'], rng, args.batch, frames, args.crop)
+        sampled = batch(data['train'], rng, args.batch, frames, args.crop, targets)
+        lr, hr = sampled[:2]
         lr, hr = lr.to(device), hr.to(device)
         optimizer.zero_grad(set_to_none=True)
         with torch.autocast(device_type=device.type, dtype=torch.bfloat16, enabled=device.type == 'cuda' and args.precision == 'bf16'):
@@ -192,13 +215,21 @@ def main():
                                 enabled=device.type == 'cuda' and args.precision == 'bf16'):
                 feature = teacher(output[:, selected], hr[:, selected], lr[:, selected])
             loss = loss + args.dino_weight*feature
+        coverage = output.new_tensor(0)
+        if args.teacher_weight:
+            selected = step % frames
+            restored = sampled[2][:, selected].to(device)
+            with torch.no_grad():
+                floor = model.floor(lr[:, selected]).clamp(0, 1)
+            distilled, coverage = reference_checked_loss(output[:, selected], hr[:, selected], restored, floor)
+            loss = loss + args.teacher_weight*distilled
         if not torch.isfinite(loss):
             raise RuntimeError(f'nonfinite training loss at step {step+1}')
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)
         optimizer.step(); scheduler.step()
         if (step+1) % 100 == 0:
-            print(f'step {step+1}/{args.steps} frames={frames} loss={float(loss.detach()):.6f} pixel={float(pixel.detach()):.6f} rate={(step+1)/(time.monotonic()-started):.2f} steps/s', flush=True)
+            print(f'step {step+1}/{args.steps} frames={frames} loss={float(loss.detach()):.6f} pixel={float(pixel.detach()):.6f} teacher_confidence={float(coverage):.4f} rate={(step+1)/(time.monotonic()-started):.2f} steps/s', flush=True)
         if (step+1) % 2000 == 0 or step+1 == args.steps:
             rows = validate(model, data['validation'], device, args.no_history)
             state = {**metadata, 'step': step+1, 'model': model.state_dict(), 'optimizer': optimizer.state_dict(),
