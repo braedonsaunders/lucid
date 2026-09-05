@@ -1,0 +1,3307 @@
+{
+  "purpose": "fixed decoded-pixel spatial development-validation; no temporal or release claim",
+  "split": "development-validation",
+  "manifest_sha256": "d2946f12954e6ba799dee2caf24216f96fb4c74904cf364a9549145aed4c491a",
+  "sequence_manifest_sha256": "4c76fb3fc4af3df817178db24ea6524cc09f27c3e74babd3021e6e39364d8d58",
+  "checkpoint_sha256": {
+    "folded": "8dd69c03424003aa98585edcbbc6c659d882a94fa680efba7d784a28deba241a",
+    "shipping": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65"
+  },
+  "presentation_adapters": [
+    "shipping"
+  ],
+  "interpolation": [
+    "lanczos",
+    "bicubic",
+    "bilinear"
+  ],
+  "code_sha256": "bb652063f0b90905fff4a9a4dabacc32b818a98748f58822b94fd8add46ae090",
+  "scorer_sha256": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75",
+  "torch": "2.6.0+cu124",
+  "device": "cuda",
+  "rows": [
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.44992050528526306,
+        "dists": 0.09364604949951172,
+        "psnr_y": 26.435645870809385,
+        "detail_energy": 0.5577691893827184,
+        "fine_correlation": 0.44887872504242937
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 0,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.4481408894062042,
+        "dists": 0.0949476957321167,
+        "psnr_y": 26.452316975535926,
+        "detail_energy": 0.5226800526429525,
+        "fine_correlation": 0.437186870671729
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 0,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.47656363248825073,
+        "dists": 0.10188150405883789,
+        "psnr_y": 26.372650115150943,
+        "detail_energy": 0.41342212102694725,
+        "fine_correlation": 0.44197281263718724
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 0,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.41316327452659607,
+        "dists": 0.10445165634155273,
+        "psnr_y": 26.43153662881248,
+        "detail_energy": 0.6593979648856827,
+        "fine_correlation": 0.46184018240550534
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4173666536808014,
+        "dists": 0.10435807704925537,
+        "psnr_y": 26.45344025356301,
+        "detail_energy": 0.651513962501611,
+        "fine_correlation": 0.4705591375122179
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.48798346519470215,
+        "dists": 0.1094890832901001,
+        "psnr_y": 25.064465335864895,
+        "detail_energy": 0.5081806330191029,
+        "fine_correlation": 0.369092116674963
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 4,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.48073381185531616,
+        "dists": 0.11192792654037476,
+        "psnr_y": 25.110933765621862,
+        "detail_energy": 0.4771305252484144,
+        "fine_correlation": 0.35978917812148853
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 4,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5058901906013489,
+        "dists": 0.12219268083572388,
+        "psnr_y": 25.13875633424176,
+        "detail_energy": 0.3795922058224031,
+        "fine_correlation": 0.36539693259488065
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 4,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.44201385974884033,
+        "dists": 0.10903114080429077,
+        "psnr_y": 25.059571267159445,
+        "detail_energy": 0.5885700985954476,
+        "fine_correlation": 0.37816641181998883
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4474528729915619,
+        "dists": 0.10897928476333618,
+        "psnr_y": 25.071103929757797,
+        "detail_energy": 0.5815230392600786,
+        "fine_correlation": 0.38585411179765533
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5025150179862976,
+        "dists": 0.11398893594741821,
+        "psnr_y": 22.534947141100346,
+        "detail_energy": 0.5103105692537495,
+        "fine_correlation": 0.2763914190882455
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 8,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.49646496772766113,
+        "dists": 0.11567407846450806,
+        "psnr_y": 22.60793830776361,
+        "detail_energy": 0.479344808382625,
+        "fine_correlation": 0.2704516383319534
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 8,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5200551152229309,
+        "dists": 0.12572944164276123,
+        "psnr_y": 22.762327806010923,
+        "detail_energy": 0.3825210528002033,
+        "fine_correlation": 0.2757736939341557
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 8,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.46126335859298706,
+        "dists": 0.10994333028793335,
+        "psnr_y": 22.51316568502746,
+        "detail_energy": 0.5874117840971878,
+        "fine_correlation": 0.2783761635169373
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.46582651138305664,
+        "dists": 0.10967063903808594,
+        "psnr_y": 22.51026344707863,
+        "detail_energy": 0.5800804979424385,
+        "fine_correlation": 0.284266289754409
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5296602249145508,
+        "dists": 0.13405781984329224,
+        "psnr_y": 21.530102960806893,
+        "detail_energy": 0.47850052902627827,
+        "fine_correlation": 0.2259510810470035
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 12,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5239992141723633,
+        "dists": 0.13533031940460205,
+        "psnr_y": 21.597389033843108,
+        "detail_energy": 0.4499704511367476,
+        "fine_correlation": 0.22119036334965836
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 12,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5469404458999634,
+        "dists": 0.1443718671798706,
+        "psnr_y": 21.7560545937112,
+        "detail_energy": 0.360325109245826,
+        "fine_correlation": 0.22546214122073222
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 12,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.4894006848335266,
+        "dists": 0.13255268335342407,
+        "psnr_y": 21.51368997775368,
+        "detail_energy": 0.5467452051776198,
+        "fine_correlation": 0.22521080064611762
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1400000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4940546751022339,
+        "dists": 0.13210177421569824,
+        "psnr_y": 21.509152933240795,
+        "detail_energy": 0.5388950870043819,
+        "fine_correlation": 0.23040216266069016
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.33672624826431274,
+        "dists": 0.04499638080596924,
+        "psnr_y": 30.72973402741898,
+        "detail_energy": 0.6640337151693372,
+        "fine_correlation": 0.6744721338430464
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 0,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.31302592158317566,
+        "dists": 0.04739648103713989,
+        "psnr_y": 30.497616091179687,
+        "detail_energy": 0.6188943016090233,
+        "fine_correlation": 0.6503025986253049
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 0,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.342126727104187,
+        "dists": 0.05607324838638306,
+        "psnr_y": 29.76171534102764,
+        "detail_energy": 0.4835358207428956,
+        "fine_correlation": 0.6407263282520351
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 0,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.26763975620269775,
+        "dists": 0.05586206912994385,
+        "psnr_y": 30.805304349911577,
+        "detail_energy": 0.8094182626661084,
+        "fine_correlation": 0.6993267667000095
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.27765777707099915,
+        "dists": 0.05635249614715576,
+        "psnr_y": 30.854156085106887,
+        "detail_energy": 0.8037208995998427,
+        "fine_correlation": 0.7071879577257202
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3799741566181183,
+        "dists": 0.05709761381149292,
+        "psnr_y": 29.248050399923578,
+        "detail_energy": 0.6147297420419096,
+        "fine_correlation": 0.608181207342139
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 4,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.3541000485420227,
+        "dists": 0.0600818395614624,
+        "psnr_y": 29.11121244455975,
+        "detail_energy": 0.57303428856188,
+        "fine_correlation": 0.586852111087771
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 4,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.38114285469055176,
+        "dists": 0.07297271490097046,
+        "psnr_y": 28.61699827768719,
+        "detail_energy": 0.4488841992107862,
+        "fine_correlation": 0.5797821029184989
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 4,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.30515778064727783,
+        "dists": 0.06382811069488525,
+        "psnr_y": 29.345894775453083,
+        "detail_energy": 0.7430377442798651,
+        "fine_correlation": 0.6356931118611173
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.31570446491241455,
+        "dists": 0.06386709213256836,
+        "psnr_y": 29.382340689491112,
+        "detail_energy": 0.7379554624012563,
+        "fine_correlation": 0.6433525685234287
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.40309345722198486,
+        "dists": 0.058965325355529785,
+        "psnr_y": 26.328608470302747,
+        "detail_energy": 0.6172428721407391,
+        "fine_correlation": 0.4786298767816753
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 8,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.3805534243583679,
+        "dists": 0.06074082851409912,
+        "psnr_y": 26.39459383546137,
+        "detail_energy": 0.576186539611254,
+        "fine_correlation": 0.46437765374752205
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 8,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.4033442735671997,
+        "dists": 0.06934452056884766,
+        "psnr_y": 26.413846729563208,
+        "detail_energy": 0.4521608681411355,
+        "fine_correlation": 0.46591703978853666
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 8,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.3353731334209442,
+        "dists": 0.06095528602600098,
+        "psnr_y": 26.234561201523977,
+        "detail_energy": 0.7373673343719538,
+        "fine_correlation": 0.48854257902517256
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3444221019744873,
+        "dists": 0.0611041784286499,
+        "psnr_y": 26.24273042254594,
+        "detail_energy": 0.7314677223473458,
+        "fine_correlation": 0.49603348574989453
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4419318735599518,
+        "dists": 0.08370864391326904,
+        "psnr_y": 24.321905308733665,
+        "detail_energy": 0.5773090928104765,
+        "fine_correlation": 0.3699518319030643
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 12,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.42257505655288696,
+        "dists": 0.08563446998596191,
+        "psnr_y": 24.41639456587367,
+        "detail_energy": 0.539558358264321,
+        "fine_correlation": 0.35985619887270553
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 12,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.4439048171043396,
+        "dists": 0.09543430805206299,
+        "psnr_y": 24.565007765419082,
+        "detail_energy": 0.4250704410846429,
+        "fine_correlation": 0.3636087993191377
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 12,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.37811198830604553,
+        "dists": 0.07985079288482666,
+        "psnr_y": 24.232487024801692,
+        "detail_energy": 0.6814903857459138,
+        "fine_correlation": 0.37193073173286706
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-4000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3869721293449402,
+        "dists": 0.07935607433319092,
+        "psnr_y": 24.231583191305283,
+        "detail_energy": 0.675137751812135,
+        "fine_correlation": 0.378513625112247
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3273582458496094,
+        "dists": 0.040241122245788574,
+        "psnr_y": 31.727247021749903,
+        "detail_energy": 0.6545231999591126,
+        "fine_correlation": 0.7128743552857411
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 0,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.3057596683502197,
+        "dists": 0.04272252321243286,
+        "psnr_y": 31.322286918502957,
+        "detail_energy": 0.6102056658689304,
+        "fine_correlation": 0.6860175563331181
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 0,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.3358832001686096,
+        "dists": 0.053728580474853516,
+        "psnr_y": 30.272775179203265,
+        "detail_energy": 0.47759881361978423,
+        "fine_correlation": 0.6711205457037651
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 0,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.26443183422088623,
+        "dists": 0.052545368671417236,
+        "psnr_y": 31.91329437114404,
+        "detail_energy": 0.8031850380510555,
+        "fine_correlation": 0.7386824598603117
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.27475249767303467,
+        "dists": 0.0526423454284668,
+        "psnr_y": 31.96664003838103,
+        "detail_energy": 0.7984026275498437,
+        "fine_correlation": 0.7455732127165788
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.48232191801071167,
+        "dists": 0.10855758190155029,
+        "psnr_y": 23.55797560894695,
+        "detail_energy": 0.44357321353690204,
+        "fine_correlation": 0.4181843215084657
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 4,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.474127858877182,
+        "dists": 0.11042296886444092,
+        "psnr_y": 23.555512650218695,
+        "detail_energy": 0.41573412927397707,
+        "fine_correlation": 0.4020515839085698
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 4,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.50006103515625,
+        "dists": 0.12039673328399658,
+        "psnr_y": 23.547058773839908,
+        "detail_energy": 0.33295580098168626,
+        "fine_correlation": 0.3935131329938657
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 4,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.42769569158554077,
+        "dists": 0.11214697360992432,
+        "psnr_y": 23.566293250802303,
+        "detail_energy": 0.5274399838506932,
+        "fine_correlation": 0.4273537728735762
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4350343346595764,
+        "dists": 0.11218130588531494,
+        "psnr_y": 23.56674293984259,
+        "detail_energy": 0.523562570543407,
+        "fine_correlation": 0.4331523250910895
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5071820616722107,
+        "dists": 0.1263907551765442,
+        "psnr_y": 23.37721454280434,
+        "detail_energy": 0.41655675281365895,
+        "fine_correlation": 0.3677523292102873
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 8,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5019189119338989,
+        "dists": 0.12828731536865234,
+        "psnr_y": 23.384165572680867,
+        "detail_energy": 0.39086269193296164,
+        "fine_correlation": 0.35583894650449327
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 8,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5270129442214966,
+        "dists": 0.13850820064544678,
+        "psnr_y": 23.386657083035796,
+        "detail_energy": 0.31394842541889895,
+        "fine_correlation": 0.35071471142072114
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 8,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.4598703980445862,
+        "dists": 0.12144482135772705,
+        "psnr_y": 23.38527645796264,
+        "detail_energy": 0.4900975246167514,
+        "fine_correlation": 0.37109342552296337
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4656982421875,
+        "dists": 0.12138986587524414,
+        "psnr_y": 23.387106547397103,
+        "detail_energy": 0.48503541988600096,
+        "fine_correlation": 0.37694692321671996
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4415131211280823,
+        "dists": 0.08301353454589844,
+        "psnr_y": 26.034888064397123,
+        "detail_energy": 0.5253261281322774,
+        "fine_correlation": 0.48019723497100175
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 12,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.4278451204299927,
+        "dists": 0.0854562520980835,
+        "psnr_y": 26.029764823354604,
+        "detail_energy": 0.49264359296531746,
+        "fine_correlation": 0.46421641432552874
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 12,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.4530903995037079,
+        "dists": 0.0979149341583252,
+        "psnr_y": 25.94501349360037,
+        "detail_energy": 0.3941274796513886,
+        "fine_correlation": 0.46012610974963597
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 12,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.38129106163978577,
+        "dists": 0.08670449256896973,
+        "psnr_y": 26.06571969797428,
+        "detail_energy": 0.6160049087182955,
+        "fine_correlation": 0.4937819691085865
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1400000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.38928699493408203,
+        "dists": 0.086952805519104,
+        "psnr_y": 26.076044124773958,
+        "detail_energy": 0.6115143882647412,
+        "fine_correlation": 0.5011128870679576
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2884237766265869,
+        "dists": 0.025584101676940918,
+        "psnr_y": 32.87204084746274,
+        "detail_energy": 0.6701167570243223,
+        "fine_correlation": 0.7480472681969835
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 0,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.2576470971107483,
+        "dists": 0.029549598693847656,
+        "psnr_y": 32.2895780835405,
+        "detail_energy": 0.6240154493158795,
+        "fine_correlation": 0.7187151242473122
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 0,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.29234957695007324,
+        "dists": 0.04220688343048096,
+        "psnr_y": 30.922327271262926,
+        "detail_energy": 0.4873937701793155,
+        "fine_correlation": 0.6991600214043102
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 0,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.21577247977256775,
+        "dists": 0.037711143493652344,
+        "psnr_y": 33.161141444848916,
+        "detail_energy": 0.8217754147362426,
+        "fine_correlation": 0.7751403373687107
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.22898982465267181,
+        "dists": 0.03816354274749756,
+        "psnr_y": 33.20800345028482,
+        "detail_energy": 0.8183282215337845,
+        "fine_correlation": 0.7807491203724995
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4071460962295532,
+        "dists": 0.07208883762359619,
+        "psnr_y": 25.983103916691512,
+        "detail_energy": 0.5239368807913718,
+        "fine_correlation": 0.5014958924960373
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 4,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.3883434534072876,
+        "dists": 0.07496529817581177,
+        "psnr_y": 25.960027574513983,
+        "detail_energy": 0.4901018846119263,
+        "fine_correlation": 0.48248091145133054
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 4,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.4191918969154358,
+        "dists": 0.08735930919647217,
+        "psnr_y": 25.854918309276602,
+        "detail_energy": 0.3898037451329719,
+        "fine_correlation": 0.47417439175066173
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 4,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.34055107831954956,
+        "dists": 0.07866507768630981,
+        "psnr_y": 25.99791146783986,
+        "detail_energy": 0.621949768389207,
+        "fine_correlation": 0.516068316618499
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3513384163379669,
+        "dists": 0.07850754261016846,
+        "psnr_y": 26.002111057698794,
+        "detail_energy": 0.6194861282497437,
+        "fine_correlation": 0.5219636639830312
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.42984074354171753,
+        "dists": 0.09551966190338135,
+        "psnr_y": 25.502895996433086,
+        "detail_energy": 0.48722539246908164,
+        "fine_correlation": 0.44741338101798517
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 8,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.4185199737548828,
+        "dists": 0.09845268726348877,
+        "psnr_y": 25.498679198677614,
+        "detail_energy": 0.45715197680171266,
+        "fine_correlation": 0.43281147757703786
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 8,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.4500681757926941,
+        "dists": 0.10939979553222656,
+        "psnr_y": 25.436803964878468,
+        "detail_energy": 0.36631538551128806,
+        "fine_correlation": 0.42738845961386746
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 8,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.37235432863235474,
+        "dists": 0.09475553035736084,
+        "psnr_y": 25.526268278104016,
+        "detail_energy": 0.5719842894819152,
+        "fine_correlation": 0.4562504997575194
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.38109248876571655,
+        "dists": 0.09427952766418457,
+        "psnr_y": 25.533207107444042,
+        "detail_energy": 0.5676446446179436,
+        "fine_correlation": 0.46251907979255436
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3801467716693878,
+        "dists": 0.055533409118652344,
+        "psnr_y": 27.421409425323546,
+        "detail_energy": 0.5794923149032762,
+        "fine_correlation": 0.5685932079887798
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 12,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.3566932678222656,
+        "dists": 0.05889618396759033,
+        "psnr_y": 27.366122234448103,
+        "detail_energy": 0.5413649387929792,
+        "fine_correlation": 0.5468972862339344
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 12,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.3857637643814087,
+        "dists": 0.07190907001495361,
+        "psnr_y": 27.14711418080329,
+        "detail_energy": 0.428790133199589,
+        "fine_correlation": 0.5377606965666214
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 12,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.3074043095111847,
+        "dists": 0.06239163875579834,
+        "psnr_y": 27.466229815563203,
+        "detail_energy": 0.689167108287951,
+        "fine_correlation": 0.5897733654376053
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-4000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3190510869026184,
+        "dists": 0.06224501132965088,
+        "psnr_y": 27.474926872052873,
+        "detail_energy": 0.6866122474460973,
+        "fine_correlation": 0.5962070436379614
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5151808261871338,
+        "dists": 0.0775524377822876,
+        "psnr_y": 28.051317252217082,
+        "detail_energy": 0.4915804556982997,
+        "fine_correlation": 0.3788386827431783
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 0,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5198717713356018,
+        "dists": 0.0797194242477417,
+        "psnr_y": 28.079105282206243,
+        "detail_energy": 0.4719540224249323,
+        "fine_correlation": 0.3679152807408448
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 0,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5491267442703247,
+        "dists": 0.08549380302429199,
+        "psnr_y": 28.05134106941994,
+        "detail_energy": 0.39391894903283353,
+        "fine_correlation": 0.3762566379195332
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 0,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.4901126027107239,
+        "dists": 0.08466094732284546,
+        "psnr_y": 27.95306785850154,
+        "detail_energy": 0.5390703469352857,
+        "fine_correlation": 0.35998264965767274
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.49731919169425964,
+        "dists": 0.08472937345504761,
+        "psnr_y": 27.975137880004482,
+        "detail_energy": 0.527202966603684,
+        "fine_correlation": 0.3701828771582818
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5243453979492188,
+        "dists": 0.06737017631530762,
+        "psnr_y": 26.809561564977223,
+        "detail_energy": 0.5068159003489451,
+        "fine_correlation": 0.3345100419262998
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 4,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5267244577407837,
+        "dists": 0.06909239292144775,
+        "psnr_y": 26.87795997081016,
+        "detail_energy": 0.48589249123565037,
+        "fine_correlation": 0.32768066967247095
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 4,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.557793378829956,
+        "dists": 0.07455599308013916,
+        "psnr_y": 26.97754403243596,
+        "detail_energy": 0.4041714452412825,
+        "fine_correlation": 0.33925359499627294
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 4,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.4977988302707672,
+        "dists": 0.07531774044036865,
+        "psnr_y": 26.83160717958236,
+        "detail_energy": 0.5502691173947346,
+        "fine_correlation": 0.3198170938984917
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5066075325012207,
+        "dists": 0.07512307167053223,
+        "psnr_y": 26.846704674733953,
+        "detail_energy": 0.5361093969321092,
+        "fine_correlation": 0.3299558048473621
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5641480088233948,
+        "dists": 0.08872288465499878,
+        "psnr_y": 23.000194195058683,
+        "detail_energy": 0.4752664295407135,
+        "fine_correlation": 0.22894825284794995
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 8,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5668726563453674,
+        "dists": 0.09114658832550049,
+        "psnr_y": 23.06058805469652,
+        "detail_energy": 0.45585406523326016,
+        "fine_correlation": 0.22633673428897347
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 8,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.597180962562561,
+        "dists": 0.09841454029083252,
+        "psnr_y": 23.208602670059484,
+        "detail_energy": 0.37988456783004587,
+        "fine_correlation": 0.23775824514301533
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 8,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.5363109111785889,
+        "dists": 0.09841656684875488,
+        "psnr_y": 23.064564913984647,
+        "detail_energy": 0.5115310547188285,
+        "fine_correlation": 0.21820806858825567
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5457215309143066,
+        "dists": 0.09853827953338623,
+        "psnr_y": 23.065586280354793,
+        "detail_energy": 0.4965098816370342,
+        "fine_correlation": 0.22601243364290516
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5912880301475525,
+        "dists": 0.09953570365905762,
+        "psnr_y": 22.444759906450006,
+        "detail_energy": 0.46985652963385605,
+        "fine_correlation": 0.1844231589220784
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 12,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5950259566307068,
+        "dists": 0.10040223598480225,
+        "psnr_y": 22.505245965056023,
+        "detail_energy": 0.4502168425908631,
+        "fine_correlation": 0.18415108357770224
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 12,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.6274605393409729,
+        "dists": 0.10562503337860107,
+        "psnr_y": 22.655841479450203,
+        "detail_energy": 0.3730389879610274,
+        "fine_correlation": 0.19656403230909475
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 12,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.5656841993331909,
+        "dists": 0.10572344064712524,
+        "psnr_y": 22.519472137194633,
+        "detail_energy": 0.5015247237559779,
+        "fine_correlation": 0.174510393792261
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-1400000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5755398273468018,
+        "dists": 0.10553652048110962,
+        "psnr_y": 22.520168997510083,
+        "detail_energy": 0.4848735596189,
+        "fine_correlation": 0.18115023551641743
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.45167866349220276,
+        "dists": 0.04555106163024902,
+        "psnr_y": 31.564112991374525,
+        "detail_energy": 0.5439347886611933,
+        "fine_correlation": 0.51618868552591
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 0,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.44788914918899536,
+        "dists": 0.048182010650634766,
+        "psnr_y": 31.491339619072527,
+        "detail_energy": 0.5214294783526696,
+        "fine_correlation": 0.4968361304566398
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 0,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.4702984392642975,
+        "dists": 0.05523562431335449,
+        "psnr_y": 31.166992446078638,
+        "detail_energy": 0.43447046371702974,
+        "fine_correlation": 0.4949538850848578
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 0,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.41794994473457336,
+        "dists": 0.04942452907562256,
+        "psnr_y": 31.333843150678806,
+        "detail_energy": 0.6091449191788852,
+        "fine_correlation": 0.5040269809554743
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4255218207836151,
+        "dists": 0.04973959922790527,
+        "psnr_y": 31.36994112599055,
+        "detail_energy": 0.60179783776535,
+        "fine_correlation": 0.5124482930090666
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.45457223057746887,
+        "dists": 0.04495513439178467,
+        "psnr_y": 30.954311499348393,
+        "detail_energy": 0.5515656121153297,
+        "fine_correlation": 0.48556595029502303
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 4,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.45006588101387024,
+        "dists": 0.04778045415878296,
+        "psnr_y": 30.95482479533159,
+        "detail_energy": 0.5282739457715444,
+        "fine_correlation": 0.46957132575153016
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 4,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.4758720099925995,
+        "dists": 0.05471384525299072,
+        "psnr_y": 30.796846999676504,
+        "detail_energy": 0.43965691357868364,
+        "fine_correlation": 0.47209474744545266
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 4,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.41946572065353394,
+        "dists": 0.04916071891784668,
+        "psnr_y": 30.805964683579457,
+        "detail_energy": 0.6110555646625404,
+        "fine_correlation": 0.47269096741341526
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.42864686250686646,
+        "dists": 0.049612998962402344,
+        "psnr_y": 30.83868753048151,
+        "detail_energy": 0.6022762369511898,
+        "fine_correlation": 0.4820140925514077
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.48566576838493347,
+        "dists": 0.047638118267059326,
+        "psnr_y": 27.26701014742758,
+        "detail_energy": 0.5380841032908439,
+        "fine_correlation": 0.37176882251294646
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 8,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.4816827178001404,
+        "dists": 0.04935038089752197,
+        "psnr_y": 27.347297046886414,
+        "detail_energy": 0.5150861755520462,
+        "fine_correlation": 0.3628041685000463
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 8,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5100313425064087,
+        "dists": 0.056468188762664795,
+        "psnr_y": 27.466280949102742,
+        "detail_energy": 0.42700776402430984,
+        "fine_correlation": 0.3732856664595066
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 8,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.45078378915786743,
+        "dists": 0.051399946212768555,
+        "psnr_y": 27.28874285989676,
+        "detail_energy": 0.5899145399816679,
+        "fine_correlation": 0.3604909139891893
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4612513780593872,
+        "dists": 0.052121520042419434,
+        "psnr_y": 27.301545624151654,
+        "detail_energy": 0.5785754509510805,
+        "fine_correlation": 0.369715557639515
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5164691805839539,
+        "dists": 0.051492929458618164,
+        "psnr_y": 26.20886830630348,
+        "detail_energy": 0.5269821985706287,
+        "fine_correlation": 0.3139537201206849
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 12,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5137448310852051,
+        "dists": 0.053035855293273926,
+        "psnr_y": 26.301361955818678,
+        "detail_energy": 0.5044418097689701,
+        "fine_correlation": 0.30856496302883235
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 12,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5430305600166321,
+        "dists": 0.0590285062789917,
+        "psnr_y": 26.46996146807515,
+        "detail_energy": 0.417597334599398,
+        "fine_correlation": 0.32124301380714376
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 12,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.483216792345047,
+        "dists": 0.05834507942199707,
+        "psnr_y": 26.28371048720872,
+        "detail_energy": 0.5702285933525328,
+        "fine_correlation": 0.30429088593617176
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-h264-4000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4943036735057831,
+        "dists": 0.05817210674285889,
+        "psnr_y": 26.293771342834127,
+        "detail_energy": 0.5565350019509728,
+        "fine_correlation": 0.3134395057467935
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4493013024330139,
+        "dists": 0.04091477394104004,
+        "psnr_y": 32.42537709177037,
+        "detail_energy": 0.5475371447273668,
+        "fine_correlation": 0.551458064859196
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 0,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.44119441509246826,
+        "dists": 0.0431370735168457,
+        "psnr_y": 32.28414859886637,
+        "detail_energy": 0.5250177545209942,
+        "fine_correlation": 0.5290570414794976
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 0,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.45632055401802063,
+        "dists": 0.047739386558532715,
+        "psnr_y": 31.804817664556758,
+        "detail_energy": 0.4381106016849994,
+        "fine_correlation": 0.5222984579326965
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 0,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.4121139347553253,
+        "dists": 0.04553490877151489,
+        "psnr_y": 32.15863243465863,
+        "detail_energy": 0.6189099513003419,
+        "fine_correlation": 0.5387701548183425
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.41897356510162354,
+        "dists": 0.04627096652984619,
+        "psnr_y": 32.1956688108019,
+        "detail_energy": 0.6124849672440927,
+        "fine_correlation": 0.54618871606926
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5581405758857727,
+        "dists": 0.06546252965927124,
+        "psnr_y": 26.571091253757103,
+        "detail_energy": 0.4126150332730108,
+        "fine_correlation": 0.3605665612921934
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 4,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5636265277862549,
+        "dists": 0.06791621446609497,
+        "psnr_y": 26.59023446831479,
+        "detail_energy": 0.40100882555616263,
+        "fine_correlation": 0.35184489812402636
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 4,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5787676572799683,
+        "dists": 0.07379353046417236,
+        "psnr_y": 26.627180211640983,
+        "detail_energy": 0.3493123085136145,
+        "fine_correlation": 0.35198999255149066
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 4,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.5219912528991699,
+        "dists": 0.07104402780532837,
+        "psnr_y": 26.564865714012406,
+        "detail_energy": 0.46384328080787973,
+        "fine_correlation": 0.33808788838280524
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5270061492919922,
+        "dists": 0.07120203971862793,
+        "psnr_y": 26.570080336784372,
+        "detail_energy": 0.4540559939129727,
+        "fine_correlation": 0.34670081323639584
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5858036279678345,
+        "dists": 0.0807112455368042,
+        "psnr_y": 26.42837778065873,
+        "detail_energy": 0.4023486763302364,
+        "fine_correlation": 0.3546266039348916
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 8,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5930250883102417,
+        "dists": 0.08187788724899292,
+        "psnr_y": 26.44457730732008,
+        "detail_energy": 0.39151660804539073,
+        "fine_correlation": 0.3462067853602021
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 8,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.6097428202629089,
+        "dists": 0.08819055557250977,
+        "psnr_y": 26.471806945887696,
+        "detail_energy": 0.34262785194070006,
+        "fine_correlation": 0.3463332700093059
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 8,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.5509607791900635,
+        "dists": 0.08118969202041626,
+        "psnr_y": 26.405984304897228,
+        "detail_energy": 0.45140445207366425,
+        "fine_correlation": 0.32885394847493077
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5560557246208191,
+        "dists": 0.08137214183807373,
+        "psnr_y": 26.413478612676357,
+        "detail_energy": 0.43979148069606944,
+        "fine_correlation": 0.33903143478099707
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5544868111610413,
+        "dists": 0.07178658246994019,
+        "psnr_y": 27.267329969789973,
+        "detail_energy": 0.47266484893865446,
+        "fine_correlation": 0.4106454083064674
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 12,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5559367537498474,
+        "dists": 0.0733945369720459,
+        "psnr_y": 27.301203525057595,
+        "detail_energy": 0.45750650822787864,
+        "fine_correlation": 0.39816342343160965
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 12,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5705770254135132,
+        "dists": 0.07910597324371338,
+        "psnr_y": 27.36030887792797,
+        "detail_energy": 0.39316301433130174,
+        "fine_correlation": 0.3976341740707326
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 12,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.5089057087898254,
+        "dists": 0.07758069038391113,
+        "psnr_y": 27.26467839644201,
+        "detail_energy": 0.52404947408195,
+        "fine_correlation": 0.39273384726424326
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-1400000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5152480006217957,
+        "dists": 0.07804083824157715,
+        "psnr_y": 27.268179119732206,
+        "detail_energy": 0.5158730187152697,
+        "fine_correlation": 0.40098176177519146
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3597545325756073,
+        "dists": 0.023998916149139404,
+        "psnr_y": 33.53251929394284,
+        "detail_energy": 0.5725615364939102,
+        "fine_correlation": 0.5932207116201396
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 0,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.35081732273101807,
+        "dists": 0.02822291851043701,
+        "psnr_y": 33.295881966377664,
+        "detail_energy": 0.5464639955495463,
+        "fine_correlation": 0.5682278042047896
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 0,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.38675081729888916,
+        "dists": 0.039394915103912354,
+        "psnr_y": 32.580877100194755,
+        "detail_energy": 0.4501093425155675,
+        "fine_correlation": 0.5550808283985722
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 0,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.3379126787185669,
+        "dists": 0.03096950054168701,
+        "psnr_y": 33.13509910815539,
+        "detail_energy": 0.6430516394133661,
+        "fine_correlation": 0.5773790918727487
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.35215577483177185,
+        "dists": 0.031668782234191895,
+        "psnr_y": 33.17752245163618,
+        "detail_energy": 0.6357388359321976,
+        "fine_correlation": 0.5836471216437387
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5157972574234009,
+        "dists": 0.05214095115661621,
+        "psnr_y": 27.487273255375364,
+        "detail_energy": 0.46084852497997925,
+        "fine_correlation": 0.3968816554834902
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 4,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5181529521942139,
+        "dists": 0.05359828472137451,
+        "psnr_y": 27.51528088202402,
+        "detail_energy": 0.4453033528215096,
+        "fine_correlation": 0.385503557391688
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 4,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5357120633125305,
+        "dists": 0.059090375900268555,
+        "psnr_y": 27.55024257433454,
+        "detail_energy": 0.3816289003372578,
+        "fine_correlation": 0.3865634300911538
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 4,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.48155343532562256,
+        "dists": 0.057936668395996094,
+        "psnr_y": 27.489395484541017,
+        "detail_energy": 0.513202269408211,
+        "fine_correlation": 0.3814224014516702
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4882197976112366,
+        "dists": 0.05813413858413696,
+        "psnr_y": 27.494457512993876,
+        "detail_energy": 0.5058859594040611,
+        "fine_correlation": 0.3888947669131655
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5711110830307007,
+        "dists": 0.07221847772598267,
+        "psnr_y": 26.892043047030562,
+        "detail_energy": 0.4124764406679065,
+        "fine_correlation": 0.36375453863254753
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 8,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5782938003540039,
+        "dists": 0.0740581750869751,
+        "psnr_y": 26.907179508907014,
+        "detail_energy": 0.4005666407425398,
+        "fine_correlation": 0.35522524302232916
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 8,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5966138243675232,
+        "dists": 0.08070313930511475,
+        "psnr_y": 26.921302863001344,
+        "detail_energy": 0.348501117913175,
+        "fine_correlation": 0.35599063017846416
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 8,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.5376541614532471,
+        "dists": 0.07582396268844604,
+        "psnr_y": 26.874126866428387,
+        "detail_energy": 0.4604766436341094,
+        "fine_correlation": 0.34211380836858973
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5433590412139893,
+        "dists": 0.07610750198364258,
+        "psnr_y": 26.88302896805695,
+        "detail_energy": 0.4496407107590469,
+        "fine_correlation": 0.35165577653931956
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4808218479156494,
+        "dists": 0.05635404586791992,
+        "psnr_y": 29.000872923567332,
+        "detail_energy": 0.5131768093617776,
+        "fine_correlation": 0.4764520958677554
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 12,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.47664374113082886,
+        "dists": 0.05988502502441406,
+        "psnr_y": 29.006717620449876,
+        "detail_energy": 0.49435130392542054,
+        "fine_correlation": 0.45953277018613303
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 12,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.49164772033691406,
+        "dists": 0.06779646873474121,
+        "psnr_y": 28.961858468356986,
+        "detail_energy": 0.418596557111717,
+        "fine_correlation": 0.45644670344455096
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 12,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.4417017102241516,
+        "dists": 0.06326103210449219,
+        "psnr_y": 28.927011424448445,
+        "detail_energy": 0.5747729046604985,
+        "fine_correlation": 0.46223648363195524
+      }
+    },
+    {
+      "source_id": "ducks_take_off",
+      "sequence_id": "ducks_take_off-vp9-4000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.44835180044174194,
+        "dists": 0.0638088583946228,
+        "psnr_y": 28.934595862961157,
+        "detail_energy": 0.5683957957940383,
+        "fine_correlation": 0.46942838976079704
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.49991941452026367,
+        "dists": 0.16641682386398315,
+        "psnr_y": 27.407708611121635,
+        "detail_energy": 0.5060291181113971,
+        "fine_correlation": 0.37854123223530634
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 0,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.49981749057769775,
+        "dists": 0.16755151748657227,
+        "psnr_y": 27.43920164029472,
+        "detail_energy": 0.47390594658877444,
+        "fine_correlation": 0.3666228224769634
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 0,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5214356184005737,
+        "dists": 0.17219895124435425,
+        "psnr_y": 27.43518304823915,
+        "detail_energy": 0.373993865430714,
+        "fine_correlation": 0.3722166300254267
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 0,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.46433740854263306,
+        "dists": 0.18258339166641235,
+        "psnr_y": 27.3510399993579,
+        "detail_energy": 0.5766216263256344,
+        "fine_correlation": 0.37093884765295215
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4680900275707245,
+        "dists": 0.182267427444458,
+        "psnr_y": 27.36713861769102,
+        "detail_energy": 0.5690351262998827,
+        "fine_correlation": 0.3793624202912486
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4857481122016907,
+        "dists": 0.15722906589508057,
+        "psnr_y": 27.010576177515688,
+        "detail_energy": 0.49317569380121984,
+        "fine_correlation": 0.3374301572545508
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 4,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.4826371669769287,
+        "dists": 0.15907728672027588,
+        "psnr_y": 27.068016076958763,
+        "detail_energy": 0.4622730254188022,
+        "fine_correlation": 0.3273864979025351
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 4,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5023186206817627,
+        "dists": 0.16486984491348267,
+        "psnr_y": 27.137916576174707,
+        "detail_energy": 0.3658935952231904,
+        "fine_correlation": 0.3335388929779972
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 4,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.4460286498069763,
+        "dists": 0.17255699634552002,
+        "psnr_y": 26.970592135720132,
+        "detail_energy": 0.5579437635294529,
+        "fine_correlation": 0.3339249408557
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4503823518753052,
+        "dists": 0.17263025045394897,
+        "psnr_y": 26.980047222016516,
+        "detail_energy": 0.5509017278054383,
+        "fine_correlation": 0.34140911726093115
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4944600760936737,
+        "dists": 0.15327316522598267,
+        "psnr_y": 25.08852153906541,
+        "detail_energy": 0.457814355739301,
+        "fine_correlation": 0.20688915708216035
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 8,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.4937199652194977,
+        "dists": 0.15376615524291992,
+        "psnr_y": 25.1584793539757,
+        "detail_energy": 0.430523766832504,
+        "fine_correlation": 0.20233572299046207
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 8,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5103071928024292,
+        "dists": 0.15540540218353271,
+        "psnr_y": 25.3173884622297,
+        "detail_energy": 0.34340595823387365,
+        "fine_correlation": 0.2090395399081002
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 8,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.46054506301879883,
+        "dists": 0.16394901275634766,
+        "psnr_y": 25.109713191766797,
+        "detail_energy": 0.5082595885569867,
+        "fine_correlation": 0.205003603007085
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.46342065930366516,
+        "dists": 0.16388720273971558,
+        "psnr_y": 25.107875036045158,
+        "detail_energy": 0.5003717837818464,
+        "fine_correlation": 0.21019813532633683
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5339810848236084,
+        "dists": 0.17773181200027466,
+        "psnr_y": 24.24956871910277,
+        "detail_energy": 0.3722467311246581,
+        "fine_correlation": 0.13924033740549543
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 12,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5375031232833862,
+        "dists": 0.1792128086090088,
+        "psnr_y": 24.299089644658714,
+        "detail_energy": 0.35083925094138607,
+        "fine_correlation": 0.13780323437859132
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 12,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5575977563858032,
+        "dists": 0.18239450454711914,
+        "psnr_y": 24.419205504202644,
+        "detail_energy": 0.28027408762740824,
+        "fine_correlation": 0.14354408856541676
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 12,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.5105241537094116,
+        "dists": 0.18537837266921997,
+        "psnr_y": 24.286848644215798,
+        "detail_energy": 0.4105881011663125,
+        "fine_correlation": 0.13775806325002357
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-1400000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5132154822349548,
+        "dists": 0.1855565309524536,
+        "psnr_y": 24.285882371303543,
+        "detail_energy": 0.40171024764044183,
+        "fine_correlation": 0.14183984291368537
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.39557546377182007,
+        "dists": 0.08837336301803589,
+        "psnr_y": 31.663143407966643,
+        "detail_energy": 0.6557134176248856,
+        "fine_correlation": 0.6472446278448807
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 0,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.3783129155635834,
+        "dists": 0.09061568975448608,
+        "psnr_y": 31.475832010965128,
+        "detail_energy": 0.6075709739425948,
+        "fine_correlation": 0.6187615737510713
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 0,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.40300583839416504,
+        "dists": 0.10008233785629272,
+        "psnr_y": 30.913094451647712,
+        "detail_energy": 0.4688496874716835,
+        "fine_correlation": 0.6094693250384254
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 0,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.3397634029388428,
+        "dists": 0.1131141185760498,
+        "psnr_y": 31.63151567997722,
+        "detail_energy": 0.7639200142422612,
+        "fine_correlation": 0.6562180785967772
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.34722214937210083,
+        "dists": 0.11256468296051025,
+        "psnr_y": 31.693083388083764,
+        "detail_energy": 0.7558630480872729,
+        "fine_correlation": 0.6665431160440587
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3961443305015564,
+        "dists": 0.08260965347290039,
+        "psnr_y": 31.188354407812678,
+        "detail_energy": 0.6279382969200433,
+        "fine_correlation": 0.6110440515602312
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 4,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.3783457279205322,
+        "dists": 0.08585429191589355,
+        "psnr_y": 31.054734227015047,
+        "detail_energy": 0.5820316163145217,
+        "fine_correlation": 0.5847959285762421
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 4,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.40163177251815796,
+        "dists": 0.09410953521728516,
+        "psnr_y": 30.618359328192174,
+        "detail_energy": 0.44973871438097734,
+        "fine_correlation": 0.5765546322116306
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 4,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.33993104100227356,
+        "dists": 0.10525470972061157,
+        "psnr_y": 31.17961937820338,
+        "detail_energy": 0.7324732312128441,
+        "fine_correlation": 0.6235973698802046
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3477127254009247,
+        "dists": 0.10450726747512817,
+        "psnr_y": 31.22781817533024,
+        "detail_energy": 0.7253380226183135,
+        "fine_correlation": 0.6333146904529878
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4159083366394043,
+        "dists": 0.09777861833572388,
+        "psnr_y": 28.581211822596863,
+        "detail_energy": 0.5942980186896094,
+        "fine_correlation": 0.41950160384856305
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 8,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.4061965346336365,
+        "dists": 0.09910154342651367,
+        "psnr_y": 28.66703812652188,
+        "detail_energy": 0.5536098528526662,
+        "fine_correlation": 0.4038502836023385
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 8,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.4247997999191284,
+        "dists": 0.10681378841400146,
+        "psnr_y": 28.776128816302755,
+        "detail_energy": 0.43274930222186037,
+        "fine_correlation": 0.40712294903584983
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 8,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.37122854590415955,
+        "dists": 0.1221165657043457,
+        "psnr_y": 28.523250024102037,
+        "detail_energy": 0.6797295109809953,
+        "fine_correlation": 0.41888206587692334
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3765282928943634,
+        "dists": 0.1219136118888855,
+        "psnr_y": 28.534762368269835,
+        "detail_energy": 0.6719805786435331,
+        "fine_correlation": 0.42759559862282065
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4554128646850586,
+        "dists": 0.12289750576019287,
+        "psnr_y": 27.135320026067408,
+        "detail_energy": 0.5208133723657977,
+        "fine_correlation": 0.3183129542158516
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 12,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.45120134949684143,
+        "dists": 0.12444710731506348,
+        "psnr_y": 27.217603045445667,
+        "detail_energy": 0.4876742323860349,
+        "fine_correlation": 0.309453909579671
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 12,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.4711501896381378,
+        "dists": 0.12975549697875977,
+        "psnr_y": 27.34991014416306,
+        "detail_energy": 0.3847124090475324,
+        "fine_correlation": 0.31678945090829225
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 12,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.4212516248226166,
+        "dists": 0.13482224941253662,
+        "psnr_y": 27.130349460016724,
+        "detail_energy": 0.5867123225820899,
+        "fine_correlation": 0.31430339184370537
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-h264-4000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4256221354007721,
+        "dists": 0.13481467962265015,
+        "psnr_y": 27.13875681567533,
+        "detail_energy": 0.57764607417962,
+        "fine_correlation": 0.3221413314956262
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.369422048330307,
+        "dists": 0.09441566467285156,
+        "psnr_y": 32.976085247740656,
+        "detail_energy": 0.6518263920763264,
+        "fine_correlation": 0.7059870440843722
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 0,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.349302738904953,
+        "dists": 0.0955662727355957,
+        "psnr_y": 32.56685035805845,
+        "detail_energy": 0.6036248128916694,
+        "fine_correlation": 0.6732787140058393
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 0,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.37553292512893677,
+        "dists": 0.10620999336242676,
+        "psnr_y": 31.60346570956067,
+        "detail_energy": 0.46529312003686407,
+        "fine_correlation": 0.6572582862059982
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 0,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.3176407217979431,
+        "dists": 0.10958778858184814,
+        "psnr_y": 33.00446138074779,
+        "detail_energy": 0.7597040061035747,
+        "fine_correlation": 0.7162113235261188
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.326009064912796,
+        "dists": 0.10925567150115967,
+        "psnr_y": 33.085454506367846,
+        "detail_energy": 0.7514189838517655,
+        "fine_correlation": 0.7260022821421045
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5061171054840088,
+        "dists": 0.17256379127502441,
+        "psnr_y": 25.42698639349199,
+        "detail_energy": 0.3796329292219503,
+        "fine_correlation": 0.3197791343838279
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 4,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5028510093688965,
+        "dists": 0.17463648319244385,
+        "psnr_y": 25.43990991451443,
+        "detail_energy": 0.35748465351802833,
+        "fine_correlation": 0.30772250133633927
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 4,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5199285745620728,
+        "dists": 0.17870545387268066,
+        "psnr_y": 25.465731325524608,
+        "detail_energy": 0.2889531324912757,
+        "fine_correlation": 0.3043700846853392
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 4,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.47681111097335815,
+        "dists": 0.17814791202545166,
+        "psnr_y": 25.448705480071467,
+        "detail_energy": 0.41951517629464874,
+        "fine_correlation": 0.31711785356961725
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4807686507701874,
+        "dists": 0.17782491445541382,
+        "psnr_y": 25.451611709806667,
+        "detail_energy": 0.4143145202415759,
+        "fine_correlation": 0.32380003402398894
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5401866436004639,
+        "dists": 0.17544305324554443,
+        "psnr_y": 25.72613920539738,
+        "detail_energy": 0.2745767487382965,
+        "fine_correlation": 0.21915322399945877
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 8,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.5436828136444092,
+        "dists": 0.17649412155151367,
+        "psnr_y": 25.734346118095594,
+        "detail_energy": 0.26174607905819647,
+        "fine_correlation": 0.21370071998187926
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 8,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5584507584571838,
+        "dists": 0.17882287502288818,
+        "psnr_y": 25.75178099546935,
+        "detail_energy": 0.21810264594074477,
+        "fine_correlation": 0.2143115448413505
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 8,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.5238466858863831,
+        "dists": 0.1870526671409607,
+        "psnr_y": 25.747406126449604,
+        "detail_energy": 0.3036007424544604,
+        "fine_correlation": 0.21318937787065287
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5249365568161011,
+        "dists": 0.18727892637252808,
+        "psnr_y": 25.75087876819344,
+        "detail_energy": 0.29554111072652967,
+        "fine_correlation": 0.22008039849808347
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.47839146852493286,
+        "dists": 0.12808632850646973,
+        "psnr_y": 27.78013331139124,
+        "detail_energy": 0.4881560863127996,
+        "fine_correlation": 0.41159412471227413
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 12,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.4746113121509552,
+        "dists": 0.12978172302246094,
+        "psnr_y": 27.79554592883017,
+        "detail_energy": 0.45738520566313373,
+        "fine_correlation": 0.39733795835327074
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 12,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.49071168899536133,
+        "dists": 0.13461816310882568,
+        "psnr_y": 27.786467465883014,
+        "detail_energy": 0.3645410986208036,
+        "fine_correlation": 0.39624978706193104
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 12,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.44236284494400024,
+        "dists": 0.13798832893371582,
+        "psnr_y": 27.795541457469334,
+        "detail_energy": 0.5532128741678739,
+        "fine_correlation": 0.4086321641815017
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-1400000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.44619059562683105,
+        "dists": 0.1380290985107422,
+        "psnr_y": 27.80908643260583,
+        "detail_energy": 0.5452111917984982,
+        "fine_correlation": 0.4177831361463859
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3365984857082367,
+        "dists": 0.0632370114326477,
+        "psnr_y": 34.00481972644859,
+        "detail_energy": 0.6665049423533852,
+        "fine_correlation": 0.7385552848738123
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 0,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.30853742361068726,
+        "dists": 0.06617492437362671,
+        "psnr_y": 33.43361854235325,
+        "detail_energy": 0.6162228339906062,
+        "fine_correlation": 0.7037106185835987
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 0,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.33807018399238586,
+        "dists": 0.07834804058074951,
+        "psnr_y": 32.188615714110206,
+        "detail_energy": 0.4740278176674307,
+        "fine_correlation": 0.6834902011633317
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 0,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.2768842577934265,
+        "dists": 0.08865910768508911,
+        "psnr_y": 34.05030778530143,
+        "detail_energy": 0.7740042301686784,
+        "fine_correlation": 0.7495001383438091
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.28788602352142334,
+        "dists": 0.08886098861694336,
+        "psnr_y": 34.14038799786529,
+        "detail_energy": 0.7661432960579814,
+        "fine_correlation": 0.7584271915771497
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4496082365512848,
+        "dists": 0.12439572811126709,
+        "psnr_y": 27.653242040385216,
+        "detail_energy": 0.4763541692540885,
+        "fine_correlation": 0.42935111733077397
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 4,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.440862238407135,
+        "dists": 0.12636667490005493,
+        "psnr_y": 27.653345525639065,
+        "detail_energy": 0.44601991203561725,
+        "fine_correlation": 0.41199013870543855
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 4,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.4621347188949585,
+        "dists": 0.13301074504852295,
+        "psnr_y": 27.61040674115691,
+        "detail_energy": 0.3557477533743019,
+        "fine_correlation": 0.40675562977871826
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 4,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.4123373031616211,
+        "dists": 0.1385887861251831,
+        "psnr_y": 27.67194054725052,
+        "detail_energy": 0.5311205442416338,
+        "fine_correlation": 0.4311012717075541
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4185405373573303,
+        "dists": 0.1389089822769165,
+        "psnr_y": 27.681171739758064,
+        "detail_energy": 0.5266472874479976,
+        "fine_correlation": 0.43861779287216424
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4767528772354126,
+        "dists": 0.12762165069580078,
+        "psnr_y": 28.075755905454066,
+        "detail_energy": 0.425369721121211,
+        "fine_correlation": 0.36491529738137873
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 8,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.47658997774124146,
+        "dists": 0.12881064414978027,
+        "psnr_y": 28.086079390490436,
+        "detail_energy": 0.40177019292016625,
+        "fine_correlation": 0.35304794492050773
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 8,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.4940214157104492,
+        "dists": 0.1321021318435669,
+        "psnr_y": 28.077434722131333,
+        "detail_energy": 0.32728958645355605,
+        "fine_correlation": 0.3519634068960332
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 8,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.45042216777801514,
+        "dists": 0.14071476459503174,
+        "psnr_y": 28.10448002326128,
+        "detail_energy": 0.4705097955532548,
+        "fine_correlation": 0.36232627789769994
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4536179304122925,
+        "dists": 0.14068031311035156,
+        "psnr_y": 28.11526490917865,
+        "detail_energy": 0.4635331653452993,
+        "fine_correlation": 0.37081321601404565
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.401139497756958,
+        "dists": 0.09842574596405029,
+        "psnr_y": 29.889310115273055,
+        "detail_energy": 0.577018309032718,
+        "fine_correlation": 0.5451981787813047
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 12,
+      "variant": "bicubic",
+      "metrics": {
+        "lpips": 0.38859373331069946,
+        "dists": 0.10051733255386353,
+        "psnr_y": 29.85254188940648,
+        "detail_energy": 0.5371542189605212,
+        "fine_correlation": 0.5220803940863793
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 12,
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.40918421745300293,
+        "dists": 0.10791563987731934,
+        "psnr_y": 29.687364790986525,
+        "detail_energy": 0.4212179232681907,
+        "fine_correlation": 0.5137285456494691
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 12,
+      "variant": "folded",
+      "metrics": {
+        "lpips": 0.35707756876945496,
+        "dists": 0.11120748519897461,
+        "psnr_y": 29.88807089995014,
+        "detail_energy": 0.6586980106461965,
+        "fine_correlation": 0.549371831205078
+      }
+    },
+    {
+      "source_id": "park_joy",
+      "sequence_id": "park_joy-vp9-4000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3638066351413727,
+        "dists": 0.11088085174560547,
+        "psnr_y": 29.910889879652615,
+        "detail_energy": 0.6519293437986933,
+        "fine_correlation": 0.5587793907244322
+      }
+    }
+  ],
+  "complete": true,
+  "summary": {
+    "lanczos": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.42473360523581505,
+          "dists": 0.08142992854118347,
+          "psnr_y": 26.416889683673105,
+          "detail_energy": 0.5518016864046447,
+          "fine_correlation": 0.48100664889986555
+        },
+        "ducks_take_off": {
+          "lpips": 0.51116032153368,
+          "dists": 0.06165037304162979,
+          "psnr_y": 27.86906377994058,
+          "detail_energy": 0.4936446895395407,
+          "fine_correlation": 0.395112684680672
+        },
+        "park_joy": {
+          "lpips": 0.4522103779017925,
+          "dists": 0.12690618634223938,
+          "psnr_y": 28.366054791051955,
+          "detail_energy": 0.5104667689054805,
+          "fine_correlation": 0.4245460954371401
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.4627014348904292,
+        "dists": 0.08999549597501755,
+        "psnr_y": 27.550669418221876,
+        "detail_energy": 0.5186377149498886,
+        "fine_correlation": 0.43355514300589254
+      }
+    },
+    "bicubic": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.40940304286777973,
+          "dists": 0.08378040418028831,
+          "psnr_y": 26.34965825473602,
+          "detail_energy": 0.5161799784388064,
+          "fine_correlation": 0.46493974458684106
+        },
+        "ducks_take_off": {
+          "lpips": 0.5112230014055967,
+          "dists": 0.06379996612668037,
+          "psnr_y": 27.872684160449722,
+          "detail_energy": 0.4746802387699611,
+          "fine_correlation": 0.3836013674510822
+        },
+        "park_joy": {
+          "lpips": 0.44454784505069256,
+          "dists": 0.12862341105937958,
+          "psnr_y": 28.30888948707647,
+          "detail_energy": 0.47686478589470144,
+          "fine_correlation": 0.4083674352019455
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.455057963108023,
+        "dists": 0.09206792712211609,
+        "psnr_y": 27.510410634087407,
+        "detail_energy": 0.48924166770115635,
+        "fine_correlation": 0.4189695157466229
+      }
+    },
+    "bilinear": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.436461815610528,
+          "dists": 0.09433898702263832,
+          "psnr_y": 26.118751576169537,
+          "detail_energy": 0.40852783573561013,
+          "fine_correlation": 0.46078736999178826
+        },
+        "ducks_take_off": {
+          "lpips": 0.5348079036921263,
+          "dists": 0.07033436745405197,
+          "psnr_y": 27.816987863762478,
+          "detail_energy": 0.39948725752080894,
+          "fine_correlation": 0.38648420686511525
+        },
+        "park_joy": {
+          "lpips": 0.46501757949590683,
+          "dists": 0.134710181504488,
+          "psnr_y": 28.133653362248406,
+          "detail_energy": 0.37592441859315046,
+          "fine_correlation": 0.4060251871845819
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.4787624329328537,
+        "dists": 0.09979451199372609,
+        "psnr_y": 27.356464267393473,
+        "detail_energy": 0.3946465039498565,
+        "fine_correlation": 0.41776558801382846
+      }
+    },
+    "folded": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.3663434386253357,
+          "dists": 0.08517750725150108,
+          "psnr_y": 26.451146605917664,
+          "detail_energy": 0.6559401759969932,
+          "fine_correlation": 0.494201930890968
+        },
+        "ducks_take_off": {
+          "lpips": 0.47838227823376656,
+          "dists": 0.06723684072494507,
+          "psnr_y": 27.80629793776315,
+          "detail_energy": 0.5457780922100296,
+          "fine_correlation": 0.37972597365601357
+        },
+        "park_joy": {
+          "lpips": 0.41318703442811966,
+          "dists": 0.14198264107108116,
+          "psnr_y": 28.368365138366347,
+          "detail_energy": 0.5804133461391812,
+          "fine_correlation": 0.4255047874540877
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.419304250429074,
+        "dists": 0.09813232968250911,
+        "psnr_y": 27.541936560682387,
+        "detail_energy": 0.5940438714487347,
+        "fine_correlation": 0.43314423066702307
+      }
+    },
+    "shipping": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.37466881703585386,
+          "dists": 0.08513447269797325,
+          "psnr_y": 26.46684706812279,
+          "detail_energy": 0.6506800419350407,
+          "fine_correlation": 0.5008995996696659
+        },
+        "ducks_take_off": {
+          "lpips": 0.48651760444045067,
+          "dists": 0.0675111711025238,
+          "psnr_y": 27.82178469573151,
+          "detail_energy": 0.5353591934292543,
+          "fine_correlation": 0.3882154738019134
+        },
+        "park_joy": {
+          "lpips": 0.41837186366319656,
+          "dists": 0.14186633750796318,
+          "psnr_y": 28.392506871115238,
+          "detail_energy": 0.5729740942702931,
+          "fine_correlation": 0.43354423090037814
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.4265194283798337,
+        "dists": 0.09817066043615341,
+        "psnr_y": 27.560379544989843,
+        "detail_energy": 0.5863377765448626,
+        "fine_correlation": 0.4408864347906525
+      }
+    }
+  }
+}
