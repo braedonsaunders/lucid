@@ -1,0 +1,4200 @@
+{
+  "complete": true,
+  "purpose": "Training-bank-only test of reference detail predictable from past decoded frames.\n\nThis fits small diagnostic linear predictors, not a shipping VSR network. DIS\nis an alignment probe, not a new architecture or a native runtime claim.\n",
+  "bank_sha256": "b11ccdaba5ed388ec615da4270058b6441369fb6325a6e5e6680472e98d6d2f0",
+  "shipping_cache_sha256": "3909586f4058c096823074c61f6e4f1ead741925f2beaf70670535908346ce41",
+  "source_sha256": "b5de4f6c5467cb8fff09025aa355d72cc31cac9c9c1c12cf3f1595bb0317b78c",
+  "metric_source_sha256": "3be4d411472345e66554f2e6d0ff260bf438fbf37530544a622afda8117301d7",
+  "fit_sources": [
+    "fast_netflix_Aerial",
+    "fast_netflix_Boat",
+    "fast_netflix_BoxingPractice",
+    "fast_netflix_Crosswalk",
+    "fast_netflix_Dancers",
+    "fast_netflix_DinnerScene",
+    "fast_netflix_RitualDance",
+    "fast_netflix_Tango",
+    "fast_netflix_ToddlerFountain",
+    "fast_netflix_WindAndNature",
+    "reds_025",
+    "reds_125",
+    "reds_187"
+  ],
+  "check_sources": [
+    "bbb",
+    "fast_netflix_BarScene",
+    "fast_netflix_DrivingPOV",
+    "fast_netflix_FoodMarket",
+    "fast_netflix_FoodMarket2",
+    "fast_netflix_Narrator",
+    "fast_netflix_PierSeaside",
+    "fast_netflix_RollerCoaster",
+    "fast_netflix_SquareAndTimelapse",
+    "fast_netflix_TunnelFlag",
+    "reds_084",
+    "reds_135",
+    "reds_152"
+  ],
+  "source_families": {
+    "reds_025": "reds_sequence_025",
+    "fast_netflix_Narrator": "netflix_public_scenes",
+    "reds_187": "reds_sequence_187",
+    "reds_084": "reds_sequence_084",
+    "fast_netflix_Aerial": "netflix_public_scenes",
+    "fast_netflix_TunnelFlag": "netflix_public_scenes",
+    "reds_125": "reds_sequence_125",
+    "reds_135": "reds_sequence_135",
+    "fast_netflix_BoxingPractice": "netflix_public_scenes",
+    "fast_netflix_FoodMarket": "netflix_public_scenes",
+    "fast_netflix_ToddlerFountain": "netflix_public_scenes",
+    "fast_netflix_RollerCoaster": "netflix_public_scenes",
+    "fast_netflix_WindAndNature": "netflix_public_scenes",
+    "fast_netflix_PierSeaside": "netflix_public_scenes",
+    "fast_netflix_Crosswalk": "netflix_public_scenes",
+    "fast_netflix_BarScene": "netflix_public_scenes",
+    "fast_netflix_RitualDance": "netflix_public_scenes",
+    "fast_netflix_DrivingPOV": "netflix_public_scenes",
+    "fast_netflix_Dancers": "netflix_public_scenes",
+    "fast_netflix_SquareAndTimelapse": "netflix_public_scenes",
+    "fast_netflix_Boat": "netflix_public_scenes",
+    "fast_netflix_FoodMarket2": "netflix_public_scenes",
+    "fast_netflix_Tango": "netflix_public_scenes",
+    "bbb": "blender_bbb",
+    "fast_netflix_DinnerScene": "netflix_public_scenes",
+    "reds_152": "reds_sequence_152"
+  },
+  "selection": {
+    "reds_025": {
+      "id": "reds_025-stream-000-00",
+      "file": "C:\\lucid\\reds-training-subset-20260905\\bank\\train\\reds_025-stream-000-00.npz",
+      "sha256": "f7a9768df298ea0e0141cd90fb80c861a85a2cffba060041d2324528269ce4ad",
+      "source_id": "reds_025",
+      "family": "reds_sequence_025",
+      "source_sha256": "de75b52aceb5ea6b3245146104dc42cbda21c9053a26202ed5cc28cbf6c5d1e9",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "24/1",
+      "start_seconds": 0.08220344451207572,
+      "codec_warmup_frames": 24,
+      "full_reference_size": [
+        1280,
+        720
+      ],
+      "lr_patch_xy": [
+        298,
+        94
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 552960,
+      "target_bits_per_pixel_frame": 0.1,
+      "gop": 60,
+      "encoded_sha256": "846f23899439b3ce89dce5f2048a12ebed3ed2e6c4b276868122804fa3cacd4c",
+      "encoded_container_bytes": 124489,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "0.08220344451207572",
+        "-i",
+        "C:\\lucid\\reds-training-subset-20260905\\masters\\reds_025.mkv",
+        "-an",
+        "-frames:v",
+        "40",
+        "-vf",
+        "scale=1280:720:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x720",
+        "-r",
+        "24/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "552960",
+        "-maxrate",
+        "552960",
+        "-bufsize",
+        "1105920",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-a1zv9xqn\\stream.mkv"
+      ],
+      "reference_std": 55.96313539236624,
+      "reference_temporal_change": 30.145418167114258
+    },
+    "fast_netflix_Narrator": {
+      "id": "fast_netflix_Narrator-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_Narrator-stream-000-00.npz",
+      "sha256": "ba77960ec55f85d7706128ea53108427eeb20fa807660a54b82d4a3f642f872d",
+      "source_id": "fast_netflix_Narrator",
+      "family": "netflix_public_scenes",
+      "source_sha256": "2c83547d8ca2d1aba16098492cdbaf54efacb6c509279cdd658de4e49a77a8da",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 0.7244538602888845,
+      "codec_warmup_frames": 16,
+      "full_reference_size": [
+        1280,
+        672
+      ],
+      "lr_patch_xy": [
+        154,
+        50
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 258048,
+      "target_bits_per_pixel_frame": 0.02,
+      "gop": 60,
+      "encoded_sha256": "be77e95c212ad30da41b403ffe4cdb1c75c81960d8311948336c7aa186178f31",
+      "encoded_container_bytes": 21166,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "0.7244538602888845",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-Narrator.mp4",
+        "-an",
+        "-frames:v",
+        "32",
+        "-vf",
+        "scale=1280:672:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x672",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:336:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "258048",
+        "-maxrate",
+        "258048",
+        "-bufsize",
+        "516096",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-rxn_vpf8/stream.mkv"
+      ],
+      "reference_std": 61.56831021705924,
+      "reference_temporal_change": 2.2113304138183594
+    },
+    "reds_187": {
+      "id": "reds_187-stream-000-00",
+      "file": "C:\\lucid\\reds-training-subset-20260905\\bank\\train\\reds_187-stream-000-00.npz",
+      "sha256": "872e171bcac268d5262d5921d4707dfcc236e7b368802ba42e387e43362ed2b7",
+      "source_id": "reds_187",
+      "family": "reds_sequence_187",
+      "source_sha256": "ed460c7dbfb4fd490f624ad1e93e98487d43800933e497f28065baf33a371adf",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "24/1",
+      "start_seconds": 1.3989236323954992,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1280,
+        720
+      ],
+      "lr_patch_xy": [
+        37,
+        79
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 110592,
+      "target_bits_per_pixel_frame": 0.02,
+      "gop": 60,
+      "encoded_sha256": "00610b6503aabb0fc1e58d3e830d19e1427eae108506de8989145afc4be854fb",
+      "encoded_container_bytes": 11419,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "1.3989236323954992",
+        "-i",
+        "C:\\lucid\\reds-training-subset-20260905\\masters\\reds_187.mkv",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1280:720:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x720",
+        "-r",
+        "24/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "110592",
+        "-maxrate",
+        "110592",
+        "-bufsize",
+        "221184",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-o9uvmu68\\stream.mkv"
+      ],
+      "reference_std": 59.80959295521836,
+      "reference_temporal_change": 3.8122942447662354
+    },
+    "reds_084": {
+      "id": "reds_084-stream-000-00",
+      "file": "C:\\lucid\\reds-training-subset-20260905\\bank\\train\\reds_084-stream-000-00.npz",
+      "sha256": "1970ceeb3c09514d5d32d0a140dce4f1e1bebc4ac9162057b7c0c475ca5c011a",
+      "source_id": "reds_084",
+      "family": "reds_sequence_084",
+      "source_sha256": "3ea7de65376aa243d065f420fed4f1eb494ca08a1e4e8eea9032b9e44a862dc0",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "24/1",
+      "start_seconds": 0.8260469209370689,
+      "codec_warmup_frames": 24,
+      "full_reference_size": [
+        1280,
+        720
+      ],
+      "lr_patch_xy": [
+        343,
+        36
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 552960,
+      "target_bits_per_pixel_frame": 0.1,
+      "gop": 60,
+      "encoded_sha256": "a9134841384adc90ddb8afcb78313ce20074233d0d426f8f160f029e13a4d807",
+      "encoded_container_bytes": 128194,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "0.8260469209370689",
+        "-i",
+        "C:\\lucid\\reds-training-subset-20260905\\masters\\reds_084.mkv",
+        "-an",
+        "-frames:v",
+        "40",
+        "-vf",
+        "scale=1280:720:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x720",
+        "-r",
+        "24/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "552960",
+        "-maxrate",
+        "552960",
+        "-bufsize",
+        "1105920",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-hvwws_oz\\stream.mkv"
+      ],
+      "reference_std": 65.46017273318766,
+      "reference_temporal_change": 38.269386291503906
+    },
+    "fast_netflix_Aerial": {
+      "id": "fast_netflix_Aerial-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_Aerial-stream-000-00.npz",
+      "sha256": "808d7328f650e7b5c6c18a9549ef1a48594d12f19ffb1342e41e4188c87fc80f",
+      "source_id": "fast_netflix_Aerial",
+      "family": "netflix_public_scenes",
+      "source_sha256": "c1eec74c6e5a31d4f844d4a5c6ab82e710a776de952a00aadf9519e70ec1550a",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 9.652694210165702,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1920,
+        1008
+      ],
+      "lr_patch_xy": [
+        420,
+        126
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 1451520,
+      "target_bits_per_pixel_frame": 0.05,
+      "gop": 60,
+      "encoded_sha256": "8e570e79071d3eb7de98a60821be848d98a4000707821ab263953eaca27e4740",
+      "encoded_container_bytes": 91375,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "9.652694210165702",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-Aerial.mp4",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1920:1008:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1920x1008",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=960:504:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "1451520",
+        "-maxrate",
+        "1451520",
+        "-bufsize",
+        "2903040",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-6h7mupfz/stream.mkv"
+      ],
+      "reference_std": 49.68286994875689,
+      "reference_temporal_change": 12.866655349731445
+    },
+    "fast_netflix_TunnelFlag": {
+      "id": "fast_netflix_TunnelFlag-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_TunnelFlag-stream-000-00.npz",
+      "sha256": "a3c61ae423d2f75c06fb92234068606ec7b80dd29466dd6b25647853fafa7093",
+      "source_id": "fast_netflix_TunnelFlag",
+      "family": "netflix_public_scenes",
+      "source_sha256": "a49bb99adc03292871755a25266a9cd62bf811284810a0f37164cfd0655a5a7f",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 1.4953023667543217,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1280,
+        672
+      ],
+      "lr_patch_xy": [
+        249,
+        53
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 645120,
+      "target_bits_per_pixel_frame": 0.05,
+      "gop": 60,
+      "encoded_sha256": "a4ae7ceb036963bc1f6d52a320ee2543ce4dbcbbbc9f9f74345ba217338070de",
+      "encoded_container_bytes": 46080,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "1.4953023667543217",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-TunnelFlag.mp4",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1280:672:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x672",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:336:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "645120",
+        "-maxrate",
+        "645120",
+        "-bufsize",
+        "1290240",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-b2vwuh6s/stream.mkv"
+      ],
+      "reference_std": 71.0642410307588,
+      "reference_temporal_change": 42.78194808959961
+    },
+    "reds_125": {
+      "id": "reds_125-stream-000-00",
+      "file": "C:\\lucid\\reds-training-subset-20260905\\bank\\train\\reds_125-stream-000-00.npz",
+      "sha256": "ac6227c03eaf53a12eebf7b51b23d40b0417be4ccd61fd74136e69456c92dc60",
+      "source_id": "reds_125",
+      "family": "reds_sequence_125",
+      "source_sha256": "aadacb80a0d6a76cc1d57be630f0cef6e0881280356e4ab6d09e620ced9bb08c",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "24/1",
+      "start_seconds": 0.8394320430952863,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1280,
+        720
+      ],
+      "lr_patch_xy": [
+        377,
+        89
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 552960,
+      "target_bits_per_pixel_frame": 0.1,
+      "gop": 60,
+      "encoded_sha256": "9ed23ff85a017c8b4b145c984081f2c806e621cf9582c7ab3c96c468c66718f0",
+      "encoded_container_bytes": 81477,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "0.8394320430952863",
+        "-i",
+        "C:\\lucid\\reds-training-subset-20260905\\masters\\reds_125.mkv",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1280:720:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x720",
+        "-r",
+        "24/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "552960",
+        "-maxrate",
+        "552960",
+        "-bufsize",
+        "1105920",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-z8pk1ek5\\stream.mkv"
+      ],
+      "reference_std": 63.76287178688372,
+      "reference_temporal_change": 22.304054260253906
+    },
+    "reds_135": {
+      "id": "reds_135-stream-000-00",
+      "file": "C:\\lucid\\reds-training-subset-20260905\\bank\\train\\reds_135-stream-000-00.npz",
+      "sha256": "d3f3b1577b2a64c6f4ddf45bff63f5bc132a3ef2cb2cc926c133fbca674ae82b",
+      "source_id": "reds_135",
+      "family": "reds_sequence_135",
+      "source_sha256": "adb1ac73dacf9a9a587e6c6d3ebf67ff11632d0247e4af22eff46a21aeb93f8d",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "24/1",
+      "start_seconds": 0.4106446717485575,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1280,
+        720
+      ],
+      "lr_patch_xy": [
+        135,
+        50
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 552960,
+      "target_bits_per_pixel_frame": 0.1,
+      "gop": 60,
+      "encoded_sha256": "b37bb0bc2ceb9f118673be6d05d18b97676291a33c0b0b9c10f408b3c7f6911d",
+      "encoded_container_bytes": 74543,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "0.4106446717485575",
+        "-i",
+        "C:\\lucid\\reds-training-subset-20260905\\masters\\reds_135.mkv",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1280:720:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x720",
+        "-r",
+        "24/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "552960",
+        "-maxrate",
+        "552960",
+        "-bufsize",
+        "1105920",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-k81_gmy3\\stream.mkv"
+      ],
+      "reference_std": 65.08951770416596,
+      "reference_temporal_change": 24.716732025146484
+    },
+    "fast_netflix_BoxingPractice": {
+      "id": "fast_netflix_BoxingPractice-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_BoxingPractice-stream-000-00.npz",
+      "sha256": "a85913f3bee81d49365a72e5def6d3e4bd26619a7375b350754bb63376f18b33",
+      "source_id": "fast_netflix_BoxingPractice",
+      "family": "netflix_public_scenes",
+      "source_sha256": "6c10287853b4ca4c0a6428cd8940ed5339f7565130aa4debf7f4a1e21212b75c",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 3.4409935357539663,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1280,
+        672
+      ],
+      "lr_patch_xy": [
+        377,
+        8
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 645120,
+      "target_bits_per_pixel_frame": 0.05,
+      "gop": 60,
+      "encoded_sha256": "f34fdc71523d2274a698821d0b4f71968e257eb682e66ff23b5d623d762ace4f",
+      "encoded_container_bytes": 41257,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "3.4409935357539663",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-BoxingPractice.mp4",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1280:672:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x672",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:336:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "645120",
+        "-maxrate",
+        "645120",
+        "-bufsize",
+        "1290240",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-md22crbv/stream.mkv"
+      ],
+      "reference_std": 77.45791504199158,
+      "reference_temporal_change": 8.511218070983887
+    },
+    "fast_netflix_FoodMarket": {
+      "id": "fast_netflix_FoodMarket-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_FoodMarket-stream-000-00.npz",
+      "sha256": "bedfca1552141e65e896070647e4ab7ccb4d3b5f94ec103a1f33b26e3f299ec4",
+      "source_id": "fast_netflix_FoodMarket",
+      "family": "netflix_public_scenes",
+      "source_sha256": "8310a65b47ee135064b429f2cd0452c5a07b5455f1dd52ad9e378ef4c80ac75b",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 5.487355115697055,
+      "codec_warmup_frames": 24,
+      "full_reference_size": [
+        1920,
+        1008
+      ],
+      "lr_patch_xy": [
+        135,
+        129
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 580608,
+      "target_bits_per_pixel_frame": 0.02,
+      "gop": 60,
+      "encoded_sha256": "7b4f50038f3256c46f6b2bda6e7e766e2a8646143676862e1981b4b44a525e4a",
+      "encoded_container_bytes": 53597,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "5.487355115697055",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-FoodMarket.mp4",
+        "-an",
+        "-frames:v",
+        "40",
+        "-vf",
+        "scale=1920:1008:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1920x1008",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=960:504:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "580608",
+        "-maxrate",
+        "580608",
+        "-bufsize",
+        "1161216",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-3f43_2wi/stream.mkv"
+      ],
+      "reference_std": 30.78559025306856,
+      "reference_temporal_change": 9.010762214660645
+    },
+    "fast_netflix_ToddlerFountain": {
+      "id": "fast_netflix_ToddlerFountain-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_ToddlerFountain-stream-000-00.npz",
+      "sha256": "935b19cf995ce35c45387b25d9bfc5423ec06fd7cf58d559f90e781817149785",
+      "source_id": "fast_netflix_ToddlerFountain",
+      "family": "netflix_public_scenes",
+      "source_sha256": "b497b223ce23a7c80418734524a12430825afd2a9d940580b8c9335722030caa",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 10.01054291755562,
+      "codec_warmup_frames": 24,
+      "full_reference_size": [
+        1280,
+        672
+      ],
+      "lr_patch_xy": [
+        328,
+        66
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 1290240,
+      "target_bits_per_pixel_frame": 0.1,
+      "gop": 60,
+      "encoded_sha256": "9349967183d9526626927401836eb3eb91453e57a6a2734c126fe5221893727f",
+      "encoded_container_bytes": 131561,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "10.01054291755562",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-ToddlerFountain.mp4",
+        "-an",
+        "-frames:v",
+        "40",
+        "-vf",
+        "scale=1280:672:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x672",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:336:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "1290240",
+        "-maxrate",
+        "1290240",
+        "-bufsize",
+        "2580480",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-mnab60rh/stream.mkv"
+      ],
+      "reference_std": 50.982443638121595,
+      "reference_temporal_change": 14.620509147644043
+    },
+    "fast_netflix_RollerCoaster": {
+      "id": "fast_netflix_RollerCoaster-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_RollerCoaster-stream-000-00.npz",
+      "sha256": "a15fc4fe85ddcf365902d1c90911c5e7afa6b796fefb9be5861ccf3fb7dae044",
+      "source_id": "fast_netflix_RollerCoaster",
+      "family": "netflix_public_scenes",
+      "source_sha256": "0b5cf3e45653547f26fd38d54c1f21eb0beaff50cc3e39253f7ac6cb598189fd",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 1.816480027933655,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1920,
+        1008
+      ],
+      "lr_patch_xy": [
+        331,
+        236
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 2903040,
+      "target_bits_per_pixel_frame": 0.1,
+      "gop": 60,
+      "encoded_sha256": "11725830d7ccf2ab5af8302783e1e73f8f65f416853d7e3cf4f6cb19ceabd725",
+      "encoded_container_bytes": 159870,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "1.816480027933655",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-RollerCoaster.mp4",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1920:1008:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1920x1008",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=960:504:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "2903040",
+        "-maxrate",
+        "2903040",
+        "-bufsize",
+        "5806080",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-6pdphks9/stream.mkv"
+      ],
+      "reference_std": 68.83905306176489,
+      "reference_temporal_change": 11.294812202453613
+    },
+    "fast_netflix_WindAndNature": {
+      "id": "fast_netflix_WindAndNature-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_WindAndNature-stream-000-00.npz",
+      "sha256": "678d656f3b4d53cb82531d8664c23aae3d2f83e4848148445334aa852cf6b3d8",
+      "source_id": "fast_netflix_WindAndNature",
+      "family": "netflix_public_scenes",
+      "source_sha256": "5bd1ad5994dc3dff7e8de4cf4e737692bb9a3735af071264a7a2e4acd12866e0",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 3.8195648686615957,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1920,
+        1008
+      ],
+      "lr_patch_xy": [
+        333,
+        119
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 1451520,
+      "target_bits_per_pixel_frame": 0.05,
+      "gop": 60,
+      "encoded_sha256": "4bc0417e52e662f460dc0754fa87429fa4d17da3d02f5950f83772cfea99a406",
+      "encoded_container_bytes": 82018,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "3.8195648686615957",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-WindAndNature.mp4",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1920:1008:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1920x1008",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=960:504:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "1451520",
+        "-maxrate",
+        "1451520",
+        "-bufsize",
+        "2903040",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-spt_u62x/stream.mkv"
+      ],
+      "reference_std": 42.233201601177754,
+      "reference_temporal_change": 2.024568796157837
+    },
+    "fast_netflix_PierSeaside": {
+      "id": "fast_netflix_PierSeaside-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_PierSeaside-stream-000-00.npz",
+      "sha256": "9e554546c8cc70456d9a69e100f6d1fa570241786427c96c9fb5e94e6e24247e",
+      "source_id": "fast_netflix_PierSeaside",
+      "family": "netflix_public_scenes",
+      "source_sha256": "b078a202ff28f4b786bb81caf0a3bf507c0bf3354734e08fdf9c61df945a5836",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 1.6680004437122347,
+      "codec_warmup_frames": 24,
+      "full_reference_size": [
+        1920,
+        1008
+      ],
+      "lr_patch_xy": [
+        631,
+        30
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 2903040,
+      "target_bits_per_pixel_frame": 0.1,
+      "gop": 60,
+      "encoded_sha256": "6df0d46bbbe5f08cde82b6eb8c598c0b65d4769040bdf6c4fb9c646847ccc639",
+      "encoded_container_bytes": 250261,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "1.6680004437122347",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-PierSeaside.mp4",
+        "-an",
+        "-frames:v",
+        "40",
+        "-vf",
+        "scale=1920:1008:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1920x1008",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=960:504:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "2903040",
+        "-maxrate",
+        "2903040",
+        "-bufsize",
+        "5806080",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-n3r0277j/stream.mkv"
+      ],
+      "reference_std": 47.24658241897727,
+      "reference_temporal_change": 3.7373745441436768
+    },
+    "fast_netflix_Crosswalk": {
+      "id": "fast_netflix_Crosswalk-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_Crosswalk-stream-000-00.npz",
+      "sha256": "0c052c60f32d99793a01828af7b11da1a216bfd2998ea506ab9deab732542572",
+      "source_id": "fast_netflix_Crosswalk",
+      "family": "netflix_public_scenes",
+      "source_sha256": "21cb7e07fb0267032e74c5ae9736107854166d0defd7cee21876df0ca92888cf",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 1.8856336861922431,
+      "codec_warmup_frames": 16,
+      "full_reference_size": [
+        1280,
+        672
+      ],
+      "lr_patch_xy": [
+        216,
+        27
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 258048,
+      "target_bits_per_pixel_frame": 0.02,
+      "gop": 60,
+      "encoded_sha256": "874c0ff8438df29b92644095a812d2da3296fb9915ae25e9ea57dd2abe2f3989",
+      "encoded_container_bytes": 21079,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "1.8856336861922431",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-Crosswalk.mp4",
+        "-an",
+        "-frames:v",
+        "32",
+        "-vf",
+        "scale=1280:672:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x672",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:336:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "258048",
+        "-maxrate",
+        "258048",
+        "-bufsize",
+        "516096",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-r0x00b0_/stream.mkv"
+      ],
+      "reference_std": 57.36785507413225,
+      "reference_temporal_change": 6.544635772705078
+    },
+    "fast_netflix_BarScene": {
+      "id": "fast_netflix_BarScene-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_BarScene-stream-000-00.npz",
+      "sha256": "f4fb8a41f14f4d41d5816f80c22ee637a8d9950ecaf90b6d0bca6803b8ff0045",
+      "source_id": "fast_netflix_BarScene",
+      "family": "netflix_public_scenes",
+      "source_sha256": "487f6351202c33fa90ec2b09bd55fa2ddbb85dcb96aec89a452b28ef0ad0b768",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 12.504179730601791,
+      "codec_warmup_frames": 24,
+      "full_reference_size": [
+        1280,
+        672
+      ],
+      "lr_patch_xy": [
+        293,
+        74
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 258048,
+      "target_bits_per_pixel_frame": 0.02,
+      "gop": 60,
+      "encoded_sha256": "40f16ae9b59dea9f14c55b961ab79f0c4ecee16543246a2b05c5874f7bf2c275",
+      "encoded_container_bytes": 24399,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "12.504179730601791",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-BarScene.mp4",
+        "-an",
+        "-frames:v",
+        "40",
+        "-vf",
+        "scale=1280:672:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x672",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:336:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "258048",
+        "-maxrate",
+        "258048",
+        "-bufsize",
+        "516096",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-efdokh47/stream.mkv"
+      ],
+      "reference_std": 41.015339267850365,
+      "reference_temporal_change": 1.0020242929458618
+    },
+    "fast_netflix_RitualDance": {
+      "id": "fast_netflix_RitualDance-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_RitualDance-stream-000-00.npz",
+      "sha256": "67b95e97e7bf7d0b9b059be76a1682494bec0dc0dd4adc4766010705b64519a3",
+      "source_id": "fast_netflix_RitualDance",
+      "family": "netflix_public_scenes",
+      "source_sha256": "2b42a4d46134ba8c5188d282a071808d8c0545b2f7ab6e92e82c3c4b59ed6ebe",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 8.276460451180057,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1280,
+        672
+      ],
+      "lr_patch_xy": [
+        290,
+        52
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 258048,
+      "target_bits_per_pixel_frame": 0.02,
+      "gop": 60,
+      "encoded_sha256": "d97a3e695b0a97e488bcfdd02e7d7eb23a58e94390716f8dbb02a354abccc184",
+      "encoded_container_bytes": 17449,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "8.276460451180057",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-RitualDance.mp4",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1280:672:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x672",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:336:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "258048",
+        "-maxrate",
+        "258048",
+        "-bufsize",
+        "516096",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-uxdd0c3_/stream.mkv"
+      ],
+      "reference_std": 61.999613918712086,
+      "reference_temporal_change": 26.797910690307617
+    },
+    "fast_netflix_DrivingPOV": {
+      "id": "fast_netflix_DrivingPOV-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_DrivingPOV-stream-000-00.npz",
+      "sha256": "12f40cef692ed21c2c6459d41b2f005d3bd42135d6ba307d62a4e6dc88f37af7",
+      "source_id": "fast_netflix_DrivingPOV",
+      "family": "netflix_public_scenes",
+      "source_sha256": "6379954265a8697bd5f9d596bc97b11fe4efe2f96e951cc1914ecd57c769933e",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 8.977507586924142,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1920,
+        1008
+      ],
+      "lr_patch_xy": [
+        537,
+        144
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 580608,
+      "target_bits_per_pixel_frame": 0.02,
+      "gop": 60,
+      "encoded_sha256": "a51c434c9655db48ca6fef718c7270d835ee3b67e4b25b586110ce91b86f1651",
+      "encoded_container_bytes": 33793,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "8.977507586924142",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-DrivingPOV.mp4",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1920:1008:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1920x1008",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=960:504:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "580608",
+        "-maxrate",
+        "580608",
+        "-bufsize",
+        "1161216",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-sa0t5f6w/stream.mkv"
+      ],
+      "reference_std": 39.23609365410414,
+      "reference_temporal_change": 8.982427597045898
+    },
+    "fast_netflix_Dancers": {
+      "id": "fast_netflix_Dancers-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_Dancers-stream-000-00.npz",
+      "sha256": "39df0f42871306237324c844ac70e86b6b3faf4c7f3ea4d31dc408bf39f3e1b4",
+      "source_id": "fast_netflix_Dancers",
+      "family": "netflix_public_scenes",
+      "source_sha256": "fa0693b657edbd2767dca03548927b50896350e7cde268b402c67178aca80329",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 18.052689754842234,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1920,
+        1008
+      ],
+      "lr_patch_xy": [
+        424,
+        174
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 580608,
+      "target_bits_per_pixel_frame": 0.02,
+      "gop": 60,
+      "encoded_sha256": "fd6e840dd304e33416820212b49100b44a8893311c6e7a9a00fba5f2fa80092a",
+      "encoded_container_bytes": 27100,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "18.052689754842234",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-Dancers.mp4",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1920:1008:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1920x1008",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=960:504:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "580608",
+        "-maxrate",
+        "580608",
+        "-bufsize",
+        "1161216",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-hi0rb0xa/stream.mkv"
+      ],
+      "reference_std": 38.136089237834604,
+      "reference_temporal_change": 1.189645767211914
+    },
+    "fast_netflix_SquareAndTimelapse": {
+      "id": "fast_netflix_SquareAndTimelapse-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_SquareAndTimelapse-stream-000-00.npz",
+      "sha256": "f84b9354af1f0fbe4fbb6e314fb939f543bc23177ae9a65cda0861e304a6da7e",
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "family": "netflix_public_scenes",
+      "source_sha256": "84f1cb1c15ea835091bd2fc44613da8df9cde693c97b68ba5bfd539321ce8b4e",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 2.3617783451720116,
+      "codec_warmup_frames": 24,
+      "full_reference_size": [
+        1280,
+        672
+      ],
+      "lr_patch_xy": [
+        185,
+        16
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 645120,
+      "target_bits_per_pixel_frame": 0.05,
+      "gop": 60,
+      "encoded_sha256": "91d54edf07a961db9d860fb5a4d00bb32f956a6d011bb50e61ccac8db92bbdec",
+      "encoded_container_bytes": 60120,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "2.3617783451720116",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-SquareAndTimelapse.mp4",
+        "-an",
+        "-frames:v",
+        "40",
+        "-vf",
+        "scale=1280:672:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x672",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:336:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "645120",
+        "-maxrate",
+        "645120",
+        "-bufsize",
+        "1290240",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-z1j9wqfe/stream.mkv"
+      ],
+      "reference_std": 45.01300205045933,
+      "reference_temporal_change": 16.080629348754883
+    },
+    "fast_netflix_Boat": {
+      "id": "fast_netflix_Boat-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_Boat-stream-000-00.npz",
+      "sha256": "f477f8e59f69000cfe0778d5858fcd4a6ff449563865da2dbd87c157356074ba",
+      "source_id": "fast_netflix_Boat",
+      "family": "netflix_public_scenes",
+      "source_sha256": "cf87aaa5b1f548a297d7f01e5415605dbe985a5a2e76585e395b77c8751a7d0d",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 1.9992972606724717,
+      "codec_warmup_frames": 24,
+      "full_reference_size": [
+        1920,
+        1008
+      ],
+      "lr_patch_xy": [
+        72,
+        217
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 580608,
+      "target_bits_per_pixel_frame": 0.02,
+      "gop": 60,
+      "encoded_sha256": "a5cd6c4e0c0fc94edb04b83c98ef36b4585a830b471d01c8bbc0b235ef376a0d",
+      "encoded_container_bytes": 55800,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "1.9992972606724717",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-Boat.mp4",
+        "-an",
+        "-frames:v",
+        "40",
+        "-vf",
+        "scale=1920:1008:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1920x1008",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=960:504:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "580608",
+        "-maxrate",
+        "580608",
+        "-bufsize",
+        "1161216",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-akfiz5fn/stream.mkv"
+      ],
+      "reference_std": 58.964390893660486,
+      "reference_temporal_change": 23.048145294189453
+    },
+    "fast_netflix_FoodMarket2": {
+      "id": "fast_netflix_FoodMarket2-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_FoodMarket2-stream-000-00.npz",
+      "sha256": "46ad27a81e693f8ebc9f66cc21b73938c350f82875ac81536441a2241157cc52",
+      "source_id": "fast_netflix_FoodMarket2",
+      "family": "netflix_public_scenes",
+      "source_sha256": "a867acf1fd67db62a53c762706bb0d4bf35b52db263e20964e86c8cd26a1db16",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 1.5160858125570358,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1920,
+        1008
+      ],
+      "lr_patch_xy": [
+        354,
+        152
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 580608,
+      "target_bits_per_pixel_frame": 0.02,
+      "gop": 60,
+      "encoded_sha256": "c94bbb285ca65d58dc6789e181e5a453329b9a17a7cd2a81b0db18c3118e2a72",
+      "encoded_container_bytes": 36192,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "1.5160858125570358",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-FoodMarket2.mp4",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1920:1008:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1920x1008",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=960:504:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "580608",
+        "-maxrate",
+        "580608",
+        "-bufsize",
+        "1161216",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-i3f6kyu5/stream.mkv"
+      ],
+      "reference_std": 49.728704418894644,
+      "reference_temporal_change": 14.638049125671387
+    },
+    "fast_netflix_Tango": {
+      "id": "fast_netflix_Tango-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_Tango-stream-000-00.npz",
+      "sha256": "3462e159792a40efd586829b90730940974c701c2d3f56d69d707668f18a23a6",
+      "source_id": "fast_netflix_Tango",
+      "family": "netflix_public_scenes",
+      "source_sha256": "b0eb08f0bcaf097f81e7860dc1d71e87764481f4d807b2b90d7d91631bd7dbd0",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 3.65071625038723,
+      "codec_warmup_frames": 24,
+      "full_reference_size": [
+        1920,
+        1008
+      ],
+      "lr_patch_xy": [
+        242,
+        143
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 2903040,
+      "target_bits_per_pixel_frame": 0.1,
+      "gop": 60,
+      "encoded_sha256": "b20ddc12deaec70d2847e66d4948eb6cffd4b246fe6cbeab678181018a28145b",
+      "encoded_container_bytes": 261014,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "3.65071625038723",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-Tango.mp4",
+        "-an",
+        "-frames:v",
+        "40",
+        "-vf",
+        "scale=1920:1008:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1920x1008",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=960:504:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "2903040",
+        "-maxrate",
+        "2903040",
+        "-bufsize",
+        "5806080",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-wk7hyczt/stream.mkv"
+      ],
+      "reference_std": 62.12216600174089,
+      "reference_temporal_change": 6.298596382141113
+    },
+    "bbb": {
+      "id": "bbb-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\bbb-stream-000-00.npz",
+      "sha256": "df54098aef9bdb918e1c094edb9b20592ab8bae036ba8cd9c40d9e2fa5c2ec97",
+      "source_id": "bbb",
+      "family": "blender_bbb",
+      "source_sha256": "35db9a007021f1b0066993e1d2c4448c83a8b279f799c97d33cbba73980a8a36",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 523.3798841868385,
+      "codec_warmup_frames": 24,
+      "full_reference_size": [
+        1920,
+        1080
+      ],
+      "lr_patch_xy": [
+        429,
+        22
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 3110400,
+      "target_bits_per_pixel_frame": 0.1,
+      "gop": 60,
+      "encoded_sha256": "5530e3c9fb9e454f30cecbf14aa315a7d83391405e5675b3fc54ef5e59c11074",
+      "encoded_container_bytes": 277892,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "523.3798841868385",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/bbb_sunflower_2160p_60fps_normal.mp4",
+        "-an",
+        "-frames:v",
+        "40",
+        "-vf",
+        "scale=1920:1080:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1920x1080",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=960:540:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "3110400",
+        "-maxrate",
+        "3110400",
+        "-bufsize",
+        "6220800",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-tnlz64nx/stream.mkv"
+      ],
+      "reference_std": 46.602754290646594,
+      "reference_temporal_change": 13.039569854736328
+    },
+    "fast_netflix_DinnerScene": {
+      "id": "fast_netflix_DinnerScene-stream-000-00",
+      "file": "C:\\lucid\\causal-pixrestore-distill-20260904\\bank\\train\\fast_netflix_DinnerScene-stream-000-00.npz",
+      "sha256": "d1e1927bf030086019247a154cd2d625b24114e98dc2d462ad6c4d0505da963f",
+      "source_id": "fast_netflix_DinnerScene",
+      "family": "netflix_public_scenes",
+      "source_sha256": "dc4b7de53e2dcafd7ee11f069b2516d37a2daedc358301501aca1435b92012d0",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "60/1",
+      "start_seconds": 6.906958554761757,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1280,
+        672
+      ],
+      "lr_patch_xy": [
+        114,
+        66
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 645120,
+      "target_bits_per_pixel_frame": 0.05,
+      "gop": 60,
+      "encoded_sha256": "fc2c3f8d51c2151a03233137769438ef377365a7ab856bd60745290f5a9f1b87",
+      "encoded_container_bytes": 28405,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "6.906958554761757",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/fast-netflix-DinnerScene.mp4",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1280:672:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x672",
+        "-r",
+        "60/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:336:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "645120",
+        "-maxrate",
+        "645120",
+        "-bufsize",
+        "1290240",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-osqosobv/stream.mkv"
+      ],
+      "reference_std": 29.543704241052193,
+      "reference_temporal_change": 0.5172951817512512
+    },
+    "reds_152": {
+      "id": "reds_152-stream-000-00",
+      "file": "C:\\lucid\\reds-training-subset-20260905\\bank\\train\\reds_152-stream-000-00.npz",
+      "sha256": "fb78ed16be1deadfabd05f5e99d619e29a984a6651a534a8bd86ae5a22a6224b",
+      "source_id": "reds_152",
+      "family": "reds_sequence_152",
+      "source_sha256": "517a6d6175403e1a3b5575b4c612dd7a2e93fbf6fe08885c23ac0b9cfd1c1cf7",
+      "split": "train",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "24/1",
+      "start_seconds": 0.11927134846670936,
+      "codec_warmup_frames": 16,
+      "full_reference_size": [
+        1280,
+        720
+      ],
+      "lr_patch_xy": [
+        311,
+        49
+      ],
+      "reference_size": [
+        512,
+        512
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 110592,
+      "target_bits_per_pixel_frame": 0.02,
+      "gop": 60,
+      "encoded_sha256": "5af3fe73a34f0696169e1a1380e64f0afe13be0c2eff48a96deeef39ce60ffcd",
+      "encoded_container_bytes": 19786,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "0.11927134846670936",
+        "-i",
+        "C:\\lucid\\reds-training-subset-20260905\\masters\\reds_152.mkv",
+        "-an",
+        "-frames:v",
+        "32",
+        "-vf",
+        "scale=1280:720:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x720",
+        "-r",
+        "24/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "110592",
+        "-maxrate",
+        "110592",
+        "-bufsize",
+        "221184",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-jsjlg7x8\\stream.mkv"
+      ],
+      "reference_std": 64.07545310621727,
+      "reference_temporal_change": 19.085769653320312
+    }
+  },
+  "frames": [
+    4,
+    8,
+    12
+  ],
+  "fit_stride": 8,
+  "metric_margin": 16,
+  "ridge_trace_fraction": 0.001,
+  "mechanism_limits": {
+    "mse_improvement_min": 0.01,
+    "fine_correlation_change_min": 0.002,
+    "sources_with_both_improved_min": 7
+  },
+  "torch": "2.6.0+cu124",
+  "opencv": "4.14.0",
+  "device": "cuda",
+  "rows": [
+    {
+      "source_id": "fast_netflix_Narrator",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 84.99391927083333,
+        "fine_correlation": 0.5138321041365859
+      }
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "frame": 4,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 82.79823640046297,
+        "fine_correlation": 0.5286067410241959
+      },
+      "visible_fraction": 0.987060546875
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "frame": 4,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 82.89947916666667,
+        "fine_correlation": 0.5271463527033549
+      },
+      "visible_fraction": 0.987060546875
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "frame": 4,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 82.47275318287036,
+        "fine_correlation": 0.5294006938808018
+      },
+      "visible_fraction": 0.987060546875
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 76.68879484953703,
+        "fine_correlation": 0.5303485292215185
+      }
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "frame": 8,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 75.05530960648149,
+        "fine_correlation": 0.5415897753418248
+      },
+      "visible_fraction": 0.9919967651367188
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "frame": 8,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 75.0417115162037,
+        "fine_correlation": 0.5423003945621996
+      },
+      "visible_fraction": 0.9919967651367188
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "frame": 8,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 75.00749131944444,
+        "fine_correlation": 0.5435225246483604
+      },
+      "visible_fraction": 0.9919967651367188
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 71.31542824074074,
+        "fine_correlation": 0.543861227219989
+      }
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "frame": 12,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 69.92750868055556,
+        "fine_correlation": 0.555448440908989
+      },
+      "visible_fraction": 0.9887275695800781
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "frame": 12,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 69.9884765625,
+        "fine_correlation": 0.5529842776430153
+      },
+      "visible_fraction": 0.9887275695800781
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "frame": 12,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 69.86030960648148,
+        "fine_correlation": 0.5560945858532695
+      },
+      "visible_fraction": 0.9887275695800781
+    },
+    {
+      "source_id": "reds_084",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 151.36510561342592,
+        "fine_correlation": 0.45730400909827096
+      }
+    },
+    {
+      "source_id": "reds_084",
+      "frame": 4,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 150.82365596064815,
+        "fine_correlation": 0.4751441906894953
+      },
+      "visible_fraction": 0.8979625701904297
+    },
+    {
+      "source_id": "reds_084",
+      "frame": 4,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 151.1527387152778,
+        "fine_correlation": 0.476451676763264
+      },
+      "visible_fraction": 0.8979625701904297
+    },
+    {
+      "source_id": "reds_084",
+      "frame": 4,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 150.10879774305556,
+        "fine_correlation": 0.47533680810806045
+      },
+      "visible_fraction": 0.8979625701904297
+    },
+    {
+      "source_id": "reds_084",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 148.1104542824074,
+        "fine_correlation": 0.45234911170638936
+      }
+    },
+    {
+      "source_id": "reds_084",
+      "frame": 8,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 146.44367621527778,
+        "fine_correlation": 0.47504789080937215
+      },
+      "visible_fraction": 0.8357410430908203
+    },
+    {
+      "source_id": "reds_084",
+      "frame": 8,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 147.64715711805556,
+        "fine_correlation": 0.4777265433006675
+      },
+      "visible_fraction": 0.8357410430908203
+    },
+    {
+      "source_id": "reds_084",
+      "frame": 8,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 147.36298466435184,
+        "fine_correlation": 0.4759179977178632
+      },
+      "visible_fraction": 0.8357410430908203
+    },
+    {
+      "source_id": "reds_084",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 158.37933449074075,
+        "fine_correlation": 0.4406289045282455
+      }
+    },
+    {
+      "source_id": "reds_084",
+      "frame": 12,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 156.8852097800926,
+        "fine_correlation": 0.45955550499214964
+      },
+      "visible_fraction": 0.9029731750488281
+    },
+    {
+      "source_id": "reds_084",
+      "frame": 12,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 158.1158521412037,
+        "fine_correlation": 0.46101101472895406
+      },
+      "visible_fraction": 0.9029731750488281
+    },
+    {
+      "source_id": "reds_084",
+      "frame": 12,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 156.38552083333335,
+        "fine_correlation": 0.4605322159559178
+      },
+      "visible_fraction": 0.9029731750488281
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 537.5815162037037,
+        "fine_correlation": 0.5310773245770557
+      }
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "frame": 4,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 522.912214988426,
+        "fine_correlation": 0.5487597586270136
+      },
+      "visible_fraction": 0.9237785339355469
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "frame": 4,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 522.2437702546297,
+        "fine_correlation": 0.5495054174024392
+      },
+      "visible_fraction": 0.9237785339355469
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "frame": 4,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 520.0138237847223,
+        "fine_correlation": 0.5490598826753518
+      },
+      "visible_fraction": 0.9237785339355469
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 659.4743287037037,
+        "fine_correlation": 0.4828129047486044
+      }
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "frame": 8,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 646.1546368634259,
+        "fine_correlation": 0.4990924077688395
+      },
+      "visible_fraction": 0.9152126312255859
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "frame": 8,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 645.8242607060185,
+        "fine_correlation": 0.5002922304714176
+      },
+      "visible_fraction": 0.9152126312255859
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "frame": 8,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 642.6449667245371,
+        "fine_correlation": 0.49874449954905253
+      },
+      "visible_fraction": 0.9152126312255859
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 638.5696643518519,
+        "fine_correlation": 0.4763780694203264
+      }
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "frame": 12,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 631.5037109375,
+        "fine_correlation": 0.4906638195234653
+      },
+      "visible_fraction": 0.9402713775634766
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "frame": 12,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 632.9159866898148,
+        "fine_correlation": 0.4903422602619637
+      },
+      "visible_fraction": 0.9402713775634766
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "frame": 12,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 624.0622945601851,
+        "fine_correlation": 0.49118281282937104
+      },
+      "visible_fraction": 0.9402713775634766
+    },
+    {
+      "source_id": "reds_135",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 179.84692997685184,
+        "fine_correlation": 0.4457643625218304
+      }
+    },
+    {
+      "source_id": "reds_135",
+      "frame": 4,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 180.3854470486111,
+        "fine_correlation": 0.44910615125439257
+      },
+      "visible_fraction": 0.9588565826416016
+    },
+    {
+      "source_id": "reds_135",
+      "frame": 4,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 181.55015625,
+        "fine_correlation": 0.44818232165868566
+      },
+      "visible_fraction": 0.9588565826416016
+    },
+    {
+      "source_id": "reds_135",
+      "frame": 4,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 179.0391825810185,
+        "fine_correlation": 0.45062053640498667
+      },
+      "visible_fraction": 0.9588565826416016
+    },
+    {
+      "source_id": "reds_135",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 200.52623119212964,
+        "fine_correlation": 0.4381829008041212
+      }
+    },
+    {
+      "source_id": "reds_135",
+      "frame": 8,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 201.2691044560185,
+        "fine_correlation": 0.43915417530729606
+      },
+      "visible_fraction": 0.9333572387695312
+    },
+    {
+      "source_id": "reds_135",
+      "frame": 8,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 202.45815104166667,
+        "fine_correlation": 0.4376526281907902
+      },
+      "visible_fraction": 0.9333572387695312
+    },
+    {
+      "source_id": "reds_135",
+      "frame": 8,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 200.0382349537037,
+        "fine_correlation": 0.44066436287021077
+      },
+      "visible_fraction": 0.9333572387695312
+    },
+    {
+      "source_id": "reds_135",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 187.7422554976852,
+        "fine_correlation": 0.438680854203756
+      }
+    },
+    {
+      "source_id": "reds_135",
+      "frame": 12,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 187.12584056712964,
+        "fine_correlation": 0.4387514177731304
+      },
+      "visible_fraction": 0.9363040924072266
+    },
+    {
+      "source_id": "reds_135",
+      "frame": 12,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 187.8067751736111,
+        "fine_correlation": 0.4373026106384466
+      },
+      "visible_fraction": 0.9363040924072266
+    },
+    {
+      "source_id": "reds_135",
+      "frame": 12,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 186.99887586805556,
+        "fine_correlation": 0.4392667311169408
+      },
+      "visible_fraction": 0.9363040924072266
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 86.26398871527778,
+        "fine_correlation": 0.2722651222816702
+      }
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "frame": 4,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 85.3419140625,
+        "fine_correlation": 0.29038473889187283
+      },
+      "visible_fraction": 0.9326133728027344
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "frame": 4,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 85.4326099537037,
+        "fine_correlation": 0.28939277841152466
+      },
+      "visible_fraction": 0.9326133728027344
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "frame": 4,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 85.16241319444444,
+        "fine_correlation": 0.28898239727237485
+      },
+      "visible_fraction": 0.9326133728027344
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 89.61978732638889,
+        "fine_correlation": 0.26841295742997456
+      }
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "frame": 8,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 88.8735011574074,
+        "fine_correlation": 0.2876497147463616
+      },
+      "visible_fraction": 0.8288478851318359
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "frame": 8,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 88.84824074074074,
+        "fine_correlation": 0.28972271252301096
+      },
+      "visible_fraction": 0.8288478851318359
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "frame": 8,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 88.52947337962964,
+        "fine_correlation": 0.2856385140128769
+      },
+      "visible_fraction": 0.8288478851318359
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 106.51639178240741,
+        "fine_correlation": 0.22436631332337661
+      }
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "frame": 12,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 105.9160546875,
+        "fine_correlation": 0.24284022321998264
+      },
+      "visible_fraction": 0.8885250091552734
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "frame": 12,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 105.7036646412037,
+        "fine_correlation": 0.24445414596872156
+      },
+      "visible_fraction": 0.8885250091552734
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "frame": 12,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 104.77979456018518,
+        "fine_correlation": 0.2495298431293342
+      },
+      "visible_fraction": 0.8885250091552734
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 20.15915943287037,
+        "fine_correlation": 0.7427862078955739
+      }
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "frame": 4,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 20.799460358796296,
+        "fine_correlation": 0.744782366399597
+      },
+      "visible_fraction": 0.8596420288085938
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "frame": 4,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 21.483744212962964,
+        "fine_correlation": 0.7405751131797935
+      },
+      "visible_fraction": 0.8596420288085938
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "frame": 4,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 20.965483217592592,
+        "fine_correlation": 0.745754606716784
+      },
+      "visible_fraction": 0.8596420288085938
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 21.020163483796296,
+        "fine_correlation": 0.7794678083780014
+      }
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "frame": 8,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 22.51494212962963,
+        "fine_correlation": 0.7769741732441492
+      },
+      "visible_fraction": 0.8833255767822266
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "frame": 8,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 22.898922164351852,
+        "fine_correlation": 0.7745232497197673
+      },
+      "visible_fraction": 0.8833255767822266
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "frame": 8,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 23.297842881944444,
+        "fine_correlation": 0.7749821036131261
+      },
+      "visible_fraction": 0.8833255767822266
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 21.59617476851852,
+        "fine_correlation": 0.7732730324026731
+      }
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "frame": 12,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 22.927174479166666,
+        "fine_correlation": 0.7713006973758787
+      },
+      "visible_fraction": 0.8772163391113281
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "frame": 12,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 23.484130497685186,
+        "fine_correlation": 0.7691600074466592
+      },
+      "visible_fraction": 0.8772163391113281
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "frame": 12,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 23.165337094907407,
+        "fine_correlation": 0.7707936214389812
+      },
+      "visible_fraction": 0.8772163391113281
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 17.569474826388888,
+        "fine_correlation": 0.7384271312380599
+      }
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "frame": 4,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 17.549538483796297,
+        "fine_correlation": 0.7274485280849873
+      },
+      "visible_fraction": 0.9063282012939453
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "frame": 4,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 17.78997829861111,
+        "fine_correlation": 0.7261178338813838
+      },
+      "visible_fraction": 0.9063282012939453
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "frame": 4,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 16.979428530092594,
+        "fine_correlation": 0.7218901619933554
+      },
+      "visible_fraction": 0.9063282012939453
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 19.284184027777776,
+        "fine_correlation": 0.744120953920775
+      }
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "frame": 8,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 19.41316261574074,
+        "fine_correlation": 0.7359206082994707
+      },
+      "visible_fraction": 0.91351318359375
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "frame": 8,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 19.723838252314813,
+        "fine_correlation": 0.7323048118365085
+      },
+      "visible_fraction": 0.91351318359375
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "frame": 8,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 19.162309027777777,
+        "fine_correlation": 0.7312619599324598
+      },
+      "visible_fraction": 0.91351318359375
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 21.962184606481483,
+        "fine_correlation": 0.7510161944053091
+      }
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "frame": 12,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 22.139547164351853,
+        "fine_correlation": 0.744257233144482
+      },
+      "visible_fraction": 0.9090290069580078
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "frame": 12,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 22.426111111111112,
+        "fine_correlation": 0.7437328896249917
+      },
+      "visible_fraction": 0.9090290069580078
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "frame": 12,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 21.83763599537037,
+        "fine_correlation": 0.7356689476662819
+      },
+      "visible_fraction": 0.9090290069580078
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 34.72233217592593,
+        "fine_correlation": 0.6993741910465814
+      }
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "frame": 4,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 35.0528587962963,
+        "fine_correlation": 0.7035990600576085
+      },
+      "visible_fraction": 0.9955101013183594
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "frame": 4,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 34.73583912037037,
+        "fine_correlation": 0.7049319971274874
+      },
+      "visible_fraction": 0.9955101013183594
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "frame": 4,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 34.84639756944444,
+        "fine_correlation": 0.7048723259522733
+      },
+      "visible_fraction": 0.9955101013183594
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 33.38953269675926,
+        "fine_correlation": 0.7141347321048319
+      }
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "frame": 8,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 33.801432291666664,
+        "fine_correlation": 0.7186152134525566
+      },
+      "visible_fraction": 0.9949951171875
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "frame": 8,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 33.487712673611114,
+        "fine_correlation": 0.7193397572335033
+      },
+      "visible_fraction": 0.9949951171875
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "frame": 8,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 33.50795283564815,
+        "fine_correlation": 0.7188233869458786
+      },
+      "visible_fraction": 0.9949951171875
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 33.22597511574074,
+        "fine_correlation": 0.7149274643245267
+      }
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "frame": 12,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 33.63861689814815,
+        "fine_correlation": 0.7191643296575613
+      },
+      "visible_fraction": 0.9949855804443359
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "frame": 12,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 33.34976128472222,
+        "fine_correlation": 0.7200840535096068
+      },
+      "visible_fraction": 0.9949855804443359
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "frame": 12,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 33.49269386574074,
+        "fine_correlation": 0.7201335046844103
+      },
+      "visible_fraction": 0.9949855804443359
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 215.41786458333334,
+        "fine_correlation": 0.27396452843836844
+      }
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "frame": 4,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 214.10223668981482,
+        "fine_correlation": 0.28639599210821026
+      },
+      "visible_fraction": 0.9750843048095703
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "frame": 4,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 212.99607783564815,
+        "fine_correlation": 0.2885809999781878
+      },
+      "visible_fraction": 0.9750843048095703
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "frame": 4,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 213.3801273148148,
+        "fine_correlation": 0.28683155066825344
+      },
+      "visible_fraction": 0.9750843048095703
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 231.96365596064814,
+        "fine_correlation": 0.2724154051827809
+      }
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "frame": 8,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 230.8755685763889,
+        "fine_correlation": 0.2822853484784506
+      },
+      "visible_fraction": 0.9758472442626953
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "frame": 8,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 230.6341160300926,
+        "fine_correlation": 0.2831416916110042
+      },
+      "visible_fraction": 0.9758472442626953
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "frame": 8,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 229.86174623842592,
+        "fine_correlation": 0.2833635226819715
+      },
+      "visible_fraction": 0.9758472442626953
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 230.36439380787036,
+        "fine_correlation": 0.25510565093691284
+      }
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "frame": 12,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 228.93918836805557,
+        "fine_correlation": 0.26696126534190934
+      },
+      "visible_fraction": 0.9604930877685547
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "frame": 12,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 228.73985677083334,
+        "fine_correlation": 0.26818468876397955
+      },
+      "visible_fraction": 0.9604930877685547
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "frame": 12,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 228.3353544560185,
+        "fine_correlation": 0.2682968057206981
+      },
+      "visible_fraction": 0.9604930877685547
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 216.64463831018517,
+        "fine_correlation": 0.45133764329989257
+      }
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "frame": 4,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 213.743671875,
+        "fine_correlation": 0.4628799603338163
+      },
+      "visible_fraction": 0.9842262268066406
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "frame": 4,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 213.4193388310185,
+        "fine_correlation": 0.46470186540762604
+      },
+      "visible_fraction": 0.9842262268066406
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "frame": 4,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 213.5371122685185,
+        "fine_correlation": 0.46491652439800446
+      },
+      "visible_fraction": 0.9842262268066406
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 214.68815827546297,
+        "fine_correlation": 0.45598175054660883
+      }
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "frame": 8,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 212.18253616898147,
+        "fine_correlation": 0.4647103485349887
+      },
+      "visible_fraction": 0.9843978881835938
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "frame": 8,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 212.27697916666668,
+        "fine_correlation": 0.4661405581935171
+      },
+      "visible_fraction": 0.9843978881835938
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "frame": 8,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 211.69533709490742,
+        "fine_correlation": 0.46685563673151564
+      },
+      "visible_fraction": 0.9843978881835938
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 219.8502662037037,
+        "fine_correlation": 0.4458797099660739
+      }
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "frame": 12,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 216.5984765625,
+        "fine_correlation": 0.45455084996056716
+      },
+      "visible_fraction": 0.9838809967041016
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "frame": 12,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 216.23148726851852,
+        "fine_correlation": 0.4567710152756698
+      },
+      "visible_fraction": 0.9838809967041016
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "frame": 12,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 215.95693287037037,
+        "fine_correlation": 0.4571540834841595
+      },
+      "visible_fraction": 0.9838809967041016
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 178.12449797453704,
+        "fine_correlation": 0.2565054665056355
+      }
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "frame": 4,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 177.14885561342592,
+        "fine_correlation": 0.26745960968157007
+      },
+      "visible_fraction": 0.9403705596923828
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "frame": 4,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 176.9786400462963,
+        "fine_correlation": 0.2694839573376939
+      },
+      "visible_fraction": 0.9403705596923828
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "frame": 4,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 176.84667100694443,
+        "fine_correlation": 0.26916745859111807
+      },
+      "visible_fraction": 0.9403705596923828
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 180.9890842013889,
+        "fine_correlation": 0.2670474158010225
+      }
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "frame": 8,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 180.70029658564815,
+        "fine_correlation": 0.27586525196896117
+      },
+      "visible_fraction": 0.9658756256103516
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "frame": 8,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 180.66560908564816,
+        "fine_correlation": 0.2770591446993634
+      },
+      "visible_fraction": 0.9658756256103516
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "frame": 8,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 180.29337239583333,
+        "fine_correlation": 0.27767087334160356
+      },
+      "visible_fraction": 0.9658756256103516
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 183.70365306712964,
+        "fine_correlation": 0.2630742170934494
+      }
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "frame": 12,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 183.43913483796297,
+        "fine_correlation": 0.27599284700822696
+      },
+      "visible_fraction": 0.968536376953125
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "frame": 12,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 183.57329427083334,
+        "fine_correlation": 0.27630332241473227
+      },
+      "visible_fraction": 0.968536376953125
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "frame": 12,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 183.14264756944445,
+        "fine_correlation": 0.2761875585428471
+      },
+      "visible_fraction": 0.968536376953125
+    },
+    {
+      "source_id": "bbb",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 116.0580714699074,
+        "fine_correlation": 0.856099363650362
+      }
+    },
+    {
+      "source_id": "bbb",
+      "frame": 4,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 137.12604166666668,
+        "fine_correlation": 0.8395141898930779
+      },
+      "visible_fraction": 0.9577560424804688
+    },
+    {
+      "source_id": "bbb",
+      "frame": 4,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 144.28919560185184,
+        "fine_correlation": 0.834143545383949
+      },
+      "visible_fraction": 0.9577560424804688
+    },
+    {
+      "source_id": "bbb",
+      "frame": 4,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 132.6713454861111,
+        "fine_correlation": 0.8429108863952139
+      },
+      "visible_fraction": 0.9577560424804688
+    },
+    {
+      "source_id": "bbb",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 121.08218605324075,
+        "fine_correlation": 0.8496627804918354
+      }
+    },
+    {
+      "source_id": "bbb",
+      "frame": 8,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 142.4813990162037,
+        "fine_correlation": 0.8335373257155668
+      },
+      "visible_fraction": 0.9601840972900391
+    },
+    {
+      "source_id": "bbb",
+      "frame": 8,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 149.3580222800926,
+        "fine_correlation": 0.8283037146414353
+      },
+      "visible_fraction": 0.9601840972900391
+    },
+    {
+      "source_id": "bbb",
+      "frame": 8,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 137.62264467592593,
+        "fine_correlation": 0.8376131655742959
+      },
+      "visible_fraction": 0.9601840972900391
+    },
+    {
+      "source_id": "bbb",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 111.77928240740741,
+        "fine_correlation": 0.8592903639017928
+      }
+    },
+    {
+      "source_id": "bbb",
+      "frame": 12,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 130.88301938657406,
+        "fine_correlation": 0.844923512179935
+      },
+      "visible_fraction": 0.9331645965576172
+    },
+    {
+      "source_id": "bbb",
+      "frame": 12,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 136.55584780092593,
+        "fine_correlation": 0.8404324269189226
+      },
+      "visible_fraction": 0.9331645965576172
+    },
+    {
+      "source_id": "bbb",
+      "frame": 12,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 127.02215133101852,
+        "fine_correlation": 0.8480352635268263
+      },
+      "visible_fraction": 0.9331645965576172
+    },
+    {
+      "source_id": "reds_152",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 435.97779658564815,
+        "fine_correlation": 0.1010341293067993
+      }
+    },
+    {
+      "source_id": "reds_152",
+      "frame": 4,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 433.42305266203704,
+        "fine_correlation": 0.10482434161840486
+      },
+      "visible_fraction": 0.8525371551513672
+    },
+    {
+      "source_id": "reds_152",
+      "frame": 4,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 433.2090350115741,
+        "fine_correlation": 0.104952060458584
+      },
+      "visible_fraction": 0.8525371551513672
+    },
+    {
+      "source_id": "reds_152",
+      "frame": 4,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 429.59747685185187,
+        "fine_correlation": 0.1040504862423583
+      },
+      "visible_fraction": 0.8525371551513672
+    },
+    {
+      "source_id": "reds_152",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 400.7018706597222,
+        "fine_correlation": 0.10770501076849193
+      }
+    },
+    {
+      "source_id": "reds_152",
+      "frame": 8,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 396.0510054976852,
+        "fine_correlation": 0.11404632255408571
+      },
+      "visible_fraction": 0.8615093231201172
+    },
+    {
+      "source_id": "reds_152",
+      "frame": 8,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 395.7930295138889,
+        "fine_correlation": 0.11467676436689465
+      },
+      "visible_fraction": 0.8615093231201172
+    },
+    {
+      "source_id": "reds_152",
+      "frame": 8,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 396.46680555555554,
+        "fine_correlation": 0.11338414583271866
+      },
+      "visible_fraction": 0.8615093231201172
+    },
+    {
+      "source_id": "reds_152",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "mse_rgb": 379.9448726851852,
+        "fine_correlation": 0.1138434738229088
+      }
+    },
+    {
+      "source_id": "reds_152",
+      "frame": 12,
+      "variant": "spatial",
+      "metrics": {
+        "mse_rgb": 376.95546296296294,
+        "fine_correlation": 0.12238287353038214
+      },
+      "visible_fraction": 0.983978271484375
+    },
+    {
+      "source_id": "reds_152",
+      "frame": 12,
+      "variant": "unaligned",
+      "metrics": {
+        "mse_rgb": 377.29916811342594,
+        "fine_correlation": 0.12212654376449414
+      },
+      "visible_fraction": 0.983978271484375
+    },
+    {
+      "source_id": "reds_152",
+      "frame": 12,
+      "variant": "aligned",
+      "metrics": {
+        "mse_rgb": 376.11200810185187,
+        "fine_correlation": 0.12311354792233156
+      },
+      "visible_fraction": 0.983978271484375
+    }
+  ],
+  "limitations": [
+    "All identities were previously used for neural training; this is a mechanism check, not release validation.",
+    "Netflix collection families overlap across fit/check; source IDs do not.",
+    "No future frames, HR-driven flow, reference-dependent visibility or quality-based hyperparameter selection.",
+    "Linear residual fitting and CPU DIS are diagnostics, not a new architecture or measured Mac implementation."
+  ],
+  "minutes": 0.25520000000008924,
+  "source_balanced": {
+    "shipping": {
+      "mse_rgb": 180.44137445839266,
+      "fine_correlation": 0.48724972617053797
+    },
+    "spatial": {
+      "mse_rgb": 180.35647951537277,
+      "fine_correlation": 0.49385095383340577
+    },
+    "unaligned": {
+      "mse_rgb": 181.00073758754752,
+      "fine_correlation": 0.4935958814872875
+    },
+    "aligned": {
+      "mse_rgb": 179.28881362031098,
+      "fine_correlation": 0.4943135008877497
+    }
+  },
+  "comparisons": {
+    "shipping": {
+      "mse_improvement": 0.006387453218759664,
+      "fine_correlation_change": 0.007063774717211757,
+      "sources_with_both_improved": 9
+    },
+    "spatial": {
+      "mse_improvement": 0.005919753467858002,
+      "fine_correlation_change": 0.0004625470543439536,
+      "sources_with_both_improved": 10
+    },
+    "unaligned": {
+      "mse_improvement": 0.009458104922962063,
+      "fine_correlation_change": 0.0007176194004622216,
+      "sources_with_both_improved": 7
+    }
+  },
+  "mechanism_pass": false,
+  "promotion_authorized": false,
+  "weights_sha256": "18e5a5896b022f56494dbd13594b2522934413a4e7e217d72e38c8d4a4b74d93"
+}

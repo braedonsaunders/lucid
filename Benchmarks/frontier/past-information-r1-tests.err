@@ -1,0 +1,23 @@
+test_past_information (unittest.loader._FailedTest.test_past_information) ... ERROR
+
+======================================================================
+ERROR: test_past_information (unittest.loader._FailedTest.test_past_information)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_past_information
+Traceback (most recent call last):
+  File "C:\Users\bsaun\AppData\Local\Programs\Python\Python312\Lib\unittest\loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bsaun\AppData\Local\Programs\Python\Python312\Lib\unittest\loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "C:\lucid\past-information-20260905-r1\Tools\experiments\test_past_information.py", line 5, in <module>
+    from probe_past_information import aligned_past, features, remap, solve
+  File "C:\lucid\past-information-20260905-r1\Tools\experiments\probe_past_information.py", line 14, in <module>
+    import cv2
+ModuleNotFoundError: No module named 'cv2'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (errors=1)
