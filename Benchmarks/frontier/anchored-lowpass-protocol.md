@@ -9,3 +9,10 @@ The 2026 motivation remains [PixelIR's separate fidelity and detail optimization
 Before full training, verify nonzero-branch Core ML conversion and measure the native graph at 360p/720p. It must pass the existing RGB conversion tolerance and keep 720p prediction below 30 ms mean in this short feasibility probe; that is not an end-to-end release gate. Paired two-step CUDA smokes must match first-batch/discriminator hashes and preserve the base weights. Reuse the completed unfiltered anchored run as control only after verifying these inputs and protocol match.
 
 Score the final raw checkpoint once on the frozen 48 full-frame development pairs and 96 bank-validation patches. No checkpoint or blend selection is allowed. Apply unchanged 3% LPIPS/DISTS minima, per-source perceptual guards and 0.01 fine-correlation limit. Any result remains development evidence and needs native trained correctness and fresh release footage before promotion. Preserve shipping weights and existing remote jobs.
+
+
+## Feasibility and smoke results
+
+The nonzero random branch passed Core ML correctness checks at both sizes. M4 Pro CPU+GPU prediction averaged 7.262 ms at 640×360 (p95 7.475 ms) and 27.728 ms at 1280×720 (p95 28.285 ms). Maximum RGB errors were 0.887 and 0.941 levels. These short, interleaved 20-sample measurements satisfy the predeclared native feasibility screen; trained correctness and sustained playback remain separate.
+
+Both two-step CUDA arms completed and matched all six checked data/cache/checkpoint/initialization provenance fields. The full-training supervisor also checks the recorded settings and hashes against the historical unfiltered run before admitting the 8,000-step experiment. The new kernel stays fixed, the base remains frozen, and checkpoint loading without the required filter is covered by a failing-loader regression test. The full run is in progress; no quality result is implied by these checks.
