@@ -5,6 +5,17 @@ import Metal
 import Testing
 @testable import Lucid
 
+struct LearnedReconstructionGeometryTests {
+    @Test func supportedScalesComeFromBothImageDimensions() {
+        #expect(LearnedUpscaler.reconstructionScale(inputWidth: 640, inputHeight: 360, outputWidth: 1280, outputHeight: 720) == 2)
+        #expect(LearnedUpscaler.reconstructionScale(inputWidth: 640, inputHeight: 360, outputWidth: 2560, outputHeight: 1440) == 4)
+        for (width, height) in [(1281, 720), (1280, 1440), (1920, 1080), (0, 0)] {
+            #expect(LearnedUpscaler.reconstructionScale(inputWidth: 640, inputHeight: 360, outputWidth: width, outputHeight: height) == nil)
+        }
+        #expect(LearnedUpscaler.reconstructionScale(inputWidth: 0, inputHeight: 360, outputWidth: 1280, outputHeight: 720) == nil)
+    }
+}
+
 private func nv12(_ w: Int = 64, _ h: Int = 64, luma: (Int, Int) -> UInt8) throws -> CVPixelBuffer {
     var result: CVPixelBuffer?
     let attributes: [String: Any] = [kCVPixelBufferIOSurfacePropertiesKey as String: [:], kCVPixelBufferMetalCompatibilityKey as String: true]

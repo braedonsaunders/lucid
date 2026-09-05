@@ -37,6 +37,7 @@ def main():
     ap.add_argument('--width', type=int, default=320)
     ap.add_argument('--scale', type=int, choices=(2, 4), default=4)
     ap.add_argument('--bitrates', type=int, nargs='+', default=[120000, 400000])
+    ap.add_argument('--split', choices=('development-validation', 'quality-holdout'), default='development-validation')
     args = ap.parse_args()
     height = args.width * 9 // 16
     if args.frames < 12 or args.width % 16 or height % 2 or min(args.bitrates) <= 0:
@@ -50,6 +51,7 @@ def main():
     args.out.mkdir(parents=True, exist_ok=True)
     # Reject bad inputs before producing any part of a new manifest.
     source_info = {name: probe(path) for name, path in args.source}
+    ffmpeg_version = subprocess.check_output(['ffmpeg', '-version'], text=True).splitlines()[0]
     records = []
     for source_id, path in args.source:
         path = Path(path).resolve()
@@ -85,7 +87,8 @@ def main():
                     'width': args.width, 'height': height, 'scale': args.scale,
                     'codec': codec, 'bitrate': bitrate, 'gop': 60,
                     'color_contract': 'SDR Rec709 video range; existing source compression remains part of reference',
-                    'split': 'development-validation; do not use for training'})
+                    'split': args.split + '; do not use for training',
+                    'builder_sha256': digest(__file__), 'ffmpeg_version': ffmpeg_version})
                 print(f'{identity}: {args.frames} aligned frames', flush=True)
     (args.out / 'sequences.json').write_text(json.dumps(records, indent=2) + '\n')
 

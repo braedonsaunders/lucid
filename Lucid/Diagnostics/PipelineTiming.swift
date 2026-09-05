@@ -2,8 +2,8 @@
 //  PipelineTiming.swift
 //  Lucid
 //
-//  End-to-end frame time for the shipping path only: preprocess → SPAN →
-//  detail. Used to A/B Neural Engine vs GPU without the browser bridge.
+//  Native enhancement-stage time: preprocess → reconstruction → detail.
+//  Used to A/B models or compute placement without the browser bridge.
 //  Isolated Core ML benches omit the Metal stages that share the GPU.
 //
 //    Lucid --pipeline-ms <input.mp4> [count]
@@ -108,7 +108,7 @@ enum PresentedNativeTiming {
         var rows: [[String: Any]] = []
         for index in 0..<2 {
             let total = zip(graph[index], packing[index]).map(+)
-            rows.append(["variant": index == 0 ? "shipping4x" : "direct2x_area",
+            rows.append(["variant": index == 0 ? "shipping4x" : "direct2x",
                 "graph_mean_ms": graph[index].reduce(0, +) / Double(count),
                 "packet_mean_ms": packing[index].reduce(0, +) / Double(count),
                 "total_mean_ms": total.reduce(0, +) / Double(count),
@@ -299,13 +299,17 @@ enum PipelineTiming {
             throw NSError(domain: "pipeline-ms", code: 1, userInfo: [NSLocalizedDescriptionKey: "no video track"])
         }
         let reader = try AVAssetReader(asset: asset)
+        defer { reader.cancelReading() }
         let output = AVAssetReaderTrackOutput(track: track, outputSettings: [
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
             kCVPixelBufferIOSurfacePropertiesKey as String: [:] as [String: Any],
             kCVPixelBufferMetalCompatibilityKey as String: true,
         ])
         reader.add(output)
-        reader.startReading()
+        guard reader.startReading() else {
+            throw reader.error ?? NSError(domain: "pipeline-ms", code: 2,
+                userInfo: [NSLocalizedDescriptionKey: "could not start decoding"])
+        }
 
         let compositor = try MetalTileCompositor()
         let t = EnhancementSession.Tuning.load()
@@ -319,6 +323,19 @@ enum PipelineTiming {
         var total: [Double] = []
         var seen = 0
         let warmup = 8
+        // Optional diagnostic export uses the actual browser packet writer.
+        // Disk writes and packet packing are outside enhancement-stage timing.
+        let packetDirectory = ProcessInfo.processInfo.environment["LUCID_PIPELINE_PACKETS"]
+            .map { URL(fileURLWithPath: $0, isDirectory: true) }
+        if let packetDirectory {
+            guard !FileManager.default.fileExists(atPath: packetDirectory.path) else {
+                throw NSError(domain: "pipeline-ms", code: 4,
+                    userInfo: [NSLocalizedDescriptionKey: "packet export requires a fresh directory"])
+            }
+            try FileManager.default.createDirectory(at: packetDirectory, withIntermediateDirectories: true)
+            try JSONEncoder().encode(t).write(to: packetDirectory.appendingPathComponent("tuning.json"), options: .atomic)
+        }
+        let sender = EnhancedFrameSender()
 
         print("pipeline-ms compute=\(LearnedUpscaler.computeUnitsLabel) count=\(count) warmup=\(warmup)")
         while seen < warmup + count, let sample = output.copyNextSampleBuffer(), let frame = sample.imageBuffer {
@@ -326,7 +343,7 @@ enum PipelineTiming {
             let height = CVPixelBufferGetHeight(frame)
             if learned == nil {
                 learned = try LearnedUpscaler(width: width, height: height)
-                print("pipeline-ms input \(width)x\(height) → SPAN \(learned!.inputWidth)x\(learned!.inputHeight)")
+                print("pipeline-ms input \(width)x\(height) → model \(learned!.inputWidth)x\(learned!.inputHeight) → output \(learned!.outputWidth)x\(learned!.outputHeight)")
                 let incoming = CVBufferCopyAttachment(frame, kCVImageBufferChromaLocationTopFieldKey, nil)
                     .map { "\($0)" } ?? "nil"
                 print("pipeline-ms chroma incoming=\(incoming)")
@@ -343,7 +360,7 @@ enum PipelineTiming {
             let t1 = ContinuousClock.now
             let reconstructed = try learned!.upscale(cleaned)
             let t2 = ContinuousClock.now
-            _ = try detail.process(reconstructed)
+            let enhanced = try detail.process(reconstructed)
             let t3 = ContinuousClock.now
             seen += 1
             if seen <= warmup { continue }
@@ -351,6 +368,30 @@ enum PipelineTiming {
             upscale.append((t2 - t1).milliseconds)
             finish.append((t3 - t2).milliseconds)
             total.append((t3 - started).milliseconds)
+            if let packetDirectory, (seen - 1) % 4 == 0 {
+                sender.maximumWidth = width * 2
+                guard let packet = sender.packet(for: enhanced, sequence: seen - 1, session: "pipeline-quality",
+                    sourceTimestamp: CMSampleBufferGetPresentationTimeStamp(sample).seconds) else {
+                    throw NSError(domain: "pipeline-ms", code: 5,
+                        userInfo: [NSLocalizedDescriptionKey: "could not export delivered NV12 frame"])
+                }
+                try packet.write(to: packetDirectory.appendingPathComponent(String(format: "%08d.luce", seen - 1)), options: .atomic)
+                for (stage, buffer) in [("source", frame), ("preprocessed", cleaned), ("reconstructed", reconstructed)] {
+                    guard let intermediate = sender.packet(for: buffer, sequence: seen - 1, session: "pipeline-quality",
+                        sourceTimestamp: CMSampleBufferGetPresentationTimeStamp(sample).seconds) else {
+                        throw NSError(domain: "pipeline-ms", code: 5,
+                            userInfo: [NSLocalizedDescriptionKey: "could not export \(stage) stage"])
+                    }
+                    try intermediate.write(to: packetDirectory.appendingPathComponent(
+                        String(format: "%08d-", seen - 1) + stage + ".luce"), options: .atomic)
+                }
+            }
+        }
+
+        guard total.count == count else {
+            throw reader.error ?? NSError(domain: "pipeline-ms", code: 3,
+                userInfo: [NSLocalizedDescriptionKey:
+                    "incomplete sample: measured \(total.count) of \(count) frames after \(warmup) warmups"])
         }
 
         func mean(_ values: [Double]) -> Double {

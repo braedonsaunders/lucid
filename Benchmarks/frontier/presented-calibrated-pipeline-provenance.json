@@ -1,0 +1,16 @@
+{
+  "files": {
+    ".build/presented-calibrated/pipeline-build/Build/Products/Release/Lucid.app/Contents/MacOS/Lucid": "d654d8ebed6a42ed36b18482cbce4f3290feebe48bce1903e286fa6735fac7ad",
+    ".build/presented-calibrated/pipeline-input.mp4": "cd98b4ea3a3e3ba02f458a24126397e1d03d075bbbb6e1998b769758b154c259",
+    ".build/presented-calibrated/pipeline-shipping4x.log": "f71378714ca961d0e9a06a13e760899120e22c44fdbaf9921b4d751b59747221",
+    ".build/presented-calibrated/pipeline-direct2x_trained.log": "c004d4582f3ec33e8616125ecec7404dbcd71c98d94cace9ca8245097fbd7b3f",
+    ".build/presented-calibrated/pipeline-short-rejection.log": "a04714ceae6d42addad11f9b9ef64ba8bbb7fcc1f1b9fb2dd848fa858e5dc585",
+    "Lucid/Metal/LearnedUpscaler.swift": "c904454ff9044e4ee0f07d9e0596846d95b6b6a77d24e7a18bacb1abd3ebe1ff"
+  },
+  "stage": "preprocess, learned RGB/NV12 conversions and inference, detail",
+  "input": "96-frame loop of 16-frame development four_people-h264-1000000, remux without reencoding",
+  "samples": 60,
+  "warmup": 8,
+  "compute_units": "CPU_AND_GPU",
+  "limitations": "Separate sequential runs, decode/prepareSource/packet/browser excluded. Shipping reconstructs 4x, candidate 2x. Not playback throughput."
+}

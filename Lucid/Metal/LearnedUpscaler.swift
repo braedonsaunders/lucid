@@ -197,6 +197,12 @@ final class LearnedUpscaler: @unchecked Sendable {
         // variants table (or is over budget). isEnhanceable still reads the
         // table; this path is measurement only.
         if CommandLine.arguments.contains("--pipeline-ms") {
+            if let path = ProcessInfo.processInfo.environment["LUCID_PIPELINE_MODEL"], !path.isEmpty {
+                let url = URL(fileURLWithPath: path)
+                guard ["mlpackage", "mlmodelc"].contains(url.pathExtension),
+                      FileManager.default.fileExists(atPath: url.path) else { return nil }
+                return url
+            }
             let stem = ProcessInfo.processInfo.environment["LUCID_MODEL_STEM"] ?? "SPAN_x4_ch32utc_"
             let exact = "\(stem)\(width)x\(height)"
             if let url = Bundle.main.url(forResource: exact, withExtension: "mlmodelc")
@@ -215,7 +221,7 @@ final class LearnedUpscaler: @unchecked Sendable {
             ?? Bundle.main.url(forResource: name, withExtension: "mlpackage")
     }
 
-    let scale = 4
+    let scale: Int
     let inputWidth: Int
     let inputHeight: Int
     private let model: MLModel
@@ -225,10 +231,25 @@ final class LearnedUpscaler: @unchecked Sendable {
     private var transfer: VTPixelTransferSession?
     private var rgbPool: CVPixelBufferPool?
     private var outputPool: CVPixelBufferPool?
+    private let ownedCompiledURL: URL?
+
+    static func reconstructionScale(inputWidth: Int, inputHeight: Int, outputWidth: Int, outputHeight: Int) -> Int? {
+        guard inputWidth > 0, inputHeight > 0, outputWidth > 0, outputHeight > 0,
+              outputWidth % inputWidth == 0, outputHeight % inputHeight == 0 else { return nil }
+        let scale = outputWidth / inputWidth
+        guard [2, 4].contains(scale), outputHeight / inputHeight == scale else { return nil }
+        return scale
+    }
 
     init(width: Int, height: Int) throws {
         guard let url = Self.model(width: width, height: height) else { throw Failure.noModel }
         let compiled = url.pathExtension == "mlmodelc" ? url : try MLModel.compileModel(at: url)
+        let ownsCompilation = url.pathExtension != "mlmodelc"
+        var keepCompilation = false
+        defer {
+            if ownsCompilation && !keepCompilation { try? FileManager.default.removeItem(at: compiled) }
+        }
+        ownedCompiledURL = ownsCompilation ? compiled : nil
         let configuration = MLModelConfiguration()
         // Placement is not settled, and the comment that used to sit here was
         // wrong. It said the Neural Engine was the only placement that met the
@@ -285,14 +306,24 @@ final class LearnedUpscaler: @unchecked Sendable {
         model = try MLModel(contentsOf: compiled, configuration: configuration)
         guard let input = model.modelDescription.inputDescriptionsByName.first,
               let output = model.modelDescription.outputDescriptionsByName.first,
-              let constraint = input.value.imageConstraint
+              let constraint = input.value.imageConstraint,
+              let outputConstraint = output.value.imageConstraint,
+              let reconstructionScale = Self.reconstructionScale(
+                inputWidth: constraint.pixelsWide, inputHeight: constraint.pixelsHigh,
+                outputWidth: outputConstraint.pixelsWide, outputHeight: outputConstraint.pixelsHigh)
         else { throw Failure.noModel }
+        scale = reconstructionScale
         inputName = input.key
         outputName = output.key
         inputFormat = constraint.pixelFormatType
         inputWidth = constraint.pixelsWide
         inputHeight = constraint.pixelsHigh
         VTPixelTransferSessionCreate(allocator: kCFAllocatorDefault, pixelTransferSessionOut: &transfer)
+        keepCompilation = true
+    }
+
+    deinit {
+        if let ownedCompiledURL { try? FileManager.default.removeItem(at: ownedCompiledURL) }
     }
 
     var outputWidth: Int { inputWidth * scale }
@@ -312,7 +343,9 @@ final class LearnedUpscaler: @unchecked Sendable {
         let provider = try MLDictionaryFeatureProvider(
             dictionary: [inputName: MLFeatureValue(pixelBuffer: rgb)])
         guard let result = try? model.prediction(from: provider),
-              let value = result.featureValue(for: outputName)?.imageBufferValue
+              let value = result.featureValue(for: outputName)?.imageBufferValue,
+              CVPixelBufferGetWidth(value) == outputWidth,
+              CVPixelBufferGetHeight(value) == outputHeight
         else { throw Failure.prediction }
 
         // The image model predicts RGB samples in its input encoding. Core ML

@@ -51,8 +51,8 @@ def main():
         ap.error('fresh output directory and at least 20 samples required')
     args.out.mkdir(parents=True)
     model, step, frames = load(args.checkpoint, 'cpu')
-    if frames != 1 or model.core.upsampler[1].upscale_factor != 8:
-        raise ValueError('shipping comparator must be single-frame 4x')
+    if frames != 1:
+        raise ValueError('only single-frame shipping input supported')
     if args.direct_checkpoint:
         folded, _, direct_frames = load(args.direct_checkpoint, 'cpu')
         if direct_frames != 1 or folded.core.upsampler[1].upscale_factor != 4:

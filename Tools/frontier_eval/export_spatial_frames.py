@@ -20,6 +20,10 @@ def main():
     if args.stride < 1 or args.out.exists():
         parser.error('positive stride and fresh output directory required')
     records = json.loads(args.manifest.read_text())
+    splits = {row.get('split', 'development-validation').split(';')[0] for row in records}
+    if len(splits) != 1:
+        raise ValueError('cannot mix evaluation splits in one frozen frame export')
+    split = next(iter(splits))
     for row in records:
         for side in ('reference', 'degraded'):
             if digest(Path(row[side])) != row[side + '_sha256']:
@@ -43,7 +47,7 @@ def main():
                     'frame': index * args.stride, 'side': side})
     (args.out / 'manifest.json').write_text(json.dumps({
         'sequence_manifest_sha256': digest(args.manifest), 'stride': args.stride,
-        'purpose': 'matched spatial development screen, full frame, no crop', 'frames': rows}, indent=2) + '\n')
+        'purpose': f'matched spatial {split}, full frame, no crop', 'split': split, 'frames': rows}, indent=2) + '\n')
 
 
 if __name__ == '__main__':

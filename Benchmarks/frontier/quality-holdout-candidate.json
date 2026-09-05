@@ -1,0 +1,27 @@
+{
+  "frozen_utc": "2026-09-05T03:53:07.541120+00:00",
+  "candidate": "/Users/braedonsaunders/Documents/Code/lucid/.build/presented-calibrated/blend-0.8.pth",
+  "candidate_sha256": "98886f65c0877f3813f46c6c9895597a8969a6b9f027446ebad5b1d803959852",
+  "shipping_sha256": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65",
+  "interpolation": {
+    "anchor": "shipping-target control",
+    "adversarial_weight": 0.8,
+    "coarse_weights_tested": [
+      0.25,
+      0.5,
+      0.75
+    ],
+    "refinement": "0.8 selected after the 0.75 point narrowly missed the aggregate LPIPS gate; no holdout scores used"
+  },
+  "development_report_sha256": "15b4c932165d3a5d913907fe5d29bb822e96642eb0b82d5183cbe533b135509e",
+  "development_gains": {
+    "lpips": 0.0349302614919933,
+    "dists": 0.07131884646419273
+  },
+  "holdout_spec_sha256": "d5f7f1c3270b4101ae78e7079241fb71cb566caeae264fd09abf50fff6237908",
+  "holdout_source_receipts_sha256": "d1b791197f9166db0ab8a4408e7bcef9c9e5b7a104008de4e2421cc49f947c56",
+  "holdout_images_inspected": false,
+  "holdout_scores_computed": false,
+  "status": "candidate frozen for quality holdout; not promoted",
+  "evaluation_contract": "same frozen decoded RGB8 pixels, 2x candidate versus genuine shipping 4x RGB8 output with explicit bicubic presentation at 2x; spatial stride 10"
+}

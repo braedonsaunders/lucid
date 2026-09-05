@@ -59,6 +59,12 @@ def digest(path):
     return h.hexdigest()
 
 
+def pixel_digest(image):
+    image = image.convert('RGB')
+    header = f'{image.width}x{image.height}:RGB\0'.encode('ascii')
+    return hashlib.sha256(header + image.tobytes()).hexdigest()
+
+
 def decode(path, count):
     with tempfile.TemporaryDirectory(prefix='lucid-sequence-') as directory:
         subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-i', str(path),
@@ -201,6 +207,8 @@ def main():
             'training_overlap': 'not verified; comparison is a development baseline, not an independent generalization claim'}
             for label, repo, weights in args.efrlfn},
         'torch': str(torch.__version__), 'device': str(device),
+        'ffmpeg_version': subprocess.check_output(['ffmpeg', '-version'], text=True).splitlines()[0],
+        'decoded_rgb_sha256': {},
         'evaluator_sha256': digest(__file__),
         'flow_code_sha256': digest(Path(__file__).with_name('flow_temporal.py')) if args.flow_width else None,
         'spatial_stride': args.spatial_stride,
@@ -214,6 +222,9 @@ def main():
     for seq in manifest:
         sources = decode(seq['degraded'], seq['frames'])
         references = decode(seq['reference'], seq['frames'])
+        report['decoded_rgb_sha256'][seq['id']] = {
+            'degraded': [pixel_digest(image) for image in sources],
+            'reference': [pixel_digest(image) for image in references]}
         motion = None
         if args.flow_width:
             from flow_temporal import ReferenceMotion

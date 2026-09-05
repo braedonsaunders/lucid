@@ -1,0 +1,6 @@
+pipeline-ms compute=cpuAndGPU count=60 warmup=8
+   🧠 SPAN compute units: cpuAndGPU
+pipeline-ms input 640x360 → model 640x360 → output 1280x720
+pipeline-ms chroma incoming=Left
+pipeline-ms chroma applied=Left flag=left resampled=none
+pipeline-ms failed: Error Domain=pipeline-ms Code=3 "incomplete sample: measured 8 of 60 frames after 8 warmups" UserInfo={NSLocalizedDescription=incomplete sample: measured 8 of 60 frames after 8 warmups}
