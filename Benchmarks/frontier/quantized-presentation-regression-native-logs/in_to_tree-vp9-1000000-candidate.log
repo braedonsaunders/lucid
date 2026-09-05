@@ -1,0 +1,8 @@
+pipeline-ms compute=cpuAndGPU count=292 warmup=8
+   🧠 SPAN compute units: cpuAndGPU
+pipeline-ms input 640x360 → model 640x360 → output 1280x720
+pipeline-ms detail radius=2
+pipeline-ms detail referenceRadius=2
+pipeline-ms chroma incoming=Left
+pipeline-ms chroma applied=Left flag=left resampled=none
+pipeline-ms compute=cpuAndGPU n=292  total mean 8.31  p50 8.48  p95 9.65  max 11.07  |  preprocess 0.38  span 7.51  detail 0.42
