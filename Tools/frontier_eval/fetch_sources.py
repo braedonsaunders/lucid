@@ -31,7 +31,47 @@ def digest(path):
     return h.hexdigest()
 
 
-def fetch(entry, out, frames):
+def y4m_layout(header):
+    text = header.decode('ascii')
+    if not text.startswith('YUV4MPEG2 '):
+        raise ValueError('invalid Y4M header')
+    width, height = (re.search(rf' {key}(\d+)(?:\s|$)', text) for key in ('W', 'H'))
+    if width is None or height is None:
+        raise ValueError('Y4M dimensions missing')
+    w, h = int(width.group(1)), int(height.group(1))
+    chroma = re.search(r' C([^\s]+)', text)
+    alternative = re.search(r' XYSCSS=([^\s]+)', text)
+    # YUV4MPEG2 defines absent C as 8-bit 420jpeg, also used by the raw SVT files.
+    layout = chroma.group(1) if chroma else (alternative.group(1).lower() if alternative else '420jpeg')
+    if layout not in ('420', '420jpeg', '420mpeg2', '420paldv') or min(w, h) < 2 or w % 2 or h % 2:
+        raise ValueError(f'unsupported source sample layout: {text}')
+    return w, h, w * h * 3 // 2
+
+
+def download_ranges(url, destination, size, workers):
+    """Bounded parallel reads for large raw excerpts, with strict range checks."""
+    chunk = 16 * 1024 * 1024
+    with destination.open('wb') as stream:
+        stream.truncate(size)
+    def transfer(start):
+        end = min(size, start + chunk) - 1
+        request = urllib.request.Request(url, headers={'Range': f'bytes={start}-{end}'})
+        with urllib.request.urlopen(request, timeout=30) as response:
+            content_range = response.headers.get('Content-Range', '')
+            if response.status != 206 or not content_range.startswith(f'bytes {start}-{end}/'):
+                raise ValueError('server did not honor exact excerpt range')
+            payload = response.read(end - start + 2)
+        if len(payload) != end - start + 1:
+            raise ValueError('incomplete or oversized excerpt range')
+        # Independent file handles and non-overlapping offsets avoid shared seeks.
+        with destination.open('r+b') as stream:
+            stream.seek(start)
+            stream.write(payload)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
+        list(pool.map(transfer, range(0, size, chunk)))
+
+
+def fetch(entry, out, frames, download_workers=1):
     name, remote, license_name, license_url = entry
     destination = out / f'{name}.mkv'
     receipt = out / f'{name}.json'
@@ -46,11 +86,7 @@ def fetch(entry, out, frames):
     # range; direct FFmpeg HTTP probing can read far beyond a short excerpt.
     with urllib.request.urlopen(urllib.request.Request(url, headers={'Range': 'bytes=0-511'}), timeout=30) as r:
         header = r.readline()
-    text = header.decode('ascii')
-    w, h = (int(re.search(rf' {key}(\d+)', text).group(1)) for key in ('W', 'H'))
-    if 'C420' not in text or any(x in text for x in ('p10', 'p12', 'p16')):
-        raise ValueError(f'unsupported source sample layout: {text}')
-    frame_bytes = w * h * 3 // 2
+    w, h, frame_bytes = y4m_layout(header)
     byte_count = len(header) + frames * (6 + frame_bytes)
     raw = out / f'{name}.partial.y4m'
     download = ['curl', '-f', '-sS', '--max-time', '480', '--range', f'0-{byte_count-1}', '-o', str(raw), url]
@@ -58,7 +94,10 @@ def fetch(entry, out, frames):
            '-i', str(raw), '-map', '0:v:0', '-frames:v', str(frames), '-an',
            '-c:v', 'ffv1', '-level', '3', '-threads', '2', str(temporary)]
     try:
-        subprocess.run(download, check=True, timeout=500)
+        if download_workers > 1:
+            download_ranges(url, raw, byte_count, download_workers)
+        else:
+            subprocess.run(download, check=True, timeout=500)
         if raw.stat().st_size != byte_count:
             raise RuntimeError(f'{name}: server did not provide exact byte range')
         with raw.open('rb') as stream:
@@ -85,7 +124,10 @@ def fetch(entry, out, frames):
               'license': license_name, 'license_url': license_url,
               'collection': BASE, 'first_frame': 0, 'frames': frames,
               'transform': 'first frames; lossless FFV1; no spatial or pixel-format conversion',
-              'sha256': digest(destination), 'stream': info, 'command': cmd, 'download_command': download,
+              'sha256': digest(destination), 'stream': info, 'command': cmd,
+              'download_command': download if download_workers == 1 else None,
+              'download_ranges': {'workers': download_workers, 'chunk_bytes': 16 * 1024 * 1024,
+                                  'bytes': byte_count} if download_workers > 1 else None,
               'use': 'evaluation only; excluded from training'}
     receipt.write_text(json.dumps(result, indent=2) + '\n')
     print(f'{name}: {frames} frames, {destination.stat().st_size / 1e6:.1f} MB', flush=True)

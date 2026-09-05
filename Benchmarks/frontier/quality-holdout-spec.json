@@ -1,0 +1,94 @@
+{
+  "purpose": "Untouched source-family-disjoint quality holdout, frozen before distillation result; never train on these sources",
+  "selection_date": "2026-09-04",
+  "sources": [
+    {
+      "id": "ducks_take_off",
+      "family": "svt_multiformat",
+      "remote": "ducks_take_off_1080p50.y4m",
+      "first_frame": 0,
+      "frames": 300
+    },
+    {
+      "id": "old_town_cross",
+      "family": "svt_multiformat",
+      "remote": "old_town_cross_1080p50.y4m",
+      "first_frame": 0,
+      "frames": 300
+    },
+    {
+      "id": "park_joy",
+      "family": "svt_multiformat",
+      "remote": "park_joy_1080p50.y4m",
+      "first_frame": 0,
+      "frames": 300
+    },
+    {
+      "id": "in_to_tree",
+      "family": "svt_multiformat",
+      "remote": "in_to_tree_1080p50.y4m",
+      "first_frame": 0,
+      "frames": 300
+    },
+    {
+      "id": "pedestrian_area",
+      "family": "taurus_1080p",
+      "remote": "pedestrian_area_1080p25.y4m",
+      "first_frame": 0,
+      "frames": 300
+    },
+    {
+      "id": "rush_hour",
+      "family": "taurus_1080p",
+      "remote": "rush_hour_1080p25.y4m",
+      "first_frame": 0,
+      "frames": 300
+    },
+    {
+      "id": "sunflower",
+      "family": "taurus_1080p",
+      "remote": "sunflower_1080p25.y4m",
+      "first_frame": 0,
+      "frames": 300
+    },
+    {
+      "id": "tractor",
+      "family": "taurus_1080p",
+      "remote": "tractor_1080p25.y4m",
+      "first_frame": 0,
+      "frames": 300
+    }
+  ],
+  "conditions": {
+    "reference": [
+      1280,
+      720
+    ],
+    "source": [
+      640,
+      360
+    ],
+    "codecs": [
+      "h264",
+      "vp9"
+    ],
+    "bitrates": [
+      350000,
+      1000000
+    ],
+    "spatial_stride": 10,
+    "full_frame": true
+  },
+  "selection_rule": "Select candidate using existing development set; run this holdout only after candidate is fixed",
+  "gate": {
+    "source_balanced_lpips_improvement_min": 0.03,
+    "source_balanced_dists_improvement_min": 0.03,
+    "per_source_perceptual_regression_max": 0.02,
+    "per_source_fine_correlation_drop_max": 0.01
+  },
+  "limitations": [
+    "Outdoor scenes dominate; animation, UI/text and additional faces still required for the complete release acceptance set",
+    "Upstream teacher training overlap is unverified; source-family disjointness applies to documented Lucid training",
+    "No holdout images or quality scores inspected at freeze time"
+  ]
+}
