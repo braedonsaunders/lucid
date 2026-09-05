@@ -14,7 +14,21 @@ The RTX 4080 processed all 48 spatial screening frames using official `inference
 
 PixRestore-S improves LPIPS **16.09%** versus Lanczos, while DISTS worsens **2.72%** and fine-detail correlation falls **12.45%**. It produces more high-frequency energy, but that energy is less aligned with the reference. Visual inspection of the low-bitrate Four People output showed visible vertical texture artifacts and distorted fine text/facial structure. It is therefore a useful perceptual target, not a replacement or an unquestioned source of training truth.
 
-This result uses full-frame dynamic-size inference; the author's README also recommends a 512-square test crop. Testing fixed training-size tiles may clarify the full-frame artifacts. That experiment is not yet performed. The result above does not establish the best achievable PixRestore quality.
+This result uses full-frame dynamic-size inference; the author's README also recommends a 512-square test crop. The subsequent controlled tile experiment below materially improves the result.
+
+## Training-size tiles: stronger quality target
+
+The same checkpoint, seed and one-step CUDA/BF16 inference now process overlapping 512×512 patches after identical bicubic 2× enlargement. Each complete 1280×720 frame uses six tiles, blended with normalized separable sin² windows. Processing never reads the reference. No evaluation pixels are cropped away. Identity round-trip tests verify complete pixel-exact coverage, including borders; missing coverage is rejected.
+
+| Variant | LPIPS ↓ | DISTS ↓ | Fine correlation ↑ |
+|---|---:|---:|---:|
+| Lanczos | 0.345604 | 0.128056 | 0.509324 |
+| PixRestore-S, full frame | 0.290007 | 0.131534 | 0.445912 |
+| PixRestore-S, 512 tiles | **0.276422** | **0.113650** | **0.525790** |
+
+The tiled model improves LPIPS **20.0%**, DISTS **11.3%** and fine correlation **3.2%** relative to Lanczos. Both perceptual distances improve on all three source identities. Fine correlation falls on Crowd Run (0.358420→0.346813) while improving on the two talking-head sources, so the aggregate improvement does not establish uniformly faithful reconstruction. Visual review shows the full-frame vertical texture streaks substantially reduced; severely compressed facial detail and text remain unresolved. This is a promising teacher for a controlled, reference-checked distillation experiment, not a shipping promotion.
+
+The RTX 4080 completed all 288 tiles successfully. This test includes image file I/O and Windows compilation is disabled; it establishes no native latency or live-cadence result. `pixrestore-tiles-spatial-evaluation.json` contains all rows and output hashes, `pixrestore-tiles-provenance.json` links exact processing/model identities, and `pixrestore-tiles-command.ps1` records the remote invocation. Split/merge manifests and tiles remain under `.build/pixrestore-tiles`. Ten frontier evaluation tests pass.
 
 `export_spatial_frames.py` exports frames 0, 4, 8 and 12 from the same 12 codec conditions as the causal development screen. `score_spatial_frames.py` verifies every source-frame hash and output size, records output hashes and averages equally across the three source identities. Its Lanczos scores reproduce the sequence evaluator. Full rows are in `pixrestore-spatial-evaluation.json`. Upstream training overlap is unverified; these 48 frames are development evidence, not an untouched generalization benchmark. No temporal metric is used in this quality/performance experiment.
 
