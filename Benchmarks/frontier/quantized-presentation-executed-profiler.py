@@ -110,11 +110,6 @@ def main():
             'seed': 20260905, 'channels': 32, 'blocks': 4, 'residual_lowpass': args.residual_lowpass,
             'added_parameters': sum(p.numel() for p in probe.parameters() if p.requires_grad),
             'status': 'random nonzero detail branch; conversion and cost only, not trained quality'}
-    if args.include_quantized_presentation:
-        report['quantized_presentation'] = {
-            'code_sha256': digest(Path(__file__).with_name('quantized_presentation.py')),
-            'precision': 'shipping mixed precision; FP32 quantization and resampling',
-            'status': 'unmodified shipping weights; common-presentation equivalence requires full-frame checks'}
     def save():
         (args.out / 'profile.json').write_text(json.dumps(report, indent=2) + '\n')
     for size in args.sizes:
@@ -145,7 +140,7 @@ def main():
                 convert_to='mlprogram', compute_precision=precision,
                 minimum_deployment_target=ct.target.macOS15)
             converted.user_defined_metadata['lucid.checkpoint_sha256'] = digest(
-                args.direct_checkpoint if label not in ('shipping4x', 'direct2x_area', 'quantized_bicubic2x') and args.direct_checkpoint else args.checkpoint)
+                args.direct_checkpoint if label not in ('shipping4x', 'direct2x_area') and args.direct_checkpoint else args.checkpoint)
             converted.user_defined_metadata['lucid.output_scale'] = '4' if label == 'shipping4x' else '2'
             converted.user_defined_metadata['lucid.transformation'] = (
                 'quantized 4x-to-2x bicubic presentation' if label == 'quantized_bicubic2x' else

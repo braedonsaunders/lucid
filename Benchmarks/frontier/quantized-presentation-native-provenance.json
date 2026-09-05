@@ -1,0 +1,15 @@
+{
+  "files": {
+    "Lucid/Diagnostics/PipelineTiming.swift": "5ebd2698841b1786a7f4ea90cb0525c012a8bf4575e970afc34be5f7efb85969",
+    "Lucid/Bridge/EnhancedFrameSender.swift": "2ba18f96ec2b8e4bf4da465beb2538a6e010ae52039a62729fc43e075110c3fc",
+    "Lucid/LucidApp.swift": "1d5ff11f69cf8fbffa31e8053d770a041a3cf14ca6562c874f80de6e19197d46",
+    ".build/tests/Build/Products/Release/Lucid.app/Contents/MacOS/Lucid": "c580c287beb51e4354b326aabf2a454631d7224f0fea7bb9a826a681f5709b6a",
+    "Tools/experiments/quantized_presentation.py": "c39a466c0fd854610540b8c50ccedadf974ef93ee481acf06747c01e91d1eed8"
+  },
+  "build": "xcodebuild -project Lucid.xcodeproj -scheme Lucid -configuration Release -derivedDataPath .build/tests CODE_SIGNING_ALLOWED=NO build",
+  "build_succeeded": true,
+  "samples": 60,
+  "command": ".build/tests/Build/Products/Release/Lucid.app/Contents/MacOS/Lucid --presented-native-ms .build/quantized-presentation-native-360/shipping4x_640x360.mlpackage .build/quantized-presentation-native-360/quantized_bicubic2x_640x360.mlpackage .build/quantized-presentation-native-swift360.json 60",
+  "quality_report_sha256": "09767cd3aab4391111055a1ff2806d81381eb45244c6ae9ae8fa074ec9682830",
+  "limitations": "Short paired native stage test on a busy host; not end-to-end playback or native detail-postfilter equivalence"
+}
