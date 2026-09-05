@@ -4,6 +4,7 @@ The active objective uses the regular Codex goal. These are measured development
 
 ## Current decisions
 
+- **Current priority: quality/performance; flicker work deferred at the user's direction.** [Persistent Core ML state](causal-native-runtime.md) reduces the experimental 1080p→4K graph time 37.6% in an alternating comparison, enabling a larger-capacity quality experiment. [Official August-2026 PixRestore-S](pixrestore-baseline.md) is now measured: substantial LPIPS improvement, but weaker detail fidelity; it is not promoted or used as unquestioned training truth.
 - Latest causal experiments: [August-2026 feature-supervision and full-frame codec-data ablations](causal-followups.md) are complete and rejected for promotion; spatial gains remain small and face flicker regresses. [Native/browser color correction](browser-color.md) fixes darkened sRGB midtones, with a reproducible Chrome chart and 34 passing native tests.
 - Shipping ch32utc weights remain unchanged. Both 4,000-step RTX 4080 fine-tunes failed the independent sequence screen. Feature/edge supervision helped relative to its matched control but still lost to shipping.
 - `sequence-evaluation.json` contains all 48 condition/model results: 3 source identities × 2 codecs × 2 bitrates × 4 variants. Every sequence has 16 consecutive frames at 320×180 → 1280×720. Spatial scores use frames 0, 4, 8, 12; temporal scores use all consecutive frames. A source-balanced average prevents repeated conditions from overweighting a scene.

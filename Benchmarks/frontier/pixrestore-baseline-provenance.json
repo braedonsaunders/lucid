@@ -1,0 +1,934 @@
+{
+  "revision": "a5fe719a0c517422cff9f7a4895ab303e2320d51",
+  "files": [
+    {
+      "type": "file",
+      "oid": "caa86cc1622b6080f15094dee544825f3cd8ad89",
+      "size": 128709340,
+      "lfs": {
+        "oid": "13c10ca30fa865977de393457e731db9f2469159dbd69c85fb3c79b3edf06895",
+        "size": 128709340,
+        "pointerSize": 134
+      },
+      "xetHash": "cd9cb2efae3c893f9e09e5616e410075e72df613bb07337e2971dee236a3d014",
+      "path": "pixrestore-s/clean_weights/ema_model.safetensors"
+    }
+  ],
+  "code_repository": "https://github.com/csslc/PixRestore",
+  "code_commit": "909ca06e614cf72e218d52b4fa41077c603d872b",
+  "weights_repository": "https://huggingface.co/VCLab-PolyU/PixRestore",
+  "teacher_sha256": "b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9",
+  "config": {
+    "manifests": [],
+    "test_lq_dir": null,
+    "test_gt_dir": null,
+    "output_dir": "outputs/pixrestore",
+    "seed": 42,
+    "global_batch_size": 16,
+    "gradient_accumulation_steps": 1,
+    "num_workers": 16,
+    "mixed_precision": "bf16",
+    "max_steps": 4000000,
+    "checkpoint_steps": 50000,
+    "eval_steps": 10000,
+    "eval_sampling_steps": 1,
+    "save_first_batch": true,
+    "resume": null,
+    "pretrained": null,
+    "report_to": null,
+    "project_name": "pixrestore",
+    "resolution": 512,
+    "patch_size": 8,
+    "bottleneck_dim": 768,
+    "hidden_size": 384,
+    "depth": 12,
+    "num_heads": 6,
+    "mlp_ratio": 4,
+    "encoder_dim_ratio": 3,
+    "use_qknorm": true,
+    "use_swiglu": true,
+    "use_rope": true,
+    "use_rmsnorm": true,
+    "encoder_type": "dinov2s",
+    "encoder_dim": 384,
+    "encoder_input_size": 448,
+    "encoder_layers": [
+      1,
+      2,
+      4,
+      6,
+      8,
+      10
+    ],
+    "dinov2_repository": "/dinov2",
+    "dinov2_checkpoint": "/dinov2_vits14_pretrain.pth",
+    "feature_norm": "channel_rmsnorm",
+    "gate_temperature": 1.0,
+    "dino_layer_router_mode": "content",
+    "use_dino_layer_router": true,
+    "dino_layer_router_loss_weight": 0.5,
+    "use_hierar_loss": true,
+    "dino_hierar_loss_weight": 0.5,
+    "dino_hierar_loss_type": "cosine",
+    "average_hierar_loss_weights": false,
+    "same_condition_layer_weights": false,
+    "use_lq_degradation_token": true,
+    "fixed_train_t": 1.0,
+    "use_dino_gan": true,
+    "dino_gan_loss_weight": 0.5,
+    "dino_gan_learning_rate": 0.0001,
+    "dino_gan_real_label": 0.8,
+    "dino_gan_hidden_ratio": 0.25,
+    "dino_gan_max_hidden": 128,
+    "flow_ratio": 0.5,
+    "time_distribution": [
+      "uniform",
+      0,
+      1.0
+    ],
+    "alpha": 0.9,
+    "adaptive_loss_power": 0.5,
+    "t_eps": 0.05,
+    "cfg_ratio": 0.0,
+    "cfg_scale": 1.0,
+    "use_aelq": true,
+    "use_venc": true,
+    "cond_strength_aelq_list": [
+      5,
+      1
+    ],
+    "weak_cond_strength_aelq_list": [
+      0.99,
+      1.0
+    ],
+    "cond_strength_aelq_test": 1,
+    "cond_strength_venc": 1,
+    "weak_cond_strength_venc": 0,
+    "aug_noise": false,
+    "use_time_shift": false,
+    "time_shift_base_dimension": 4096,
+    "learning_rate": 0.0001,
+    "adam_betas": [
+      0.9,
+      0.95
+    ],
+    "weight_decay": 0.01,
+    "adam_epsilon": 1e-08,
+    "max_grad_norm": 1.0,
+    "lr_scheduler": "constant_with_warmup",
+    "warmup_steps": 0,
+    "ema_decay": 0.9999
+  },
+  "runtime": {
+    "torch": "2.6.0+cu124",
+    "device": "RTX 4080",
+    "precision": "bf16",
+    "torch_compile": false,
+    "reason": "Windows runtime lacks a working Triton installation; torch CUDA execution retained"
+  },
+  "inference": {
+    "steps": 1,
+    "cfg_scale": 1,
+    "upscale": 2,
+    "interpolation": "PIL bicubic, official --upscale",
+    "test_mode": "off",
+    "seed": 0,
+    "shape": [
+      1280,
+      720
+    ],
+    "frames": 48
+  },
+  "input_manifest": {
+    "sequence_manifest_sha256": "a42d1514b0c0ebb6b10d7107fe8c7d944022c9cca4a9f20992e560448ef4f696",
+    "stride": 4,
+    "purpose": "matched spatial development screen, full frame, no crop",
+    "frames": [
+      {
+        "file": "input/crowd_run-h264-350000-001.png",
+        "sha256": "4c9d64c9569999417f10de205a100511f542d9442d92620949889d8677a528f2",
+        "sequence_id": "crowd_run-h264-350000",
+        "source_id": "crowd_run",
+        "frame": 0,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-h264-350000-002.png",
+        "sha256": "b5871849f640e9588682dd4d67c0aa8aa2fd001565a416810b2471d0af65e91a",
+        "sequence_id": "crowd_run-h264-350000",
+        "source_id": "crowd_run",
+        "frame": 4,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-h264-350000-003.png",
+        "sha256": "18d6b060b3b76c3e346514af79953534b4b0cb086b8bd203d36cf8f1e9de3f00",
+        "sequence_id": "crowd_run-h264-350000",
+        "source_id": "crowd_run",
+        "frame": 8,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-h264-350000-004.png",
+        "sha256": "158770a100bd6a15e1b1353ee04dca685308f37b9a15521ef80985efe188a779",
+        "sequence_id": "crowd_run-h264-350000",
+        "source_id": "crowd_run",
+        "frame": 12,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-h264-1000000-001.png",
+        "sha256": "456e16dd656c4ebe0afebb8aa58e7474d6eadc0fd2f647f93796633bc3438ee9",
+        "sequence_id": "crowd_run-h264-1000000",
+        "source_id": "crowd_run",
+        "frame": 0,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-h264-1000000-002.png",
+        "sha256": "8deb448de3a7055f2c40994e113acdbda0b1f24e85e966ee0a5e597a2a67cd13",
+        "sequence_id": "crowd_run-h264-1000000",
+        "source_id": "crowd_run",
+        "frame": 4,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-h264-1000000-003.png",
+        "sha256": "f78cd9aacba18643bb79b041bed471301f69df2dc9c88cc327f95b6793828bef",
+        "sequence_id": "crowd_run-h264-1000000",
+        "source_id": "crowd_run",
+        "frame": 8,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-h264-1000000-004.png",
+        "sha256": "7a0aae69c6555b0c6327f91a1bdb362e6d90e0092d933ad0a3198e2dcdc510ec",
+        "sequence_id": "crowd_run-h264-1000000",
+        "source_id": "crowd_run",
+        "frame": 12,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-vp9-350000-001.png",
+        "sha256": "8bbae584ede750889022cbf6bcba8fbfc522c2d31a21365a573d4d2887783d9e",
+        "sequence_id": "crowd_run-vp9-350000",
+        "source_id": "crowd_run",
+        "frame": 0,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-vp9-350000-002.png",
+        "sha256": "8c29eab1d05a39af677deb771530dab82e16a193395e8187f8b812d4dc830d70",
+        "sequence_id": "crowd_run-vp9-350000",
+        "source_id": "crowd_run",
+        "frame": 4,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-vp9-350000-003.png",
+        "sha256": "d778770fffcbff392d756f41f39ccf64a224a8395e6eee34b65cdc94018a5c26",
+        "sequence_id": "crowd_run-vp9-350000",
+        "source_id": "crowd_run",
+        "frame": 8,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-vp9-350000-004.png",
+        "sha256": "9ac3cfc93c98bc260f61660008dc3f8d146fed35aa6b20277a344915f716ba7d",
+        "sequence_id": "crowd_run-vp9-350000",
+        "source_id": "crowd_run",
+        "frame": 12,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-vp9-1000000-001.png",
+        "sha256": "7d84273e3711fc3f4c2ab67b29f0ee20836c092cb070eb4b99a59bf0e895fd6f",
+        "sequence_id": "crowd_run-vp9-1000000",
+        "source_id": "crowd_run",
+        "frame": 0,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-vp9-1000000-002.png",
+        "sha256": "9147ddbedf366a9425562767c142fec9fa441fb3450ce1e25986a881dd40fb6b",
+        "sequence_id": "crowd_run-vp9-1000000",
+        "source_id": "crowd_run",
+        "frame": 4,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-vp9-1000000-003.png",
+        "sha256": "5a59927f4e4ef0e08c4535b50acef27c5d9b391e2506459999cca0d50ef53f9b",
+        "sequence_id": "crowd_run-vp9-1000000",
+        "source_id": "crowd_run",
+        "frame": 8,
+        "side": "degraded"
+      },
+      {
+        "file": "input/crowd_run-vp9-1000000-004.png",
+        "sha256": "56e057135e9aefa58e4a2f94466a88ec78010f5f30a51f820ca6e1def207d306",
+        "sequence_id": "crowd_run-vp9-1000000",
+        "source_id": "crowd_run",
+        "frame": 12,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-h264-350000-001.png",
+        "sha256": "a1cebdfa84ec983b194d23e18e59701dd8396b8ed19ba77f123e3f49cdca7ca2",
+        "sequence_id": "four_people-h264-350000",
+        "source_id": "four_people",
+        "frame": 0,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-h264-350000-002.png",
+        "sha256": "031a2b3279a3743ac0c2d0dc76097ce464e3bc4239e5c231162f98051ab0fcb4",
+        "sequence_id": "four_people-h264-350000",
+        "source_id": "four_people",
+        "frame": 4,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-h264-350000-003.png",
+        "sha256": "2d783886a21ed1a854a33a02250d70556f65c45cf7e825da98ae167e9b1e0327",
+        "sequence_id": "four_people-h264-350000",
+        "source_id": "four_people",
+        "frame": 8,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-h264-350000-004.png",
+        "sha256": "1170cfe5561a544a067786c8f82959da15569b5c536de09907bd9b71ddb8903d",
+        "sequence_id": "four_people-h264-350000",
+        "source_id": "four_people",
+        "frame": 12,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-h264-1000000-001.png",
+        "sha256": "a9dfc735e94ad8df83fe2f8e880028312656e25f2e73e7f4ec399dc7dd631cdf",
+        "sequence_id": "four_people-h264-1000000",
+        "source_id": "four_people",
+        "frame": 0,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-h264-1000000-002.png",
+        "sha256": "dbd833e3a89aef8197109c267a9d583ecc0c512fb799c82ad8ab948660d27d44",
+        "sequence_id": "four_people-h264-1000000",
+        "source_id": "four_people",
+        "frame": 4,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-h264-1000000-003.png",
+        "sha256": "33de7d80994b28917a8d746247a3cfc32085b5224c4ce32ad8922f076d73918f",
+        "sequence_id": "four_people-h264-1000000",
+        "source_id": "four_people",
+        "frame": 8,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-h264-1000000-004.png",
+        "sha256": "37436f58dd2f7c54fe5e615ebfc28ad978716069160e5850880bcf42ed73db6a",
+        "sequence_id": "four_people-h264-1000000",
+        "source_id": "four_people",
+        "frame": 12,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-vp9-350000-001.png",
+        "sha256": "0f5a6340c0fb07441ca24347c196f9c9070ee03884576545fd25ee3d7519046d",
+        "sequence_id": "four_people-vp9-350000",
+        "source_id": "four_people",
+        "frame": 0,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-vp9-350000-002.png",
+        "sha256": "b5e944107117da0db5ee1d2b609dad2adceca2a283442bfc0edf55e095c681ac",
+        "sequence_id": "four_people-vp9-350000",
+        "source_id": "four_people",
+        "frame": 4,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-vp9-350000-003.png",
+        "sha256": "ed4043e5e8ac05906be670ea92d48d82f3ef77f3dfbddba6da579a408b7b1420",
+        "sequence_id": "four_people-vp9-350000",
+        "source_id": "four_people",
+        "frame": 8,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-vp9-350000-004.png",
+        "sha256": "68ded6f0fa5d1be505bb6f2dacc1c8c65f789ead825de30e96c75784159b17e1",
+        "sequence_id": "four_people-vp9-350000",
+        "source_id": "four_people",
+        "frame": 12,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-vp9-1000000-001.png",
+        "sha256": "2175b1eee82cd8fb6e2d15f1c1d71e6dca1047cc956cea9e26565f7e16b7d47c",
+        "sequence_id": "four_people-vp9-1000000",
+        "source_id": "four_people",
+        "frame": 0,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-vp9-1000000-002.png",
+        "sha256": "43864109014cd8a17958686389a5a05c13ee15f83ad48a2571d5319504f84bbc",
+        "sequence_id": "four_people-vp9-1000000",
+        "source_id": "four_people",
+        "frame": 4,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-vp9-1000000-003.png",
+        "sha256": "f69aae8e3cd211df289bae1015bec8b28c69a5ae4cb075bcfd3e89272c2bb827",
+        "sequence_id": "four_people-vp9-1000000",
+        "source_id": "four_people",
+        "frame": 8,
+        "side": "degraded"
+      },
+      {
+        "file": "input/four_people-vp9-1000000-004.png",
+        "sha256": "00b8b0d55ef953d13adae0f6daf8d9cf1c2d3eb463309f13a375104bdcffb5eb",
+        "sequence_id": "four_people-vp9-1000000",
+        "source_id": "four_people",
+        "frame": 12,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-h264-350000-001.png",
+        "sha256": "5430fcd13ea3316721e298d2f07b56639d0c748ef491c5aeee9af6067d2ec213",
+        "sequence_id": "johnny-h264-350000",
+        "source_id": "johnny",
+        "frame": 0,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-h264-350000-002.png",
+        "sha256": "b53719edbc6ec859aeaf70653a03ad5c16ed39ea96d31c79e9a281cfd1692faa",
+        "sequence_id": "johnny-h264-350000",
+        "source_id": "johnny",
+        "frame": 4,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-h264-350000-003.png",
+        "sha256": "df9158a3e2ad18256280838255f0d80be91b9d30a2d5c7a78ff20ac0b729bcf8",
+        "sequence_id": "johnny-h264-350000",
+        "source_id": "johnny",
+        "frame": 8,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-h264-350000-004.png",
+        "sha256": "6c908d456afad4b5fdd3c9b24ab824eeec97ae84454d0a0855f4b7caa4f66d60",
+        "sequence_id": "johnny-h264-350000",
+        "source_id": "johnny",
+        "frame": 12,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-h264-1000000-001.png",
+        "sha256": "e352f6dcaea374c43916f155f4469bfdb196f37755822139fcdd4f1ee6878f0d",
+        "sequence_id": "johnny-h264-1000000",
+        "source_id": "johnny",
+        "frame": 0,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-h264-1000000-002.png",
+        "sha256": "b4a224f29fe0c5442916d6758cc44412ab2a6013175a25b246eda6ca82ea3a13",
+        "sequence_id": "johnny-h264-1000000",
+        "source_id": "johnny",
+        "frame": 4,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-h264-1000000-003.png",
+        "sha256": "782d20d54f37a02d9b7f7a1eecc8c02f7f2124587ec5fedbe503098a2a6dc722",
+        "sequence_id": "johnny-h264-1000000",
+        "source_id": "johnny",
+        "frame": 8,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-h264-1000000-004.png",
+        "sha256": "ebbbf8ed02c3bdc8b89389a35ab69b1d21f7af5fab3a32de7555a0d169a464d2",
+        "sequence_id": "johnny-h264-1000000",
+        "source_id": "johnny",
+        "frame": 12,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-vp9-350000-001.png",
+        "sha256": "59795bc81ece38a90f73e8f3215fa6a3c4bfa61165b22dad0e6cd0b9b3c506e5",
+        "sequence_id": "johnny-vp9-350000",
+        "source_id": "johnny",
+        "frame": 0,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-vp9-350000-002.png",
+        "sha256": "f37f68a8c29aaac22c0d3bb6c9127f92d55a93fe93b750388c20740232688533",
+        "sequence_id": "johnny-vp9-350000",
+        "source_id": "johnny",
+        "frame": 4,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-vp9-350000-003.png",
+        "sha256": "6dfacf9321d74eac517742502dade2fa1286bac05a1f97857410e1e37bb4cedf",
+        "sequence_id": "johnny-vp9-350000",
+        "source_id": "johnny",
+        "frame": 8,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-vp9-350000-004.png",
+        "sha256": "a3d853995b63d2ed588738b2bd43ff20613908a67847758514c66c81fcb09496",
+        "sequence_id": "johnny-vp9-350000",
+        "source_id": "johnny",
+        "frame": 12,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-vp9-1000000-001.png",
+        "sha256": "9a961b0dd3cbb5af3275e4925ca2f398d06e3ee195f2a9d3e3de1fe7d899880a",
+        "sequence_id": "johnny-vp9-1000000",
+        "source_id": "johnny",
+        "frame": 0,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-vp9-1000000-002.png",
+        "sha256": "4ca99d3a629d03ccd240734b28203bcc8db0cf143e503db29245297d70f52b19",
+        "sequence_id": "johnny-vp9-1000000",
+        "source_id": "johnny",
+        "frame": 4,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-vp9-1000000-003.png",
+        "sha256": "ed8f9d7873c3eab9fd0c2cd52e8bc811d6fceb076f494a9c298cd1b478585ddd",
+        "sequence_id": "johnny-vp9-1000000",
+        "source_id": "johnny",
+        "frame": 8,
+        "side": "degraded"
+      },
+      {
+        "file": "input/johnny-vp9-1000000-004.png",
+        "sha256": "59870c40871591b554cd8710f6cc14b767bbb35f3bb597ed9039c4bda770c1c2",
+        "sequence_id": "johnny-vp9-1000000",
+        "source_id": "johnny",
+        "frame": 12,
+        "side": "degraded"
+      },
+      {
+        "file": "reference/crowd_run-h264-350000-001.png",
+        "sha256": "fef3dc11694aa07be394bc4733d1d0bbeb7b016b569b4b85e60447658be92a35",
+        "sequence_id": "crowd_run-h264-350000",
+        "source_id": "crowd_run",
+        "frame": 0,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-h264-350000-002.png",
+        "sha256": "640ebd95b35a93132f854ecf8b2a60311baa354b8095dc45f91e33281887efc9",
+        "sequence_id": "crowd_run-h264-350000",
+        "source_id": "crowd_run",
+        "frame": 4,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-h264-350000-003.png",
+        "sha256": "5de05a97eb445b7cf8395481e4b3a6dc53de3951ddfd9c1fc6b9e7cee893aca0",
+        "sequence_id": "crowd_run-h264-350000",
+        "source_id": "crowd_run",
+        "frame": 8,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-h264-350000-004.png",
+        "sha256": "fb9da6234c8a07f08fc1ed43997f28b22fb84b1de6d7a02aa1475d74c7d04642",
+        "sequence_id": "crowd_run-h264-350000",
+        "source_id": "crowd_run",
+        "frame": 12,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-h264-1000000-001.png",
+        "sha256": "fef3dc11694aa07be394bc4733d1d0bbeb7b016b569b4b85e60447658be92a35",
+        "sequence_id": "crowd_run-h264-1000000",
+        "source_id": "crowd_run",
+        "frame": 0,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-h264-1000000-002.png",
+        "sha256": "640ebd95b35a93132f854ecf8b2a60311baa354b8095dc45f91e33281887efc9",
+        "sequence_id": "crowd_run-h264-1000000",
+        "source_id": "crowd_run",
+        "frame": 4,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-h264-1000000-003.png",
+        "sha256": "5de05a97eb445b7cf8395481e4b3a6dc53de3951ddfd9c1fc6b9e7cee893aca0",
+        "sequence_id": "crowd_run-h264-1000000",
+        "source_id": "crowd_run",
+        "frame": 8,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-h264-1000000-004.png",
+        "sha256": "fb9da6234c8a07f08fc1ed43997f28b22fb84b1de6d7a02aa1475d74c7d04642",
+        "sequence_id": "crowd_run-h264-1000000",
+        "source_id": "crowd_run",
+        "frame": 12,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-vp9-350000-001.png",
+        "sha256": "fef3dc11694aa07be394bc4733d1d0bbeb7b016b569b4b85e60447658be92a35",
+        "sequence_id": "crowd_run-vp9-350000",
+        "source_id": "crowd_run",
+        "frame": 0,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-vp9-350000-002.png",
+        "sha256": "640ebd95b35a93132f854ecf8b2a60311baa354b8095dc45f91e33281887efc9",
+        "sequence_id": "crowd_run-vp9-350000",
+        "source_id": "crowd_run",
+        "frame": 4,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-vp9-350000-003.png",
+        "sha256": "5de05a97eb445b7cf8395481e4b3a6dc53de3951ddfd9c1fc6b9e7cee893aca0",
+        "sequence_id": "crowd_run-vp9-350000",
+        "source_id": "crowd_run",
+        "frame": 8,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-vp9-350000-004.png",
+        "sha256": "fb9da6234c8a07f08fc1ed43997f28b22fb84b1de6d7a02aa1475d74c7d04642",
+        "sequence_id": "crowd_run-vp9-350000",
+        "source_id": "crowd_run",
+        "frame": 12,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-vp9-1000000-001.png",
+        "sha256": "fef3dc11694aa07be394bc4733d1d0bbeb7b016b569b4b85e60447658be92a35",
+        "sequence_id": "crowd_run-vp9-1000000",
+        "source_id": "crowd_run",
+        "frame": 0,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-vp9-1000000-002.png",
+        "sha256": "640ebd95b35a93132f854ecf8b2a60311baa354b8095dc45f91e33281887efc9",
+        "sequence_id": "crowd_run-vp9-1000000",
+        "source_id": "crowd_run",
+        "frame": 4,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-vp9-1000000-003.png",
+        "sha256": "5de05a97eb445b7cf8395481e4b3a6dc53de3951ddfd9c1fc6b9e7cee893aca0",
+        "sequence_id": "crowd_run-vp9-1000000",
+        "source_id": "crowd_run",
+        "frame": 8,
+        "side": "reference"
+      },
+      {
+        "file": "reference/crowd_run-vp9-1000000-004.png",
+        "sha256": "fb9da6234c8a07f08fc1ed43997f28b22fb84b1de6d7a02aa1475d74c7d04642",
+        "sequence_id": "crowd_run-vp9-1000000",
+        "source_id": "crowd_run",
+        "frame": 12,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-h264-350000-001.png",
+        "sha256": "b5368aa5d7ccd539fcf2ef303a18cdbace107136b5cc0c9e49335adf1d8095d0",
+        "sequence_id": "four_people-h264-350000",
+        "source_id": "four_people",
+        "frame": 0,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-h264-350000-002.png",
+        "sha256": "f3919d6e76bee2e5098cdd0ca7d3a20c964d249e0d8f6fcbca8935329e03d428",
+        "sequence_id": "four_people-h264-350000",
+        "source_id": "four_people",
+        "frame": 4,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-h264-350000-003.png",
+        "sha256": "3aa3c304908da93f3255a15f1c3b9e5e6a5935574b430ef4a9bb4deea8ab4a7a",
+        "sequence_id": "four_people-h264-350000",
+        "source_id": "four_people",
+        "frame": 8,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-h264-350000-004.png",
+        "sha256": "574add7b213102651684e99e6693625ce1fb2c4b49ee019fc3049a1c5239dcb9",
+        "sequence_id": "four_people-h264-350000",
+        "source_id": "four_people",
+        "frame": 12,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-h264-1000000-001.png",
+        "sha256": "b5368aa5d7ccd539fcf2ef303a18cdbace107136b5cc0c9e49335adf1d8095d0",
+        "sequence_id": "four_people-h264-1000000",
+        "source_id": "four_people",
+        "frame": 0,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-h264-1000000-002.png",
+        "sha256": "f3919d6e76bee2e5098cdd0ca7d3a20c964d249e0d8f6fcbca8935329e03d428",
+        "sequence_id": "four_people-h264-1000000",
+        "source_id": "four_people",
+        "frame": 4,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-h264-1000000-003.png",
+        "sha256": "3aa3c304908da93f3255a15f1c3b9e5e6a5935574b430ef4a9bb4deea8ab4a7a",
+        "sequence_id": "four_people-h264-1000000",
+        "source_id": "four_people",
+        "frame": 8,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-h264-1000000-004.png",
+        "sha256": "574add7b213102651684e99e6693625ce1fb2c4b49ee019fc3049a1c5239dcb9",
+        "sequence_id": "four_people-h264-1000000",
+        "source_id": "four_people",
+        "frame": 12,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-vp9-350000-001.png",
+        "sha256": "b5368aa5d7ccd539fcf2ef303a18cdbace107136b5cc0c9e49335adf1d8095d0",
+        "sequence_id": "four_people-vp9-350000",
+        "source_id": "four_people",
+        "frame": 0,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-vp9-350000-002.png",
+        "sha256": "f3919d6e76bee2e5098cdd0ca7d3a20c964d249e0d8f6fcbca8935329e03d428",
+        "sequence_id": "four_people-vp9-350000",
+        "source_id": "four_people",
+        "frame": 4,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-vp9-350000-003.png",
+        "sha256": "3aa3c304908da93f3255a15f1c3b9e5e6a5935574b430ef4a9bb4deea8ab4a7a",
+        "sequence_id": "four_people-vp9-350000",
+        "source_id": "four_people",
+        "frame": 8,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-vp9-350000-004.png",
+        "sha256": "574add7b213102651684e99e6693625ce1fb2c4b49ee019fc3049a1c5239dcb9",
+        "sequence_id": "four_people-vp9-350000",
+        "source_id": "four_people",
+        "frame": 12,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-vp9-1000000-001.png",
+        "sha256": "b5368aa5d7ccd539fcf2ef303a18cdbace107136b5cc0c9e49335adf1d8095d0",
+        "sequence_id": "four_people-vp9-1000000",
+        "source_id": "four_people",
+        "frame": 0,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-vp9-1000000-002.png",
+        "sha256": "f3919d6e76bee2e5098cdd0ca7d3a20c964d249e0d8f6fcbca8935329e03d428",
+        "sequence_id": "four_people-vp9-1000000",
+        "source_id": "four_people",
+        "frame": 4,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-vp9-1000000-003.png",
+        "sha256": "3aa3c304908da93f3255a15f1c3b9e5e6a5935574b430ef4a9bb4deea8ab4a7a",
+        "sequence_id": "four_people-vp9-1000000",
+        "source_id": "four_people",
+        "frame": 8,
+        "side": "reference"
+      },
+      {
+        "file": "reference/four_people-vp9-1000000-004.png",
+        "sha256": "574add7b213102651684e99e6693625ce1fb2c4b49ee019fc3049a1c5239dcb9",
+        "sequence_id": "four_people-vp9-1000000",
+        "source_id": "four_people",
+        "frame": 12,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-h264-350000-001.png",
+        "sha256": "63c71f5bebe4c4ab73c988be0e628310994be4a965e095514a04b5ee835db5d4",
+        "sequence_id": "johnny-h264-350000",
+        "source_id": "johnny",
+        "frame": 0,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-h264-350000-002.png",
+        "sha256": "69a4361f607cb217441ab9246f50727a06724cc092a989990925bd2cc8cc91c0",
+        "sequence_id": "johnny-h264-350000",
+        "source_id": "johnny",
+        "frame": 4,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-h264-350000-003.png",
+        "sha256": "e92cf99685e5af3b0d2851576904da3170334cb4b2c49fd01a7a089b67dea92d",
+        "sequence_id": "johnny-h264-350000",
+        "source_id": "johnny",
+        "frame": 8,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-h264-350000-004.png",
+        "sha256": "4e987e6517418f62f0964ed972d92c6fae5913879dd87043604eaa2d57bd4767",
+        "sequence_id": "johnny-h264-350000",
+        "source_id": "johnny",
+        "frame": 12,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-h264-1000000-001.png",
+        "sha256": "63c71f5bebe4c4ab73c988be0e628310994be4a965e095514a04b5ee835db5d4",
+        "sequence_id": "johnny-h264-1000000",
+        "source_id": "johnny",
+        "frame": 0,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-h264-1000000-002.png",
+        "sha256": "69a4361f607cb217441ab9246f50727a06724cc092a989990925bd2cc8cc91c0",
+        "sequence_id": "johnny-h264-1000000",
+        "source_id": "johnny",
+        "frame": 4,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-h264-1000000-003.png",
+        "sha256": "e92cf99685e5af3b0d2851576904da3170334cb4b2c49fd01a7a089b67dea92d",
+        "sequence_id": "johnny-h264-1000000",
+        "source_id": "johnny",
+        "frame": 8,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-h264-1000000-004.png",
+        "sha256": "4e987e6517418f62f0964ed972d92c6fae5913879dd87043604eaa2d57bd4767",
+        "sequence_id": "johnny-h264-1000000",
+        "source_id": "johnny",
+        "frame": 12,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-vp9-350000-001.png",
+        "sha256": "63c71f5bebe4c4ab73c988be0e628310994be4a965e095514a04b5ee835db5d4",
+        "sequence_id": "johnny-vp9-350000",
+        "source_id": "johnny",
+        "frame": 0,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-vp9-350000-002.png",
+        "sha256": "69a4361f607cb217441ab9246f50727a06724cc092a989990925bd2cc8cc91c0",
+        "sequence_id": "johnny-vp9-350000",
+        "source_id": "johnny",
+        "frame": 4,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-vp9-350000-003.png",
+        "sha256": "e92cf99685e5af3b0d2851576904da3170334cb4b2c49fd01a7a089b67dea92d",
+        "sequence_id": "johnny-vp9-350000",
+        "source_id": "johnny",
+        "frame": 8,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-vp9-350000-004.png",
+        "sha256": "4e987e6517418f62f0964ed972d92c6fae5913879dd87043604eaa2d57bd4767",
+        "sequence_id": "johnny-vp9-350000",
+        "source_id": "johnny",
+        "frame": 12,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-vp9-1000000-001.png",
+        "sha256": "63c71f5bebe4c4ab73c988be0e628310994be4a965e095514a04b5ee835db5d4",
+        "sequence_id": "johnny-vp9-1000000",
+        "source_id": "johnny",
+        "frame": 0,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-vp9-1000000-002.png",
+        "sha256": "69a4361f607cb217441ab9246f50727a06724cc092a989990925bd2cc8cc91c0",
+        "sequence_id": "johnny-vp9-1000000",
+        "source_id": "johnny",
+        "frame": 4,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-vp9-1000000-003.png",
+        "sha256": "e92cf99685e5af3b0d2851576904da3170334cb4b2c49fd01a7a089b67dea92d",
+        "sequence_id": "johnny-vp9-1000000",
+        "source_id": "johnny",
+        "frame": 8,
+        "side": "reference"
+      },
+      {
+        "file": "reference/johnny-vp9-1000000-004.png",
+        "sha256": "4e987e6517418f62f0964ed972d92c6fae5913879dd87043604eaa2d57bd4767",
+        "sequence_id": "johnny-vp9-1000000",
+        "source_id": "johnny",
+        "frame": 12,
+        "side": "reference"
+      }
+    ]
+  },
+  "code_sha256": {
+    "smoke_test.py": "0aa66ea05f2abaf7a5e2b9dace9722230bcaeabd08b0654502dae976edf4b4ed",
+    "train.py": "a649a927cb3d5315ae4786c487cd1646fb94433eeab5b50ae09b7cf8536524b4",
+    "inference.py": "9f9b49b5686d317cd063e04ab9579fa18237aa90bce395dbb606c8baf83ccf5e",
+    "pixrestore/gan.py": "21be7412da65dc94eb7048e3510ce8ec8e6b47ae241ff4679df0eba728f99b59",
+    "pixrestore/vision.py": "81cca0775440f1b0f4069ea148589ad04ef57b52412e1585c0603f5dc8afaa40",
+    "pixrestore/__init__.py": "562150ba920bbd1b64b6f07baa0d6ffc3fd66cad295b0505bb871e04f7cbb257",
+    "pixrestore/flow.py": "4212987fd6514494ec45fd7315d0a2be1b263ffadcde4ce2492f4266eb37f9ae",
+    "pixrestore/data.py": "d0c4e118612acbc851e8b4f668b6c91438246c0b17660021edfe79ace6ecb84c",
+    "pixrestore/models/__init__.py": "57ee7934e076c58027fec3a889d026c00e8e41b96a60e830b3094b94199a4b41",
+    "pixrestore/models/rope.py": "7b73661b9efa16a538079d55795641e0aed2dab5e05e71ab6be7675349a91c06",
+    "pixrestore/models/patch_embed.py": "28b0b670ff05d8d47d5258847493ca4cc10cd34407e166f86b62ced605b42bdc",
+    "pixrestore/models/pixel_dit.py": "4bf20b499144b9d10c7cc01b9499170714ea1c8f5305a1f4083c867eaf7da6d3",
+    "pixrestore/models/layers.py": "8936ccec1c77fbc13ee31e892ebd5b399e6150da2035d3dbfae9865429cefcf3",
+    "pixrestore/models/swiglu.py": "2f5824e2dc9c2c8911a61ae3e62819590804a9c4dd00ea03f0979744de374abb",
+    "pixrestore/models/rms_norm.py": "009c3df874c72f68db08e6ac1a2199213605d62918b7488a697102eb24ac65f5"
+  }
+}
