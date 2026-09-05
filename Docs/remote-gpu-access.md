@@ -1,22 +1,22 @@
 # Remote GPU access
 
-Status as of 2026-09-05: **VPN SSH is configured and verified. Use `ssh lucid-gpu-vpn` from the Mac with Tailscale connected.** Both devices are enrolled and the native macOS VPN menu is enabled. SCP, original host-key continuity and VPN reconnection passed. Disabling the GPU device-key expiry remains outstanding. Off-LAN reachability and actual reboot recovery have not been tested. Existing `ssh lucid-gpu` remains the LAN route to `192.168.68.85` as `bsaun` using `~/.ssh/lucid_gpu`; `lucid-gpu-lan` is an explicit fallback alias.
+Status as of 2026-09-05: **VPN SSH is configured and verified. Use `ssh lucid-gpu-vpn` from the Mac with Tailscale connected.** Both devices are enrolled and the native macOS VPN menu is enabled. SCP, original host-key continuity and VPN reconnection passed. The trusted GPU node has key expiry disabled, verified in the admin console and by `KeyExpiry: null` over VPN SSH. Off-LAN reachability and actual reboot recovery have not been tested. Existing `ssh lucid-gpu` remains the LAN route to `192.168.68.85` as `bsaun` using `~/.ssh/lucid_gpu`; `lucid-gpu-lan` is an explicit fallback alias.
 
 ## Installed configuration
 
 - Mac: standalone Tailscale 1.102.3 at `/Applications/Tailscale.app`, bundle `io.tailscale.ipn.macsys`, enabled network system extension, native VPN profile `Tailscale` (`223ABF95-B90B-47DD-9ECF-96E63230169F`). System Settings → Menu Bar → VPN is enabled. System Settings → VPN visibly contains its native switch.
 - PC: `C:\Program Files\Tailscale\tailscale.exe` 1.102.3; automatic, running Windows service. Preferences verified: hostname `lucid-gpu`, `ForceDaemon=true` (unattended), `WantRunning=true`, DNS/route acceptance false, no advertised routes or exit node.
-- GPU identity: `100.115.49.93`, `fd7a:115c:a1e0::fd33:315f`, MagicDNS `lucid-gpu.tailea5249.ts.net`. The node is online. Its device key currently expires **2027-03-04 14:36:50 UTC**; disabling expiry is still pending.
+- GPU identity: `100.115.49.93`, `fd7a:115c:a1e0::fd33:315f`, MagicDNS `lucid-gpu.tailea5249.ts.net`. The node is online. Its device key has **expiry disabled**; the console confirms this and the node reports `KeyExpiry: null`. The Mac retains its existing expiry policy.
 - Mac identity: `100.65.221.123`, `fd7a:115c:a1e0::1c33:dd7c`. SSH config backup: `~/.ssh/config.lucid-backup-20260905103921`.
 - Remote tooling: `C:\lucid\remote-access`; owner, Administrators and SYSTEM have access. Existing training/data directories and LAN SSH alias were preserved.
 - The Mac VPN connection can say “Connected” while Tailscale still says `NeedsLogin`. This means the native extension is running, not that remote access is ready.
 
 The [standalone macOS variant](https://tailscale.com/docs/concepts/macos-variants) integrates with the native VPN system. A bare `tailscaled` install does not provide this UI. Windows [unattended mode](https://tailscale.com/docs/how-to/run-unattended) makes the node available without an interactive desktop login.
 
-## Daily use and remaining expiry setting
+## Daily use and device expiry
 
 1. Connect **Tailscale** in the native macOS VPN menu, then run `ssh lucid-gpu-vpn`. Both devices use the same owner account. If reauthentication is eventually needed, run `Tailscale login --timeout=10s` using the executable paths above (PowerShell needs `&` before its quoted executable path). Enrollment links are transient and never committed here. Do not use `--force-reauth` on the only working remote connection.
-2. In the [Machines console](https://login.tailscale.com/admin/machines), find `lucid-gpu` and choose its menu → **Disable Key Expiry**. Verify the resulting non-expiring device status. Tailscale's default for a new domain is 180 days; unattended mode alone does not remove expiry. Keep routine expiry on portable clients and reauthenticate the Mac when prompted. No reusable enrollment key or API token is needed. See [device key expiry](https://tailscale.com/docs/features/access-control/key-expiry).
+2. The trusted `lucid-gpu` node already has **key expiry disabled**. If it is deleted/re-enrolled, verify this again in the [Machines console](https://login.tailscale.com/admin/machines); its device menu can disable expiry. Tailscale's default for a new domain is 180 days; unattended mode alone does not remove expiry. Keep routine expiry on portable clients and reauthenticate the Mac when prompted. No reusable enrollment key or API token is needed. See [device key expiry](https://tailscale.com/docs/features/access-control/key-expiry).
 3. The following setup and checks have already passed. To refresh the aliases/restriction after re-enrolling either device, run them while LAN access is available:
 
    ```sh
@@ -81,7 +81,7 @@ Rollback the recovery task with:
 Unregister-ScheduledTask -TaskName Lucid-EnsureSshAtBoot -Confirm:$false
 ```
 
-This leaves the preexisting SSH service untouched. Its pending deletion must then be repaired manually before relying on reboot persistence. To undo a future VPN restriction, remove only `Lucid-Tailscale-SSH-OwnerOnly` using `Remove-NetFirewallRule -Name Lucid-Tailscale-SSH-OwnerOnly`; to undo aliases restore the timestamped SSH config backup or remove its marked Lucid block.
+This leaves the preexisting SSH service untouched. Its pending deletion must then be repaired manually before relying on reboot persistence. To undo the VPN restriction, remove only `Lucid-Tailscale-SSH-OwnerOnly` using `Remove-NetFirewallRule -Name Lucid-Tailscale-SSH-OwnerOnly`; to undo aliases restore the timestamped SSH config backup or remove its marked Lucid block.
 
 ## Power and availability
 
@@ -108,6 +108,6 @@ The active custom power plan is `6fecc5ae-f350-48a5-b669-b472cb895ccf`. `powercf
 | Owner restriction | Verified enabled inbound Block rule on Tailscale adapter; excludes only this Mac from blocked tailnet IPv4/IPv6 ranges; positive SSH passed |
 | VPN reconnect | Native Disconnected confirmed with working LAN SSH; Connected and VPN SSH restored after startup retry |
 | Off-LAN | Not performed; Tailscale reported a direct LAN-underlay path during tests |
-| Device expiry | Verified GPU key expires 2027-03-04T14:36:50Z; disabling expiry remains pending |
+| Device expiry | Admin console shows GPU “Expiry disabled”; independent VPN SSH status reports `KeyExpiry: null`, `Online: true`, `BackendState: Running`; Mac policy unchanged |
 
 Installer downloads came from [Tailscale's stable package index](https://pkgs.tailscale.com/stable/). Installation used `/norestart` and `REBOOT=ReallySuppress`. Existing GPU training processes were preserved; the access setup's test jobs were CPU-only.
