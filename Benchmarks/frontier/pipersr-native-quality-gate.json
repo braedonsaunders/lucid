@@ -1,0 +1,138 @@
+{
+  "spatial_gate_pass": false,
+  "failure_reasons": [
+    "lpips: aggregate improvement below minimum",
+    "dists: aggregate improvement below minimum",
+    "crowd_run: dists regression exceeds limit",
+    "crowd_run: fine correlation drop exceeds limit",
+    "four_people: lpips regression exceeds limit",
+    "four_people: fine correlation drop exceeds limit",
+    "johnny: lpips regression exceeds limit",
+    "johnny: fine correlation drop exceeds limit"
+  ],
+  "frames_per_variant": 48,
+  "source_balanced": {
+    "lanczos": {
+      "lpips": 0.3456039136896531,
+      "dists": 0.1280564603706201,
+      "fine_correlation": 0.5093240648945621
+    },
+    "bicubic": {
+      "lpips": 0.3354127397760749,
+      "dists": 0.13242512568831444,
+      "fine_correlation": 0.4900637893199271
+    },
+    "shipping": {
+      "lpips": 0.30248340653876465,
+      "dists": 0.12834738940000534,
+      "fine_correlation": 0.5643107409154196
+    },
+    "pipersr": {
+      "lpips": 0.31754098056505126,
+      "dists": 0.1293820602198442,
+      "fine_correlation": 0.4886380957403575
+    }
+  },
+  "per_source": {
+    "lanczos": {
+      "crowd_run": {
+        "lpips": 0.495750118046999,
+        "dists": 0.17145344987511635,
+        "fine_correlation": 0.3584202039433989
+      },
+      "four_people": {
+        "lpips": 0.25478613283485174,
+        "dists": 0.10223440453410149,
+        "fine_correlation": 0.6186566818904616
+      },
+      "johnny": {
+        "lpips": 0.2862754901871085,
+        "dists": 0.11048152670264244,
+        "fine_correlation": 0.5508953088498255
+      }
+    },
+    "bicubic": {
+      "crowd_run": {
+        "lpips": 0.4717636927962303,
+        "dists": 0.17897933721542358,
+        "fine_correlation": 0.34602036094887045
+      },
+      "four_people": {
+        "lpips": 0.24850072339177132,
+        "dists": 0.10510314255952835,
+        "fine_correlation": 0.592293104188349
+      },
+      "johnny": {
+        "lpips": 0.285973803140223,
+        "dists": 0.11319289728999138,
+        "fine_correlation": 0.5318779028225619
+      }
+    },
+    "shipping": {
+      "crowd_run": {
+        "lpips": 0.43213558197021484,
+        "dists": 0.16417091339826584,
+        "fine_correlation": 0.3826486426147748
+      },
+      "four_people": {
+        "lpips": 0.2165464572608471,
+        "dists": 0.10294333472847939,
+        "fine_correlation": 0.6708326990081547
+      },
+      "johnny": {
+        "lpips": 0.25876818038523197,
+        "dists": 0.1179279200732708,
+        "fine_correlation": 0.6394508811233292
+      }
+    },
+    "pipersr": {
+      "crowd_run": {
+        "lpips": 0.43839510902762413,
+        "dists": 0.16880543902516365,
+        "fine_correlation": 0.33280858539565833
+      },
+      "four_people": {
+        "lpips": 0.23596861492842436,
+        "dists": 0.10407678410410881,
+        "fine_correlation": 0.5932836297219936
+      },
+      "johnny": {
+        "lpips": 0.2782592177391052,
+        "dists": 0.11526395753026009,
+        "fine_correlation": 0.5398220721034205
+      }
+    }
+  },
+  "perceptual_improvements": {
+    "lpips": -0.049779834862964334,
+    "dists": -0.008061487067837492
+  },
+  "per_source_changes": {
+    "crowd_run": {
+      "lpips": -0.014485099858869699,
+      "dists": -0.028229882693378228,
+      "fine_correlation": -0.049840057219116496
+    },
+    "four_people": {
+      "lpips": -0.08969048911375976,
+      "dists": -0.011010420233801277,
+      "fine_correlation": -0.07754906928616112
+    },
+    "johnny": {
+      "lpips": -0.07532238826604054,
+      "dists": 0.02258975263326568,
+      "fine_correlation": -0.09962880901990867
+    }
+  },
+  "status": "native model spatial development only; not full delivery or untouched holdout",
+  "controls_max_absolute_delta": 0.0,
+  "evidence_sha256": {
+    "Benchmarks/frontier/pipersr-native-quality.json": "ad97c4cf3c016eeb7bb39a0f0835e88b2dd478a0a7101b3c91d143dc67412bd8",
+    "Benchmarks/frontier/pipersr-shipping-mps.json": "767dade00cb4f85365293ba3527eb7145a7ee737dde6d0e817630d8b47448583",
+    "Benchmarks/frontier/pipersr-native-output-manifest.json": "330475cc567debc505a0d1de3fcbbf8186887157420e08fd305e523f9c464eb6",
+    "Benchmarks/frontier/pipersr-quality-protocol.md": "921a9ccb07496fba404374ba61ab120d71f9c98fbf4f38e31b44a53144e7db8a",
+    "Tools/frontier_eval/evaluate_sequences.py": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75",
+    "Tools/frontier_eval/gate_frozen_holdout.py": "cfc05cc6c7dc64a703070afd1b6147f38cae1ed3031413ca6f417c8e6ce1769b"
+  },
+  "scoring_backend": "Both candidate and shipping metrics on MPS, Torch2.14; reused CUDA shipping rejected because controls exceeded1e-5"
+}

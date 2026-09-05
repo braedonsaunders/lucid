@@ -16,6 +16,12 @@ The complete video package was tested through Core ML with ten warmups and 40 me
 | 854×480 → 1708×960 | 31.19 / 41.02 ms | 60.62 / 71.55 ms | 72.33 / 112.95 ms |
 | 1280×720 → 2560×1440 | 67.33 / 77.00 ms | 134.38 / 141.30 ms | 139.69 / 216.07 ms |
 
-CPU+ANE was the best requested configuration for this package. Lucid's separately measured shipping graph takes about 9.75 ms at 360p and 35.97 ms at 720p on CPU+GPU, but produces 4× output through a different image interface. These separate runs are not a matched quality, power or delivered-playback comparison. PiperSR's architecture is not a demonstrated throughput upgrade for this host. Quality remains unmeasured on Lucid's corpus.
+CPU+ANE was the best requested configuration for this package. Lucid's separately measured shipping graph takes about 9.75 ms at 360p and 35.97 ms at 720p on CPU+GPU, but produces 4× output through a different image interface. These separate runs are not a matched quality, power or delivered-playback comparison. PiperSR's architecture is not a demonstrated throughput upgrade for this host. The subsequent matched quality result is recorded below.
 
 `pipersr-native-profile.json` and `pipersr-download-receipt.json` contain the package hashes, all measurements, requested compute units and observed system load. The benchmark did not modify or redistribute the model package.
+
+## Matched native quality outcome
+
+The complete video package has now processed the same frozen 48 full-frame development pairs at 360p→720p using CPU+ANE. Its direct RGB8 outputs score **4.98% worse LPIPS and 0.81% worse DISTS** than shipping's declared 4× RGB8-to-2× presentation, and lose too much fine correlation on all three sources. It fails the unchanged joint spatial gate; the package remains an external baseline. These limited codec-degraded scenes do not establish a general model ranking.
+
+The initial MPS scoring differed from cached CUDA interpolation controls by up to 0.000115 LPIPS and 0.0000283 DISTS, beyond the predeclared 1e-5 comparison tolerance. Therefore shipping was recomputed on MPS, where all interpolation controls reproduce exactly. No threshold was relaxed. `pipersr-native-quality-gate.json`, both raw reports and the hashed native-output manifest provide the evidence; `pipersr-quality-protocol.md` declares preprocessing and limitations.

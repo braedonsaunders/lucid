@@ -1,0 +1,574 @@
+{
+  "complete": true,
+  "model_files": {
+    "PiperSR_2x_video_720p.mlpackage/Manifest.json": "7d1b8a5d6c0392f92fa9a330d2064b06b2a07dd0f71822defa3003c90c08f16b",
+    "PiperSR_2x_video_720p.mlpackage/Data/com.apple.CoreML/model.mlmodel": "5db1b32bb9fb02a2feebb724a59b44b53dc2024e45aec1734482b7dd97d1b7a5",
+    "PiperSR_2x_video_720p.mlpackage/Data/com.apple.CoreML/weights/weight.bin": "cadece5739d80dd17aa96ac760455cee5c9318e097057e40c69111d84de68252"
+  },
+  "upstream": {
+    "repository": "https://huggingface.co/ModelPiper/PiperSR-2x",
+    "revision": "8daecfccbbe023de6580e7eecbff3d44a51d0b13",
+    "files": {
+      "PiperSR_2x.mlpackage/Manifest.json": {
+        "sha256": "bb4d698b552f273ef0b2b3a1898f45c3be34ea60a6315c4f0d77ca8989746222",
+        "bytes": 617
+      },
+      "PiperSR_2x.mlpackage/Data/com.apple.CoreML/model.mlmodel": {
+        "sha256": "df7fcedd18b75f7e87a9d782e65efb00a946947f30a877ee5e6ba6e23d263a9f",
+        "bytes": 22003
+      },
+      "PiperSR_2x.mlpackage/Data/com.apple.CoreML/weights/weight.bin": {
+        "sha256": "470924d59790b031487863da4f0df0a394c05cb959455300e78484754841e060",
+        "bytes": 905560
+      },
+      "PiperSR_2x_video_720p.mlpackage/Manifest.json": {
+        "sha256": "7d1b8a5d6c0392f92fa9a330d2064b06b2a07dd0f71822defa3003c90c08f16b",
+        "bytes": 617
+      },
+      "PiperSR_2x_video_720p.mlpackage/Data/com.apple.CoreML/model.mlmodel": {
+        "sha256": "5db1b32bb9fb02a2feebb724a59b44b53dc2024e45aec1734482b7dd97d1b7a5",
+        "bytes": 21956
+      },
+      "PiperSR_2x_video_720p.mlpackage/Data/com.apple.CoreML/weights/weight.bin": {
+        "sha256": "cadece5739d80dd17aa96ac760455cee5c9318e097057e40c69111d84de68252",
+        "bytes": 905560
+      }
+    }
+  },
+  "input_manifest_sha256": "aac663ad088fede87e1ede68cb46501603fc0f0b066b5ae6c07726b6555d923f",
+  "code_sha256": "9ba9e666480a4f7b9af650fe01d3041633b20d2cc7a3dcb18f9002e54b20e92b",
+  "coremltools": "9.0",
+  "compute_units": "CPU_AND_NE; CPU fallback allowed",
+  "representation": "RGB NCHW float32 /255 input; float output clamp and nearest RGB8 rounding; direct2x",
+  "timing_note": "quality export timings include first prediction; use separate warmed runtime benchmark",
+  "rows": [
+    {
+      "file": "input/crowd_run-h264-350000-001.png",
+      "sha256": "4c9d64c9569999417f10de205a100511f542d9442d92620949889d8677a528f2",
+      "sequence_id": "crowd_run-h264-350000",
+      "source_id": "crowd_run",
+      "frame": 0,
+      "side": "degraded",
+      "output_file": "crowd_run-h264-350000-001.png",
+      "output_sha256": "63736973cda4821ff5e3b9090a630c293a89d79ffcfe29b68316c0eba09894f4",
+      "prediction_and_materialization_ms": 32.28091700020741
+    },
+    {
+      "file": "input/crowd_run-h264-350000-002.png",
+      "sha256": "b5871849f640e9588682dd4d67c0aa8aa2fd001565a416810b2471d0af65e91a",
+      "sequence_id": "crowd_run-h264-350000",
+      "source_id": "crowd_run",
+      "frame": 4,
+      "side": "degraded",
+      "output_file": "crowd_run-h264-350000-002.png",
+      "output_sha256": "db94d7272f7945d118443f8cf0b7908e3d83ff393fb56346b4160e9e54e39e64",
+      "prediction_and_materialization_ms": 16.880666999895766
+    },
+    {
+      "file": "input/crowd_run-h264-350000-003.png",
+      "sha256": "18d6b060b3b76c3e346514af79953534b4b0cb086b8bd203d36cf8f1e9de3f00",
+      "sequence_id": "crowd_run-h264-350000",
+      "source_id": "crowd_run",
+      "frame": 8,
+      "side": "degraded",
+      "output_file": "crowd_run-h264-350000-003.png",
+      "output_sha256": "34b87b07c961e492c5180249623ded974172cd1b6b41db117116712a4d252d27",
+      "prediction_and_materialization_ms": 17.31204199950298
+    },
+    {
+      "file": "input/crowd_run-h264-350000-004.png",
+      "sha256": "158770a100bd6a15e1b1353ee04dca685308f37b9a15521ef80985efe188a779",
+      "sequence_id": "crowd_run-h264-350000",
+      "source_id": "crowd_run",
+      "frame": 12,
+      "side": "degraded",
+      "output_file": "crowd_run-h264-350000-004.png",
+      "output_sha256": "509aa491681a44f56a9538badd5ba51dd4d203907d374027694cf868ec2d3085",
+      "prediction_and_materialization_ms": 17.20541700069589
+    },
+    {
+      "file": "input/crowd_run-h264-1000000-001.png",
+      "sha256": "456e16dd656c4ebe0afebb8aa58e7474d6eadc0fd2f647f93796633bc3438ee9",
+      "sequence_id": "crowd_run-h264-1000000",
+      "source_id": "crowd_run",
+      "frame": 0,
+      "side": "degraded",
+      "output_file": "crowd_run-h264-1000000-001.png",
+      "output_sha256": "3ccf06ea7664e8a82224b8adbc0e9c9edb9546dac27ea010a705f3552367a0ac",
+      "prediction_and_materialization_ms": 17.437625000638945
+    },
+    {
+      "file": "input/crowd_run-h264-1000000-002.png",
+      "sha256": "8deb448de3a7055f2c40994e113acdbda0b1f24e85e966ee0a5e597a2a67cd13",
+      "sequence_id": "crowd_run-h264-1000000",
+      "source_id": "crowd_run",
+      "frame": 4,
+      "side": "degraded",
+      "output_file": "crowd_run-h264-1000000-002.png",
+      "output_sha256": "a14e02a1b8ba14ab37827f922137fa12c927dc0dd7cb302ec4995089f1547a5e",
+      "prediction_and_materialization_ms": 17.229291999683483
+    },
+    {
+      "file": "input/crowd_run-h264-1000000-003.png",
+      "sha256": "f78cd9aacba18643bb79b041bed471301f69df2dc9c88cc327f95b6793828bef",
+      "sequence_id": "crowd_run-h264-1000000",
+      "source_id": "crowd_run",
+      "frame": 8,
+      "side": "degraded",
+      "output_file": "crowd_run-h264-1000000-003.png",
+      "output_sha256": "23d25c26662d6d1a8d881d03daa2fc64c47a5c1cbe1839a978dca0cfc857a894",
+      "prediction_and_materialization_ms": 17.321833000096376
+    },
+    {
+      "file": "input/crowd_run-h264-1000000-004.png",
+      "sha256": "7a0aae69c6555b0c6327f91a1bdb362e6d90e0092d933ad0a3198e2dcdc510ec",
+      "sequence_id": "crowd_run-h264-1000000",
+      "source_id": "crowd_run",
+      "frame": 12,
+      "side": "degraded",
+      "output_file": "crowd_run-h264-1000000-004.png",
+      "output_sha256": "4d7aaa62b5ad6361287511b1b026f2a8609c54c522bb265ce179368043deef14",
+      "prediction_and_materialization_ms": 17.471375000241096
+    },
+    {
+      "file": "input/crowd_run-vp9-350000-001.png",
+      "sha256": "8bbae584ede750889022cbf6bcba8fbfc522c2d31a21365a573d4d2887783d9e",
+      "sequence_id": "crowd_run-vp9-350000",
+      "source_id": "crowd_run",
+      "frame": 0,
+      "side": "degraded",
+      "output_file": "crowd_run-vp9-350000-001.png",
+      "output_sha256": "3e4bc3d504e3ed41c0426c28e176fd54cd4c2c6ed1e620f6bf5d58498ae2dedb",
+      "prediction_and_materialization_ms": 17.770624999684514
+    },
+    {
+      "file": "input/crowd_run-vp9-350000-002.png",
+      "sha256": "8c29eab1d05a39af677deb771530dab82e16a193395e8187f8b812d4dc830d70",
+      "sequence_id": "crowd_run-vp9-350000",
+      "source_id": "crowd_run",
+      "frame": 4,
+      "side": "degraded",
+      "output_file": "crowd_run-vp9-350000-002.png",
+      "output_sha256": "fe14076f1f05c39d20268c29891098853fafd9afc67a4ebd3c9676bc6cfe659c",
+      "prediction_and_materialization_ms": 17.04704199983098
+    },
+    {
+      "file": "input/crowd_run-vp9-350000-003.png",
+      "sha256": "d778770fffcbff392d756f41f39ccf64a224a8395e6eee34b65cdc94018a5c26",
+      "sequence_id": "crowd_run-vp9-350000",
+      "source_id": "crowd_run",
+      "frame": 8,
+      "side": "degraded",
+      "output_file": "crowd_run-vp9-350000-003.png",
+      "output_sha256": "a07894da710bcc10cddfa72caed07a2399c88896cd5435597b28b8823ec7ff0c",
+      "prediction_and_materialization_ms": 17.342707999887352
+    },
+    {
+      "file": "input/crowd_run-vp9-350000-004.png",
+      "sha256": "9ac3cfc93c98bc260f61660008dc3f8d146fed35aa6b20277a344915f716ba7d",
+      "sequence_id": "crowd_run-vp9-350000",
+      "source_id": "crowd_run",
+      "frame": 12,
+      "side": "degraded",
+      "output_file": "crowd_run-vp9-350000-004.png",
+      "output_sha256": "f20ca22b6012d15f564639d6014fb14a6850fb9fda79fd724baa15187a0f0997",
+      "prediction_and_materialization_ms": 17.507542000203102
+    },
+    {
+      "file": "input/crowd_run-vp9-1000000-001.png",
+      "sha256": "7d84273e3711fc3f4c2ab67b29f0ee20836c092cb070eb4b99a59bf0e895fd6f",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "source_id": "crowd_run",
+      "frame": 0,
+      "side": "degraded",
+      "output_file": "crowd_run-vp9-1000000-001.png",
+      "output_sha256": "446fb73cc5570ef14869ad7e8a4670f9948c5067be156d6d55b397c485336697",
+      "prediction_and_materialization_ms": 16.87137499993696
+    },
+    {
+      "file": "input/crowd_run-vp9-1000000-002.png",
+      "sha256": "9147ddbedf366a9425562767c142fec9fa441fb3450ce1e25986a881dd40fb6b",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "source_id": "crowd_run",
+      "frame": 4,
+      "side": "degraded",
+      "output_file": "crowd_run-vp9-1000000-002.png",
+      "output_sha256": "7957c21d4ac0558cca701fd46d4e8c84efd4b84e7997ca9b7ae3ea09b659a7eb",
+      "prediction_and_materialization_ms": 17.181750000418106
+    },
+    {
+      "file": "input/crowd_run-vp9-1000000-003.png",
+      "sha256": "5a59927f4e4ef0e08c4535b50acef27c5d9b391e2506459999cca0d50ef53f9b",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "source_id": "crowd_run",
+      "frame": 8,
+      "side": "degraded",
+      "output_file": "crowd_run-vp9-1000000-003.png",
+      "output_sha256": "eca8fc62f4e5931ac5fdfd1cb2bf82a8ea8406592147fd99ffdfca040096d664",
+      "prediction_and_materialization_ms": 16.819582999232807
+    },
+    {
+      "file": "input/crowd_run-vp9-1000000-004.png",
+      "sha256": "56e057135e9aefa58e4a2f94466a88ec78010f5f30a51f820ca6e1def207d306",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "source_id": "crowd_run",
+      "frame": 12,
+      "side": "degraded",
+      "output_file": "crowd_run-vp9-1000000-004.png",
+      "output_sha256": "4756a4d035d2d4cd0d4812a10d03cc2b5dd06fbe28e3894e4750543eefa85120",
+      "prediction_and_materialization_ms": 16.485791000377503
+    },
+    {
+      "file": "input/four_people-h264-350000-001.png",
+      "sha256": "a1cebdfa84ec983b194d23e18e59701dd8396b8ed19ba77f123e3f49cdca7ca2",
+      "sequence_id": "four_people-h264-350000",
+      "source_id": "four_people",
+      "frame": 0,
+      "side": "degraded",
+      "output_file": "four_people-h264-350000-001.png",
+      "output_sha256": "9294869cdcc1f946a65424bfaf4cb9dc84eeb7babbf04d182d9f52bb1b944f88",
+      "prediction_and_materialization_ms": 17.110791999584762
+    },
+    {
+      "file": "input/four_people-h264-350000-002.png",
+      "sha256": "031a2b3279a3743ac0c2d0dc76097ce464e3bc4239e5c231162f98051ab0fcb4",
+      "sequence_id": "four_people-h264-350000",
+      "source_id": "four_people",
+      "frame": 4,
+      "side": "degraded",
+      "output_file": "four_people-h264-350000-002.png",
+      "output_sha256": "68a529aaad78561097499127240f5eb019bf886448f8390e148b916e82b61abd",
+      "prediction_and_materialization_ms": 17.022875000293425
+    },
+    {
+      "file": "input/four_people-h264-350000-003.png",
+      "sha256": "2d783886a21ed1a854a33a02250d70556f65c45cf7e825da98ae167e9b1e0327",
+      "sequence_id": "four_people-h264-350000",
+      "source_id": "four_people",
+      "frame": 8,
+      "side": "degraded",
+      "output_file": "four_people-h264-350000-003.png",
+      "output_sha256": "6f9633451367a3bfd29e5ad94fd1589beca2692c4e39abd64d3c5b59cd6eba4b",
+      "prediction_and_materialization_ms": 17.495125000095868
+    },
+    {
+      "file": "input/four_people-h264-350000-004.png",
+      "sha256": "1170cfe5561a544a067786c8f82959da15569b5c536de09907bd9b71ddb8903d",
+      "sequence_id": "four_people-h264-350000",
+      "source_id": "four_people",
+      "frame": 12,
+      "side": "degraded",
+      "output_file": "four_people-h264-350000-004.png",
+      "output_sha256": "c76894973b157005d8818dd20d8813ee90ab21cfd812a62bb3fef748652246cc",
+      "prediction_and_materialization_ms": 17.25208300013037
+    },
+    {
+      "file": "input/four_people-h264-1000000-001.png",
+      "sha256": "a9dfc735e94ad8df83fe2f8e880028312656e25f2e73e7f4ec399dc7dd631cdf",
+      "sequence_id": "four_people-h264-1000000",
+      "source_id": "four_people",
+      "frame": 0,
+      "side": "degraded",
+      "output_file": "four_people-h264-1000000-001.png",
+      "output_sha256": "a9f8cd9491bd2453a783ac8a2888e122cf1ed5c60c633300ec9035a3a20886fe",
+      "prediction_and_materialization_ms": 17.142583000349987
+    },
+    {
+      "file": "input/four_people-h264-1000000-002.png",
+      "sha256": "dbd833e3a89aef8197109c267a9d583ecc0c512fb799c82ad8ab948660d27d44",
+      "sequence_id": "four_people-h264-1000000",
+      "source_id": "four_people",
+      "frame": 4,
+      "side": "degraded",
+      "output_file": "four_people-h264-1000000-002.png",
+      "output_sha256": "1e7a7efa4db5b5635a53f62b5dc3437a343be4b1847721b2b13204ee72555f6d",
+      "prediction_and_materialization_ms": 17.377709000356845
+    },
+    {
+      "file": "input/four_people-h264-1000000-003.png",
+      "sha256": "33de7d80994b28917a8d746247a3cfc32085b5224c4ce32ad8922f076d73918f",
+      "sequence_id": "four_people-h264-1000000",
+      "source_id": "four_people",
+      "frame": 8,
+      "side": "degraded",
+      "output_file": "four_people-h264-1000000-003.png",
+      "output_sha256": "83cc15f7d03a4ac003c903566fe70dfb838d187dae486e568d679f02b724cd08",
+      "prediction_and_materialization_ms": 17.13412499975675
+    },
+    {
+      "file": "input/four_people-h264-1000000-004.png",
+      "sha256": "37436f58dd2f7c54fe5e615ebfc28ad978716069160e5850880bcf42ed73db6a",
+      "sequence_id": "four_people-h264-1000000",
+      "source_id": "four_people",
+      "frame": 12,
+      "side": "degraded",
+      "output_file": "four_people-h264-1000000-004.png",
+      "output_sha256": "deaa9853c6afba776e1abad9ffeaf9c5c476c9df0e9cdaa04ecd751fc34c2c38",
+      "prediction_and_materialization_ms": 16.931707999901846
+    },
+    {
+      "file": "input/four_people-vp9-350000-001.png",
+      "sha256": "0f5a6340c0fb07441ca24347c196f9c9070ee03884576545fd25ee3d7519046d",
+      "sequence_id": "four_people-vp9-350000",
+      "source_id": "four_people",
+      "frame": 0,
+      "side": "degraded",
+      "output_file": "four_people-vp9-350000-001.png",
+      "output_sha256": "5bc83a3883c608ebb3448f510876d7192365d91e3a906886aaa6f3fb362c477d",
+      "prediction_and_materialization_ms": 16.737083999942115
+    },
+    {
+      "file": "input/four_people-vp9-350000-002.png",
+      "sha256": "b5e944107117da0db5ee1d2b609dad2adceca2a283442bfc0edf55e095c681ac",
+      "sequence_id": "four_people-vp9-350000",
+      "source_id": "four_people",
+      "frame": 4,
+      "side": "degraded",
+      "output_file": "four_people-vp9-350000-002.png",
+      "output_sha256": "37c88555477d0a9fb0e20d50cd3cf9baed26a19854b4adb77f2e7a2c1bba0be0",
+      "prediction_and_materialization_ms": 16.63883299988811
+    },
+    {
+      "file": "input/four_people-vp9-350000-003.png",
+      "sha256": "ed4043e5e8ac05906be670ea92d48d82f3ef77f3dfbddba6da579a408b7b1420",
+      "sequence_id": "four_people-vp9-350000",
+      "source_id": "four_people",
+      "frame": 8,
+      "side": "degraded",
+      "output_file": "four_people-vp9-350000-003.png",
+      "output_sha256": "21f1cc34e5a05767c2f58873c34b938397b7ac1c77536649ba98f9bd43ccb950",
+      "prediction_and_materialization_ms": 17.03487499980838
+    },
+    {
+      "file": "input/four_people-vp9-350000-004.png",
+      "sha256": "68ded6f0fa5d1be505bb6f2dacc1c8c65f789ead825de30e96c75784159b17e1",
+      "sequence_id": "four_people-vp9-350000",
+      "source_id": "four_people",
+      "frame": 12,
+      "side": "degraded",
+      "output_file": "four_people-vp9-350000-004.png",
+      "output_sha256": "f28c2fbba993ba9bbdcc612cee482f2932155b7746686974825dae906e4b1f26",
+      "prediction_and_materialization_ms": 18.41391699963424
+    },
+    {
+      "file": "input/four_people-vp9-1000000-001.png",
+      "sha256": "2175b1eee82cd8fb6e2d15f1c1d71e6dca1047cc956cea9e26565f7e16b7d47c",
+      "sequence_id": "four_people-vp9-1000000",
+      "source_id": "four_people",
+      "frame": 0,
+      "side": "degraded",
+      "output_file": "four_people-vp9-1000000-001.png",
+      "output_sha256": "e25348f9abd67ff89480922c7b3d6a86f5e6078ca703dc70970985474576f426",
+      "prediction_and_materialization_ms": 17.47870800045348
+    },
+    {
+      "file": "input/four_people-vp9-1000000-002.png",
+      "sha256": "43864109014cd8a17958686389a5a05c13ee15f83ad48a2571d5319504f84bbc",
+      "sequence_id": "four_people-vp9-1000000",
+      "source_id": "four_people",
+      "frame": 4,
+      "side": "degraded",
+      "output_file": "four_people-vp9-1000000-002.png",
+      "output_sha256": "08f7133b73e72b47c78ed0e4998f478300da4958b9223d1e290294ed4442205e",
+      "prediction_and_materialization_ms": 17.035875000146916
+    },
+    {
+      "file": "input/four_people-vp9-1000000-003.png",
+      "sha256": "f69aae8e3cd211df289bae1015bec8b28c69a5ae4cb075bcfd3e89272c2bb827",
+      "sequence_id": "four_people-vp9-1000000",
+      "source_id": "four_people",
+      "frame": 8,
+      "side": "degraded",
+      "output_file": "four_people-vp9-1000000-003.png",
+      "output_sha256": "1fb5f155faf0ab631082315440ce539edee2777585fd08b58c48493807728242",
+      "prediction_and_materialization_ms": 16.85029200052668
+    },
+    {
+      "file": "input/four_people-vp9-1000000-004.png",
+      "sha256": "00b8b0d55ef953d13adae0f6daf8d9cf1c2d3eb463309f13a375104bdcffb5eb",
+      "sequence_id": "four_people-vp9-1000000",
+      "source_id": "four_people",
+      "frame": 12,
+      "side": "degraded",
+      "output_file": "four_people-vp9-1000000-004.png",
+      "output_sha256": "de17176810ccd6c471530d4042157880bc5309154570e31e5ebc699fb5225141",
+      "prediction_and_materialization_ms": 17.053874999874097
+    },
+    {
+      "file": "input/johnny-h264-350000-001.png",
+      "sha256": "5430fcd13ea3316721e298d2f07b56639d0c748ef491c5aeee9af6067d2ec213",
+      "sequence_id": "johnny-h264-350000",
+      "source_id": "johnny",
+      "frame": 0,
+      "side": "degraded",
+      "output_file": "johnny-h264-350000-001.png",
+      "output_sha256": "c1fd92c3e4fd3bc44a1fa43b2d743642766f5f920179f305f75f525d19b119ac",
+      "prediction_and_materialization_ms": 18.090707999363076
+    },
+    {
+      "file": "input/johnny-h264-350000-002.png",
+      "sha256": "b53719edbc6ec859aeaf70653a03ad5c16ed39ea96d31c79e9a281cfd1692faa",
+      "sequence_id": "johnny-h264-350000",
+      "source_id": "johnny",
+      "frame": 4,
+      "side": "degraded",
+      "output_file": "johnny-h264-350000-002.png",
+      "output_sha256": "8e0317c4fe5b840ffe1be82937adcf18992be1f0a0adbf465ff39087dbe20895",
+      "prediction_and_materialization_ms": 17.42133300012938
+    },
+    {
+      "file": "input/johnny-h264-350000-003.png",
+      "sha256": "df9158a3e2ad18256280838255f0d80be91b9d30a2d5c7a78ff20ac0b729bcf8",
+      "sequence_id": "johnny-h264-350000",
+      "source_id": "johnny",
+      "frame": 8,
+      "side": "degraded",
+      "output_file": "johnny-h264-350000-003.png",
+      "output_sha256": "b78ea5671bc9823abb0413171c598d1428c46e139fe246c23021979012d09834",
+      "prediction_and_materialization_ms": 17.381374999786203
+    },
+    {
+      "file": "input/johnny-h264-350000-004.png",
+      "sha256": "6c908d456afad4b5fdd3c9b24ab824eeec97ae84454d0a0855f4b7caa4f66d60",
+      "sequence_id": "johnny-h264-350000",
+      "source_id": "johnny",
+      "frame": 12,
+      "side": "degraded",
+      "output_file": "johnny-h264-350000-004.png",
+      "output_sha256": "f8fd3ee58bd0a63c945b6da2079a4769a46b5df75663cc5013ed8401b3a1d5e6",
+      "prediction_and_materialization_ms": 17.58125000014843
+    },
+    {
+      "file": "input/johnny-h264-1000000-001.png",
+      "sha256": "e352f6dcaea374c43916f155f4469bfdb196f37755822139fcdd4f1ee6878f0d",
+      "sequence_id": "johnny-h264-1000000",
+      "source_id": "johnny",
+      "frame": 0,
+      "side": "degraded",
+      "output_file": "johnny-h264-1000000-001.png",
+      "output_sha256": "3cf23d2aab892dd3b5048cc6c48854528fb209fe28c1676c5975713b6762179e",
+      "prediction_and_materialization_ms": 16.79329200032953
+    },
+    {
+      "file": "input/johnny-h264-1000000-002.png",
+      "sha256": "b4a224f29fe0c5442916d6758cc44412ab2a6013175a25b246eda6ca82ea3a13",
+      "sequence_id": "johnny-h264-1000000",
+      "source_id": "johnny",
+      "frame": 4,
+      "side": "degraded",
+      "output_file": "johnny-h264-1000000-002.png",
+      "output_sha256": "5bebec9314f3659ee475dd1a18bc5bf73bc9972fd7f3facf19bb7a01c4c1c0ed",
+      "prediction_and_materialization_ms": 17.197708000821876
+    },
+    {
+      "file": "input/johnny-h264-1000000-003.png",
+      "sha256": "782d20d54f37a02d9b7f7a1eecc8c02f7f2124587ec5fedbe503098a2a6dc722",
+      "sequence_id": "johnny-h264-1000000",
+      "source_id": "johnny",
+      "frame": 8,
+      "side": "degraded",
+      "output_file": "johnny-h264-1000000-003.png",
+      "output_sha256": "34fdca227a38714548621d84fdeefc301c6b1582d548ad8425b09d5ec30c2914",
+      "prediction_and_materialization_ms": 17.175207999571285
+    },
+    {
+      "file": "input/johnny-h264-1000000-004.png",
+      "sha256": "ebbbf8ed02c3bdc8b89389a35ab69b1d21f7af5fab3a32de7555a0d169a464d2",
+      "sequence_id": "johnny-h264-1000000",
+      "source_id": "johnny",
+      "frame": 12,
+      "side": "degraded",
+      "output_file": "johnny-h264-1000000-004.png",
+      "output_sha256": "3a19e1f8183c1cfcff2e58c34ce39b771365fa48fdf49133623c58cb54186e17",
+      "prediction_and_materialization_ms": 17.714916999466368
+    },
+    {
+      "file": "input/johnny-vp9-350000-001.png",
+      "sha256": "59795bc81ece38a90f73e8f3215fa6a3c4bfa61165b22dad0e6cd0b9b3c506e5",
+      "sequence_id": "johnny-vp9-350000",
+      "source_id": "johnny",
+      "frame": 0,
+      "side": "degraded",
+      "output_file": "johnny-vp9-350000-001.png",
+      "output_sha256": "f17d4dc96067cb0a092519416e5bc5fd52ea9966391160495c643deeca3f04d7",
+      "prediction_and_materialization_ms": 17.082000000300468
+    },
+    {
+      "file": "input/johnny-vp9-350000-002.png",
+      "sha256": "f37f68a8c29aaac22c0d3bb6c9127f92d55a93fe93b750388c20740232688533",
+      "sequence_id": "johnny-vp9-350000",
+      "source_id": "johnny",
+      "frame": 4,
+      "side": "degraded",
+      "output_file": "johnny-vp9-350000-002.png",
+      "output_sha256": "e74a8d085c788eb9ce5084180eb23de6ecfba3cad08a55bc2583472163b2e653",
+      "prediction_and_materialization_ms": 16.65262500046083
+    },
+    {
+      "file": "input/johnny-vp9-350000-003.png",
+      "sha256": "6dfacf9321d74eac517742502dade2fa1286bac05a1f97857410e1e37bb4cedf",
+      "sequence_id": "johnny-vp9-350000",
+      "source_id": "johnny",
+      "frame": 8,
+      "side": "degraded",
+      "output_file": "johnny-vp9-350000-003.png",
+      "output_sha256": "69331890ef610ab7aa5803951654d3376ae7cc1e4fa9ad3018e2774aeea5c335",
+      "prediction_and_materialization_ms": 16.736999999920954
+    },
+    {
+      "file": "input/johnny-vp9-350000-004.png",
+      "sha256": "a3d853995b63d2ed588738b2bd43ff20613908a67847758514c66c81fcb09496",
+      "sequence_id": "johnny-vp9-350000",
+      "source_id": "johnny",
+      "frame": 12,
+      "side": "degraded",
+      "output_file": "johnny-vp9-350000-004.png",
+      "output_sha256": "992979593881917f5206a703e44e5f3aee456ef08b2444b0fda4dfcc4f07f7c7",
+      "prediction_and_materialization_ms": 17.360791999635694
+    },
+    {
+      "file": "input/johnny-vp9-1000000-001.png",
+      "sha256": "9a961b0dd3cbb5af3275e4925ca2f398d06e3ee195f2a9d3e3de1fe7d899880a",
+      "sequence_id": "johnny-vp9-1000000",
+      "source_id": "johnny",
+      "frame": 0,
+      "side": "degraded",
+      "output_file": "johnny-vp9-1000000-001.png",
+      "output_sha256": "1d0b1a9aff8a6deb22eb51af85a854a5b59daf861aa341f6829d248e677005f7",
+      "prediction_and_materialization_ms": 16.49825000004057
+    },
+    {
+      "file": "input/johnny-vp9-1000000-002.png",
+      "sha256": "4ca99d3a629d03ccd240734b28203bcc8db0cf143e503db29245297d70f52b19",
+      "sequence_id": "johnny-vp9-1000000",
+      "source_id": "johnny",
+      "frame": 4,
+      "side": "degraded",
+      "output_file": "johnny-vp9-1000000-002.png",
+      "output_sha256": "08108d17f25000d89f9dd3e336a66e555e60ab4600b0bca0f004277ed84f7530",
+      "prediction_and_materialization_ms": 17.709583999931056
+    },
+    {
+      "file": "input/johnny-vp9-1000000-003.png",
+      "sha256": "ed8f9d7873c3eab9fd0c2cd52e8bc811d6fceb076f494a9c298cd1b478585ddd",
+      "sequence_id": "johnny-vp9-1000000",
+      "source_id": "johnny",
+      "frame": 8,
+      "side": "degraded",
+      "output_file": "johnny-vp9-1000000-003.png",
+      "output_sha256": "b74cdf31b51d8ed0b25babaf979c7b242ee68b39175f8b0cfba1222ec217b77d",
+      "prediction_and_materialization_ms": 16.79279200016026
+    },
+    {
+      "file": "input/johnny-vp9-1000000-004.png",
+      "sha256": "59870c40871591b554cd8710f6cc14b767bbb35f3bb597ed9039c4bda770c1c2",
+      "sequence_id": "johnny-vp9-1000000",
+      "source_id": "johnny",
+      "frame": 12,
+      "side": "degraded",
+      "output_file": "johnny-vp9-1000000-004.png",
+      "output_sha256": "867d837cb4d101994049b2261efb3c71df25003ffa55000e9e6264b03727e6fa",
+      "prediction_and_materialization_ms": 17.79579100002593
+    }
+  ]
+}
