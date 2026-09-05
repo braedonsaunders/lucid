@@ -1,6 +1,7 @@
 import CoreMedia
 import CoreML
 import CoreVideo
+import CryptoKit
 import Metal
 import Testing
 @testable import Lucid
@@ -13,6 +14,54 @@ struct LearnedReconstructionGeometryTests {
             #expect(LearnedUpscaler.reconstructionScale(inputWidth: 640, inputHeight: 360, outputWidth: width, outputHeight: height) == nil)
         }
         #expect(LearnedUpscaler.reconstructionScale(inputWidth: 0, inputHeight: 360, outputWidth: 1280, outputHeight: 720) == nil)
+    }
+}
+
+struct DiagnosticNV12FramesTests {
+    @Test func tightPlanesSurvivePaddedBuffersAndCadenceIsExact() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let data = Data((0..<72).map { UInt8($0) })
+        let dataURL = directory.appendingPathComponent("source.nv12")
+        try data.write(to: dataURL)
+        let manifestURL = directory.appendingPathComponent("input.json")
+        var manifest: [String: Any] = ["format": "NV12", "width": 6, "height": 4, "frames": 2,
+            "fpsNumerator": 24000, "fpsDenominator": 1001, "data": "source.nv12",
+            "sha256": SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined(),
+            "colorSpace": ["primaries": "bt709", "transfer": "bt709", "matrix": "bt709", "fullRange": false],
+            "chromaLocation": "left", "spatialStride": 1, "exportWarmup": true]
+        func writeManifest() throws {
+            try JSONSerialization.data(withJSONObject: manifest).write(to: manifestURL)
+        }
+        try writeManifest()
+        let reader = try DiagnosticNV12Frames(manifestURL: manifestURL)
+        for index in 0..<2 {
+            let (buffer, time) = try #require(try reader.next())
+            #expect(time.value == Int64(index * 1001))
+            #expect(time.timescale == 24000)
+            #expect(VideoColorInfo.read(from: buffer) == .rec709)
+            CVPixelBufferLockBaseAddress(buffer, .readOnly)
+            defer { CVPixelBufferUnlockBaseAddress(buffer, .readOnly) }
+            for plane in 0..<2 {
+                let base = CVPixelBufferGetBaseAddressOfPlane(buffer, plane)!.assumingMemoryBound(to: UInt8.self)
+                let stride = CVPixelBufferGetBytesPerRowOfPlane(buffer, plane)
+                for y in 0..<(plane == 0 ? 4 : 2) { for x in 0..<6 {
+                    #expect(base[y * stride + x] == data[index * 36 + (plane == 0 ? 0 : 24) + y * 6 + x])
+                }}
+            }
+        }
+        #expect(try reader.next() == nil)
+        for (key, value) in [("width", 7 as Any), ("fpsNumerator", 0 as Any), ("sha256", "wrong" as Any)] {
+            let old = manifest[key]; manifest[key] = value; try writeManifest()
+            #expect(throws: (any Error).self) { try DiagnosticNV12Frames(manifestURL: manifestURL) }
+            manifest[key] = old
+        }
+        try writeManifest()
+        let truncated = try DiagnosticNV12Frames(manifestURL: manifestURL)
+        let writer = try FileHandle(forWritingTo: dataURL)
+        try writer.truncate(atOffset: 10); try writer.close()
+        #expect(throws: (any Error).self) { try truncated.next() }
     }
 }
 

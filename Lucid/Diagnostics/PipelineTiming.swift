@@ -273,6 +273,103 @@ enum CausalNativeTiming {
     }
 }
 
+/// Offline decoder boundary for codec-independent quality evaluation. RGB conversion
+/// and all enhancement/delivery stages remain the app's normal implementations.
+final class DiagnosticNV12Frames {
+    struct Manifest: Codable {
+        let format: String
+        let width: Int, height: Int, frames: Int
+        let fpsNumerator: Int32, fpsDenominator: Int32
+        let data: String, sha256: String
+        let colorSpace: VideoColorInfo
+        let chromaLocation: String
+        let spatialStride: Int
+        let exportWarmup: Bool
+    }
+    let manifest: Manifest
+    private let file: FileHandle
+    private let pool: CVPixelBufferPool
+    private var position = 0
+
+    private static func failure(_ message: String) -> NSError {
+        NSError(domain: "pipeline-nv12", code: 1, userInfo: [NSLocalizedDescriptionKey: message])
+    }
+
+    init(manifestURL: URL) throws {
+        let manifest = try JSONDecoder().decode(Manifest.self, from: Data(contentsOf: manifestURL))
+        guard manifest.format == "NV12", manifest.width > 0, manifest.width <= 8192,
+              manifest.height > 0, manifest.height <= 4320,
+              manifest.width % 2 == 0, manifest.height % 2 == 0,
+              manifest.frames > 0, manifest.frames <= 1_000_000,
+              manifest.fpsNumerator > 0, manifest.fpsDenominator > 0,
+              manifest.spatialStride > 0, manifest.spatialStride <= manifest.frames,
+              manifest.colorSpace == .rec709, manifest.chromaLocation == "left",
+              !manifest.data.isEmpty, manifest.data == (manifest.data as NSString).lastPathComponent
+        else { throw Self.failure("invalid NV12 geometry, cadence, filename or explicit Rec.709/left-chroma contract") }
+        let url = manifestURL.deletingLastPathComponent().appendingPathComponent(manifest.data)
+        let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize
+        guard size == manifest.width * manifest.height * 3 / 2 * manifest.frames else {
+            throw Self.failure("raw stream byte count differs from declared frame count")
+        }
+        let handle = try FileHandle(forReadingFrom: url)
+        var keepHandle = false
+        defer { if !keepHandle { try? handle.close() } }
+        var hash = SHA256()
+        while let chunk = try handle.read(upToCount: 1 << 20), !chunk.isEmpty { hash.update(data: chunk) }
+        let actual = hash.finalize().map { String(format: "%02x", $0) }.joined()
+        guard actual == manifest.sha256 else { throw Self.failure("raw stream SHA256 mismatch") }
+        try handle.seek(toOffset: 0)
+        var created: CVPixelBufferPool?
+        let attributes: [String: Any] = [kCVPixelBufferWidthKey as String: manifest.width,
+            kCVPixelBufferHeightKey as String: manifest.height,
+            kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+            kCVPixelBufferIOSurfacePropertiesKey as String: [:],
+            kCVPixelBufferMetalCompatibilityKey as String: true]
+        guard CVPixelBufferPoolCreate(kCFAllocatorDefault,
+            [kCVPixelBufferPoolMinimumBufferCountKey as String: 4] as CFDictionary,
+            attributes as CFDictionary, &created) == kCVReturnSuccess, let created else {
+            throw Self.failure("NV12 pool allocation failed")
+        }
+        self.manifest = manifest; file = handle; pool = created; keepHandle = true
+    }
+
+    deinit { try? file.close() }
+
+    func next() throws -> (CVPixelBuffer, CMTime)? {
+        guard position < manifest.frames else { return nil }
+        let width = manifest.width, height = manifest.height, count = width * height * 3 / 2
+        var bytes = Data()
+        while bytes.count < count {
+            guard let chunk = try file.read(upToCount: count - bytes.count), !chunk.isEmpty else {
+                throw Self.failure("raw stream truncated after validation")
+            }
+            bytes.append(chunk)
+        }
+        var created: CVPixelBuffer?
+        guard CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pool, &created) == kCVReturnSuccess,
+              let buffer = created else { throw Self.failure("NV12 frame allocation failed") }
+        CVBufferRemoveAllAttachments(buffer)
+        CVPixelBufferLockBaseAddress(buffer, [])
+        bytes.withUnsafeBytes { source in
+            for plane in 0..<2 {
+                let destination = CVPixelBufferGetBaseAddressOfPlane(buffer, plane)!
+                let stride = CVPixelBufferGetBytesPerRowOfPlane(buffer, plane)
+                let offset = plane == 0 ? 0 : width * height
+                for row in 0..<(plane == 0 ? height : height / 2) {
+                    memcpy(destination.advanced(by: row * stride), source.baseAddress!.advanced(by: offset + row * width), width)
+                }
+            }
+        }
+        CVPixelBufferUnlockBaseAddress(buffer, [])
+        manifest.colorSpace.apply(to: buffer)
+        CVBufferSetAttachment(buffer, kCVImageBufferChromaLocationTopFieldKey, kCVImageBufferChromaLocation_Left, .shouldPropagate)
+        CVBufferSetAttachment(buffer, kCVImageBufferChromaLocationBottomFieldKey, kCVImageBufferChromaLocation_Left, .shouldPropagate)
+        let time = CMTime(value: Int64(position) * Int64(manifest.fpsDenominator), timescale: manifest.fpsNumerator)
+        position += 1
+        return (buffer, time)
+    }
+}
+
 @available(macOS 26.0, *)
 enum PipelineTiming {
     static func run() async {
@@ -294,21 +391,32 @@ enum PipelineTiming {
     }
 
     private static func measure(path: String, count: Int) async throws {
-        let asset = AVURLAsset(url: URL(fileURLWithPath: path))
-        guard let track = try await asset.loadTracks(withMediaType: .video).first else {
-            throw NSError(domain: "pipeline-ms", code: 1, userInfo: [NSLocalizedDescriptionKey: "no video track"])
+        let url = URL(fileURLWithPath: path)
+        let raw = url.pathExtension == "json" ? try DiagnosticNV12Frames(manifestURL: url) : nil
+        var reader: AVAssetReader?
+        var output: AVAssetReaderTrackOutput?
+        defer { reader?.cancelReading() }
+        if raw == nil {
+            let asset = AVURLAsset(url: url)
+            guard let track = try await asset.loadTracks(withMediaType: .video).first else {
+                throw NSError(domain: "pipeline-ms", code: 1, userInfo: [NSLocalizedDescriptionKey: "no video track"])
+            }
+            let assetReader = try AVAssetReader(asset: asset)
+            let trackOutput = AVAssetReaderTrackOutput(track: track, outputSettings: [
+                kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+                kCVPixelBufferIOSurfacePropertiesKey as String: [:] as [String: Any],
+                kCVPixelBufferMetalCompatibilityKey as String: true])
+            reader = assetReader; output = trackOutput
+            assetReader.add(trackOutput)
+            guard assetReader.startReading() else {
+                throw assetReader.error ?? NSError(domain: "pipeline-ms", code: 2,
+                    userInfo: [NSLocalizedDescriptionKey: "could not start decoding"])
+            }
         }
-        let reader = try AVAssetReader(asset: asset)
-        defer { reader.cancelReading() }
-        let output = AVAssetReaderTrackOutput(track: track, outputSettings: [
-            kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
-            kCVPixelBufferIOSurfacePropertiesKey as String: [:] as [String: Any],
-            kCVPixelBufferMetalCompatibilityKey as String: true,
-        ])
-        reader.add(output)
-        guard reader.startReading() else {
-            throw reader.error ?? NSError(domain: "pipeline-ms", code: 2,
-                userInfo: [NSLocalizedDescriptionKey: "could not start decoding"])
+        func nextFrame() throws -> (CVPixelBuffer, CMTime)? {
+            if let raw { return try raw.next() }
+            guard let sample = output?.copyNextSampleBuffer(), let frame = sample.imageBuffer else { return nil }
+            return (frame, CMSampleBufferGetPresentationTimeStamp(sample))
         }
 
         let compositor = try MetalTileCompositor()
@@ -338,7 +446,7 @@ enum PipelineTiming {
         let sender = EnhancedFrameSender()
 
         print("pipeline-ms compute=\(LearnedUpscaler.computeUnitsLabel) count=\(count) warmup=\(warmup)")
-        while seen < warmup + count, let sample = output.copyNextSampleBuffer(), let frame = sample.imageBuffer {
+        while seen < warmup + count, let (frame, timestamp) = try nextFrame() {
             let width = CVPixelBufferGetWidth(frame)
             let height = CVPixelBufferGetHeight(frame)
             if learned == nil {
@@ -358,29 +466,32 @@ enum PipelineTiming {
             }
             let started = ContinuousClock.now
             let t0 = ContinuousClock.now
-            let cleaned = try detail.preprocess(frame, timestamp: CMSampleBufferGetPresentationTimeStamp(sample))
+            let cleaned = try detail.preprocess(frame, timestamp: timestamp)
             let t1 = ContinuousClock.now
             let reconstructed = try learned!.upscale(cleaned)
             let t2 = ContinuousClock.now
             let enhanced = try detail.process(reconstructed)
             let t3 = ContinuousClock.now
             seen += 1
-            if seen <= warmup { continue }
-            preprocess.append((t1 - t0).milliseconds)
-            upscale.append((t2 - t1).milliseconds)
-            finish.append((t3 - t2).milliseconds)
-            total.append((t3 - started).milliseconds)
-            if let packetDirectory, (seen - 1) % 4 == 0 {
+            if seen > warmup {
+                preprocess.append((t1 - t0).milliseconds)
+                upscale.append((t2 - t1).milliseconds)
+                finish.append((t3 - t2).milliseconds)
+                total.append((t3 - started).milliseconds)
+            }
+            let exportFrame = seen > warmup || raw?.manifest.exportWarmup == true
+            if let packetDirectory, exportFrame, (seen - 1) % (raw?.manifest.spatialStride ?? 4) == 0 {
                 sender.maximumWidth = width * 2
                 guard let packet = sender.packet(for: enhanced, sequence: seen - 1, session: "pipeline-quality",
-                    sourceTimestamp: CMSampleBufferGetPresentationTimeStamp(sample).seconds) else {
+                    sourceTimestamp: timestamp.seconds) else {
                     throw NSError(domain: "pipeline-ms", code: 5,
                         userInfo: [NSLocalizedDescriptionKey: "could not export delivered NV12 frame"])
                 }
                 try packet.write(to: packetDirectory.appendingPathComponent(String(format: "%08d.luce", seen - 1)), options: .atomic)
-                for (stage, buffer) in [("source", frame), ("preprocessed", cleaned), ("reconstructed", reconstructed)] {
+                let exportStages = raw == nil || ProcessInfo.processInfo.environment["LUCID_PIPELINE_STAGES"] == "1"
+                for (stage, buffer) in exportStages ? [("source", frame), ("preprocessed", cleaned), ("reconstructed", reconstructed)] : [] {
                     guard let intermediate = sender.packet(for: buffer, sequence: seen - 1, session: "pipeline-quality",
-                        sourceTimestamp: CMSampleBufferGetPresentationTimeStamp(sample).seconds) else {
+                        sourceTimestamp: timestamp.seconds) else {
                         throw NSError(domain: "pipeline-ms", code: 5,
                             userInfo: [NSLocalizedDescriptionKey: "could not export \(stage) stage"])
                     }
@@ -391,7 +502,7 @@ enum PipelineTiming {
         }
 
         guard total.count == count else {
-            throw reader.error ?? NSError(domain: "pipeline-ms", code: 3,
+            throw reader?.error ?? NSError(domain: "pipeline-ms", code: 3,
                 userInfo: [NSLocalizedDescriptionKey:
                     "incomplete sample: measured \(total.count) of \(count) frames after \(warmup) warmups"])
         }

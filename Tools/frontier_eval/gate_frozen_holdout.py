@@ -32,9 +32,14 @@ def evaluate(report, spec, frozen, manifest):
         keys = [(r['source_id'], r['sequence_id'], r['frame']) for r in rows]
         if len(keys) != len(set(keys)) or set(keys) != expected:
             raise ValueError('frame export has missing, duplicate or unexpected samples')
+    return compare_rows(report['rows'], expected, spec['gate'])
+
+
+def compare_rows(rows, expected, gate, candidate='blend80', baseline='shipping', other_labels=('lanczos',)):
+    report_rows = rows
     groups = collections.defaultdict(lambda: collections.defaultdict(list))
-    for label in ['lanczos', 'shipping', 'blend80']:
-        rows = [r for r in report['rows'] if r['variant'] == label]
+    for label in [*other_labels, baseline, candidate]:
+        rows = [r for r in report_rows if r['variant'] == label]
         keys = [(r['source_id'], r['sequence_id'], r['frame']) for r in rows]
         if len(keys) != len(set(keys)) or set(keys) != expected:
             raise ValueError('report has missing, duplicate or unexpected samples')
@@ -48,18 +53,17 @@ def evaluate(report, spec, frozen, manifest):
         for label, sources in groups.items()}
     balanced = {label: {key: sum(r[key] for r in sources.values())/len(sources)
         for key in ['lpips', 'dists', 'fine_correlation']} for label, sources in means.items()}
-    if any(row[key] <= 0 for row in means['shipping'].values() for key in ['lpips', 'dists']):
+    if any(row[key] <= 0 for row in means[baseline].values() for key in ['lpips', 'dists']):
         raise ValueError('positive baseline distances required')
-    gains = {key: 1-balanced['blend80'][key]/balanced['shipping'][key] for key in ['lpips', 'dists']}
-    gate = spec['gate']
+    gains = {key: 1-balanced[candidate][key]/balanced[baseline][key] for key in ['lpips', 'dists']}
     reasons = []
     for key, gain in gains.items():
         if gain < gate[f'source_balanced_{key}_improvement_min']:
             reasons.append(f'{key}: aggregate improvement below minimum')
     deltas = {}
-    for source, values in means['shipping'].items():
-        delta = {key: 1-means['blend80'][source][key]/values[key] for key in ['lpips', 'dists']}
-        delta['fine_correlation'] = means['blend80'][source]['fine_correlation']-values['fine_correlation']
+    for source, values in means[baseline].items():
+        delta = {key: 1-means[candidate][source][key]/values[key] for key in ['lpips', 'dists']}
+        delta['fine_correlation'] = means[candidate][source]['fine_correlation']-values['fine_correlation']
         deltas[source] = delta
         for key in ['lpips', 'dists']:
             if delta[key] < -gate['per_source_perceptual_regression_max']:
