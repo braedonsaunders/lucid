@@ -1,22 +1,23 @@
 # Remote GPU access
 
-Status as of 2026-09-05: both Tailscale clients are installed and the Mac's native VPN menu is enabled. **GPU enrollment is complete; the Mac still needs owner account enrollment.** VPN SSH, off-LAN reachability, device-key expiry, and reboot recovery are not yet verified. Existing `ssh lucid-gpu` remains the LAN route to `192.168.68.85` as `bsaun` using `~/.ssh/lucid_gpu`.
+Status as of 2026-09-05: **VPN SSH is configured and verified. Use `ssh lucid-gpu-vpn` from the Mac with Tailscale connected.** Both devices are enrolled and the native macOS VPN menu is enabled. SCP, original host-key continuity and VPN reconnection passed. Disabling the GPU device-key expiry remains outstanding. Off-LAN reachability and actual reboot recovery have not been tested. Existing `ssh lucid-gpu` remains the LAN route to `192.168.68.85` as `bsaun` using `~/.ssh/lucid_gpu`; `lucid-gpu-lan` is an explicit fallback alias.
 
 ## Installed configuration
 
 - Mac: standalone Tailscale 1.102.3 at `/Applications/Tailscale.app`, bundle `io.tailscale.ipn.macsys`, enabled network system extension, native VPN profile `Tailscale` (`223ABF95-B90B-47DD-9ECF-96E63230169F`). System Settings → Menu Bar → VPN is enabled. System Settings → VPN visibly contains its native switch.
 - PC: `C:\Program Files\Tailscale\tailscale.exe` 1.102.3; automatic, running Windows service. Preferences verified: hostname `lucid-gpu`, `ForceDaemon=true` (unattended), `WantRunning=true`, DNS/route acceptance false, no advertised routes or exit node.
 - GPU identity: `100.115.49.93`, `fd7a:115c:a1e0::fd33:315f`, MagicDNS `lucid-gpu.tailea5249.ts.net`. The node is online. Its device key currently expires **2027-03-04 14:36:50 UTC**; disabling expiry is still pending.
+- Mac identity: `100.65.221.123`, `fd7a:115c:a1e0::1c33:dd7c`. SSH config backup: `~/.ssh/config.lucid-backup-20260905103921`.
 - Remote tooling: `C:\lucid\remote-access`; owner, Administrators and SYSTEM have access. Existing training/data directories and LAN SSH alias were preserved.
 - The Mac VPN connection can say “Connected” while Tailscale still says `NeedsLogin`. This means the native extension is running, not that remote access is ready.
 
 The [standalone macOS variant](https://tailscale.com/docs/concepts/macos-variants) integrates with the native VPN system. A bare `tailscaled` install does not provide this UI. Windows [unattended mode](https://tailscale.com/docs/how-to/run-unattended) makes the node available without an interactive desktop login.
 
-## Finish enrollment and verify the VPN route
+## Daily use and remaining expiry setting
 
-1. Finish signing the Mac into Tailscale using the same owner account already used for the GPU PC. Short-lived enrollment links are supplied in the conversation, never committed here. If a link expires, run `Tailscale login --timeout=10s` using the executable paths above (PowerShell needs `&` before its quoted executable path). Do not use `--force-reauth` on a working remote connection.
+1. Connect **Tailscale** in the native macOS VPN menu, then run `ssh lucid-gpu-vpn`. Both devices use the same owner account. If reauthentication is eventually needed, run `Tailscale login --timeout=10s` using the executable paths above (PowerShell needs `&` before its quoted executable path). Enrollment links are transient and never committed here. Do not use `--force-reauth` on the only working remote connection.
 2. In the [Machines console](https://login.tailscale.com/admin/machines), find `lucid-gpu` and choose its menu → **Disable Key Expiry**. Verify the resulting non-expiring device status. Tailscale's default for a new domain is 180 days; unattended mode alone does not remove expiry. Keep routine expiry on portable clients and reauthenticate the Mac when prompted. No reusable enrollment key or API token is needed. See [device key expiry](https://tailscale.com/docs/features/access-control/key-expiry).
-3. While LAN access is available, from this repository run:
+3. The following setup and checks have already passed. To refresh the aliases/restriction after re-enrolling either device, run them while LAN access is available:
 
    ```sh
    python3 Tools/remote_access/configure_vpn_alias.py
@@ -26,8 +27,8 @@ The [standalone macOS variant](https://tailscale.com/docs/concepts/macos-variant
 
    The script requires both clients to report `Running` and verifies VPN SSH against the already-trusted LAN host key. It restricts Tailscale TCP/22 to this Mac's exact IPv4/IPv6 addresses using Windows firewall rule `Lucid-Tailscale-SSH-OwnerOnly`, then retests SSH. It does not modify existing LAN firewall rules. The rule blocks other tailnet source addresses only on the actual Tailscale adapter; another owner device must be explicitly added before it can use SSH. Existing OpenSSH authentication remains required. Tailnet-wide sharing/policy has not been inspected or changed.
 
-   Only after verification does the script back up `~/.ssh/config` and add `lucid-gpu-vpn` (stable Tailscale IP) and `lucid-gpu-lan` (existing LAN IP). `lucid-gpu` stays unchanged. `--check-only` verifies enrollment/host identity without changing aliases/firewall. Until enrollment is complete, no VPN alias or firewall rule is created.
-4. Verify an SCP hash roundtrip over `lucid-gpu-vpn`, disconnect/reconnect Tailscale from the native menu, and retry SSH. Finally test from a genuinely different network, such as a phone hotspot. A VPN-IP test while on home Wi-Fi is not an off-LAN test.
+   Only after verification does the script back up `~/.ssh/config` and add `lucid-gpu-vpn` (stable Tailscale IP) and `lucid-gpu-lan` (existing LAN IP). `lucid-gpu` stays unchanged. `--check-only` verifies enrollment/host identity without changing aliases/firewall. The enrolled addresses above are installed now; an un-enrolled client causes the helper to exit without changing anything.
+4. SCP hash roundtrip and native disconnect/reconnect have passed. A future acceptance check should use a genuinely different network, such as a phone hotspot. A VPN-IP test while on home Wi-Fi is not an off-LAN test.
 
 Use the native VPN menu → Tailscale for normal connect/disconnect. CLI equivalents:
 
@@ -37,7 +38,7 @@ scutil --nc start Tailscale
 /Applications/Tailscale.app/Contents/MacOS/Tailscale status
 ```
 
-Only Tailscale was cycled during setup; LAN SSH still returned `DESKTOP-CR5L3VD`. Existing Rassaun VPN profiles were unchanged. No public router port forwarding, subnet router, or exit node was added.
+Allow a short startup interval after reconnecting: the first SSH attempt during testing timed out, and the subsequent attempt succeeded. Only Tailscale was cycled during setup; LAN SSH still returned `DESKTOP-CR5L3VD`. Existing Rassaun VPN profiles were unchanged. No public router port forwarding, subnet router, or exit node was added.
 
 ## Jobs that survive SSH disconnection
 
@@ -56,7 +57,7 @@ Launch it using a unique job name:
 ssh lucid-gpu-vpn 'powershell -NoProfile -ExecutionPolicy Bypass -File C:\lucid\remote-access\Start-LucidJob.ps1 -Name my-experiment-001 -ScriptPath C:\lucid\my-experiment\job.ps1 -WorkingDirectory C:\lucid\my-experiment'
 ```
 
-Use `lucid-gpu` instead until VPN enrollment finishes. The launcher copies the wrapper into `C:\lucid\remote-access\jobs\<name>`, registers `LucidJob-<name>`, starts it and returns immediately. Windows Task Scheduler owns the supervisor, so closing SSH or sleeping the Mac does not end the job. It runs as `DESKTOP-CR5L3VD\bsaun` using S4U, stores no password, and does not require a desktop login. Local files are accessible; network shares and per-user encrypted files are not available under S4U.
+Use `lucid-gpu-lan` when home LAN access is preferred. The launcher copies the wrapper into `C:\lucid\remote-access\jobs\<name>`, registers `LucidJob-<name>`, starts it and returns immediately. Windows Task Scheduler owns the supervisor, so closing SSH or sleeping the Mac does not end the job. It runs as `DESKTOP-CR5L3VD\bsaun` using S4U, stores no password, and does not require a desktop login. Local files are accessible; network shares and per-user encrypted files are not available under S4U.
 
 Inspect `status.json` and `output.log` in the job directory. Status records `running`, `completed` or `failed`, exit code, PID and timestamps. Task Scheduler's `LastTaskResult` also contains the exit code. Duplicate job names are rejected. The supervisor lock applies only to that job: **the experiment must enforce exclusive GPU ownership itself**. Wrappers must wait for child processes rather than spawning untracked background work.
 
@@ -102,7 +103,11 @@ The active custom power plan is `6fecc5ae-f350-48a5-b669-b472cb895ccf`. `powercf
 | Failure status SHA256 | `c5f43b2d2e6526016686775e0380e9da9ebde98818be3d412a256d3ecfa71be0` |
 | Actual detached CUDA job | Verified `LucidJob-subspace-development-20260905` completed exit 0 after initiating SSH closed; 14:34:18Z–14:35:16Z; RTX4080, 48 full-frame pairs |
 | Boot recovery | Installed/Ready, SYSTEM + boot trigger, config/key inspection passed; reboot not tested |
-| VPN SSH / SCP / off-LAN | Pending owner enrollment; not claimed as passed |
+| VPN SSH | Verified existing host key; `nvidia-smi` reports NVIDIA GeForce RTX 4080, driver 616.56 |
+| VPN SCP | 4,127 bytes; local, Windows and return SHA256 all `ad3d5369698d2a2b3d2f9bca028d0ea0de17a4f8b91ac7a2d917333912d93394` |
+| Owner restriction | Verified enabled inbound Block rule on Tailscale adapter; excludes only this Mac from blocked tailnet IPv4/IPv6 ranges; positive SSH passed |
+| VPN reconnect | Native Disconnected confirmed with working LAN SSH; Connected and VPN SSH restored after startup retry |
+| Off-LAN | Not performed; Tailscale reported a direct LAN-underlay path during tests |
 | Device expiry | Verified GPU key expires 2027-03-04T14:36:50Z; disabling expiry remains pending |
 
 Installer downloads came from [Tailscale's stable package index](https://pkgs.tailscale.com/stable/). Installation used `/norestart` and `REBOOT=ReallySuppress`. Existing GPU training processes were preserved; the access setup's test jobs were CPU-only.

@@ -12,7 +12,10 @@ import subprocess
 TS = '/Applications/Tailscale.app/Contents/MacOS/Tailscale'
 
 def run(args):
-    return subprocess.run(args, check=True, text=True, capture_output=True, timeout=45).stdout
+    result = subprocess.run(args, text=True, capture_output=True, timeout=45)
+    if result.returncode:
+        raise SystemExit(result.stderr.strip() or result.stdout.strip() or 'Command failed.')
+    return result.stdout
 
 def powershell(script):
     encoded = base64.b64encode(script.encode('utf-16le')).decode()
@@ -44,8 +47,10 @@ def main():
         owner = [ipaddress.ip_address(ip) for ip in local['TailscaleIPs'] if ipaddress.ip_address(ip) in space]
         if len(owner) != 1:
             raise SystemExit('Expected exactly one owner address per Tailscale address family.')
-        host = ipaddress.ip_network(str(owner[0]) + ('/32' if space.version == 4 else '/128'))
-        blocked.extend(str(net) for net in space.address_exclude(host))
+        if owner[0] > space.network_address:
+            blocked.append(f'{space.network_address}-{owner[0] - 1}')
+        if owner[0] < space.broadcast_address:
+            blocked.append(f'{owner[0] + 1}-{space.broadcast_address}')
     ranges = ','.join("'" + cidr + "'" for cidr in blocked)
     firewall = f"""$ErrorActionPreference='Stop'; $ProgressPreference='SilentlyContinue'
 $adapter=(Get-NetIPAddress -IPAddress '{vpn_ip}' -ErrorAction Stop).InterfaceAlias
