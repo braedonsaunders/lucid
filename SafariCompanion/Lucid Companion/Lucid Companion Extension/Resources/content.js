@@ -574,13 +574,18 @@
     if (frameSocket && frameSocket.readyState === 1) frameSocket.send(packet);
   }
 
-  function header(width, height, format, planes, timestamp, sequence, captureTime, colorSpace) {
+  function header(width, height, format, planes, timestamp, sequence, captureTime, colorSpace, reservedBytes = 0) {
     const meta = JSON.stringify({ session, w: width, h: height, format, planes, seq: sequence, ts: timestamp, captureTime, colorSpace });
     const metaBytes = new TextEncoder().encode(meta);
-    const head = new ArrayBuffer(8 + metaBytes.length);
+    const length = reservedBytes || 8 + metaBytes.length;
+    if (length < 8 + metaBytes.length) throw new Error('Frame metadata exceeds reserved header');
+    const head = new ArrayBuffer(length);
     const view = new DataView(head);
     view.setUint32(0, FRAME_MAGIC, false);
-    view.setUint32(4, metaBytes.length, false);
+    view.setUint32(4, length - 8, false);
+    // Trailing spaces are JSON whitespace. Reserve aligned payload space so
+    // VideoFrame.copyTo can write directly into the final outgoing packet.
+    new Uint8Array(head, 8).fill(0x20);
     new Uint8Array(head, 8).set(metaBytes);
     return head;
   }
@@ -613,16 +618,15 @@
               return;
             }
             const size = frame.allocationSize();
-            const buffer = new ArrayBuffer(size);
+            const payloadOffset = 1024;
+            const packet = new Uint8Array(payloadOffset + size);
             const t0 = performance.now();
-            const layout = await frame.copyTo(buffer);
+            const layout = await frame.copyTo(packet.subarray(payloadOffset));
             stats.copyMs = (stats.copyMs * 0.8 + (performance.now() - t0) * 0.2).toFixed(1);
             const planes = layout.map(p => ({ offset: p.offset, stride: p.stride }));
             if (!gate.allowed) { gate.acknowledge(sequence); return; }
-            const head = header(frame.codedWidth, frame.codedHeight, frame.format, planes, frame.timestamp, sequence, captureTime, colorSpace);
-            const packet = new Uint8Array(head.byteLength + size);
+            const head = header(frame.codedWidth, frame.codedHeight, frame.format, planes, frame.timestamp, sequence, captureTime, colorSpace, payloadOffset);
             packet.set(new Uint8Array(head), 0);
-            packet.set(new Uint8Array(buffer), head.byteLength);
             deliverFrame(packet);
             stats.sent++; stats.last = `${frame.format} ${frame.codedWidth}x${frame.codedHeight}`;
             const now = performance.now();
