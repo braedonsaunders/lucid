@@ -1,0 +1,39 @@
+{
+  "purpose": "fixed subspace experiment preflight provenance; no training quality claim",
+  "files": {
+    "Tools/architectures/subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+    "Tools/eval_checkpoint.py": "57800a8080c961f3ee325f5f3b5eb7577404b526b3047f00fbe95491168c7f34",
+    "Tools/experiments/train_presented_detail.py": "b27e7a8ccc07e4c448cb323647b617f2fc21f63539c759f714dab1cf52228e08",
+    "Tools/experiments/profile_folded_shipping.py": "4d835457a4c4e8a87ef34442c8068a0da7dfdcf1114f8f73c9e6ccd5df9549fe",
+    "Tools/experiments/fold_shipping_head.py": "750795d69cce54883e601440b64344e25cd137b90c05e0e0d990d3bcf205d01e",
+    "Tools/convert_span.py": "0768c5dcc702218dba6563488d16de72b17ec38af20c9c477cbafe2cbd3b2fd7",
+    "Tools/architectures/span_arch.py": "0fd7c3c6bddcf6fd9c547793a58e9ded66a99e75c106fa20aa3e1cd059f6a806",
+    "Tools/train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+    "Tools/experiments/test_subspace_adapter.py": "4018a672c0f65fc3c9a6532c378e03135d4900f3e1198e9566488046771dcd08",
+    ".build/subspace-input.tar": "2ce739f6954e4b918d99720f9b9a0eb79663c714b6ea9d7db4a08ddd5d828c0d",
+    ".build/subspace-probe/nonzero.pth": "e3792cf889c516a8a3e5ecd78aa7b73aeb5de3d28946bc0e8496f6b5ee1fd912",
+    ".build/freqortho-official-20260905/src/ortho_utils/gradient_projection.py": "bd4d0e8582b9639ded049fc0b8d38c88c842b3f4fbd00e8906931e3d95e93a52",
+    ".build/freqortho-official-20260905/train_pisasr.py": "8d411062b7e7334ca796deef6a9f0b8e483df3d40136b461cdcc5f5f6817d1eb",
+    ".build/ntire2026-mobile-official/models/team14_VIPSL/model.py": "02acbd298b6bc53e98afeea83a06fe17b33b6de597a66dfba10fc5e43f7c7093",
+    ".build/subspace-native/profile.json": "49f2d598e3cb5d38522cf796c98677cce68b565d62b000c7fcc1589e97a16722",
+    ".build/subspace-native/shipping4x_640x360.mlpackage/Manifest.json": "cf189ecd6025e3bebb76fbed8ae4abc20e93749bcffff80918b3ec574ebbcb4f",
+    ".build/subspace-native/direct2x_trained_1280x720.mlpackage/Manifest.json": "13f6532b4512993f146b7bb33d7baf2e48819a2cb7bea28dd33ee27ef5fc5bb9",
+    ".build/subspace-native/shipping4x_1280x720.mlpackage/Manifest.json": "27a5ba275389abdeffdee43defafd5c4aa942b49c9d8e9b63d89150d13070597",
+    ".build/subspace-native/direct2x_trained_640x360.mlpackage/Manifest.json": "b36e2bb2fb335eddb7ce2bf29162bc0f1353a248201990ebe13de7c80ef5fe61",
+    ".build/subspace-native/direct2x_trained_640x360.mlpackage/Data/com.apple.CoreML/model.mlmodel": "8190959af958d08929d64afca1b866eaa1291e508ed82028d354c9fa60d440f9",
+    ".build/subspace-native/direct2x_trained_640x360.mlpackage/Data/com.apple.CoreML/weights/weight.bin": "2674b28d230f2d8da73b6e5878171f3fd4464bf86dc61ae8a0dcbbda4a26eddd",
+    ".build/subspace-native/shipping4x_1280x720.mlpackage/Data/com.apple.CoreML/model.mlmodel": "2f676c67c2a5a909c8f95f95450708305fb51a271949be34cf1ac950e11ab952",
+    ".build/subspace-native/shipping4x_1280x720.mlpackage/Data/com.apple.CoreML/weights/weight.bin": "3b43b4c514cb65db9bbf54d2b0941dc7392c26f2099e12a77dab6faa085cdfb8",
+    ".build/subspace-native/direct2x_trained_1280x720.mlpackage/Data/com.apple.CoreML/model.mlmodel": "f2a1f20ebac61d858947267dc30cae05ebcd76cafff802aa895a445d8af2c765",
+    ".build/subspace-native/direct2x_trained_1280x720.mlpackage/Data/com.apple.CoreML/weights/weight.bin": "2674b28d230f2d8da73b6e5878171f3fd4464bf86dc61ae8a0dcbbda4a26eddd",
+    ".build/subspace-native/shipping4x_640x360.mlpackage/Data/com.apple.CoreML/model.mlmodel": "7cf62c9ad69869bf3744c9da0e109dd02acb242b55f10c595ca7ac02f947b455",
+    ".build/subspace-native/shipping4x_640x360.mlpackage/Data/com.apple.CoreML/weights/weight.bin": "3b43b4c514cb65db9bbf54d2b0941dc7392c26f2099e12a77dab6faa085cdfb8"
+  },
+  "native_command": ".venv-convert/bin/python Tools/experiments/profile_folded_shipping.py --checkpoint Model/weights/span_ch32utc.pth --expected-checkpoint-sha256 fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65 --direct-checkpoint .build/subspace-probe/nonzero.pth --sizes 640x360 1280x720 --samples 20 --out .build/subspace-native",
+  "preflight_tests": {
+    "subspace_adapter": 4,
+    "presented_objective": 4,
+    "passed": true
+  },
+  "experiment_commit": "9ba6da200859a361e378c920d7688578c5358a74"
+}
