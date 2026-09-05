@@ -1,0 +1,1638 @@
+{
+  "purpose": "training-only mechanism diagnostic; no validation or quality-promotion claim",
+  "source_paper": "https://arxiv.org/html/2609.03813v1",
+  "difference_from_paper": "convolutional block outputs, offline one-frame-per-source ranking, fixed 5% attenuation; no VAE, DiT, learned controller or SPARK reproduction",
+  "bank_sha256": "b11ccdaba5ed388ec615da4270058b6441369fb6325a6e5e6680472e98d6d2f0",
+  "shipping_sha256": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65",
+  "code_sha256": "a5c9728e0519cbf2cfa0514ccd80e0627a166cfc23c044c2ab761cc6a75107d0",
+  "device": "cuda",
+  "torch": "2.6.0+cu124",
+  "selection": "first sorted sequence, frame0 for every train source; no validation sources",
+  "sources": {
+    "bbb": {
+      "sequence_id": "bbb-stream-000-00",
+      "sha256": "df54098aef9bdb918e1c094edb9b20592ab8bae036ba8cd9c40d9e2fa5c2ec97"
+    },
+    "fast_netflix_Aerial": {
+      "sequence_id": "fast_netflix_Aerial-stream-000-00",
+      "sha256": "808d7328f650e7b5c6c18a9549ef1a48594d12f19ffb1342e41e4188c87fc80f"
+    },
+    "fast_netflix_BarScene": {
+      "sequence_id": "fast_netflix_BarScene-stream-000-00",
+      "sha256": "f4fb8a41f14f4d41d5816f80c22ee637a8d9950ecaf90b6d0bca6803b8ff0045"
+    },
+    "fast_netflix_Boat": {
+      "sequence_id": "fast_netflix_Boat-stream-000-00",
+      "sha256": "f477f8e59f69000cfe0778d5858fcd4a6ff449563865da2dbd87c157356074ba"
+    },
+    "fast_netflix_BoxingPractice": {
+      "sequence_id": "fast_netflix_BoxingPractice-stream-000-00",
+      "sha256": "a85913f3bee81d49365a72e5def6d3e4bd26619a7375b350754bb63376f18b33"
+    },
+    "fast_netflix_Crosswalk": {
+      "sequence_id": "fast_netflix_Crosswalk-stream-000-00",
+      "sha256": "0c052c60f32d99793a01828af7b11da1a216bfd2998ea506ab9deab732542572"
+    },
+    "fast_netflix_Dancers": {
+      "sequence_id": "fast_netflix_Dancers-stream-000-00",
+      "sha256": "39df0f42871306237324c844ac70e86b6b3faf4c7f3ea4d31dc408bf39f3e1b4"
+    },
+    "fast_netflix_DinnerScene": {
+      "sequence_id": "fast_netflix_DinnerScene-stream-000-00",
+      "sha256": "d1e1927bf030086019247a154cd2d625b24114e98dc2d462ad6c4d0505da963f"
+    },
+    "fast_netflix_DrivingPOV": {
+      "sequence_id": "fast_netflix_DrivingPOV-stream-000-00",
+      "sha256": "12f40cef692ed21c2c6459d41b2f005d3bd42135d6ba307d62a4e6dc88f37af7"
+    },
+    "fast_netflix_FoodMarket": {
+      "sequence_id": "fast_netflix_FoodMarket-stream-000-00",
+      "sha256": "bedfca1552141e65e896070647e4ab7ccb4d3b5f94ec103a1f33b26e3f299ec4"
+    },
+    "fast_netflix_FoodMarket2": {
+      "sequence_id": "fast_netflix_FoodMarket2-stream-000-00",
+      "sha256": "46ad27a81e693f8ebc9f66cc21b73938c350f82875ac81536441a2241157cc52"
+    },
+    "fast_netflix_Narrator": {
+      "sequence_id": "fast_netflix_Narrator-stream-000-00",
+      "sha256": "ba77960ec55f85d7706128ea53108427eeb20fa807660a54b82d4a3f642f872d"
+    },
+    "fast_netflix_PierSeaside": {
+      "sequence_id": "fast_netflix_PierSeaside-stream-000-00",
+      "sha256": "9e554546c8cc70456d9a69e100f6d1fa570241786427c96c9fb5e94e6e24247e"
+    },
+    "fast_netflix_RitualDance": {
+      "sequence_id": "fast_netflix_RitualDance-stream-000-00",
+      "sha256": "67b95e97e7bf7d0b9b059be76a1682494bec0dc0dd4adc4766010705b64519a3"
+    },
+    "fast_netflix_RollerCoaster": {
+      "sequence_id": "fast_netflix_RollerCoaster-stream-000-00",
+      "sha256": "a15fc4fe85ddcf365902d1c90911c5e7afa6b796fefb9be5861ccf3fb7dae044"
+    },
+    "fast_netflix_SquareAndTimelapse": {
+      "sequence_id": "fast_netflix_SquareAndTimelapse-stream-000-00",
+      "sha256": "f84b9354af1f0fbe4fbb6e314fb939f543bc23177ae9a65cda0861e304a6da7e"
+    },
+    "fast_netflix_Tango": {
+      "sequence_id": "fast_netflix_Tango-stream-000-00",
+      "sha256": "3462e159792a40efd586829b90730940974c701c2d3f56d69d707668f18a23a6"
+    },
+    "fast_netflix_ToddlerFountain": {
+      "sequence_id": "fast_netflix_ToddlerFountain-stream-000-00",
+      "sha256": "935b19cf995ce35c45387b25d9bfc5423ec06fd7cf58d559f90e781817149785"
+    },
+    "fast_netflix_TunnelFlag": {
+      "sequence_id": "fast_netflix_TunnelFlag-stream-000-00",
+      "sha256": "a3c61ae423d2f75c06fb92234068606ec7b80dd29466dd6b25647853fafa7093"
+    },
+    "fast_netflix_WindAndNature": {
+      "sequence_id": "fast_netflix_WindAndNature-stream-000-00",
+      "sha256": "678d656f3b4d53cb82531d8664c23aae3d2f83e4848148445334aa852cf6b3d8"
+    },
+    "reds_025": {
+      "sequence_id": "reds_025-stream-000-00",
+      "sha256": "f7a9768df298ea0e0141cd90fb80c861a85a2cffba060041d2324528269ce4ad"
+    },
+    "reds_084": {
+      "sequence_id": "reds_084-stream-000-00",
+      "sha256": "1970ceeb3c09514d5d32d0a140dce4f1e1bebc4ac9162057b7c0c475ca5c011a"
+    },
+    "reds_125": {
+      "sequence_id": "reds_125-stream-000-00",
+      "sha256": "ac6227c03eaf53a12eebf7b51b23d40b0417be4ccd61fd74136e69456c92dc60"
+    },
+    "reds_135": {
+      "sequence_id": "reds_135-stream-000-00",
+      "sha256": "d3f3b1577b2a64c6f4ddf45bff63f5bc132a3ef2cb2cc926c133fbca674ae82b"
+    },
+    "reds_152": {
+      "sequence_id": "reds_152-stream-000-00",
+      "sha256": "fb78ed16be1deadfabd05f5e99d619e29a984a6651a534a8bd86ae5a22a6224b"
+    },
+    "reds_187": {
+      "sequence_id": "reds_187-stream-000-00",
+      "sha256": "872e171bcac268d5262d5921d4707dfcc236e7b368802ba42e387e43362ed2b7"
+    }
+  },
+  "intervention": "all six main block outputs simultaneously; gain .95 on four selected channels; other tuple outputs unchanged",
+  "concentration": {
+    "core.block_1": {
+      "channels": 32,
+      "mean_absolute": [
+        0.02067521959543228,
+        0.009307474829256535,
+        0.012685134075582027,
+        0.009348137304186821,
+        0.04327234998345375,
+        0.02188788913190365,
+        0.024492112919688225,
+        0.010074852034449577,
+        0.09846914559602737,
+        0.006836007349193096,
+        0.008264746516942978,
+        0.00906078889966011,
+        0.00992019847035408,
+        0.06592952460050583,
+        0.013118056580424309,
+        0.04870349541306496,
+        0.0044268472120165825,
+        0.006805662997066975,
+        0.0037222665268927813,
+        0.03707381337881088,
+        0.009339787997305393,
+        0.008416105061769485,
+        0.006302403751760721,
+        0.007922987453639507,
+        0.013312841765582561,
+        0.01478557102382183,
+        0.004819744266569614,
+        0.008323082700371742,
+        0.03722630441188812,
+        0.00753215653821826,
+        0.011529033072292805,
+        0.06334073096513748
+      ],
+      "mean_squared": [
+        0.001251437934115529,
+        0.0007050674757920206,
+        0.00041908022831194103,
+        0.0005667401710525155,
+        0.0031227285508066416,
+        0.0009069379884749651,
+        0.0012538586743175983,
+        0.0003098471788689494,
+        0.012782474979758263,
+        0.00028666123398579657,
+        0.0007210433832369745,
+        0.0007235783850774169,
+        0.0005238238372839987,
+        0.005913625471293926,
+        0.0005444601410999894,
+        0.0034481140319257975,
+        0.0008707955712452531,
+        0.0002261651970911771,
+        0.0006970904069021344,
+        0.003096062922850251,
+        0.00025493133580312133,
+        0.00033713949960656464,
+        0.0002446312864776701,
+        0.0005442791734822094,
+        0.0007395303109660745,
+        0.0005371079314500093,
+        0.00014519266551360488,
+        0.00040521996561437845,
+        0.001895357039757073,
+        0.0003512947296258062,
+        0.000903767126146704,
+        0.00611676461994648
+      ],
+      "top_absolute_ranked_energy_fraction": {
+        "1": 0.25140181183815,
+        "4": 0.5558282732963562,
+        "8": 0.7400753498077393
+      }
+    },
+    "core.block_2": {
+      "channels": 32,
+      "mean_absolute": [
+        1.2701460123062134,
+        0.08546315133571625,
+        0.6333998441696167,
+        0.7916651964187622,
+        0.32424482703208923,
+        0.2820400893688202,
+        0.09739315509796143,
+        1.3594468832015991,
+        0.20649252831935883,
+        0.14603230357170105,
+        2.27701473236084,
+        0.09201954305171967,
+        0.2796161472797394,
+        0.13677749037742615,
+        1.9475420713424683,
+        0.7234353423118591,
+        0.21488787233829498,
+        1.379907488822937,
+        0.1968161016702652,
+        0.16448989510536194,
+        1.8300247192382812,
+        0.6998366117477417,
+        0.8497809171676636,
+        0.21224245429039001,
+        0.20419208705425262,
+        1.1099215745925903,
+        0.26045480370521545,
+        0.12926556169986725,
+        0.43642061948776245,
+        1.4606882333755493,
+        1.9548065662384033,
+        0.7290217876434326
+      ],
+      "mean_squared": [
+        1.971709966659546,
+        0.08907735347747803,
+        0.5848897695541382,
+        0.8522741794586182,
+        0.2756088972091675,
+        0.15506236255168915,
+        0.07192011922597885,
+        2.43095064163208,
+        0.18064700067043304,
+        0.06147504597902298,
+        5.835709571838379,
+        0.048825666308403015,
+        0.20627263188362122,
+        0.0765543133020401,
+        4.522623062133789,
+        1.0804215669631958,
+        0.13443170487880707,
+        3.0159711837768555,
+        0.113371841609478,
+        0.17640407383441925,
+        3.754746913909912,
+        0.6179413199424744,
+        1.3043022155761719,
+        0.16552139818668365,
+        0.09015604853630066,
+        1.5872788429260254,
+        0.16648682951927185,
+        0.04608549550175667,
+        0.5214948058128357,
+        2.8381330966949463,
+        4.939597129821777,
+        0.7454901933670044
+      ],
+      "top_absolute_ranked_energy_fraction": {
+        "1": 0.15094394981861115,
+        "4": 0.49280834197998047,
+        "8": 0.7581053376197815
+      }
+    },
+    "core.block_3": {
+      "channels": 32,
+      "mean_absolute": [
+        0.3685363531112671,
+        0.10767543315887451,
+        0.1852005124092102,
+        0.33147305250167847,
+        0.091499462723732,
+        0.18103185296058655,
+        0.04314927011728287,
+        0.34769609570503235,
+        0.16803447902202606,
+        0.09477052092552185,
+        0.26392248272895813,
+        0.042475376278162,
+        0.10450497269630432,
+        0.07198964804410934,
+        0.3377208709716797,
+        0.30694130063056946,
+        0.10960778594017029,
+        0.4680640399456024,
+        0.1013321578502655,
+        0.15500804781913757,
+        0.3122885525226593,
+        0.1765727698802948,
+        0.36667773127555847,
+        0.059494707733392715,
+        0.1105893924832344,
+        0.3206259608268738,
+        0.13077431917190552,
+        0.045582327991724014,
+        0.11603765934705734,
+        0.45717138051986694,
+        0.47183746099472046,
+        0.2616644501686096
+      ],
+      "mean_squared": [
+        0.1754271239042282,
+        0.015691181644797325,
+        0.050973888486623764,
+        0.13087521493434906,
+        0.013400868512690067,
+        0.05139169469475746,
+        0.0037370158825069666,
+        0.15760770440101624,
+        0.03874320164322853,
+        0.02052466757595539,
+        0.12838873267173767,
+        0.005171833094209433,
+        0.017383677884936333,
+        0.014143886044621468,
+        0.17553648352622986,
+        0.13730071485042572,
+        0.023376593366265297,
+        0.30154865980148315,
+        0.01720833033323288,
+        0.043945010751485825,
+        0.13618367910385132,
+        0.043453335762023926,
+        0.17256347835063934,
+        0.0072260829620063305,
+        0.01673092134296894,
+        0.14897379279136658,
+        0.026826264336705208,
+        0.00693464046344161,
+        0.024734966456890106,
+        0.27706071734428406,
+        0.31186601519584656,
+        0.09509393572807312
+      ],
+      "top_absolute_ranked_energy_fraction": {
+        "1": 0.11177895218133926,
+        "4": 0.38204053044319153,
+        "8": 0.6102044582366943
+      }
+    },
+    "core.block_4": {
+      "channels": 32,
+      "mean_absolute": [
+        0.37919896841049194,
+        0.035838160663843155,
+        0.04114465042948723,
+        0.28275588154792786,
+        0.05333385616540909,
+        0.076004758477211,
+        0.22876684367656708,
+        0.03553399816155434,
+        0.012768234126269817,
+        0.20441722869873047,
+        0.4525226950645447,
+        0.0809626430273056,
+        0.03780535236001015,
+        0.04896478354930878,
+        0.244471475481987,
+        0.13325785100460052,
+        0.20154692232608795,
+        0.28943806886672974,
+        0.02379484847187996,
+        0.11111752688884735,
+        0.16822463274002075,
+        0.1303998976945877,
+        0.28788286447525024,
+        0.2561584711074829,
+        0.07014141976833344,
+        0.2899702489376068,
+        0.11111719161272049,
+        0.09618918597698212,
+        0.024794023483991623,
+        0.08875859528779984,
+        0.42467382550239563,
+        0.0647285133600235
+      ],
+      "mean_squared": [
+        0.1957540661096573,
+        0.005346196237951517,
+        0.010042543523013592,
+        0.09966296702623367,
+        0.010086440481245518,
+        0.024687619879841805,
+        0.10998670756816864,
+        0.005453207064419985,
+        0.002245518611744046,
+        0.06441796571016312,
+        0.36974021792411804,
+        0.020636998116970062,
+        0.006099416874349117,
+        0.008146745152771473,
+        0.07546492666006088,
+        0.04475641995668411,
+        0.07493938505649567,
+        0.1956571489572525,
+        0.0019335926044732332,
+        0.01816660538315773,
+        0.05213092267513275,
+        0.03574477136135101,
+        0.10753312706947327,
+        0.08151085674762726,
+        0.00866591278463602,
+        0.11038952320814133,
+        0.039539799094200134,
+        0.014970784075558186,
+        0.0029376258607953787,
+        0.014915447682142258,
+        0.2968239188194275,
+        0.019075794145464897
+      ],
+      "top_absolute_ranked_energy_fraction": {
+        "1": 0.1737939566373825,
+        "4": 0.4572148323059082,
+        "8": 0.6848870515823364
+      }
+    },
+    "core.block_5": {
+      "channels": 32,
+      "mean_absolute": [
+        0.012038817629218102,
+        0.011472795158624649,
+        0.016651377081871033,
+        0.009775921702384949,
+        0.027100838720798492,
+        0.0058960095047950745,
+        0.009096566587686539,
+        0.04565507546067238,
+        0.012824748642742634,
+        0.015923427417874336,
+        0.02816033363342285,
+        0.02203529141843319,
+        0.025868620723485947,
+        0.03786229342222214,
+        0.03856470435857773,
+        0.04909573122859001,
+        0.03991103544831276,
+        0.011743192560970783,
+        0.036915432661771774,
+        0.042283352464437485,
+        0.008828815072774887,
+        0.06264616549015045,
+        0.039702579379081726,
+        0.05202637240290642,
+        0.020909329876303673,
+        0.05846349149942398,
+        0.018343253061175346,
+        0.019955964758992195,
+        0.0073664626106619835,
+        0.016360152512788773,
+        0.02176302671432495,
+        0.018333613872528076
+      ],
+      "mean_squared": [
+        0.0005388158606365323,
+        0.0007819673628546298,
+        0.002092663897201419,
+        0.000626821129117161,
+        0.003847751533612609,
+        9.840184065978974e-05,
+        0.0010058762272819877,
+        0.00658040028065443,
+        0.002447086153551936,
+        0.001338739413768053,
+        0.0036502608563750982,
+        0.002143193269148469,
+        0.0022696133237332106,
+        0.005097007378935814,
+        0.004687877371907234,
+        0.009239098988473415,
+        0.006393750198185444,
+        0.0010516514303162694,
+        0.0023950240574777126,
+        0.003133733058348298,
+        0.0008925055735744536,
+        0.004915707278996706,
+        0.0030384694691747427,
+        0.0036901580169796944,
+        0.0017008614959195256,
+        0.006505792494863272,
+        0.0031660706736147404,
+        0.0037015480920672417,
+        0.00030460828565992415,
+        0.0010443483479321003,
+        0.0018596674781292677,
+        0.0024146507494151592
+      ],
+      "top_absolute_ranked_energy_fraction": {
+        "1": 0.053054384887218475,
+        "4": 0.262813538312912,
+        "8": 0.46945682168006897
+      }
+    },
+    "core.block_6": {
+      "channels": 32,
+      "mean_absolute": [
+        0.0044122361578047276,
+        0.016563741490244865,
+        0.01132179331034422,
+        0.012908577919006348,
+        0.003070676000788808,
+        0.014818476513028145,
+        0.004816277883946896,
+        0.0024727312847971916,
+        0.006774065084755421,
+        0.016976172104477882,
+        0.0067954338155686855,
+        0.0066681825555861,
+        0.00766613008454442,
+        0.00632014824077487,
+        0.053204793483018875,
+        0.01817772164940834,
+        0.013561959378421307,
+        0.006662512198090553,
+        0.015592127107083797,
+        0.04075050354003906,
+        0.01001952774822712,
+        0.004703701473772526,
+        0.005070006009191275,
+        0.0063955169171094894,
+        0.013150296173989773,
+        0.003355128923431039,
+        0.0033720331266522408,
+        0.013677438721060753,
+        0.01604134775698185,
+        0.005159889813512564,
+        0.003719469765201211,
+        0.010015944018959999
+      ],
+      "mean_squared": [
+        0.00019001244800165296,
+        0.0017564687877893448,
+        0.001021233736537397,
+        0.0010818005539476871,
+        0.00036809066659770906,
+        0.0014752489514648914,
+        0.00041119789239019156,
+        0.00020677028805948794,
+        0.00030610713292844594,
+        0.001860768417827785,
+        0.0005051955813542008,
+        0.00017295547877438366,
+        0.0006938187871128321,
+        0.0004408313543535769,
+        0.002884159330278635,
+        0.002281553577631712,
+        0.0014128518523648381,
+        0.0009368815226480365,
+        0.0006872891099192202,
+        0.0017700283788144588,
+        0.0009330115863122046,
+        0.0004969264846295118,
+        0.00043934976565651596,
+        0.00039554352406412363,
+        0.001420949469320476,
+        0.00021407907479442656,
+        0.00040434024413116276,
+        0.001115378807298839,
+        0.0017638083081692457,
+        0.0005378540954552591,
+        0.0003951767284888774,
+        0.0010834160493686795
+      ],
+      "top_absolute_ranked_energy_fraction": {
+        "1": 0.09723054617643356,
+        "4": 0.29654720425605774,
+        "8": 0.4881258010864258
+      }
+    }
+  },
+  "selections": {
+    "core.block_1": {
+      "top": [
+        8,
+        13,
+        31,
+        15
+      ],
+      "bottom": [
+        22,
+        26,
+        16,
+        18
+      ],
+      "random": [
+        30,
+        13,
+        27,
+        22
+      ]
+    },
+    "core.block_2": {
+      "top": [
+        10,
+        30,
+        14,
+        20
+      ],
+      "bottom": [
+        27,
+        6,
+        11,
+        1
+      ],
+      "random": [
+        21,
+        9,
+        10,
+        11
+      ]
+    },
+    "core.block_3": {
+      "top": [
+        30,
+        17,
+        29,
+        0
+      ],
+      "bottom": [
+        23,
+        27,
+        6,
+        11
+      ],
+      "random": [
+        21,
+        29,
+        24,
+        22
+      ]
+    },
+    "core.block_4": {
+      "top": [
+        10,
+        30,
+        0,
+        25
+      ],
+      "bottom": [
+        7,
+        28,
+        18,
+        8
+      ],
+      "random": [
+        23,
+        7,
+        22,
+        5
+      ]
+    },
+    "core.block_5": {
+      "top": [
+        21,
+        25,
+        23,
+        15
+      ],
+      "bottom": [
+        6,
+        20,
+        28,
+        5
+      ],
+      "random": [
+        10,
+        15,
+        17,
+        19
+      ]
+    },
+    "core.block_6": {
+      "top": [
+        14,
+        19,
+        15,
+        9
+      ],
+      "bottom": [
+        26,
+        25,
+        4,
+        7
+      ],
+      "random": [
+        7,
+        10,
+        6,
+        26
+      ]
+    }
+  },
+  "rows": [
+    {
+      "source_id": "bbb",
+      "sequence_id": "bbb-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 113.47301737467448,
+      "fine_correlation": 0.8500723928412753
+    },
+    {
+      "source_id": "bbb",
+      "sequence_id": "bbb-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0028961333446204662,
+      "reference_mse_rgb8": 115.7826665242513,
+      "fine_correlation": 0.8475141323319969
+    },
+    {
+      "source_id": "bbb",
+      "sequence_id": "bbb-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.0005082162097096443,
+      "reference_mse_rgb8": 113.5275052388509,
+      "fine_correlation": 0.8500294051148493
+    },
+    {
+      "source_id": "bbb",
+      "sequence_id": "bbb-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0018886200850829482,
+      "reference_mse_rgb8": 114.41066487630208,
+      "fine_correlation": 0.8496866560701994
+    },
+    {
+      "source_id": "fast_netflix_Aerial",
+      "sequence_id": "fast_netflix_Aerial-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 113.27872467041016,
+      "fine_correlation": 0.28643822645913386
+    },
+    {
+      "source_id": "fast_netflix_Aerial",
+      "sequence_id": "fast_netflix_Aerial-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0009243364329449832,
+      "reference_mse_rgb8": 113.0318234761556,
+      "fine_correlation": 0.28405704822569144
+    },
+    {
+      "source_id": "fast_netflix_Aerial",
+      "sequence_id": "fast_netflix_Aerial-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.00013647385640069842,
+      "reference_mse_rgb8": 113.30295817057292,
+      "fine_correlation": 0.28548904390304086
+    },
+    {
+      "source_id": "fast_netflix_Aerial",
+      "sequence_id": "fast_netflix_Aerial-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0006301795947365463,
+      "reference_mse_rgb8": 113.10079447428386,
+      "fine_correlation": 0.2877903365791234
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "sequence_id": "fast_netflix_BarScene-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 38.183953603108726,
+      "fine_correlation": 0.6820420611471434
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "sequence_id": "fast_netflix_BarScene-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0010587236611172557,
+      "reference_mse_rgb8": 38.576525370279946,
+      "fine_correlation": 0.6774650711633083
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "sequence_id": "fast_netflix_BarScene-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.00015436879766639322,
+      "reference_mse_rgb8": 38.17830276489258,
+      "fine_correlation": 0.6815014038291564
+    },
+    {
+      "source_id": "fast_netflix_BarScene",
+      "sequence_id": "fast_netflix_BarScene-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0007155396742746234,
+      "reference_mse_rgb8": 38.40221277872721,
+      "fine_correlation": 0.6827431601363146
+    },
+    {
+      "source_id": "fast_netflix_Boat",
+      "sequence_id": "fast_netflix_Boat-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 762.1034762064616,
+      "fine_correlation": 0.3173473930444025
+    },
+    {
+      "source_id": "fast_netflix_Boat",
+      "sequence_id": "fast_netflix_Boat-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0023033933248370886,
+      "reference_mse_rgb8": 759.8632672627767,
+      "fine_correlation": 0.31548736203722094
+    },
+    {
+      "source_id": "fast_netflix_Boat",
+      "sequence_id": "fast_netflix_Boat-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.00040798395639285445,
+      "reference_mse_rgb8": 761.6768544514974,
+      "fine_correlation": 0.3169816403932975
+    },
+    {
+      "source_id": "fast_netflix_Boat",
+      "sequence_id": "fast_netflix_Boat-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0016175652854144573,
+      "reference_mse_rgb8": 761.7385037740072,
+      "fine_correlation": 0.3176188627552034
+    },
+    {
+      "source_id": "fast_netflix_BoxingPractice",
+      "sequence_id": "fast_netflix_BoxingPractice-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 98.42866516113281,
+      "fine_correlation": 0.652986993968724
+    },
+    {
+      "source_id": "fast_netflix_BoxingPractice",
+      "sequence_id": "fast_netflix_BoxingPractice-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0016032960265874863,
+      "reference_mse_rgb8": 99.31201426188152,
+      "fine_correlation": 0.6463481592858149
+    },
+    {
+      "source_id": "fast_netflix_BoxingPractice",
+      "sequence_id": "fast_netflix_BoxingPractice-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.00025357207050547004,
+      "reference_mse_rgb8": 98.58867263793945,
+      "fine_correlation": 0.6515741362383484
+    },
+    {
+      "source_id": "fast_netflix_BoxingPractice",
+      "sequence_id": "fast_netflix_BoxingPractice-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0009636901086196303,
+      "reference_mse_rgb8": 98.83725611368816,
+      "fine_correlation": 0.6494726173498075
+    },
+    {
+      "source_id": "fast_netflix_Crosswalk",
+      "sequence_id": "fast_netflix_Crosswalk-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 86.32306798299153,
+      "fine_correlation": 0.2115285328492562
+    },
+    {
+      "source_id": "fast_netflix_Crosswalk",
+      "sequence_id": "fast_netflix_Crosswalk-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.000787072058301419,
+      "reference_mse_rgb8": 86.19008763631184,
+      "fine_correlation": 0.20935661057506913
+    },
+    {
+      "source_id": "fast_netflix_Crosswalk",
+      "sequence_id": "fast_netflix_Crosswalk-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 9.995758591685444e-05,
+      "reference_mse_rgb8": 86.31296157836914,
+      "fine_correlation": 0.2118789846246959
+    },
+    {
+      "source_id": "fast_netflix_Crosswalk",
+      "sequence_id": "fast_netflix_Crosswalk-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0005817215424031019,
+      "reference_mse_rgb8": 86.19036483764648,
+      "fine_correlation": 0.21299502354603025
+    },
+    {
+      "source_id": "fast_netflix_Dancers",
+      "sequence_id": "fast_netflix_Dancers-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 7.741376241048177,
+      "fine_correlation": 0.6696934524596821
+    },
+    {
+      "source_id": "fast_netflix_Dancers",
+      "sequence_id": "fast_netflix_Dancers-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0005868531297892332,
+      "reference_mse_rgb8": 7.837300618489583,
+      "fine_correlation": 0.6566638234104358
+    },
+    {
+      "source_id": "fast_netflix_Dancers",
+      "sequence_id": "fast_netflix_Dancers-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 9.094068082049489e-05,
+      "reference_mse_rgb8": 7.761333465576172,
+      "fine_correlation": 0.6675094252008879
+    },
+    {
+      "source_id": "fast_netflix_Dancers",
+      "sequence_id": "fast_netflix_Dancers-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0005045421421527863,
+      "reference_mse_rgb8": 7.831172943115234,
+      "fine_correlation": 0.6678250723012309
+    },
+    {
+      "source_id": "fast_netflix_DinnerScene",
+      "sequence_id": "fast_netflix_DinnerScene-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 4.28024419148763,
+      "fine_correlation": 0.7342156440811362
+    },
+    {
+      "source_id": "fast_netflix_DinnerScene",
+      "sequence_id": "fast_netflix_DinnerScene-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0005758245824836195,
+      "reference_mse_rgb8": 4.317484537760417,
+      "fine_correlation": 0.7258993493674546
+    },
+    {
+      "source_id": "fast_netflix_DinnerScene",
+      "sequence_id": "fast_netflix_DinnerScene-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.0001072852683137171,
+      "reference_mse_rgb8": 4.297952016194661,
+      "fine_correlation": 0.7328161031438639
+    },
+    {
+      "source_id": "fast_netflix_DinnerScene",
+      "sequence_id": "fast_netflix_DinnerScene-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.00046617299085482955,
+      "reference_mse_rgb8": 4.336683909098308,
+      "fine_correlation": 0.7312064115312701
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "sequence_id": "fast_netflix_DrivingPOV-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 203.68283971150717,
+      "fine_correlation": 0.2901767810810429
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "sequence_id": "fast_netflix_DrivingPOV-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.001041507232002914,
+      "reference_mse_rgb8": 203.86379114786783,
+      "fine_correlation": 0.28700896524463176
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "sequence_id": "fast_netflix_DrivingPOV-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.000148791863466613,
+      "reference_mse_rgb8": 203.7003377278646,
+      "fine_correlation": 0.28956759253255404
+    },
+    {
+      "source_id": "fast_netflix_DrivingPOV",
+      "sequence_id": "fast_netflix_DrivingPOV-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0007557634962722659,
+      "reference_mse_rgb8": 203.8366241455078,
+      "fine_correlation": 0.2897243477053963
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "sequence_id": "fast_netflix_FoodMarket-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 84.81770451863606,
+      "fine_correlation": 0.22079683143291529
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "sequence_id": "fast_netflix_FoodMarket-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0007083853124640882,
+      "reference_mse_rgb8": 84.87799962361653,
+      "fine_correlation": 0.21989726760487555
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "sequence_id": "fast_netflix_FoodMarket-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 8.236782014137134e-05,
+      "reference_mse_rgb8": 84.82299423217773,
+      "fine_correlation": 0.22020548950270516
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket",
+      "sequence_id": "fast_netflix_FoodMarket-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.00048809597501531243,
+      "reference_mse_rgb8": 84.797056833903,
+      "fine_correlation": 0.22321724553035993
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "sequence_id": "fast_netflix_FoodMarket2-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 176.75356674194336,
+      "fine_correlation": 0.25199419106101506
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "sequence_id": "fast_netflix_FoodMarket2-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0009053380927070975,
+      "reference_mse_rgb8": 176.8877830505371,
+      "fine_correlation": 0.25069484688985966
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "sequence_id": "fast_netflix_FoodMarket2-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.00012671761214733124,
+      "reference_mse_rgb8": 176.73944218953451,
+      "fine_correlation": 0.2514130723250818
+    },
+    {
+      "source_id": "fast_netflix_FoodMarket2",
+      "sequence_id": "fast_netflix_FoodMarket2-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0006539287278428674,
+      "reference_mse_rgb8": 176.82930119832358,
+      "fine_correlation": 0.2523388591039599
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "sequence_id": "fast_netflix_Narrator-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 86.12280654907227,
+      "fine_correlation": 0.48341826065675914
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "sequence_id": "fast_netflix_Narrator-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.001079938723705709,
+      "reference_mse_rgb8": 86.09608205159505,
+      "fine_correlation": 0.47883266146055803
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "sequence_id": "fast_netflix_Narrator-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.00014079478569328785,
+      "reference_mse_rgb8": 86.14038721720378,
+      "fine_correlation": 0.4829993360797602
+    },
+    {
+      "source_id": "fast_netflix_Narrator",
+      "sequence_id": "fast_netflix_Narrator-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0007744015892967582,
+      "reference_mse_rgb8": 86.08213170369466,
+      "fine_correlation": 0.4829321669431442
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "sequence_id": "fast_netflix_PierSeaside-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 20.349234263102215,
+      "fine_correlation": 0.7293740114025068
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "sequence_id": "fast_netflix_PierSeaside-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0007841931656002998,
+      "reference_mse_rgb8": 21.169504801432293,
+      "fine_correlation": 0.7163685292114592
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "sequence_id": "fast_netflix_PierSeaside-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.0001894984598038718,
+      "reference_mse_rgb8": 20.467639923095703,
+      "fine_correlation": 0.7279479909635697
+    },
+    {
+      "source_id": "fast_netflix_PierSeaside",
+      "sequence_id": "fast_netflix_PierSeaside-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0005394481704570353,
+      "reference_mse_rgb8": 21.034678141276043,
+      "fine_correlation": 0.7224077679403106
+    },
+    {
+      "source_id": "fast_netflix_RitualDance",
+      "sequence_id": "fast_netflix_RitualDance-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 401.5546010335286,
+      "fine_correlation": 0.061787691401766154
+    },
+    {
+      "source_id": "fast_netflix_RitualDance",
+      "sequence_id": "fast_netflix_RitualDance-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0007719200802966952,
+      "reference_mse_rgb8": 401.0848032633464,
+      "fine_correlation": 0.06216509006155068
+    },
+    {
+      "source_id": "fast_netflix_RitualDance",
+      "sequence_id": "fast_netflix_RitualDance-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.0001008311373880133,
+      "reference_mse_rgb8": 401.53922271728516,
+      "fine_correlation": 0.06182026677283879
+    },
+    {
+      "source_id": "fast_netflix_RitualDance",
+      "sequence_id": "fast_netflix_RitualDance-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0005628999788314104,
+      "reference_mse_rgb8": 401.3987630208333,
+      "fine_correlation": 0.06251323566619418
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "sequence_id": "fast_netflix_RollerCoaster-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 15.160154978434244,
+      "fine_correlation": 0.7566825129165421
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "sequence_id": "fast_netflix_RollerCoaster-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.000968438689596951,
+      "reference_mse_rgb8": 15.430276234944662,
+      "fine_correlation": 0.7480921484972711
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "sequence_id": "fast_netflix_RollerCoaster-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.00017470435705035925,
+      "reference_mse_rgb8": 15.236582438151041,
+      "fine_correlation": 0.7546790134095891
+    },
+    {
+      "source_id": "fast_netflix_RollerCoaster",
+      "sequence_id": "fast_netflix_RollerCoaster-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.000620501465164125,
+      "reference_mse_rgb8": 15.252694447835287,
+      "fine_correlation": 0.7540155144600172
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "sequence_id": "fast_netflix_SquareAndTimelapse-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 213.72108586629233,
+      "fine_correlation": 0.4328728581612937
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "sequence_id": "fast_netflix_SquareAndTimelapse-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0016847469378262758,
+      "reference_mse_rgb8": 213.44904963175455,
+      "fine_correlation": 0.42826739183581713
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "sequence_id": "fast_netflix_SquareAndTimelapse-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.0002535231178626418,
+      "reference_mse_rgb8": 213.6441764831543,
+      "fine_correlation": 0.43200334413795033
+    },
+    {
+      "source_id": "fast_netflix_SquareAndTimelapse",
+      "sequence_id": "fast_netflix_SquareAndTimelapse-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.001093385275453329,
+      "reference_mse_rgb8": 213.54969024658203,
+      "fine_correlation": 0.4313367599695678
+    },
+    {
+      "source_id": "fast_netflix_Tango",
+      "sequence_id": "fast_netflix_Tango-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 21.435496012369793,
+      "fine_correlation": 0.7615930939686741
+    },
+    {
+      "source_id": "fast_netflix_Tango",
+      "sequence_id": "fast_netflix_Tango-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0008752195863053203,
+      "reference_mse_rgb8": 21.610682169596355,
+      "fine_correlation": 0.7543132656595523
+    },
+    {
+      "source_id": "fast_netflix_Tango",
+      "sequence_id": "fast_netflix_Tango-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.00014066073345020413,
+      "reference_mse_rgb8": 21.46833038330078,
+      "fine_correlation": 0.7610069944818229
+    },
+    {
+      "source_id": "fast_netflix_Tango",
+      "sequence_id": "fast_netflix_Tango-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0006036476115696132,
+      "reference_mse_rgb8": 21.573983510335285,
+      "fine_correlation": 0.7571545131704484
+    },
+    {
+      "source_id": "fast_netflix_ToddlerFountain",
+      "sequence_id": "fast_netflix_ToddlerFountain-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 91.94446309407552,
+      "fine_correlation": 0.23516607853590438
+    },
+    {
+      "source_id": "fast_netflix_ToddlerFountain",
+      "sequence_id": "fast_netflix_ToddlerFountain-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0008191288798116148,
+      "reference_mse_rgb8": 91.6071065266927,
+      "fine_correlation": 0.23410299115399097
+    },
+    {
+      "source_id": "fast_netflix_ToddlerFountain",
+      "sequence_id": "fast_netflix_ToddlerFountain-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.00011445194104453549,
+      "reference_mse_rgb8": 91.94553629557292,
+      "fine_correlation": 0.2348460237197181
+    },
+    {
+      "source_id": "fast_netflix_ToddlerFountain",
+      "sequence_id": "fast_netflix_ToddlerFountain-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0006023648893460631,
+      "reference_mse_rgb8": 91.82597986857097,
+      "fine_correlation": 0.23558905172685737
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "sequence_id": "fast_netflix_TunnelFlag-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 477.8424441019694,
+      "fine_correlation": 0.541784482116685
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "sequence_id": "fast_netflix_TunnelFlag-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0035056783817708492,
+      "reference_mse_rgb8": 478.6964467366536,
+      "fine_correlation": 0.5333138650940834
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "sequence_id": "fast_netflix_TunnelFlag-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.0008869452285580337,
+      "reference_mse_rgb8": 476.62319564819336,
+      "fine_correlation": 0.5420534016301247
+    },
+    {
+      "source_id": "fast_netflix_TunnelFlag",
+      "sequence_id": "fast_netflix_TunnelFlag-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0023368278052657843,
+      "reference_mse_rgb8": 477.79103724161786,
+      "fine_correlation": 0.5414075687183648
+    },
+    {
+      "source_id": "fast_netflix_WindAndNature",
+      "sequence_id": "fast_netflix_WindAndNature-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 48.221675872802734,
+      "fine_correlation": 0.8026435057357725
+    },
+    {
+      "source_id": "fast_netflix_WindAndNature",
+      "sequence_id": "fast_netflix_WindAndNature-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0016232196940109134,
+      "reference_mse_rgb8": 48.89857610066732,
+      "fine_correlation": 0.7945519642111097
+    },
+    {
+      "source_id": "fast_netflix_WindAndNature",
+      "sequence_id": "fast_netflix_WindAndNature-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.00023717169824521989,
+      "reference_mse_rgb8": 48.260746002197266,
+      "fine_correlation": 0.8015235503221404
+    },
+    {
+      "source_id": "fast_netflix_WindAndNature",
+      "sequence_id": "fast_netflix_WindAndNature-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0010523037053644657,
+      "reference_mse_rgb8": 48.72820790608724,
+      "fine_correlation": 0.798248857215026
+    },
+    {
+      "source_id": "reds_025",
+      "sequence_id": "reds_025-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 338.36385854085285,
+      "fine_correlation": 0.3964445273310145
+    },
+    {
+      "source_id": "reds_025",
+      "sequence_id": "reds_025-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0021937149576842785,
+      "reference_mse_rgb8": 336.6779276529948,
+      "fine_correlation": 0.3929107684042822
+    },
+    {
+      "source_id": "reds_025",
+      "sequence_id": "reds_025-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.0003295490168966353,
+      "reference_mse_rgb8": 338.1163609822591,
+      "fine_correlation": 0.3956595330036266
+    },
+    {
+      "source_id": "reds_025",
+      "sequence_id": "reds_025-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0013186028227210045,
+      "reference_mse_rgb8": 337.8946584065755,
+      "fine_correlation": 0.3940971305951369
+    },
+    {
+      "source_id": "reds_084",
+      "sequence_id": "reds_084-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 121.98923365275066,
+      "fine_correlation": 0.46371119198737554
+    },
+    {
+      "source_id": "reds_084",
+      "sequence_id": "reds_084-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0012878968846052885,
+      "reference_mse_rgb8": 122.67591222127278,
+      "fine_correlation": 0.4576186297408474
+    },
+    {
+      "source_id": "reds_084",
+      "sequence_id": "reds_084-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.00021433457732200623,
+      "reference_mse_rgb8": 121.93843332926433,
+      "fine_correlation": 0.4625676516157645
+    },
+    {
+      "source_id": "reds_084",
+      "sequence_id": "reds_084-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0008542620344087481,
+      "reference_mse_rgb8": 122.15668869018555,
+      "fine_correlation": 0.46345198769486606
+    },
+    {
+      "source_id": "reds_125",
+      "sequence_id": "reds_125-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 229.24999237060547,
+      "fine_correlation": 0.2741782403357118
+    },
+    {
+      "source_id": "reds_125",
+      "sequence_id": "reds_125-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0012961974134668708,
+      "reference_mse_rgb8": 227.74776077270508,
+      "fine_correlation": 0.27301596755694757
+    },
+    {
+      "source_id": "reds_125",
+      "sequence_id": "reds_125-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.00021481803560163826,
+      "reference_mse_rgb8": 229.11803690592447,
+      "fine_correlation": 0.27375412420014983
+    },
+    {
+      "source_id": "reds_125",
+      "sequence_id": "reds_125-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0008212641696445644,
+      "reference_mse_rgb8": 228.9167683919271,
+      "fine_correlation": 0.2740879824084504
+    },
+    {
+      "source_id": "reds_135",
+      "sequence_id": "reds_135-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 164.5211639404297,
+      "fine_correlation": 0.45520048879428227
+    },
+    {
+      "source_id": "reds_135",
+      "sequence_id": "reds_135-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0017921365797519684,
+      "reference_mse_rgb8": 165.08775838216147,
+      "fine_correlation": 0.4484686993856059
+    },
+    {
+      "source_id": "reds_135",
+      "sequence_id": "reds_135-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.0002550140779931098,
+      "reference_mse_rgb8": 164.52073669433594,
+      "fine_correlation": 0.45439330831387564
+    },
+    {
+      "source_id": "reds_135",
+      "sequence_id": "reds_135-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0010504898382350802,
+      "reference_mse_rgb8": 164.58664194742838,
+      "fine_correlation": 0.4537915737290929
+    },
+    {
+      "source_id": "reds_152",
+      "sequence_id": "reds_152-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 439.1155090332031,
+      "fine_correlation": 0.049609183149388426
+    },
+    {
+      "source_id": "reds_152",
+      "sequence_id": "reds_152-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0008414987241849303,
+      "reference_mse_rgb8": 438.024107615153,
+      "fine_correlation": 0.052309915641929314
+    },
+    {
+      "source_id": "reds_152",
+      "sequence_id": "reds_152-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.00014736531011294574,
+      "reference_mse_rgb8": 438.86044947306317,
+      "fine_correlation": 0.05007409326478465
+    },
+    {
+      "source_id": "reds_152",
+      "sequence_id": "reds_152-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0006132382550276816,
+      "reference_mse_rgb8": 438.30405680338544,
+      "fine_correlation": 0.05169558963885197
+    },
+    {
+      "source_id": "reds_187",
+      "sequence_id": "reds_187-stream-000-00",
+      "frame": 0,
+      "strategy": "none",
+      "output_change_l1": 0.0,
+      "reference_mse_rgb8": 185.57463582356772,
+      "fine_correlation": 0.20781529170404517
+    },
+    {
+      "source_id": "reds_187",
+      "sequence_id": "reds_187-stream-000-00",
+      "frame": 0,
+      "strategy": "top",
+      "output_change_l1": 0.0007537619094364345,
+      "reference_mse_rgb8": 186.28181838989258,
+      "fine_correlation": 0.20300797674316504
+    },
+    {
+      "source_id": "reds_187",
+      "sequence_id": "reds_187-stream-000-00",
+      "frame": 0,
+      "strategy": "bottom",
+      "output_change_l1": 0.00013421382755041122,
+      "reference_mse_rgb8": 185.6553866068522,
+      "fine_correlation": 0.2075307091175431
+    },
+    {
+      "source_id": "reds_187",
+      "sequence_id": "reds_187-stream-000-00",
+      "frame": 0,
+      "strategy": "random",
+      "output_change_l1": 0.0005069918697699904,
+      "reference_mse_rgb8": 185.89606348673502,
+      "fine_correlation": 0.2050916793552574
+    }
+  ],
+  "complete": true,
+  "weights_modified": false
+}
