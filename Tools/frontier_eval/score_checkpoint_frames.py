@@ -34,12 +34,16 @@ def main():
     ap.add_argument('--frames', type=Path, required=True)
     ap.add_argument('--checkpoint', nargs=2, action='append', required=True)
     ap.add_argument('--present-4x-at-2x', nargs='+', default=[])
+    ap.add_argument('--interpolation', nargs='+', choices=('lanczos', 'bicubic', 'bilinear'),
+                    default=['lanczos'], help='Explicit pixel interpolation comparators; not browser rendering')
     ap.add_argument('--device', default='mps')
     ap.add_argument('--report', type=Path, required=True)
     args = ap.parse_args()
     labels = [label for label, _ in args.checkpoint]
-    if len(labels) != len(set(labels)) or 'lanczos' in labels or not set(args.present_4x_at_2x) <= set(labels):
-        ap.error('distinct labels excluding lanczos and registered presentation adapters required')
+    if (len(labels) != len(set(labels)) or set(labels) & {'lanczos', 'bicubic', 'bilinear'}
+            or len(args.interpolation) != len(set(args.interpolation))
+            or not set(args.present_4x_at_2x) <= set(labels)):
+        ap.error('distinct model/interpolation labels and registered presentation adapters required')
     manifest_path = args.frames / 'manifest.json'
     manifest = json.loads(manifest_path.read_text())
     reference_index = paired_references(manifest['frames'])
@@ -56,6 +60,7 @@ def main():
         'manifest_sha256': digest(manifest_path), 'sequence_manifest_sha256': manifest['sequence_manifest_sha256'],
         'checkpoint_sha256': {label: digest(path) for label, path in args.checkpoint},
         'presentation_adapters': args.present_4x_at_2x,
+        'interpolation': args.interpolation,
         'code_sha256': digest(__file__), 'scorer_sha256': digest(Path(__file__).with_name('evaluate_sequences.py')),
         'torch': str(torch.__version__), 'device': str(device), 'rows': [], 'complete': False}
     for row in manifest['frames']:
@@ -66,7 +71,8 @@ def main():
         reference_row = reference_index[row['sequence_id'], row['frame']]
         with Image.open(args.frames / reference_row['file']) as image:
             reference = image.convert('RGB')
-        results = {'lanczos': source.resize(reference.size, Image.Resampling.LANCZOS)}
+        results = {label: source.resize(reference.size, getattr(Image.Resampling, label.upper()))
+                   for label in args.interpolation}
         with torch.inference_mode():
             x = torch.from_numpy(np.asarray(source).copy()).permute(2, 0, 1)[None].to(device).float()/255
             for label, (model, _, _) in models.items():
