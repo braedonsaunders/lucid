@@ -1,11 +1,12 @@
 # Remote GPU access
 
-Status as of 2026-09-05: both Tailscale clients are installed and the Mac's native VPN menu is enabled. **Owner account enrollment is still required on both devices.** VPN SSH, off-LAN reachability, device-key expiry, and reboot recovery are not yet verified. Existing `ssh lucid-gpu` remains the LAN route to `192.168.68.85` as `bsaun` using `~/.ssh/lucid_gpu`.
+Status as of 2026-09-05: both Tailscale clients are installed and the Mac's native VPN menu is enabled. **GPU enrollment is complete; the Mac still needs owner account enrollment.** VPN SSH, off-LAN reachability, device-key expiry, and reboot recovery are not yet verified. Existing `ssh lucid-gpu` remains the LAN route to `192.168.68.85` as `bsaun` using `~/.ssh/lucid_gpu`.
 
 ## Installed configuration
 
 - Mac: standalone Tailscale 1.102.3 at `/Applications/Tailscale.app`, bundle `io.tailscale.ipn.macsys`, enabled network system extension, native VPN profile `Tailscale` (`223ABF95-B90B-47DD-9ECF-96E63230169F`). System Settings → Menu Bar → VPN is enabled. System Settings → VPN visibly contains its native switch.
 - PC: `C:\Program Files\Tailscale\tailscale.exe` 1.102.3; automatic, running Windows service. Preferences verified: hostname `lucid-gpu`, `ForceDaemon=true` (unattended), `WantRunning=true`, DNS/route acceptance false, no advertised routes or exit node.
+- GPU identity: `100.115.49.93`, `fd7a:115c:a1e0::fd33:315f`, MagicDNS `lucid-gpu.tailea5249.ts.net`. The node is online. Its device key currently expires **2027-03-04 14:36:50 UTC**; disabling expiry is still pending.
 - Remote tooling: `C:\lucid\remote-access`; owner, Administrators and SYSTEM have access. Existing training/data directories and LAN SSH alias were preserved.
 - The Mac VPN connection can say “Connected” while Tailscale still says `NeedsLogin`. This means the native extension is running, not that remote access is ready.
 
@@ -13,7 +14,7 @@ The [standalone macOS variant](https://tailscale.com/docs/concepts/macos-variant
 
 ## Finish enrollment and verify the VPN route
 
-1. Sign in to Tailscale on both devices using the same owner account. Short-lived enrollment links are supplied in the conversation, never committed here. If a link expires, run `Tailscale login --timeout=10s` using the executable paths above (PowerShell needs `&` before its quoted executable path). Do not use `--force-reauth` on a working remote connection.
+1. Finish signing the Mac into Tailscale using the same owner account already used for the GPU PC. Short-lived enrollment links are supplied in the conversation, never committed here. If a link expires, run `Tailscale login --timeout=10s` using the executable paths above (PowerShell needs `&` before its quoted executable path). Do not use `--force-reauth` on a working remote connection.
 2. In the [Machines console](https://login.tailscale.com/admin/machines), find `lucid-gpu` and choose its menu → **Disable Key Expiry**. Verify the resulting non-expiring device status. Tailscale's default for a new domain is 180 days; unattended mode alone does not remove expiry. Keep routine expiry on portable clients and reauthenticate the Mac when prompted. No reusable enrollment key or API token is needed. See [device key expiry](https://tailscale.com/docs/features/access-control/key-expiry).
 3. While LAN access is available, from this repository run:
 
@@ -102,6 +103,6 @@ The active custom power plan is `6fecc5ae-f350-48a5-b669-b472cb895ccf`. `powercf
 | Actual detached CUDA job | Verified `LucidJob-subspace-development-20260905` completed exit 0 after initiating SSH closed; 14:34:18Z–14:35:16Z; RTX4080, 48 full-frame pairs |
 | Boot recovery | Installed/Ready, SYSTEM + boot trigger, config/key inspection passed; reboot not tested |
 | VPN SSH / SCP / off-LAN | Pending owner enrollment; not claimed as passed |
-| Device expiry | Pending console inspection and disabling expiry for the trusted GPU node |
+| Device expiry | Verified GPU key expires 2027-03-04T14:36:50Z; disabling expiry remains pending |
 
 Installer downloads came from [Tailscale's stable package index](https://pkgs.tailscale.com/stable/). Installation used `/norestart` and `REBOOT=ReallySuppress`. Existing GPU training processes were preserved; the access setup's test jobs were CPU-only.
