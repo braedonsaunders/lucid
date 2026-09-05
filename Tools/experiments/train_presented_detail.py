@@ -94,7 +94,8 @@ def main():
     ap.add_argument('--crop', type=int, default=96)
     ap.add_argument('--lr', type=float, default=0.00002)
     ap.add_argument('--seed', type=int, default=20260914)
-    ap.add_argument('--architecture', choices=['coupled', 'anchored_detail', 'anchored_lowpass'], default='coupled')
+    ap.add_argument('--architecture', choices=['coupled', 'anchored_detail', 'anchored_lowpass',
+                    'subspace_full', 'subspace_protected'], default='coupled')
     ap.add_argument('--detail-channels', type=int, default=32)
     ap.add_argument('--detail-blocks', type=int, default=4)
     ap.add_argument('--detail-target', choices=['mixture', 'reference'], default='mixture',
@@ -137,6 +138,12 @@ def main():
     del teacher, target
     model = fold_head(shipping).cuda().train()
     del shipping
+    subspace = args.architecture in ('subspace_full', 'subspace_protected')
+    model_channels = model.core.conv_1.eval_conv.out_channels
+    if subspace:
+        from architectures.subspace_adapter import attach_adapters, merge_adapters, adapter_report
+        with torch.random.fork_rng(devices=[torch.cuda.current_device()]):
+            model = attach_adapters(model, constrained=args.architecture == 'subspace_protected', energy=.95).cuda().train()
     if args.architecture in ('anchored_detail', 'anchored_lowpass'):
         from architectures.anchored_detail import AnchoredDetail
         # Added branch initialization must not change the matched discriminator
@@ -168,6 +175,18 @@ def main():
             Path(__file__).resolve().parents[1] / 'architectures/anchored_detail.py')
         experiment['residual_filter'] = 'sigma-1 radius-3 Gaussian, replicated boundaries' if args.architecture == 'anchored_lowpass' else 'none'
         experiment['fidelity_anchor'] = 'frozen folded shipping weights; only conditional detail branch is optimized'
+    if subspace:
+        experiment['source_hashes']['subspace_adapter.py'] = digest(
+            Path(__file__).resolve().parents[1] / 'architectures/subspace_adapter.py')
+        experiment['subspace'] = {'energy': .95, 'constrained': args.architecture == 'subspace_protected',
+            'basis': 'SVD of frozen fused convolution weights plus bias; no reference images',
+            'initial_layers': adapter_report(model),
+            'limitation': 'orthogonal local weight changes do not guarantee nonlinear image fidelity',
+            'inference': 'merge adapters into ordinary convolutions; no added layers'}
+        def subspace_anchor_digest():
+            return state_digest({k: v for k, v in model.state_dict().items()
+                                 if k.endswith(('.anchor', '.basis', '.protected_basis'))})
+        experiment['subspace_anchor_sha256'] = subspace_anchor_digest()
     if adversary:
         experiment['adversary'] = adversary.metadata
         experiment['discriminator_initial_sha256'] = state_digest(adversary.discriminator.state_dict())
@@ -187,6 +206,7 @@ def main():
         with torch.autocast('cuda', dtype=torch.bfloat16):
             output = model(x)
         if step == 1:
+            experiment['first_output_sha256'] = state_digest({'output': output})
             if args.architecture in ('anchored_detail', 'anchored_lowpass'):
                 # The first forward materializes the frozen inference convolutions.
                 anchor_hash = state_digest(model.anchor.state_dict())
@@ -200,7 +220,8 @@ def main():
             with torch.autocast('cuda', dtype=torch.bfloat16):
                 gan_loss, fake_features = adversary.generator_loss(output)
             if args.gan_head_ratio_cap or step in (1, 200, 1000):
-                head = model.head.weight if args.architecture in ('anchored_detail', 'anchored_lowpass') else model.core.upsampler[0].weight
+                head = (model.core.upsampler[0].coefficients if subspace else model.head.weight
+                        if args.architecture in ('anchored_detail', 'anchored_lowpass') else model.core.upsampler[0].weight)
                 base_gradient = torch.autograd.grad(loss, head, retain_graph=True)[0].float().norm()
                 adversarial_gradient = torch.autograd.grad(args.dino_gan_weight * gan_loss, head, retain_graph=True)[0].float().norm()
                 if args.gan_head_ratio_cap:
@@ -233,9 +254,25 @@ def main():
             if args.architecture in ('anchored_detail', 'anchored_lowpass') and state_digest(model.anchor.state_dict()) != anchor_hash:
                 raise ValueError('frozen reconstruction weights changed during detail training')
             anchor = model.anchor if args.architecture in ('anchored_detail', 'anchored_lowpass') else model
-            checkpoint = {'model': model.state_dict(), 'channels': anchor.core.conv_1.eval_conv.out_channels,
+            state = model.state_dict()
+            if subspace:
+                if subspace_anchor_digest() != experiment['subspace_anchor_sha256']:
+                    raise ValueError('frozen subspace anchor or coordinates changed')
+                layers = adapter_report(model)
+                if args.architecture == 'subspace_protected' and any(r['protected_update_norm'] > 1e-5 for r in layers):
+                    raise ValueError('merged FP32 update escaped the protected subspace tolerance')
+                (args.out / f'subspace{step:06d}.json').write_text(json.dumps(layers, indent=2) + '\n')
+                with torch.random.fork_rng(devices=[torch.cuda.current_device()]):
+                    merged = merge_adapters(model)
+                with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16):
+                    if not torch.equal(model(x), merged(x)):
+                        raise ValueError('merged training graph changes BF16 output')
+                state = merged.state_dict()
+            checkpoint = {'model': state, 'channels': model_channels,
                 'scale': 2, 'frames': 1, 'version': anchor.version, 'step': step,
                 'architecture': 'shipping_direct2x_area', 'experiment': experiment}
+            if subspace:
+                checkpoint['architecture'] = 'fused_span2x'
             if args.architecture in ('anchored_detail', 'anchored_lowpass'):
                 checkpoint.update(architecture='anchored_lowpass2x' if args.architecture == 'anchored_lowpass' else 'anchored_detail2x', detail_channels=args.detail_channels,
                                   detail_blocks=args.detail_blocks)

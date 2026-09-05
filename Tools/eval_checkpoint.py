@@ -95,6 +95,11 @@ def load(path, device):
         raise ValueError('checkpoint reconstruction scale must be 2 or 4')
     model = Unshuffled(state.get("channels", 32), frames=frames, scale=scale,
                        version=state.get("version", 1))
+    if state.get('architecture') == 'fused_span2x':
+        if scale != 2 or frames != 1:
+            raise ValueError('fused 2x reconstruction requires single-frame 2x geometry')
+        from architectures.subspace_adapter import fuse_convolutions
+        fuse_convolutions(model)
     if state.get('architecture') in ('anchored_detail2x', 'anchored_lowpass2x'):
         if scale != 2 or frames != 1:
             raise ValueError('anchored detail requires a single-frame 2x checkpoint')
