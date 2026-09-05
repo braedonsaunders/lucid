@@ -19,6 +19,22 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from eval_checkpoint import load
 from architectures.subspace_adapter import fuse_convolutions
 from architectures.activation_control import ActivationControl, config_from_probe
+from architectures.spatial_activation_control import CoarseSpatialActivationControl
+
+
+def validate_coarse_native(native, checkpoint_sha256, source_sha256):
+    if (native.get('complete') is not True or native.get('direct_architecture') != 'CoarseSpatialActivationControl'
+            or native.get('checkpoint_sha256') != checkpoint_sha256 or native.get('samples',0)<20
+            or native.get('direct_model_sources',{}).get('architectures/spatial_activation_control.py') != source_sha256):
+        raise ValueError('native preflight does not identify this complete coarse architecture and anchor')
+    for size,mean_limit,p95_limit in [('640x360',8,10),('1280x720',25,30)]:
+        rows=[r for r in native['rows'] if r['input_size']==size and r['compute_units']=='CPU_AND_GPU']
+        if len(rows)!=1:raise ValueError('missing or duplicate native preflight shape')
+        timing=rows[0]['timings']['direct2x_trained'];error=rows[0]['correctness']['direct2x_trained']
+        values=[(timing['mean_ms'],1e-9,mean_limit),(timing['p95_ms'],1e-9,p95_limit),
+                (error['max_rgb'],0,3),(error['mean_rgb'],0,.6)]
+        if not all(math.isfinite(v) and lo<=v<=hi for v,lo,hi in values):
+            raise ValueError('coarse native cost/correctness gate failed')
 
 
 def main():
@@ -31,9 +47,17 @@ def main():
     ap.add_argument('--seed', type=int, default=20260914)
     ap.add_argument('--local-fidelity-constraint', action='store_true')
     ap.add_argument('--deterministic', action='store_true')
+    ap.add_argument('--coarse-spatial', action='store_true')
+    ap.add_argument('--native-preflight', type=Path, help='Required measured cost admission for coarse spatial training')
     args = ap.parse_args()
     if args.out.exists() or args.steps < 1:
         ap.error('fresh output and positive steps required')
+    if args.coarse_spatial:
+        if args.mode != 'dynamic' or not args.deterministic or not args.local_fidelity_constraint or not args.native_preflight:
+            ap.error('coarse spatial requires dynamic, deterministic, constrained training and native preflight')
+        native=json.loads(args.native_preflight.read_text())
+        source=Path(__file__).resolve().parents[1]/'architectures/spatial_activation_control.py'
+        validate_coarse_native(native,digest(args.init),digest(source))
     torch.set_num_threads(4)
     if args.deterministic:
         torch.use_deterministic_algorithms(True)
@@ -62,8 +86,9 @@ def main():
     anchor = fold_head(anchor)
     fuse_convolutions(anchor)
     config = config_from_probe(probe, args.mode == 'dynamic')
+    if args.coarse_spatial:config['window']=9
     with torch.random.fork_rng(devices=[torch.cuda.current_device()]):
-        model = ActivationControl(anchor, **config).cuda().train()
+        model = (CoarseSpatialActivationControl if args.coarse_spatial else ActivationControl)(anchor, **config).cuda().train()
     del anchor
     frozen = lambda: state_digest({k: v for k, v in model.state_dict().items() if not k.startswith('controller.')})
     frozen_hash = frozen()
@@ -96,6 +121,10 @@ def main():
             Path(__file__).with_name('train_presented_detail.py'), Path(__file__).with_name('dino_adversary.py'),
             Path(__file__).resolve().parents[1]/'architectures/activation_control.py']}}
     experiment_path = args.out/'experiment.json'
+    if args.coarse_spatial:
+        experiment['native_preflight_sha256']=digest(args.native_preflight)
+        experiment['source_hashes'][str(source)]=digest(source)
+        experiment['limitation']='Stride-two spatial control is tested on aligned crops; quality and temporal grid-phase behavior remain unproven'
     if penalty is not None:
         experiment['local_fidelity_constraint'] = {
             'domains': ['RGB squared error', 'signed RGB Sobel squared error'],
@@ -158,7 +187,7 @@ def main():
             if frozen() != frozen_hash:
                 raise ValueError('frozen reconstruction or control mask changed')
             torch.save({'model': model.state_dict(), 'channels': 32, 'scale': 2, 'frames': 1,
-                'version': model.version, 'step': step, 'architecture': 'activation_control2x',
+                'version': model.version, 'step': step, 'architecture': 'coarse_spatial_activation_control2x' if args.coarse_spatial else 'activation_control2x',
                 'controller_config': config, 'experiment': experiment}, args.out/f'step{step:06d}.pth')
             torch.save({'optimizer': optimizer.state_dict(), 'discriminator': adversary.discriminator.state_dict(),
                 'discriminator_optimizer': adversary.optimizer.state_dict(), 'step': step,

@@ -95,7 +95,7 @@ def load(path, device):
         raise ValueError('checkpoint reconstruction scale must be 2 or 4')
     model = Unshuffled(state.get("channels", 32), frames=frames, scale=scale,
                        version=state.get("version", 1))
-    if state.get('architecture') in ('fused_span2x', 'activation_control2x'):
+    if state.get('architecture') in ('fused_span2x', 'activation_control2x', 'spatial_activation_control2x', 'coarse_spatial_activation_control2x'):
         if scale != 2 or frames != 1:
             raise ValueError('fused 2x reconstruction requires single-frame 2x geometry')
         from architectures.subspace_adapter import fuse_convolutions
@@ -103,6 +103,12 @@ def load(path, device):
         if state['architecture'] == 'activation_control2x':
             from architectures.activation_control import ActivationControl
             model = ActivationControl(model, **state['controller_config'])
+        elif state['architecture'] == 'spatial_activation_control2x':
+            from architectures.spatial_activation_control import SpatialActivationControl
+            model = SpatialActivationControl(model, **state['controller_config'])
+        elif state['architecture'] == 'coarse_spatial_activation_control2x':
+            from architectures.spatial_activation_control import CoarseSpatialActivationControl
+            model = CoarseSpatialActivationControl(model, **state['controller_config'])
     if state.get('architecture') in ('anchored_detail2x', 'anchored_lowpass2x'):
         if scale != 2 or frames != 1:
             raise ValueError('anchored detail requires a single-frame 2x checkpoint')

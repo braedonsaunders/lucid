@@ -104,6 +104,13 @@ def main():
         'quality': 'trained checkpoint requires independent quality evaluation' if args.direct_checkpoint else
                    'area average before clamp differs from shipping RGB8 bicubic presentation; evaluate separately',
         'rows': [], 'complete': False}
+    if args.direct_checkpoint:
+        report['direct_architecture'] = type(folded).__name__
+        source_root = Path(__file__).resolve().parents[1]
+        report['direct_model_sources'] = {name: digest(source_root/name) for name in (
+            'eval_checkpoint.py', 'train_span.py', 'architectures/span_arch.py',
+            'architectures/subspace_adapter.py', 'architectures/activation_control.py',
+            'architectures/spatial_activation_control.py') if (source_root/name).is_file()}
     if args.anchored_probe:
         report['anchored_probe'] = {
             'code_sha256': digest(Path(__file__).resolve().parents[1] / 'architectures/anchored_detail.py'),
