@@ -1,0 +1,115 @@
+{
+  "spatial_gate_pass": false,
+  "failure_reasons": [
+    "lpips: aggregate improvement below minimum",
+    "dists: aggregate improvement below minimum"
+  ],
+  "frames_per_variant": 48,
+  "source_balanced": {
+    "lanczos": {
+      "lpips": 0.3455616074303786,
+      "dists": 0.12805385887622833,
+      "fine_correlation": 0.5093240648945621
+    },
+    "shipping": {
+      "lpips": 0.3024238742267092,
+      "dists": 0.12832974269986153,
+      "fine_correlation": 0.5643192119145054
+    },
+    "coarse": {
+      "lpips": 0.29913231435542303,
+      "dists": 0.12759470815459886,
+      "fine_correlation": 0.5611203072876517
+    }
+  },
+  "per_source": {
+    "lanczos": {
+      "crowd_run": {
+        "lpips": 0.4957118332386017,
+        "dists": 0.17144159227609634,
+        "fine_correlation": 0.3584202039433989
+      },
+      "four_people": {
+        "lpips": 0.25478572119027376,
+        "dists": 0.10224039480090141,
+        "fine_correlation": 0.6186566818904616
+      },
+      "johnny": {
+        "lpips": 0.28618726786226034,
+        "dists": 0.11047958955168724,
+        "fine_correlation": 0.5508953088498255
+      }
+    },
+    "shipping": {
+      "crowd_run": {
+        "lpips": 0.4320258032530546,
+        "dists": 0.1641482375562191,
+        "fine_correlation": 0.3826510771160185
+      },
+      "four_people": {
+        "lpips": 0.21655134484171867,
+        "dists": 0.10291698202490807,
+        "fine_correlation": 0.6708610856042104
+      },
+      "johnny": {
+        "lpips": 0.25869447458535433,
+        "dists": 0.11792400851845741,
+        "fine_correlation": 0.6394454730232871
+      }
+    },
+    "coarse": {
+      "crowd_run": {
+        "lpips": 0.4235538970679045,
+        "dists": 0.16311438754200935,
+        "fine_correlation": 0.3802767133640492
+      },
+      "four_people": {
+        "lpips": 0.21521045779809356,
+        "dists": 0.10178004577755928,
+        "fine_correlation": 0.668853520040623
+      },
+      "johnny": {
+        "lpips": 0.25863258820027113,
+        "dists": 0.11788969114422798,
+        "fine_correlation": 0.6342306884582831
+      }
+    }
+  },
+  "perceptual_improvements": {
+    "lpips": 0.010883928657096309,
+    "dists": 0.005727702166299586
+  },
+  "per_source_changes": {
+    "crowd_run": {
+      "lpips": 0.019609722663226692,
+      "dists": 0.0062982705729975885,
+      "fine_correlation": -0.002374363751969255
+    },
+    "four_people": {
+      "lpips": 0.006192005155198577,
+      "dists": 0.011047119969701646,
+      "fine_correlation": -0.002007565563587388
+    },
+    "johnny": {
+      "lpips": 0.00023922577079538154,
+      "dists": 0.0002910126161803639,
+      "fine_correlation": -0.005214784565004016
+    }
+  },
+  "status": "Repeated controller development screen; fresh independent and native/browser quality still required",
+  "gate": {
+    "source_balanced_lpips_improvement_min": 0.03,
+    "source_balanced_dists_improvement_min": 0.03,
+    "per_source_perceptual_regression_max": 0.02,
+    "per_source_fine_correlation_drop_max": 0.01
+  },
+  "controls_max_absolute_delta": 0.0,
+  "promotion_authorized": false,
+  "evidence_sha256": {
+    "evaluation\\development.json": "7424a2e8726637c730f15dab39afce3942afb635374ef2097d12e69662ca7e64",
+    "C:\\lucid\\local-fidelity-20260905-r4\\Benchmarks\\frontier\\local-fidelity-development.json": "950ab18ff979d57a77a1b080e8d0dc4b4d104d7490d1f2b4c457cf98ad624a2a",
+    "trained\\step008000.pth": "385d34372baf9575b8d0154c111a03fc8a97fd8258f09a13b04b5cf8d1b9a07a",
+    "C:\\lucid\\coarse-controller-20260905-r1\\Tools\\frontier_eval\\gate_controller_candidate.py": "7b383e612e5f0440c58de9a7faf80b4ea016d5fbf6ccc8bd1789cdff2d124399",
+    "C:\\lucid\\coarse-controller-20260905-r1\\Tools\\frontier_eval\\gate_frozen_holdout.py": "cfc05cc6c7dc64a703070afd1b6147f38cae1ed3031413ca6f417c8e6ce1769b"
+  }
+}
