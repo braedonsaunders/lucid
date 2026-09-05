@@ -94,7 +94,7 @@ def main():
     ap.add_argument('--crop', type=int, default=96)
     ap.add_argument('--lr', type=float, default=0.00002)
     ap.add_argument('--seed', type=int, default=20260914)
-    ap.add_argument('--architecture', choices=['coupled', 'anchored_detail'], default='coupled')
+    ap.add_argument('--architecture', choices=['coupled', 'anchored_detail', 'anchored_lowpass'], default='coupled')
     ap.add_argument('--detail-channels', type=int, default=32)
     ap.add_argument('--detail-blocks', type=int, default=4)
     ap.add_argument('--detail-target', choices=['mixture', 'reference'], default='mixture',
@@ -137,12 +137,13 @@ def main():
     del teacher, target
     model = fold_head(shipping).cuda().train()
     del shipping
-    if args.architecture == 'anchored_detail':
+    if args.architecture in ('anchored_detail', 'anchored_lowpass'):
         from architectures.anchored_detail import AnchoredDetail
         # Added branch initialization must not change the matched discriminator
         # RNG stream relative to the completed coupled reconstruction control.
         with torch.random.fork_rng(devices=[torch.cuda.current_device()]):
-            model = AnchoredDetail(model, args.detail_channels, args.detail_blocks).cuda().train()
+            model = AnchoredDetail(model, args.detail_channels, args.detail_blocks,
+                                   residual_lowpass=args.architecture == 'anchored_lowpass').cuda().train()
     optimizer = torch.optim.AdamW((p for p in model.parameters() if p.requires_grad), lr=args.lr, weight_decay=0)
     rng = np.random.default_rng(args.seed)
     adversary = None
@@ -162,9 +163,10 @@ def main():
         'precision': 'CUDA BF16 autocast; AdamW FP32; no compilation',
         'torch': str(torch.__version__), 'gpu': torch.cuda.get_device_name(),
         'purpose': 'controlled quality/performance experiment; not shipping promotion'}
-    if args.architecture == 'anchored_detail':
+    if args.architecture in ('anchored_detail', 'anchored_lowpass'):
         experiment['source_hashes']['anchored_detail.py'] = digest(
             Path(__file__).resolve().parents[1] / 'architectures/anchored_detail.py')
+        experiment['residual_filter'] = 'sigma-1 radius-3 Gaussian, replicated boundaries' if args.architecture == 'anchored_lowpass' else 'none'
         experiment['fidelity_anchor'] = 'frozen folded shipping weights; only conditional detail branch is optimized'
     if adversary:
         experiment['adversary'] = adversary.metadata
@@ -185,7 +187,7 @@ def main():
         with torch.autocast('cuda', dtype=torch.bfloat16):
             output = model(x)
         if step == 1:
-            if args.architecture == 'anchored_detail':
+            if args.architecture in ('anchored_detail', 'anchored_lowpass'):
                 # The first forward materializes the frozen inference convolutions.
                 anchor_hash = state_digest(model.anchor.state_dict())
                 experiment['anchor_initial_sha256'] = anchor_hash
@@ -198,7 +200,7 @@ def main():
             with torch.autocast('cuda', dtype=torch.bfloat16):
                 gan_loss, fake_features = adversary.generator_loss(output)
             if args.gan_head_ratio_cap or step in (1, 200, 1000):
-                head = model.head.weight if args.architecture == 'anchored_detail' else model.core.upsampler[0].weight
+                head = model.head.weight if args.architecture in ('anchored_detail', 'anchored_lowpass') else model.core.upsampler[0].weight
                 base_gradient = torch.autograd.grad(loss, head, retain_graph=True)[0].float().norm()
                 adversarial_gradient = torch.autograd.grad(args.dino_gan_weight * gan_loss, head, retain_graph=True)[0].float().norm()
                 if args.gan_head_ratio_cap:
@@ -228,14 +230,14 @@ def main():
             extra = f' generator={float(gan_loss.detach()):.5f} discriminator={discriminator_loss:.5f}' if adversary else ''
             print(f'step {step}/{args.steps} loss={float(loss):.6f} minutes={(time.monotonic()-started)/60:.2f}{extra}', flush=True)
         if step % 2000 == 0 or step == args.steps:
-            if args.architecture == 'anchored_detail' and state_digest(model.anchor.state_dict()) != anchor_hash:
+            if args.architecture in ('anchored_detail', 'anchored_lowpass') and state_digest(model.anchor.state_dict()) != anchor_hash:
                 raise ValueError('frozen reconstruction weights changed during detail training')
-            anchor = model.anchor if args.architecture == 'anchored_detail' else model
+            anchor = model.anchor if args.architecture in ('anchored_detail', 'anchored_lowpass') else model
             checkpoint = {'model': model.state_dict(), 'channels': anchor.core.conv_1.eval_conv.out_channels,
                 'scale': 2, 'frames': 1, 'version': anchor.version, 'step': step,
                 'architecture': 'shipping_direct2x_area', 'experiment': experiment}
-            if args.architecture == 'anchored_detail':
-                checkpoint.update(architecture='anchored_detail2x', detail_channels=args.detail_channels,
+            if args.architecture in ('anchored_detail', 'anchored_lowpass'):
+                checkpoint.update(architecture='anchored_lowpass2x' if args.architecture == 'anchored_lowpass' else 'anchored_detail2x', detail_channels=args.detail_channels,
                                   detail_blocks=args.detail_blocks)
             torch.save(checkpoint, args.out / f'step{step:06d}.pth')
             if adversary:

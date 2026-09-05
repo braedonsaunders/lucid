@@ -45,6 +45,7 @@ def main():
                     help='Optional trained 2x checkpoint; otherwise use the exact area-folded initialization')
     ap.add_argument('--anchored-probe', action='store_true',
                     help='Also measure a nonzero untrained frozen-base detail branch; no quality claim')
+    ap.add_argument('--residual-lowpass', action='store_true', help='Measure the fixed sigma-1 anchored residual filter')
     ap.add_argument('--precision',choices=['mul-fp32','shuffle-fp32','fp16'],default='mul-fp32',
                     help='Experimental conversion policy; every graph must pass RGB correctness checks')
     ap.add_argument('--sizes', nargs='+', default=['640x360', '1280x720'])
@@ -52,6 +53,8 @@ def main():
     ap.add_argument('--compute-units', nargs='+', choices=['CPU_AND_GPU', 'ALL'], default=['CPU_AND_GPU'])
     ap.add_argument('--out', type=Path, required=True)
     args = ap.parse_args()
+    if args.residual_lowpass and not args.anchored_probe:
+        ap.error('--residual-lowpass requires --anchored-probe')
     if args.samples < 20 or args.out.exists():
         ap.error('fresh output directory and at least 20 samples required')
     if args.expected_checkpoint_sha256 and digest(args.checkpoint) != args.expected_checkpoint_sha256:
@@ -74,7 +77,7 @@ def main():
     if args.anchored_probe:
         from architectures.anchored_detail import AnchoredDetail
         torch.manual_seed(20260905)
-        probe = AnchoredDetail(copy.deepcopy(folded), channels=32, blocks=4).eval()
+        probe = AnchoredDetail(copy.deepcopy(folded), channels=32, blocks=4, residual_lowpass=args.residual_lowpass).eval()
         # Keep the branch nonzero so compilation cannot erase a zero-output head.
         torch.nn.init.normal_(probe.head.weight, std=.001)
         torch.nn.init.normal_(probe.head.bias, std=.001)
@@ -93,7 +96,7 @@ def main():
     if args.anchored_probe:
         report['anchored_probe'] = {
             'code_sha256': digest(Path(__file__).resolve().parents[1] / 'architectures/anchored_detail.py'),
-            'seed': 20260905, 'channels': 32, 'blocks': 4,
+            'seed': 20260905, 'channels': 32, 'blocks': 4, 'residual_lowpass': args.residual_lowpass,
             'added_parameters': sum(p.numel() for p in probe.parameters() if p.requires_grad),
             'status': 'random nonzero detail branch; conversion and cost only, not trained quality'}
     def save():

@@ -95,11 +95,12 @@ def load(path, device):
         raise ValueError('checkpoint reconstruction scale must be 2 or 4')
     model = Unshuffled(state.get("channels", 32), frames=frames, scale=scale,
                        version=state.get("version", 1))
-    if state.get('architecture') == 'anchored_detail2x':
+    if state.get('architecture') in ('anchored_detail2x', 'anchored_lowpass2x'):
         if scale != 2 or frames != 1:
             raise ValueError('anchored detail requires a single-frame 2x checkpoint')
         from architectures.anchored_detail import AnchoredDetail
-        model = AnchoredDetail(model, state['detail_channels'], state['detail_blocks'])
+        model = AnchoredDetail(model, state['detail_channels'], state['detail_blocks'],
+                               residual_lowpass=state['architecture'] == 'anchored_lowpass2x')
     model = model.eval().to(device)
     model.load_state_dict(state["model"] if "model" in state else state)
     return model, state.get("step", "?"), frames

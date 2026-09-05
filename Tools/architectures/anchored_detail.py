@@ -25,7 +25,7 @@ class DetailBlock(nn.Module):
 
 
 class AnchoredDetail(nn.Module):
-    def __init__(self, anchor, channels=32, blocks=4):
+    def __init__(self, anchor, channels=32, blocks=4, residual_lowpass=False):
         super().__init__()
         if channels < 4 or blocks < 1:
             raise ValueError('positive detail capacity required')
@@ -36,6 +36,13 @@ class AnchoredDetail(nn.Module):
         self.body = nn.Sequential(*(DetailBlock(channels, (1, 2, 3, 1)[i % 4]) for i in range(blocks)))
         self.head = nn.Conv2d(channels, 48, 1)
         nn.init.zeros_(self.head.weight); nn.init.zeros_(self.head.bias)
+        self.residual_lowpass = residual_lowpass
+        if residual_lowpass:
+            # Same fixed spatial operator as the diagnostic, now inside the
+            # trainable branch. The anchor bypasses it. No temporal state.
+            grid = torch.arange(-3, 4, dtype=torch.float32)
+            kernel = torch.exp(-grid.square()/2)
+            self.register_buffer('residual_kernel', kernel/kernel.sum())
 
     def train(self, mode=True):
         super().train(mode)
@@ -46,4 +53,9 @@ class AnchoredDetail(nn.Module):
         base = self.anchor(image)
         condition = torch.cat((F.pixel_unshuffle(image, 2), F.pixel_unshuffle(base, 4)), dim=1)
         detail = F.pixel_shuffle(self.head(self.body(self.input(condition))), 4)
+        if self.residual_lowpass:
+            detail = F.conv2d(F.pad(detail, (3,3,0,0), mode='replicate'),
+                              self.residual_kernel.reshape(1,1,1,7).expand(3,1,1,7), groups=3)
+            detail = F.conv2d(F.pad(detail, (0,0,3,3), mode='replicate'),
+                              self.residual_kernel.reshape(1,1,7,1).expand(3,1,7,1), groups=3)
         return base + detail
