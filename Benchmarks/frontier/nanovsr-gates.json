@@ -1,0 +1,162 @@
+{
+  "nanovsr_bidirectional": {
+    "spatial_gate_pass": false,
+    "failure_reasons": [
+      "lpips: aggregate improvement below minimum",
+      "dists: aggregate improvement below minimum",
+      "crowd_run: fine correlation drop exceeds limit",
+      "four_people: fine correlation drop exceeds limit",
+      "johnny: fine correlation drop exceeds limit"
+    ],
+    "frames_per_variant": 48,
+    "source_balanced": {
+      "shipping": {
+        "lpips": 0.3004794493317604,
+        "dists": 0.12782609214385351,
+        "fine_correlation": 0.5644043305321653
+      },
+      "nanovsr_bidirectional": {
+        "lpips": 0.2934449411307772,
+        "dists": 0.12419175480802853,
+        "fine_correlation": 0.5171837741060451
+      }
+    },
+    "per_source": {
+      "shipping": {
+        "crowd_run": {
+          "lpips": 0.43136447854340076,
+          "dists": 0.16417375952005386,
+          "fine_correlation": 0.382468788148897
+        },
+        "four_people": {
+          "lpips": 0.21731479931622744,
+          "dists": 0.10246428474783897,
+          "fine_correlation": 0.6709973460460873
+        },
+        "johnny": {
+          "lpips": 0.252759070135653,
+          "dists": 0.11684023216366768,
+          "fine_correlation": 0.6397468574015117
+        }
+      },
+      "nanovsr_bidirectional": {
+        "crowd_run": {
+          "lpips": 0.4098404385149479,
+          "dists": 0.16730386763811111,
+          "fine_correlation": 0.36567746139418983
+        },
+        "four_people": {
+          "lpips": 0.21602350566536188,
+          "dists": 0.0988207496702671,
+          "fine_correlation": 0.6211160783738721
+        },
+        "johnny": {
+          "lpips": 0.2544708792120218,
+          "dists": 0.1064506471157074,
+          "fine_correlation": 0.5647577825500734
+        }
+      }
+    },
+    "perceptual_improvements": {
+      "lpips": 0.023410946128353705,
+      "dists": 0.028431889568641067
+    },
+    "per_source_changes": {
+      "crowd_run": {
+        "lpips": 0.04989757177302512,
+        "dists": -0.01906582469213003,
+        "fine_correlation": -0.01679132675470718
+      },
+      "four_people": {
+        "lpips": 0.005942041936069509,
+        "dists": 0.03555907394013902,
+        "fine_correlation": -0.049881267672215235
+      },
+      "johnny": {
+        "lpips": -0.006772493170868588,
+        "dists": 0.08892129753222966,
+        "fine_correlation": -0.07498907485143835
+      }
+    },
+    "status": "development-only spatial comparison; upstream pretraining overlap unverified; not a holdout promotion"
+  },
+  "nanovsr_causal": {
+    "spatial_gate_pass": false,
+    "failure_reasons": [
+      "crowd_run: fine correlation drop exceeds limit",
+      "four_people: fine correlation drop exceeds limit",
+      "johnny: fine correlation drop exceeds limit"
+    ],
+    "frames_per_variant": 48,
+    "source_balanced": {
+      "shipping": {
+        "lpips": 0.3004794493317604,
+        "dists": 0.12782609214385351,
+        "fine_correlation": 0.5644043305321653
+      },
+      "nanovsr_causal": {
+        "lpips": 0.2837894133602579,
+        "dists": 0.12325907374421756,
+        "fine_correlation": 0.5209880183584069
+      }
+    },
+    "per_source": {
+      "shipping": {
+        "crowd_run": {
+          "lpips": 0.43136447854340076,
+          "dists": 0.16417375952005386,
+          "fine_correlation": 0.382468788148897
+        },
+        "four_people": {
+          "lpips": 0.21731479931622744,
+          "dists": 0.10246428474783897,
+          "fine_correlation": 0.6709973460460873
+        },
+        "johnny": {
+          "lpips": 0.252759070135653,
+          "dists": 0.11684023216366768,
+          "fine_correlation": 0.6397468574015117
+        }
+      },
+      "nanovsr_causal": {
+        "crowd_run": {
+          "lpips": 0.38400370441377163,
+          "dists": 0.16457241401076317,
+          "fine_correlation": 0.36495417550572645
+        },
+        "four_people": {
+          "lpips": 0.21493618469685316,
+          "dists": 0.09864465892314911,
+          "fine_correlation": 0.623793982687
+        },
+        "johnny": {
+          "lpips": 0.25242835097014904,
+          "dists": 0.10656014829874039,
+          "fine_correlation": 0.5742158968824942
+        }
+      }
+    },
+    "perceptual_improvements": {
+      "lpips": 0.05554468370006549,
+      "dists": 0.03572837378534821
+    },
+    "per_source_changes": {
+      "crowd_run": {
+        "lpips": 0.10979293957989644,
+        "dists": -0.002428247314764098,
+        "fine_correlation": -0.017514612643170557
+      },
+      "four_people": {
+        "lpips": 0.010945479216594944,
+        "dists": 0.03727763126527284,
+        "fine_correlation": -0.04720336335908726
+      },
+      "johnny": {
+        "lpips": 0.0013084363909333652,
+        "dists": 0.08798411022093089,
+        "fine_correlation": -0.06553096051901752
+      }
+    },
+    "status": "development-only spatial comparison; upstream pretraining overlap unverified; not a holdout promotion"
+  }
+}
