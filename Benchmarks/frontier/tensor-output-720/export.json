@@ -1,0 +1,34 @@
+{
+  "complete": true,
+  "purpose": "Export identical 4x reconstruction with image versus tensor output boundaries.",
+  "checkpoint_sha256": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65",
+  "exporter_sha256": "f5243d2e5f1013434f179ac9eb4f1bb4f16c98cd82d47f82ea01d7273442ab95",
+  "torch": "2.14.0",
+  "coremltools": "9.0",
+  "precision": "identical shipping mixed precision; output storage type is the sole intervention",
+  "input": [
+    1280,
+    720
+  ],
+  "output": [
+    5120,
+    2880
+  ],
+  "models": {
+    "image4x": {
+      "Data/com.apple.CoreML/model.mlmodel": "750f9d229d249f2ea8364ccada898be967d908e5b7fe37fc72fc177bffc17222",
+      "Data/com.apple.CoreML/weights/weight.bin": "3b43b4c514cb65db9bbf54d2b0941dc7392c26f2099e12a77dab6faa085cdfb8",
+      "Manifest.json": "524f2f5ca4729cf77a2b3208773e71db94a8c6e16da7015e4aabfc9c3f12ca72"
+    },
+    "tensor4x_fp32": {
+      "Data/com.apple.CoreML/model.mlmodel": "571887ffc687e5e67b96f7ab1ac0cda8e8803623d2409b395ab8844142b1297b",
+      "Data/com.apple.CoreML/weights/weight.bin": "3b43b4c514cb65db9bbf54d2b0941dc7392c26f2099e12a77dab6faa085cdfb8",
+      "Manifest.json": "42394c1b2cd50a1ee61b17e4a35c728edd9b3ef2f0c9f2c9568a235002fee3f9"
+    },
+    "tensor4x_fp16": {
+      "Data/com.apple.CoreML/model.mlmodel": "f9f140e212cf9c25a3369cebc3de65412e6c3181d9211361f26af56a3354458b",
+      "Data/com.apple.CoreML/weights/weight.bin": "3b43b4c514cb65db9bbf54d2b0941dc7392c26f2099e12a77dab6faa085cdfb8",
+      "Manifest.json": "aa90a1658de151e0e051081faa6feacb00328266fc1608531c26f81c18b8b1cb"
+    }
+  }
+}

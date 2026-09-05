@@ -1,0 +1,252 @@
+{
+  "complete": true,
+  "numerical_scope": "Four synthetic native RGB probes; same frozen full4x shipping weights",
+  "quality_scope": "Reanalysis of already measured shipping RGB output, not a new native 720p quality capture",
+  "sources_sha256": {
+    "Tools/experiments/TensorOutputBench.swift": "d5c330c8a3055c64b42a27b09ef44a9d87c7b52790537e056ccbb41d8d77b97a",
+    "Lucid/Metal/CoreMLTensorImagePacker.swift": "f6458eb217be2ad333adf383deedaf9a18a9a648f85702652ac2c40b94680102",
+    ".build/TensorOutputBenchSplitTail": "10ad98c9754128258f9a014f0dcc364010efc3c27915520db40d7d58f3a8616a",
+    "Benchmarks/frontier/coverage-720-quality.json": "747da8934956500bff4cb7b52e76fa705d997fddeabf7d39f2d27f871d579641",
+    "Benchmarks/frontier/coverage-720-spec.json": "a43223396967d095e0fbe71305d4aa2ba3301f0e491c59f6c422ff60c647877e"
+  },
+  "quality_gates": {
+    "lanczos": {
+      "spatial_gate_pass": false,
+      "failure_reasons": [
+        "dists: aggregate improvement below minimum",
+        "crowd_run: dists regression exceeds limit",
+        "ducks_take_off: dists regression exceeds limit",
+        "park_joy: dists regression exceeds limit"
+      ],
+      "frames_per_variant": 48,
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.4627014348904292,
+          "dists": 0.08999549597501755,
+          "fine_correlation": 0.43355514300589254
+        },
+        "shipping": {
+          "lpips": 0.4265194283798337,
+          "dists": 0.09817066043615341,
+          "fine_correlation": 0.4408864347906525
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "crowd_run": {
+            "lpips": 0.42473360523581505,
+            "dists": 0.08142992854118347,
+            "fine_correlation": 0.4810066488998655
+          },
+          "ducks_take_off": {
+            "lpips": 0.51116032153368,
+            "dists": 0.06165037304162979,
+            "fine_correlation": 0.395112684680672
+          },
+          "park_joy": {
+            "lpips": 0.4522103779017925,
+            "dists": 0.12690618634223938,
+            "fine_correlation": 0.4245460954371401
+          }
+        },
+        "shipping": {
+          "crowd_run": {
+            "lpips": 0.37466881703585386,
+            "dists": 0.08513447269797325,
+            "fine_correlation": 0.5008995996696659
+          },
+          "ducks_take_off": {
+            "lpips": 0.48651760444045067,
+            "dists": 0.0675111711025238,
+            "fine_correlation": 0.3882154738019134
+          },
+          "park_joy": {
+            "lpips": 0.41837186366319656,
+            "dists": 0.14186633750796318,
+            "fine_correlation": 0.43354423090037814
+          }
+        }
+      },
+      "perceptual_improvements": {
+        "lpips": 0.07819730777183265,
+        "dists": -0.09083970672715957
+      },
+      "per_source_changes": {
+        "crowd_run": {
+          "lpips": 0.11787338600665909,
+          "dists": -0.045493643714991094,
+          "fine_correlation": 0.01989295076980041
+        },
+        "ducks_take_off": {
+          "lpips": 0.04820937004517789,
+          "dists": -0.09506508674224046,
+          "fine_correlation": -0.006897210878758608
+        },
+        "park_joy": {
+          "lpips": 0.07482914124086015,
+          "dists": -0.11788354529368172,
+          "fine_correlation": 0.008998135463238022
+        }
+      },
+      "status": "spatial holdout only; native/browser quality and release requirements remain"
+    },
+    "bicubic": {
+      "spatial_gate_pass": false,
+      "failure_reasons": [
+        "dists: aggregate improvement below minimum",
+        "ducks_take_off: dists regression exceeds limit",
+        "park_joy: dists regression exceeds limit"
+      ],
+      "frames_per_variant": 48,
+      "source_balanced": {
+        "bicubic": {
+          "lpips": 0.455057963108023,
+          "dists": 0.09206792712211609,
+          "fine_correlation": 0.4189695157466229
+        },
+        "shipping": {
+          "lpips": 0.4265194283798337,
+          "dists": 0.09817066043615341,
+          "fine_correlation": 0.4408864347906525
+        }
+      },
+      "per_source": {
+        "bicubic": {
+          "crowd_run": {
+            "lpips": 0.40940304286777973,
+            "dists": 0.08378040418028831,
+            "fine_correlation": 0.4649397445868411
+          },
+          "ducks_take_off": {
+            "lpips": 0.5112230014055967,
+            "dists": 0.06379996612668037,
+            "fine_correlation": 0.3836013674510822
+          },
+          "park_joy": {
+            "lpips": 0.44454784505069256,
+            "dists": 0.12862341105937958,
+            "fine_correlation": 0.40836743520194546
+          }
+        },
+        "shipping": {
+          "crowd_run": {
+            "lpips": 0.37466881703585386,
+            "dists": 0.08513447269797325,
+            "fine_correlation": 0.5008995996696659
+          },
+          "ducks_take_off": {
+            "lpips": 0.48651760444045067,
+            "dists": 0.0675111711025238,
+            "fine_correlation": 0.3882154738019134
+          },
+          "park_joy": {
+            "lpips": 0.41837186366319656,
+            "dists": 0.14186633750796318,
+            "fine_correlation": 0.43354423090037814
+          }
+        }
+      },
+      "perceptual_improvements": {
+        "lpips": 0.06271406511221678,
+        "dists": -0.06628511692180106
+      },
+      "per_source_changes": {
+        "crowd_run": {
+          "lpips": 0.08484115210434229,
+          "dists": -0.01616211488752306,
+          "fine_correlation": 0.03595985508282479
+        },
+        "ducks_take_off": {
+          "lpips": 0.04832606689687102,
+          "dists": -0.05816938787200154,
+          "fine_correlation": 0.004614106350831204
+        },
+        "park_joy": {
+          "lpips": 0.05888225908397127,
+          "dists": -0.10295891190811246,
+          "fine_correlation": 0.025176795698432675
+        }
+      },
+      "status": "spatial holdout only; native/browser quality and release requirements remain"
+    },
+    "bilinear": {
+      "spatial_gate_pass": false,
+      "failure_reasons": [
+        "dists: aggregate improvement below minimum",
+        "park_joy: dists regression exceeds limit"
+      ],
+      "frames_per_variant": 48,
+      "source_balanced": {
+        "bilinear": {
+          "lpips": 0.4787624329328537,
+          "dists": 0.09979451199372609,
+          "fine_correlation": 0.41776558801382846
+        },
+        "shipping": {
+          "lpips": 0.4265194283798337,
+          "dists": 0.09817066043615341,
+          "fine_correlation": 0.4408864347906525
+        }
+      },
+      "per_source": {
+        "bilinear": {
+          "crowd_run": {
+            "lpips": 0.436461815610528,
+            "dists": 0.09433898702263832,
+            "fine_correlation": 0.4607873699917883
+          },
+          "ducks_take_off": {
+            "lpips": 0.5348079036921263,
+            "dists": 0.07033436745405197,
+            "fine_correlation": 0.38648420686511525
+          },
+          "park_joy": {
+            "lpips": 0.46501757949590683,
+            "dists": 0.134710181504488,
+            "fine_correlation": 0.4060251871845819
+          }
+        },
+        "shipping": {
+          "crowd_run": {
+            "lpips": 0.37466881703585386,
+            "dists": 0.08513447269797325,
+            "fine_correlation": 0.5008995996696659
+          },
+          "ducks_take_off": {
+            "lpips": 0.48651760444045067,
+            "dists": 0.0675111711025238,
+            "fine_correlation": 0.3882154738019134
+          },
+          "park_joy": {
+            "lpips": 0.41837186366319656,
+            "dists": 0.14186633750796318,
+            "fine_correlation": 0.43354423090037814
+          }
+        }
+      },
+      "perceptual_improvements": {
+        "lpips": 0.10912093547729773,
+        "dists": 0.016271952486473062
+      },
+      "per_source_changes": {
+        "crowd_run": {
+          "lpips": 0.1415771010534732,
+          "dists": 0.09756850921513793,
+          "fine_correlation": 0.04011222967787759
+        },
+        "ducks_take_off": {
+          "lpips": 0.09029466265980046,
+          "dists": 0.04013964230747513,
+          "fine_correlation": 0.0017312669367981481
+        },
+        "park_joy": {
+          "lpips": 0.10030957514181649,
+          "dists": -0.05312260679595893,
+          "fine_correlation": 0.02751904371579622
+        }
+      },
+      "status": "spatial holdout only; native/browser quality and release requirements remain"
+    }
+  },
+  "production_admission": false
+}
