@@ -16,7 +16,7 @@ These papers combine established and newer ideas. Selecting a new title is not t
 
 `Tools/architectures/causal_detail.py` is a small, explicitly causal reconstruction prototype, separate from shipping. It accepts the current frame and caller-owned feature history. It packs every source sample into channels on a grid with 16× less area, updates bounded history, applies image-conditioned low-rank channel mixing and local gated detail blocks, then reconstructs a 2× or 4× residual. A bilinear path preserves the initial image; the residual starts at zero.
 
-This is an original engineering combination for experimentation, not a reproduction of the papers and not a verified novelty claim. The subsequent 8,000-step screen now records a quality failure versus Lanczos; see `causal-training-v1.md`. No trained weights have been promoted. The first tests cover reset isolation, bounded recurrence, both output scales and an effective gradient path through temporal state. The Core ML probe uses nonzero random residual weights so constant folding cannot remove the reconstruction work. It checks conversion agreement before measuring runtime and includes explicit state transfers.
+This is an original engineering combination for experimentation, not a reproduction of the papers and not a verified novelty claim. Both the 8,000-step screen and completed 20,000-step causal model fail quality versus Lanczos; see `causal-training-v1.md`. No trained weights have been promoted. Tests cover reset isolation, bounded recurrence, both output scales and an effective gradient path through temporal state. Core ML probes now check both nonzero random graphs and trained weights across independently accumulated state and mid-sequence resets, including explicit state transfers.
 
 ## Mac feasibility results
 
@@ -29,11 +29,12 @@ Both 2× prototypes passed Core ML conversion checks. Worst observed image diffe
 
 The wider graph retains plausible room for 30 fps inference, while the all-compute-units configuration is slower. Explicit float32 history is 8.29 MB / 16.59 MB respectively. See `causal-detail-ch16-profile.json` and `causal-detail-ch32-profile.json` for the complete 360p/720p/1080p measurements and limitations. These are untrained graph costs, not image quality, end-to-end latency or delivered browser cadence. Larger temporal capacity, motion reliability and training may change the design and cost.
 
-## Next experiments, in order
+## Current experiment sequence
 
-1. Measure converted 2× graphs at 360p, 720p and 1080p on this Mac. Refuse a design that already exceeds the frame budget before browser integration.
-2. Build true consecutive, codec-degraded 2× training sequences with source-family split receipts. Do not relabel the old 4× patch bank as 2× training or treat patch holdouts as independent validation.
-3. Train the causal reconstruction model on the RTX 4080 after checking other jobs. Use short-to-long sequences, controlled reconstruction/feature supervision, and a matched no-history control. Restrict any generative teacher to training unless actual Mac measurements justify it at inference.
-4. Require independent perceptual/detail gains and temporal stability, then integrate explicit feature state with cut/seek/reconnect resets. Measure sustained native/browser cadence and latency, including all copying and presentation.
+1. Completed architecture probes at 360p, 720p and 1080p. The trained v1 1080p→4K graph also passes recurrent conversion checks, with CPU+GPU means of 18.8–20.4 ms in two short probes. This is not playback cadence.
+2. Built 168 true consecutive codec-degraded 2× sequences with source-family receipts and shared HR/LR geometry. Training and validation are separated by source family; references still inherit source compression.
+3. Completed causal v1 training on the RTX 4080; its matched no-history control follows in the same protected experiment. The completed causal model is rejected. Forcing resets scarcely changes spatial quality; changing only its interpolation floor improves detail but increases flicker.
+4. Implemented v2 with a stronger fixed interpolation floor and direct packed-pixel bypass beside temporal features. Its untrained nonzero graph passes conversion and measures approximately 21 ms mean at 1080p→4K. Train it with the same bank and schedule after the existing GPU job finishes, then score it against the floor, v1 and controls. No v2 quality result is implied by timing.
+5. Require independent perceptual/detail gains and temporal stability before integrating explicit feature state with cut/seek/reconnect resets. A stronger training teacher remains an option to test, not an implemented feature. Measure sustained native/browser cadence and latency, including all copying and presentation.
 
 The regular Codex goal remains active. Quality, long-duration temporal behavior, higher-resolution coverage, end-to-end cadence and final delivery are unfinished.

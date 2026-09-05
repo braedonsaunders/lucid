@@ -166,11 +166,9 @@ def main():
     models = {label: load(path, device) for label, path in args.checkpoint}
     models.update({label: load_efrlfn(repo, weights, device) for label, repo, weights in args.efrlfn})
     for label, path in args.causal:
-        from architectures.causal_detail import CausalDetail
+        from architectures.causal_detail_v2 import make_model
         state = torch.load(path, map_location='cpu', weights_only=False)
-        if state['architecture'] != 'causal_detail_v1':
-            raise ValueError('unrecognized causal architecture')
-        model = CausalDetail(state['channels'], state['blocks'], state['scale']).eval().to(device)
+        model = make_model(state['architecture'], state['channels'], state['blocks'], state['scale']).eval().to(device)
         model.load_state_dict(state['model'], strict=True)
         model.no_history = state['no_history']
         models[label] = model, state['step'], 0

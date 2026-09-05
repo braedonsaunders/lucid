@@ -1,0 +1,261 @@
+{
+  "untrained": true,
+  "purpose": "Core ML graph correctness and latency feasibility only",
+  "checkpoint_sha256": null,
+  "checkpoint_step": null,
+  "no_history": false,
+  "channels": 32,
+  "blocks": 4,
+  "scale": 2,
+  "architecture": "causal_detail_v2",
+  "parameters": 57512,
+  "coremltools": "9.0",
+  "torch": "2.14.0",
+  "architecture_sha256": "cd195f8b02d53401560cbc81a786cc552207df0558c5b6407bc1ef036872ddea",
+  "architecture_v2_sha256": "5693aa3c890df3faa5474789f07b7ef88bdf8081c817746386afdb1023154991",
+  "includes": "synchronous Python Core ML prediction with PIL image and explicit feature-state copies",
+  "excludes": "video decode, browser transport, app rendering; conversion probes do not measure reconstruction quality",
+  "complete": true,
+  "rows": [
+    {
+      "input": "640x360",
+      "output": "1280x720",
+      "compute_units": "CPU_AND_GPU",
+      "mean_ms": 3.319616604130715,
+      "p95_ms": 3.561262198491022,
+      "samples_ms": [
+        3.103708033449948,
+        3.600000054575503,
+        3.2244999893009663,
+        3.513915929943323,
+        3.4319160040467978,
+        3.157875034958124,
+        3.4608329879119992,
+        2.975667011924088,
+        3.427583957090974,
+        3.300167038105428
+      ],
+      "conversion_max_pixel_error_255": 0.7456817626953125,
+      "conversion_max_state_error": 0.0006390810012817383,
+      "conversion_sequence": [
+        {
+          "frame": 0,
+          "history_valid": false,
+          "max_pixel_error_255": 0.731689453125,
+          "max_state_error": 0.0005737543106079102
+        },
+        {
+          "frame": 1,
+          "history_valid": true,
+          "max_pixel_error_255": 0.7456817626953125,
+          "max_state_error": 0.0005792975425720215
+        },
+        {
+          "frame": 2,
+          "history_valid": true,
+          "max_pixel_error_255": 0.7321319580078125,
+          "max_state_error": 0.0006121993064880371
+        },
+        {
+          "frame": 3,
+          "history_valid": true,
+          "max_pixel_error_255": 0.7373809814453125,
+          "max_state_error": 0.0006390810012817383
+        },
+        {
+          "frame": 4,
+          "history_valid": false,
+          "max_pixel_error_255": 0.731689453125,
+          "max_state_error": 0.0005737543106079102
+        },
+        {
+          "frame": 5,
+          "history_valid": true,
+          "max_pixel_error_255": 0.718353271484375,
+          "max_state_error": 0.0005792975425720215
+        }
+      ],
+      "state_bytes_fp32": 1843200
+    },
+    {
+      "input": "640x360",
+      "output": "1280x720",
+      "compute_units": "ALL",
+      "mean_ms": 3.087362612131983,
+      "p95_ms": 3.264910710277036,
+      "samples_ms": [
+        3.004708094522357,
+        3.083209041506052,
+        3.220291924662888,
+        2.908834023401141,
+        3.060291986912489,
+        3.1183329410851,
+        3.0776250641793013,
+        3.0774159822613,
+        3.301416989415884,
+        3.0215000733733177
+      ],
+      "conversion_max_pixel_error_255": 0.786407470703125,
+      "conversion_max_state_error": 0.004435017704963684,
+      "conversion_sequence": [
+        {
+          "frame": 0,
+          "history_valid": false,
+          "max_pixel_error_255": 0.7730865478515625,
+          "max_state_error": 0.002121567726135254
+        },
+        {
+          "frame": 1,
+          "history_valid": true,
+          "max_pixel_error_255": 0.7642364501953125,
+          "max_state_error": 0.0040295422077178955
+        },
+        {
+          "frame": 2,
+          "history_valid": true,
+          "max_pixel_error_255": 0.786407470703125,
+          "max_state_error": 0.004435017704963684
+        },
+        {
+          "frame": 3,
+          "history_valid": true,
+          "max_pixel_error_255": 0.778106689453125,
+          "max_state_error": 0.004264354705810547
+        },
+        {
+          "frame": 4,
+          "history_valid": false,
+          "max_pixel_error_255": 0.7730865478515625,
+          "max_state_error": 0.002121567726135254
+        },
+        {
+          "frame": 5,
+          "history_valid": true,
+          "max_pixel_error_255": 0.7642364501953125,
+          "max_state_error": 0.0040295422077178955
+        }
+      ],
+      "state_bytes_fp32": 1843200
+    },
+    {
+      "input": "1920x1080",
+      "output": "3840x2160",
+      "compute_units": "CPU_AND_GPU",
+      "mean_ms": 21.429133298806846,
+      "p95_ms": 21.654791192850098,
+      "samples_ms": [
+        21.301375003531575,
+        21.351125091314316,
+        21.739541087299585,
+        21.41483302693814,
+        21.551207988522947,
+        21.40816696919501,
+        21.265999996103346,
+        21.331916912458837,
+        21.416874951682985,
+        21.51029196102172
+      ],
+      "conversion_max_pixel_error_255": 0.77972412109375,
+      "conversion_max_state_error": 0.0006669163703918457,
+      "conversion_sequence": [
+        {
+          "frame": 0,
+          "history_valid": false,
+          "max_pixel_error_255": 0.7516326904296875,
+          "max_state_error": 0.0006300210952758789
+        },
+        {
+          "frame": 1,
+          "history_valid": true,
+          "max_pixel_error_255": 0.7597503662109375,
+          "max_state_error": 0.0006070137023925781
+        },
+        {
+          "frame": 2,
+          "history_valid": true,
+          "max_pixel_error_255": 0.77972412109375,
+          "max_state_error": 0.000644683837890625
+        },
+        {
+          "frame": 3,
+          "history_valid": true,
+          "max_pixel_error_255": 0.76483154296875,
+          "max_state_error": 0.0006669163703918457
+        },
+        {
+          "frame": 4,
+          "history_valid": false,
+          "max_pixel_error_255": 0.7516326904296875,
+          "max_state_error": 0.0006300210952758789
+        },
+        {
+          "frame": 5,
+          "history_valid": true,
+          "max_pixel_error_255": 0.7597503662109375,
+          "max_state_error": 0.0006070137023925781
+        }
+      ],
+      "state_bytes_fp32": 16588800
+    },
+    {
+      "input": "1920x1080",
+      "output": "3840x2160",
+      "compute_units": "ALL",
+      "mean_ms": 35.09170009056106,
+      "p95_ms": 35.88697293889709,
+      "samples_ms": [
+        35.89066700078547,
+        35.882457974366844,
+        35.26337502989918,
+        35.044249962083995,
+        34.28387502208352,
+        35.17854190431535,
+        34.30583293084055,
+        34.26608396694064,
+        35.813917056657374,
+        34.98800005763769
+      ],
+      "conversion_max_pixel_error_255": 0.781036376953125,
+      "conversion_max_state_error": 0.0033996105194091797,
+      "conversion_sequence": [
+        {
+          "frame": 0,
+          "history_valid": false,
+          "max_pixel_error_255": 0.753082275390625,
+          "max_state_error": 0.0007531642913818359
+        },
+        {
+          "frame": 1,
+          "history_valid": true,
+          "max_pixel_error_255": 0.772796630859375,
+          "max_state_error": 0.0030620694160461426
+        },
+        {
+          "frame": 2,
+          "history_valid": true,
+          "max_pixel_error_255": 0.77972412109375,
+          "max_state_error": 0.0033996105194091797
+        },
+        {
+          "frame": 3,
+          "history_valid": true,
+          "max_pixel_error_255": 0.781036376953125,
+          "max_state_error": 0.0033284425735473633
+        },
+        {
+          "frame": 4,
+          "history_valid": false,
+          "max_pixel_error_255": 0.753082275390625,
+          "max_state_error": 0.0007531642913818359
+        },
+        {
+          "frame": 5,
+          "history_valid": true,
+          "max_pixel_error_255": 0.772796630859375,
+          "max_state_error": 0.0030620694160461426
+        }
+      ],
+      "state_bytes_fp32": 16588800
+    }
+  ]
+}

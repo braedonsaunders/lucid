@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Measure a Core ML deployment prototype; untrained weights imply no quality claim."""
+"""Check recurrent Core ML conversion and measure graph latency, not playback."""
 import argparse
 import hashlib
 import json
 from pathlib import Path
+import platform
 import sys
 import time
-import warnings
 
 import numpy as np
 from PIL import Image
@@ -14,7 +14,7 @@ import torch
 import coremltools as ct
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from architectures.causal_detail import CausalDetail
+from architectures.causal_detail_v2 import make_model
 
 
 class ImageOutput(torch.nn.Module):
@@ -31,24 +31,42 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sizes', nargs='+', default=['640x360', '1280x720'])
     parser.add_argument('--channels', type=int, default=16)
+    parser.add_argument('--architecture', choices=('causal_detail_v1', 'causal_detail_v2'), default='causal_detail_v1')
     parser.add_argument('--blocks', type=int, default=4)
     parser.add_argument('--scale', type=int, default=2)
+    parser.add_argument('--checkpoint', type=Path,
+                        help='Trusted local causal training checkpoint; otherwise random graph probe')
     parser.add_argument('--out', type=Path, default=Path('.build/causal-detail'))
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     torch.manual_seed(20260904)
-    model = CausalDetail(args.channels, args.blocks, args.scale).eval()
-    # A zero head can be constant-folded away. Use nonzero probe weights so the
-    # entire architecture is measured. These weights are not a trained model.
-    torch.nn.init.normal_(model.head.weight, std=0.002)
+    no_history = False
+    if args.checkpoint:
+        checkpoint = torch.load(args.checkpoint, map_location='cpu', weights_only=False)
+        args.architecture = checkpoint['architecture']
+        args.channels, args.blocks, args.scale = (checkpoint[k] for k in ('channels', 'blocks', 'scale'))
+        no_history = checkpoint['no_history']
+    model = make_model(args.architecture, args.channels, args.blocks, args.scale).eval()
+    if args.checkpoint:
+        model.load_state_dict(checkpoint['model'], strict=True)
+    else:
+        # A zero head can be constant-folded away. Keep the entire random graph.
+        torch.nn.init.normal_(model.head.weight, std=0.002)
     wrapper = ImageOutput(model).eval()
-    report = {'untrained': True, 'purpose': 'Core ML graph correctness and latency feasibility only',
+    report = {'untrained': not bool(args.checkpoint), 'purpose': 'Core ML graph correctness and latency feasibility only',
+        'checkpoint_sha256': hashlib.sha256(args.checkpoint.read_bytes()).hexdigest() if args.checkpoint else None,
+        'checkpoint_step': checkpoint['step'] if args.checkpoint else None, 'no_history': no_history,
         'channels': args.channels, 'blocks': args.blocks, 'scale': args.scale,
+        'architecture': args.architecture,
         'parameters': sum(p.numel() for p in model.parameters()),
+        'platform': platform.platform(),
+        'profiler_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         'coremltools': str(ct.__version__), 'torch': str(torch.__version__),
         'architecture_sha256': hashlib.sha256(Path(__file__).resolve().parents[1].joinpath('architectures/causal_detail.py').read_bytes()).hexdigest(),
+        'architecture_v2_sha256': hashlib.sha256(Path(__file__).resolve().parents[1].joinpath('architectures/causal_detail_v2.py').read_bytes()).hexdigest(),
         'includes': 'synchronous Python Core ML prediction with PIL image and explicit feature-state copies',
-        'excludes': 'video decode, browser transport, app rendering; no trained quality result', 'rows': []}
+        'excludes': 'video decode, browser transport, app rendering; conversion probes do not measure reconstruction quality',
+        'complete': False, 'rows': []}
     for size in args.sizes:
         width, height = map(int, size.split('x'))
         pixels = np.random.default_rng(71).integers(0, 256, (height, width, 3), dtype=np.uint8)
@@ -57,7 +75,6 @@ def main():
         valid = torch.ones(1, 1, 1, 1)
         with torch.inference_mode():
             traced = torch.jit.trace(wrapper, (frame, initial, valid))
-            reference, state_reference = wrapper(frame, initial, valid)
         path = args.out / f'causal_ch{args.channels}_x{args.scale}_{size}.mlpackage'
         converted = ct.convert(traced, inputs=[
             ct.ImageType(name='input', shape=frame.shape, scale=1/255, color_layout=ct.colorlayout.RGB),
@@ -69,14 +86,31 @@ def main():
         converted.save(str(path))
         for units in (ct.ComputeUnit.CPU_AND_GPU, ct.ComputeUnit.ALL):
             native = ct.models.MLModel(str(path), compute_units=units)
-            inputs = {'input': Image.fromarray(pixels), 'history_features': initial.numpy(), 'valid': valid.numpy()}
-            first = native.predict(inputs)
-            expected = reference[0].permute(1, 2, 0).numpy().clip(0, 255)
-            actual = np.asarray(first['output'].convert('RGB'), dtype=np.float32)
-            max_error = float(np.max(np.abs(actual-expected)))
-            state_error = float(np.max(np.abs(first['next_state']-state_reference.numpy())))
+            # Roll each implementation's own state, rather than feeding the
+            # native graph perfect Torch history. Include a mid-sequence reset.
+            state_reference, state_native = initial, initial.numpy()
+            parity = []
+            with torch.inference_mode():
+                for index in range(6):
+                    moved = np.roll(pixels, (index, -index), axis=(0, 1)).copy()
+                    current = torch.from_numpy(moved).permute(2, 0, 1)[None].float()/255
+                    use_history = float(index not in (0, 4) and not no_history)
+                    reset = torch.full_like(valid, use_history)
+                    reference, state_reference = wrapper(current, state_reference, reset)
+                    result = native.predict({'input': Image.fromarray(moved),
+                        'history_features': state_native, 'valid': reset.numpy()})
+                    state_native = result['next_state']
+                    expected = reference[0].permute(1, 2, 0).numpy().clip(0, 255)
+                    actual = np.asarray(result['output'].convert('RGB'), dtype=np.float32)
+                    parity.append({'frame': index, 'history_valid': bool(use_history),
+                        'max_pixel_error_255': float(np.max(np.abs(actual-expected))),
+                        'max_state_error': float(np.max(np.abs(state_native-state_reference.numpy())))})
+            max_error = max(p['max_pixel_error_255'] for p in parity)
+            state_error = max(p['max_state_error'] for p in parity)
             if max_error > 2 or state_error > 0.02:
                 raise RuntimeError(f'conversion mismatch: image={max_error}, state={state_error}')
+            inputs = {'input': Image.fromarray(pixels), 'history_features': initial.numpy(),
+                      'valid': np.full((1, 1, 1, 1), float(not no_history), dtype=np.float32)}
             samples = []
             for i in range(15):
                 started = time.perf_counter()
@@ -90,10 +124,13 @@ def main():
                 'p95_ms': float(np.percentile(samples, 95)), 'samples_ms': samples,
                 'conversion_max_pixel_error_255': max_error,
                 'conversion_max_state_error': state_error,
+                'conversion_sequence': parity,
                 'state_bytes_fp32': initial.numel()*4}
             report['rows'].append(row)
             (args.out/'profile.json').write_text(json.dumps(report, indent=2)+'\n')
             print(json.dumps(row), flush=True)
+    report['complete'] = True
+    (args.out/'profile.json').write_text(json.dumps(report, indent=2)+'\n')
 
 
 if __name__ == '__main__':

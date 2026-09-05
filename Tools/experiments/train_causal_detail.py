@@ -14,7 +14,7 @@ import torch
 from torch.nn import functional as F
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from architectures.causal_detail import CausalDetail
+from architectures.causal_detail_v2 import make_model
 from reconstruction_loss import sobel_loss
 from build_causal_bank import validate_sources
 
@@ -92,9 +92,11 @@ def validate(model, data, device, no_history):
         output = sequence(model, x, no_history).clamp(0, 1)
         mse = float((output-target).square().mean())
         baseline = F.interpolate(x.flatten(0, 1), scale_factor=2, mode='bilinear', align_corners=False).reshape_as(target)
+        floor = model.floor(x.flatten(0, 1)).reshape_as(target) if hasattr(model, 'floor') else baseline
         residual_change = float(torch.diff(output-target, dim=1).abs().mean())
         rows.append({'id': identity, 'psnr_rgb': -10*math.log10(max(mse, 1e-12)),
             'mse_rgb': mse, 'bilinear_mse_rgb': float((baseline-target).square().mean()),
+            'floor_mse_rgb': float((floor.clamp(0, 1)-target).square().mean()),
             'bilinear_psnr_rgb': -10*math.log10(max(float((baseline-target).square().mean()), 1e-12)),
             'temporal_residual_l1': residual_change})
     model.train()
@@ -107,6 +109,7 @@ def main():
     ap.add_argument('--out', type=Path, required=True)
     ap.add_argument('--steps', type=int, default=20000)
     ap.add_argument('--channels', type=int, default=32)
+    ap.add_argument('--architecture', choices=('causal_detail_v1', 'causal_detail_v2'), default='causal_detail_v1')
     ap.add_argument('--blocks', type=int, default=4)
     ap.add_argument('--batch', type=int, default=4)
     ap.add_argument('--crop', type=int, default=96)
@@ -128,15 +131,17 @@ def main():
     if args.crop > manifest['lr_patch']:
         ap.error('crop exceeds bank dimensions')
     rng = np.random.default_rng(args.seed)
-    model = CausalDetail(args.channels, args.blocks, scale=2).to(device)
+    model = make_model(args.architecture, args.channels, args.blocks, scale=2).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.99), weight_decay=0)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.steps, eta_min=args.lr*0.01)
     args.out.mkdir(parents=True, exist_ok=True)
-    metadata = {'architecture': 'causal_detail_v1', 'scale': 2, 'channels': args.channels,
+    metadata = {'architecture': args.architecture, 'scale': 2, 'channels': args.channels,
+        'parameters': sum(p.numel() for p in model.parameters()),
         'blocks': args.blocks, 'no_history': args.no_history, 'arguments': {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
         'bank_sha256': digest(args.bank/'manifest.json'), 'torch': str(torch.__version__),
         'device': str(device), 'training_code_sha256': digest(__file__),
-        'architecture_sha256': digest(Path(__file__).resolve().parents[1]/'architectures/causal_detail.py')}
+        'architecture_sha256': digest(Path(__file__).resolve().parents[1]/'architectures/causal_detail.py'),
+        'architecture_v2_sha256': digest(Path(__file__).resolve().parents[1]/'architectures/causal_detail_v2.py')}
     (args.out/'experiment.json').write_text(json.dumps(metadata, indent=2)+'\n')
     started = time.monotonic()
     print(json.dumps(metadata), flush=True)
@@ -171,7 +176,7 @@ def main():
                         'cuda': torch.cuda.get_rng_state_all() if device.type == 'cuda' else []}}
             temporary = args.out/'latest.tmp.pth'; torch.save(state, temporary); temporary.replace(args.out/'latest.pth')
             torch.save(state, args.out/f'step{step+1:06d}.pth')
-            print(f'validation step={step+1} psnr={-10*math.log10(max(np.mean([r["mse_rgb"] for r in rows]), 1e-12)):.3f} bilinear={-10*math.log10(max(np.mean([r["bilinear_mse_rgb"] for r in rows]), 1e-12)):.3f}', flush=True)
+            print(f'validation step={step+1} psnr={-10*math.log10(max(np.mean([r["mse_rgb"] for r in rows]), 1e-12)):.3f} bilinear={-10*math.log10(max(np.mean([r["bilinear_mse_rgb"] for r in rows]), 1e-12)):.3f} floor={-10*math.log10(max(np.mean([r["floor_mse_rgb"] for r in rows]), 1e-12)):.3f}', flush=True)
     print(f'finished {args.steps} steps in {(time.monotonic()-started)/60:.2f} minutes', flush=True)
 
 

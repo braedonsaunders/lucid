@@ -1,0 +1,1377 @@
+{
+  "purpose": "Separate spatial-floor and history effects; post-hoc variants are not trained models.",
+  "checkpoint_sha256": "19d9026b3abf9675e72cd758eb2b8288aa7930230d8acce9e182512a48268555",
+  "manifest_sha256": "a42d1514b0c0ebb6b10d7107fe8c7d944022c9cca4a9f20992e560448ef4f696",
+  "sequences": [
+    {
+      "id": "crowd_run-h264-350000",
+      "source_id": "crowd_run",
+      "source_path": "/Users/braedonsaunders/Documents/Code/lucid/.build/eval-sources/eval-crowd_run.mp4",
+      "source_sha256": "4c58da6be716781cfbb53e6ee477b1175770df55cc36475439fbb96c875b164a",
+      "reference": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/crowd_run-reference.mkv",
+      "reference_sha256": "1bd93e9bf0c95f1ead5d4db530e00091682c78575709b0006e289a739f72660a",
+      "degraded": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/crowd_run-h264-350000.mkv",
+      "degraded_sha256": "464b201a7f38b7d08aa0632b5f1eee99f31f352bdd231a988c7ab28101c03d38",
+      "frames": 16,
+      "frame_rate": "50/1",
+      "width": 640,
+      "height": 360,
+      "scale": 2,
+      "codec": "h264",
+      "bitrate": 350000,
+      "gop": 60,
+      "color_contract": "SDR Rec709 video range; existing source compression remains part of reference",
+      "split": "development-validation; do not use for training"
+    },
+    {
+      "id": "crowd_run-h264-1000000",
+      "source_id": "crowd_run",
+      "source_path": "/Users/braedonsaunders/Documents/Code/lucid/.build/eval-sources/eval-crowd_run.mp4",
+      "source_sha256": "4c58da6be716781cfbb53e6ee477b1175770df55cc36475439fbb96c875b164a",
+      "reference": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/crowd_run-reference.mkv",
+      "reference_sha256": "1bd93e9bf0c95f1ead5d4db530e00091682c78575709b0006e289a739f72660a",
+      "degraded": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/crowd_run-h264-1000000.mkv",
+      "degraded_sha256": "492a942067b82baca55d259c821e54d0804df85044965e7beb53ec2b62b0f77a",
+      "frames": 16,
+      "frame_rate": "50/1",
+      "width": 640,
+      "height": 360,
+      "scale": 2,
+      "codec": "h264",
+      "bitrate": 1000000,
+      "gop": 60,
+      "color_contract": "SDR Rec709 video range; existing source compression remains part of reference",
+      "split": "development-validation; do not use for training"
+    },
+    {
+      "id": "crowd_run-vp9-350000",
+      "source_id": "crowd_run",
+      "source_path": "/Users/braedonsaunders/Documents/Code/lucid/.build/eval-sources/eval-crowd_run.mp4",
+      "source_sha256": "4c58da6be716781cfbb53e6ee477b1175770df55cc36475439fbb96c875b164a",
+      "reference": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/crowd_run-reference.mkv",
+      "reference_sha256": "1bd93e9bf0c95f1ead5d4db530e00091682c78575709b0006e289a739f72660a",
+      "degraded": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/crowd_run-vp9-350000.mkv",
+      "degraded_sha256": "1a051ecc3e7ce5939796e6f768526f36425475d2f30d9042ce03e450315a1c48",
+      "frames": 16,
+      "frame_rate": "50/1",
+      "width": 640,
+      "height": 360,
+      "scale": 2,
+      "codec": "vp9",
+      "bitrate": 350000,
+      "gop": 60,
+      "color_contract": "SDR Rec709 video range; existing source compression remains part of reference",
+      "split": "development-validation; do not use for training"
+    },
+    {
+      "id": "crowd_run-vp9-1000000",
+      "source_id": "crowd_run",
+      "source_path": "/Users/braedonsaunders/Documents/Code/lucid/.build/eval-sources/eval-crowd_run.mp4",
+      "source_sha256": "4c58da6be716781cfbb53e6ee477b1175770df55cc36475439fbb96c875b164a",
+      "reference": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/crowd_run-reference.mkv",
+      "reference_sha256": "1bd93e9bf0c95f1ead5d4db530e00091682c78575709b0006e289a739f72660a",
+      "degraded": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/crowd_run-vp9-1000000.mkv",
+      "degraded_sha256": "8bbeab5642e410d6b2303b4568a85c994a1e1a34faeb828bf0545f9e608b4bb1",
+      "frames": 16,
+      "frame_rate": "50/1",
+      "width": 640,
+      "height": 360,
+      "scale": 2,
+      "codec": "vp9",
+      "bitrate": 1000000,
+      "gop": 60,
+      "color_contract": "SDR Rec709 video range; existing source compression remains part of reference",
+      "split": "development-validation; do not use for training"
+    },
+    {
+      "id": "four_people-h264-350000",
+      "source_id": "four_people",
+      "source_path": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-eval-sources/four_people.mkv",
+      "source_sha256": "36b77c9b5e805d0c2208f0de8efc8a144de48094c7298b2c47baa3e66830ec8f",
+      "reference": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/four_people-reference.mkv",
+      "reference_sha256": "1493fd15d4e4afae43de630692bb497b05ec563e11acbb32f8c41ec9243a5fe0",
+      "degraded": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/four_people-h264-350000.mkv",
+      "degraded_sha256": "f9db6b607091bed74060a3b3c81f0390e8dce40adf639add667df51d828a8c54",
+      "frames": 16,
+      "frame_rate": "60/1",
+      "width": 640,
+      "height": 360,
+      "scale": 2,
+      "codec": "h264",
+      "bitrate": 350000,
+      "gop": 60,
+      "color_contract": "SDR Rec709 video range; existing source compression remains part of reference",
+      "split": "development-validation; do not use for training"
+    },
+    {
+      "id": "four_people-h264-1000000",
+      "source_id": "four_people",
+      "source_path": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-eval-sources/four_people.mkv",
+      "source_sha256": "36b77c9b5e805d0c2208f0de8efc8a144de48094c7298b2c47baa3e66830ec8f",
+      "reference": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/four_people-reference.mkv",
+      "reference_sha256": "1493fd15d4e4afae43de630692bb497b05ec563e11acbb32f8c41ec9243a5fe0",
+      "degraded": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/four_people-h264-1000000.mkv",
+      "degraded_sha256": "75be50121c11c245db5d16be4d1a4ef7eb82f8c31f51cbad1736ab9c2b7dfcef",
+      "frames": 16,
+      "frame_rate": "60/1",
+      "width": 640,
+      "height": 360,
+      "scale": 2,
+      "codec": "h264",
+      "bitrate": 1000000,
+      "gop": 60,
+      "color_contract": "SDR Rec709 video range; existing source compression remains part of reference",
+      "split": "development-validation; do not use for training"
+    },
+    {
+      "id": "four_people-vp9-350000",
+      "source_id": "four_people",
+      "source_path": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-eval-sources/four_people.mkv",
+      "source_sha256": "36b77c9b5e805d0c2208f0de8efc8a144de48094c7298b2c47baa3e66830ec8f",
+      "reference": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/four_people-reference.mkv",
+      "reference_sha256": "1493fd15d4e4afae43de630692bb497b05ec563e11acbb32f8c41ec9243a5fe0",
+      "degraded": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/four_people-vp9-350000.mkv",
+      "degraded_sha256": "898c0eb82777bf88a3d80c2136f289b978313d3071fc53aaf10d18e08a12d98d",
+      "frames": 16,
+      "frame_rate": "60/1",
+      "width": 640,
+      "height": 360,
+      "scale": 2,
+      "codec": "vp9",
+      "bitrate": 350000,
+      "gop": 60,
+      "color_contract": "SDR Rec709 video range; existing source compression remains part of reference",
+      "split": "development-validation; do not use for training"
+    },
+    {
+      "id": "four_people-vp9-1000000",
+      "source_id": "four_people",
+      "source_path": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-eval-sources/four_people.mkv",
+      "source_sha256": "36b77c9b5e805d0c2208f0de8efc8a144de48094c7298b2c47baa3e66830ec8f",
+      "reference": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/four_people-reference.mkv",
+      "reference_sha256": "1493fd15d4e4afae43de630692bb497b05ec563e11acbb32f8c41ec9243a5fe0",
+      "degraded": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/four_people-vp9-1000000.mkv",
+      "degraded_sha256": "345a8e559c004a280d13781c4575bbf8a87a01f7fc7caa7a33ae7a7c0f734a3a",
+      "frames": 16,
+      "frame_rate": "60/1",
+      "width": 640,
+      "height": 360,
+      "scale": 2,
+      "codec": "vp9",
+      "bitrate": 1000000,
+      "gop": 60,
+      "color_contract": "SDR Rec709 video range; existing source compression remains part of reference",
+      "split": "development-validation; do not use for training"
+    },
+    {
+      "id": "johnny-h264-350000",
+      "source_id": "johnny",
+      "source_path": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-eval-sources/johnny.mkv",
+      "source_sha256": "7ab080dd1eb4bea3f4039f997bfe3ad5df6641f4854fc22b26ea764efcf12a5a",
+      "reference": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/johnny-reference.mkv",
+      "reference_sha256": "b38720fd780d4b45ee0f18667e06a2f04f95e35d6c341a2e17ba4bebafe9d484",
+      "degraded": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/johnny-h264-350000.mkv",
+      "degraded_sha256": "6a3b68c0f8d9cfacc701e22721a36be08d038efe20e57b0db3204fdd2b3ca4b3",
+      "frames": 16,
+      "frame_rate": "60/1",
+      "width": 640,
+      "height": 360,
+      "scale": 2,
+      "codec": "h264",
+      "bitrate": 350000,
+      "gop": 60,
+      "color_contract": "SDR Rec709 video range; existing source compression remains part of reference",
+      "split": "development-validation; do not use for training"
+    },
+    {
+      "id": "johnny-h264-1000000",
+      "source_id": "johnny",
+      "source_path": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-eval-sources/johnny.mkv",
+      "source_sha256": "7ab080dd1eb4bea3f4039f997bfe3ad5df6641f4854fc22b26ea764efcf12a5a",
+      "reference": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/johnny-reference.mkv",
+      "reference_sha256": "b38720fd780d4b45ee0f18667e06a2f04f95e35d6c341a2e17ba4bebafe9d484",
+      "degraded": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/johnny-h264-1000000.mkv",
+      "degraded_sha256": "cd9fbe32c74f7b3b420b5ad294e2691f870873f9cc60853e0cceb86ea5b5c6dd",
+      "frames": 16,
+      "frame_rate": "60/1",
+      "width": 640,
+      "height": 360,
+      "scale": 2,
+      "codec": "h264",
+      "bitrate": 1000000,
+      "gop": 60,
+      "color_contract": "SDR Rec709 video range; existing source compression remains part of reference",
+      "split": "development-validation; do not use for training"
+    },
+    {
+      "id": "johnny-vp9-350000",
+      "source_id": "johnny",
+      "source_path": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-eval-sources/johnny.mkv",
+      "source_sha256": "7ab080dd1eb4bea3f4039f997bfe3ad5df6641f4854fc22b26ea764efcf12a5a",
+      "reference": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/johnny-reference.mkv",
+      "reference_sha256": "b38720fd780d4b45ee0f18667e06a2f04f95e35d6c341a2e17ba4bebafe9d484",
+      "degraded": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/johnny-vp9-350000.mkv",
+      "degraded_sha256": "beca163293cfda41ea8daeb5616c4f6650449f6e6bb6860a78bfad404048dc7b",
+      "frames": 16,
+      "frame_rate": "60/1",
+      "width": 640,
+      "height": 360,
+      "scale": 2,
+      "codec": "vp9",
+      "bitrate": 350000,
+      "gop": 60,
+      "color_contract": "SDR Rec709 video range; existing source compression remains part of reference",
+      "split": "development-validation; do not use for training"
+    },
+    {
+      "id": "johnny-vp9-1000000",
+      "source_id": "johnny",
+      "source_path": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-eval-sources/johnny.mkv",
+      "source_sha256": "7ab080dd1eb4bea3f4039f997bfe3ad5df6641f4854fc22b26ea764efcf12a5a",
+      "reference": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/johnny-reference.mkv",
+      "reference_sha256": "b38720fd780d4b45ee0f18667e06a2f04f95e35d6c341a2e17ba4bebafe9d484",
+      "degraded": "/Users/braedonsaunders/Documents/Code/lucid/.build/frontier-sequences-2x/johnny-vp9-1000000.mkv",
+      "degraded_sha256": "312b9c4b7ca472084a3f8dcf8c2b76e52d021df691c0b54987501dacecbbdfd0",
+      "frames": 16,
+      "frame_rate": "60/1",
+      "width": 640,
+      "height": 360,
+      "scale": 2,
+      "codec": "vp9",
+      "bitrate": 1000000,
+      "gop": 60,
+      "color_contract": "SDR Rec709 video range; existing source compression remains part of reference",
+      "split": "development-validation; do not use for training"
+    }
+  ],
+  "limitations": [
+    "Post-hoc interpolation replacement was not trained and is not a promotion candidate.",
+    "Forced reset isolates inference history, not the effect of training with history.",
+    "Short development sequences; spatial frames 0/4/8/12, all frames for unwarped temporal metrics."
+  ],
+  "rows": [
+    {
+      "sequence_id": "crowd_run-h264-350000",
+      "source_id": "crowd_run",
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.6357540935277939,
+        "dists": 0.2782103419303894,
+        "psnr_y": 20.235083740935465,
+        "detail_energy": 0.2050745504852664,
+        "fine_correlation": 0.14197386157317268,
+        "static_flicker": 1.5635130047798156,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 11.072409947713217
+      }
+    },
+    {
+      "sequence_id": "crowd_run-h264-350000",
+      "source_id": "crowd_run",
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5990753620862961,
+        "dists": 0.2675207108259201,
+        "psnr_y": 20.14361836395002,
+        "detail_energy": 0.2692436622986432,
+        "fine_correlation": 0.1390529389796347,
+        "static_flicker": 1.7102693875630697,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 11.215105883280437
+      }
+    },
+    {
+      "sequence_id": "crowd_run-h264-350000",
+      "source_id": "crowd_run",
+      "variant": "causal",
+      "metrics": {
+        "lpips": 0.6255113780498505,
+        "dists": 0.2709052711725235,
+        "psnr_y": 20.142225587933254,
+        "detail_energy": 0.2428898415971191,
+        "fine_correlation": 0.14233049645047158,
+        "static_flicker": 1.69291539589564,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 11.161974143981933
+      }
+    },
+    {
+      "sequence_id": "crowd_run-h264-350000",
+      "source_id": "crowd_run",
+      "variant": "forced-reset",
+      "metrics": {
+        "lpips": 0.6250135004520416,
+        "dists": 0.27151739597320557,
+        "psnr_y": 20.14368257133587,
+        "detail_energy": 0.24108759880728706,
+        "fine_correlation": 0.1422143052649395,
+        "static_flicker": 1.6713797132174173,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 11.162494087219239
+      }
+    },
+    {
+      "sequence_id": "crowd_run-h264-350000",
+      "source_id": "crowd_run",
+      "variant": "lanczos-plus-residual",
+      "metrics": {
+        "lpips": 0.592411071062088,
+        "dists": 0.2612733095884323,
+        "psnr_y": 20.0062797597896,
+        "detail_energy": 0.3128099614225714,
+        "fine_correlation": 0.13731409041472667,
+        "static_flicker": 1.8476832866668702,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 11.328359285990397
+      }
+    },
+    {
+      "sequence_id": "crowd_run-h264-1000000",
+      "source_id": "crowd_run",
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.5076771378517151,
+        "dists": 0.18972896039485931,
+        "psnr_y": 22.80302377911325,
+        "detail_energy": 0.32658502303910564,
+        "fine_correlation": 0.33784123588526915,
+        "static_flicker": 2.1656301657358807,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 10.21193307240804
+      }
+    },
+    {
+      "sequence_id": "crowd_run-h264-1000000",
+      "source_id": "crowd_run",
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5044633597135544,
+        "dists": 0.16695536673069,
+        "psnr_y": 22.786947739811033,
+        "detail_energy": 0.4478673072108219,
+        "fine_correlation": 0.3495674202049791,
+        "static_flicker": 2.526126678784688,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 10.506421852111817
+      }
+    },
+    {
+      "sequence_id": "crowd_run-h264-1000000",
+      "source_id": "crowd_run",
+      "variant": "causal",
+      "metrics": {
+        "lpips": 0.5307079032063484,
+        "dists": 0.17297589778900146,
+        "psnr_y": 22.760574659136704,
+        "detail_energy": 0.39393604909032687,
+        "fine_correlation": 0.34495183005781144,
+        "static_flicker": 2.410951828956604,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 10.366464233398437
+      }
+    },
+    {
+      "sequence_id": "crowd_run-h264-1000000",
+      "source_id": "crowd_run",
+      "variant": "forced-reset",
+      "metrics": {
+        "lpips": 0.5296095237135887,
+        "dists": 0.17350631952285767,
+        "psnr_y": 22.758262670138215,
+        "detail_energy": 0.3916358491709042,
+        "fine_correlation": 0.34419542987867036,
+        "static_flicker": 2.3955307881037395,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 10.37010014851888
+      }
+    },
+    {
+      "sequence_id": "crowd_run-h264-1000000",
+      "source_id": "crowd_run",
+      "variant": "lanczos-plus-residual",
+      "metrics": {
+        "lpips": 0.5110607594251633,
+        "dists": 0.1569034904241562,
+        "psnr_y": 22.51277276682851,
+        "detail_energy": 0.5230059746577086,
+        "fine_correlation": 0.34907345473787765,
+        "static_flicker": 2.795822834968567,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 10.760412343343098
+      }
+    },
+    {
+      "sequence_id": "crowd_run-vp9-350000",
+      "source_id": "crowd_run",
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.4783793166279793,
+        "dists": 0.17232054471969604,
+        "psnr_y": 23.414015722774465,
+        "detail_energy": 0.30978725476697394,
+        "fine_correlation": 0.4133826677335204,
+        "static_flicker": 2.386090119679769,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 10.042254702250164
+      }
+    },
+    {
+      "sequence_id": "crowd_run-vp9-350000",
+      "source_id": "crowd_run",
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4697229638695717,
+        "dists": 0.14392238855361938,
+        "psnr_y": 23.782242391288356,
+        "detail_energy": 0.4272466953923488,
+        "fine_correlation": 0.439988594858301,
+        "static_flicker": 2.771512254079183,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 10.219875590006511
+      }
+    },
+    {
+      "sequence_id": "crowd_run-vp9-350000",
+      "source_id": "crowd_run",
+      "variant": "causal",
+      "metrics": {
+        "lpips": 0.49922677874565125,
+        "dists": 0.15257564187049866,
+        "psnr_y": 23.567328661958076,
+        "detail_energy": 0.37509818787740845,
+        "fine_correlation": 0.4233522350700479,
+        "static_flicker": 2.6415905793507894,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 10.139865430196126
+      }
+    },
+    {
+      "sequence_id": "crowd_run-vp9-350000",
+      "source_id": "crowd_run",
+      "variant": "forced-reset",
+      "metrics": {
+        "lpips": 0.4981639012694359,
+        "dists": 0.15294550359249115,
+        "psnr_y": 23.56133117982943,
+        "detail_energy": 0.3724618879952666,
+        "fine_correlation": 0.4220871584060558,
+        "static_flicker": 2.6303767204284667,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 10.13963794708252
+      }
+    },
+    {
+      "sequence_id": "crowd_run-vp9-350000",
+      "source_id": "crowd_run",
+      "variant": "lanczos-plus-residual",
+      "metrics": {
+        "lpips": 0.47280389815568924,
+        "dists": 0.13439172506332397,
+        "psnr_y": 23.60295398659793,
+        "detail_energy": 0.4995583887307607,
+        "fine_correlation": 0.438668803007871,
+        "static_flicker": 3.055054720242818,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 10.430010986328124
+      }
+    },
+    {
+      "sequence_id": "crowd_run-vp9-1000000",
+      "source_id": "crowd_run",
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.40985118597745895,
+        "dists": 0.1420140117406845,
+        "psnr_y": 24.487628323796745,
+        "detail_energy": 0.34402645378475977,
+        "fine_correlation": 0.47386805626509926,
+        "static_flicker": 2.298528059323629,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 9.123534933725994
+      }
+    },
+    {
+      "sequence_id": "crowd_run-vp9-1000000",
+      "source_id": "crowd_run",
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.40973878651857376,
+        "dists": 0.1074153333902359,
+        "psnr_y": 25.01445119384889,
+        "detail_energy": 0.4783733187996577,
+        "fine_correlation": 0.5050718617306809,
+        "static_flicker": 2.748221015930176,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 9.238481267293293
+      }
+    },
+    {
+      "sequence_id": "crowd_run-vp9-1000000",
+      "source_id": "crowd_run",
+      "variant": "causal",
+      "metrics": {
+        "lpips": 0.44201748818159103,
+        "dists": 0.11698685586452484,
+        "psnr_y": 24.716752739371522,
+        "detail_energy": 0.41774177258504563,
+        "fine_correlation": 0.4842022629452982,
+        "static_flicker": 2.5820747534434,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 9.178191566467286
+      }
+    },
+    {
+      "sequence_id": "crowd_run-vp9-1000000",
+      "source_id": "crowd_run",
+      "variant": "forced-reset",
+      "metrics": {
+        "lpips": 0.44071511179208755,
+        "dists": 0.11754831671714783,
+        "psnr_y": 24.706952753139568,
+        "detail_energy": 0.4148964520852362,
+        "fine_correlation": 0.4831146757949589,
+        "static_flicker": 2.5721532185872396,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 9.175579071044922
+      }
+    },
+    {
+      "sequence_id": "crowd_run-vp9-1000000",
+      "source_id": "crowd_run",
+      "variant": "lanczos-plus-residual",
+      "metrics": {
+        "lpips": 0.4183914512395859,
+        "dists": 0.09623666107654572,
+        "psnr_y": 24.78554202521005,
+        "detail_energy": 0.5591616148787111,
+        "fine_correlation": 0.5030039017554959,
+        "static_flicker": 3.0680365880330402,
+        "static_coverage": 0.24121332465277778,
+        "temporal_residual_l1": 9.472056198120118
+      }
+    },
+    {
+      "sequence_id": "four_people-h264-350000",
+      "source_id": "four_people",
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.42630527913570404,
+        "dists": 0.1968899965286255,
+        "psnr_y": 25.649806533144407,
+        "detail_energy": 0.32836285810371885,
+        "fine_correlation": 0.3735024096655414,
+        "static_flicker": 0.1958711639046669,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 2.1291666169961294
+      }
+    },
+    {
+      "sequence_id": "four_people-h264-350000",
+      "source_id": "four_people",
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3977666646242142,
+        "dists": 0.1903773993253708,
+        "psnr_y": 25.696932798268755,
+        "detail_energy": 0.4373348911488043,
+        "fine_correlation": 0.38881812507665875,
+        "static_flicker": 0.21609280904134115,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 2.148536519209544
+      }
+    },
+    {
+      "sequence_id": "four_people-h264-350000",
+      "source_id": "four_people",
+      "variant": "causal",
+      "metrics": {
+        "lpips": 0.4094223454594612,
+        "dists": 0.19156678020954132,
+        "psnr_y": 25.623276758286757,
+        "detail_energy": 0.4095566978068273,
+        "fine_correlation": 0.3976307324693665,
+        "static_flicker": 0.23522187570730846,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 2.1543108304341634
+      }
+    },
+    {
+      "sequence_id": "four_people-h264-350000",
+      "source_id": "four_people",
+      "variant": "forced-reset",
+      "metrics": {
+        "lpips": 0.4105960726737976,
+        "dists": 0.19171810150146484,
+        "psnr_y": 25.616743990493436,
+        "detail_energy": 0.4011021894159549,
+        "fine_correlation": 0.3955684462468464,
+        "static_flicker": 0.21262034724156062,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 2.141863711675008
+      }
+    },
+    {
+      "sequence_id": "four_people-h264-350000",
+      "source_id": "four_people",
+      "variant": "lanczos-plus-residual",
+      "metrics": {
+        "lpips": 0.3876119405031204,
+        "dists": 0.18764592707157135,
+        "psnr_y": 25.530077784098452,
+        "detail_energy": 0.5297984295176654,
+        "fine_correlation": 0.3975492085317213,
+        "static_flicker": 0.2555720418691635,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 2.1758020957310995
+      }
+    },
+    {
+      "sequence_id": "four_people-h264-1000000",
+      "source_id": "four_people",
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.2697351425886154,
+        "dists": 0.11887882649898529,
+        "psnr_y": 29.345609775195527,
+        "detail_energy": 0.44509630431872715,
+        "fine_correlation": 0.5990577116242322,
+        "static_flicker": 0.20363043646017712,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 2.0235094010829924
+      }
+    },
+    {
+      "sequence_id": "four_people-h264-1000000",
+      "source_id": "four_people",
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2528757229447365,
+        "dists": 0.1043267548084259,
+        "psnr_y": 29.887913771413306,
+        "detail_energy": 0.6023901304323278,
+        "fine_correlation": 0.6288261032598682,
+        "static_flicker": 0.23330179353555044,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 2.049966232975324
+      }
+    },
+    {
+      "sequence_id": "four_people-h264-1000000",
+      "source_id": "four_people",
+      "variant": "causal",
+      "metrics": {
+        "lpips": 0.2618260085582733,
+        "dists": 0.10790325701236725,
+        "psnr_y": 29.61312105850642,
+        "detail_energy": 0.5595551287284766,
+        "fine_correlation": 0.6307561525702795,
+        "static_flicker": 0.25387208064397176,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 2.0548755327860513
+      }
+    },
+    {
+      "sequence_id": "four_people-h264-1000000",
+      "source_id": "four_people",
+      "variant": "forced-reset",
+      "metrics": {
+        "lpips": 0.26229119300842285,
+        "dists": 0.108716681599617,
+        "psnr_y": 29.576243790005673,
+        "detail_energy": 0.549521118392525,
+        "fine_correlation": 0.6278111222016547,
+        "static_flicker": 0.22577233811219533,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 2.038943647344907
+      }
+    },
+    {
+      "sequence_id": "four_people-h264-1000000",
+      "source_id": "four_people",
+      "variant": "lanczos-plus-residual",
+      "metrics": {
+        "lpips": 0.24861755967140198,
+        "dists": 0.09993484616279602,
+        "psnr_y": 29.500505064700075,
+        "detail_energy": 0.731027480977423,
+        "fine_correlation": 0.6364042926769916,
+        "static_flicker": 0.2859711815913518,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 2.0884629686673484
+      }
+    },
+    {
+      "sequence_id": "four_people-vp9-350000",
+      "source_id": "four_people",
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.2198767103254795,
+        "dists": 0.08306770026683807,
+        "psnr_y": 30.816006808810258,
+        "detail_energy": 0.45851464640632134,
+        "fine_correlation": 0.6684561253093689,
+        "static_flicker": 0.21683341078460217,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 1.9741639958073696
+      }
+    },
+    {
+      "sequence_id": "four_people-vp9-350000",
+      "source_id": "four_people",
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.20428678765892982,
+        "dists": 0.06993354856967926,
+        "psnr_y": 32.02725555469662,
+        "detail_energy": 0.6204434540801103,
+        "fine_correlation": 0.7110363632486649,
+        "static_flicker": 0.2524692792445421,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 2.001646576200922
+      }
+    },
+    {
+      "sequence_id": "four_people-vp9-350000",
+      "source_id": "four_people",
+      "variant": "causal",
+      "metrics": {
+        "lpips": 0.2129565291106701,
+        "dists": 0.07299657166004181,
+        "psnr_y": 31.446864005883437,
+        "detail_energy": 0.5777613881715913,
+        "fine_correlation": 0.7021875230593263,
+        "static_flicker": 0.273476971189181,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 2.007314215103785
+      }
+    },
+    {
+      "sequence_id": "four_people-vp9-350000",
+      "source_id": "four_people",
+      "variant": "forced-reset",
+      "metrics": {
+        "lpips": 0.21343685686588287,
+        "dists": 0.07366882264614105,
+        "psnr_y": 31.37010814747702,
+        "detail_energy": 0.5680391353323833,
+        "fine_correlation": 0.6985531870250199,
+        "static_flicker": 0.2428789967050155,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 1.9896201385806005
+      }
+    },
+    {
+      "sequence_id": "four_people-vp9-350000",
+      "source_id": "four_people",
+      "variant": "lanczos-plus-residual",
+      "metrics": {
+        "lpips": 0.20044828578829765,
+        "dists": 0.06784282624721527,
+        "psnr_y": 31.590615367764684,
+        "detail_energy": 0.7544669832844324,
+        "fine_correlation": 0.7172408296196076,
+        "static_flicker": 0.3119819422562917,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 2.0448969423770906
+      }
+    },
+    {
+      "sequence_id": "four_people-vp9-1000000",
+      "source_id": "four_people",
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.1781027726829052,
+        "dists": 0.058148935437202454,
+        "psnr_y": 31.637353625096075,
+        "detail_energy": 0.47214686915446513,
+        "fine_correlation": 0.6984705605372642,
+        "static_flicker": 0.18886756597397228,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 1.880195923630769
+      }
+    },
+    {
+      "sequence_id": "four_people-vp9-1000000",
+      "source_id": "four_people",
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.1642153561115265,
+        "dists": 0.04429991543292999,
+        "psnr_y": 33.3314991284252,
+        "detail_energy": 0.6408041081964595,
+        "fine_correlation": 0.7459461359766548,
+        "static_flicker": 0.22660115243246157,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 1.897598227672279
+      }
+    },
+    {
+      "sequence_id": "four_people-vp9-1000000",
+      "source_id": "four_people",
+      "variant": "causal",
+      "metrics": {
+        "lpips": 0.17368649318814278,
+        "dists": 0.04669918119907379,
+        "psnr_y": 32.493943264213854,
+        "detail_energy": 0.5953756579031868,
+        "fine_correlation": 0.7318063507185026,
+        "static_flicker": 0.24647877216339112,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 1.906800893942515
+      }
+    },
+    {
+      "sequence_id": "four_people-vp9-1000000",
+      "source_id": "four_people",
+      "variant": "forced-reset",
+      "metrics": {
+        "lpips": 0.1738879233598709,
+        "dists": 0.04726821184158325,
+        "psnr_y": 32.39007807000522,
+        "detail_energy": 0.5856464682048388,
+        "fine_correlation": 0.7280483952370758,
+        "static_flicker": 0.21600888419585923,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 1.8879433110201111
+      }
+    },
+    {
+      "sequence_id": "four_people-vp9-1000000",
+      "source_id": "four_people",
+      "variant": "lanczos-plus-residual",
+      "metrics": {
+        "lpips": 0.16309897229075432,
+        "dists": 0.04341369867324829,
+        "psnr_y": 32.74922319132868,
+        "detail_energy": 0.778940652240287,
+        "fine_correlation": 0.7505024036814505,
+        "static_flicker": 0.2876115451256434,
+        "static_coverage": 0.5285455729166667,
+        "temporal_residual_l1": 1.9403430283069611
+      }
+    },
+    {
+      "sequence_id": "johnny-h264-350000",
+      "source_id": "johnny",
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.41326217353343964,
+        "dists": 0.18790850043296814,
+        "psnr_y": 28.277099279142867,
+        "detail_energy": 0.3157546360709777,
+        "fine_correlation": 0.3051191884963349,
+        "static_flicker": 0.2585924769441287,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.2689385294914244
+      }
+    },
+    {
+      "sequence_id": "johnny-h264-350000",
+      "source_id": "johnny",
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3955567553639412,
+        "dists": 0.18293607234954834,
+        "psnr_y": 28.2822835965164,
+        "detail_energy": 0.40376056086370826,
+        "fine_correlation": 0.30389203926219166,
+        "static_flicker": 0.28113305071989697,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.285498042901357
+      }
+    },
+    {
+      "sequence_id": "johnny-h264-350000",
+      "source_id": "johnny",
+      "variant": "causal",
+      "metrics": {
+        "lpips": 0.4026195779442787,
+        "dists": 0.18398116528987885,
+        "psnr_y": 28.19939874630996,
+        "detail_energy": 0.37558545743635074,
+        "fine_correlation": 0.30959245856676954,
+        "static_flicker": 0.29246980845928194,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.287803469101588
+      }
+    },
+    {
+      "sequence_id": "johnny-h264-350000",
+      "source_id": "johnny",
+      "variant": "forced-reset",
+      "metrics": {
+        "lpips": 0.4025457575917244,
+        "dists": 0.18431605398654938,
+        "psnr_y": 28.200571337183536,
+        "detail_energy": 0.36902863171022593,
+        "fine_correlation": 0.3094607164051769,
+        "static_flicker": 0.2778105919559797,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.2799446205298106
+      }
+    },
+    {
+      "sequence_id": "johnny-h264-350000",
+      "source_id": "johnny",
+      "variant": "lanczos-plus-residual",
+      "metrics": {
+        "lpips": 0.3889678865671158,
+        "dists": 0.18071042001247406,
+        "psnr_y": 28.11303877043126,
+        "detail_energy": 0.4721033141658227,
+        "fine_correlation": 0.30365074566668315,
+        "static_flicker": 0.31466319660345715,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.306484717130661
+      }
+    },
+    {
+      "sequence_id": "johnny-h264-1000000",
+      "source_id": "johnny",
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.30996058881282806,
+        "dists": 0.12436169385910034,
+        "psnr_y": 32.05385158726277,
+        "detail_energy": 0.42308510729260407,
+        "fine_correlation": 0.5260535408647089,
+        "static_flicker": 0.2696910291910172,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.216110332806905
+      }
+    },
+    {
+      "sequence_id": "johnny-h264-1000000",
+      "source_id": "johnny",
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2965742498636246,
+        "dists": 0.11294546723365784,
+        "psnr_y": 32.42057957528402,
+        "detail_energy": 0.5542026001979012,
+        "fine_correlation": 0.5484709508891126,
+        "static_flicker": 0.30842648645242055,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.238284734884898
+      }
+    },
+    {
+      "sequence_id": "johnny-h264-1000000",
+      "source_id": "johnny",
+      "variant": "causal",
+      "metrics": {
+        "lpips": 0.3017358332872391,
+        "dists": 0.11525562405586243,
+        "psnr_y": 31.994370970291126,
+        "detail_energy": 0.5166958670196526,
+        "fine_correlation": 0.5513223134583006,
+        "static_flicker": 0.3132190922896067,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.2368461032708487
+      }
+    },
+    {
+      "sequence_id": "johnny-h264-1000000",
+      "source_id": "johnny",
+      "variant": "forced-reset",
+      "metrics": {
+        "lpips": 0.30161823332309723,
+        "dists": 0.11557446420192719,
+        "psnr_y": 31.97426772862024,
+        "detail_energy": 0.5094648065816533,
+        "fine_correlation": 0.5490392182905599,
+        "static_flicker": 0.2990116427342097,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.229294569293658
+      }
+    },
+    {
+      "sequence_id": "johnny-h264-1000000",
+      "source_id": "johnny",
+      "variant": "lanczos-plus-residual",
+      "metrics": {
+        "lpips": 0.2916036918759346,
+        "dists": 0.10815352201461792,
+        "psnr_y": 31.894900614077805,
+        "detail_energy": 0.6593787826548319,
+        "fine_correlation": 0.5577348506035062,
+        "static_flicker": 0.3527709662914276,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.2654833078384398
+      }
+    },
+    {
+      "sequence_id": "johnny-vp9-350000",
+      "source_id": "johnny",
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.26363030821084976,
+        "dists": 0.09496583044528961,
+        "psnr_y": 33.57996176876887,
+        "detail_energy": 0.4462305075083581,
+        "fine_correlation": 0.6115752596850299,
+        "static_flicker": 0.32607644740492103,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.178186983304719
+      }
+    },
+    {
+      "sequence_id": "johnny-vp9-350000",
+      "source_id": "johnny",
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.24831198528409004,
+        "dists": 0.08466790616512299,
+        "psnr_y": 34.460114955466835,
+        "detail_energy": 0.5886273592722241,
+        "fine_correlation": 0.6509359573609141,
+        "static_flicker": 0.3804566331207752,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.2026647763947644
+      }
+    },
+    {
+      "sequence_id": "johnny-vp9-350000",
+      "source_id": "johnny",
+      "variant": "causal",
+      "metrics": {
+        "lpips": 0.25533876568078995,
+        "dists": 0.08716218173503876,
+        "psnr_y": 33.70014843593011,
+        "detail_energy": 0.5482795165697105,
+        "fine_correlation": 0.642630538990707,
+        "static_flicker": 0.3829263220230738,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.203040400147438
+      }
+    },
+    {
+      "sequence_id": "johnny-vp9-350000",
+      "source_id": "johnny",
+      "variant": "forced-reset",
+      "metrics": {
+        "lpips": 0.2554556652903557,
+        "dists": 0.08746995031833649,
+        "psnr_y": 33.65714392167715,
+        "detail_energy": 0.5407860480433332,
+        "fine_correlation": 0.6396583818192814,
+        "static_flicker": 0.3656552576770385,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.1926692966371775
+      }
+    },
+    {
+      "sequence_id": "johnny-vp9-350000",
+      "source_id": "johnny",
+      "variant": "lanczos-plus-residual",
+      "metrics": {
+        "lpips": 0.24377959966659546,
+        "dists": 0.0812540203332901,
+        "psnr_y": 33.75425626033427,
+        "detail_energy": 0.702539731781681,
+        "fine_correlation": 0.6602006203503425,
+        "static_flicker": 0.43818657596906024,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.2383139610290526
+      }
+    },
+    {
+      "sequence_id": "johnny-vp9-1000000",
+      "source_id": "johnny",
+      "variant": "bilinear",
+      "metrics": {
+        "lpips": 0.2263103350996971,
+        "dists": 0.07614028453826904,
+        "psnr_y": 34.46649596358548,
+        "detail_energy": 0.4631924666851277,
+        "fine_correlation": 0.6516679740209976,
+        "static_flicker": 0.3163734285781781,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.1188098290314277
+      }
+    },
+    {
+      "sequence_id": "johnny-vp9-1000000",
+      "source_id": "johnny",
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.20465897023677826,
+        "dists": 0.0613766610622406,
+        "psnr_y": 35.748015361765766,
+        "detail_energy": 0.6160957506424508,
+        "fine_correlation": 0.7002822878870836,
+        "static_flicker": 0.3830013415465752,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.1336129855364563
+      }
+    },
+    {
+      "sequence_id": "johnny-vp9-1000000",
+      "source_id": "johnny",
+      "variant": "causal",
+      "metrics": {
+        "lpips": 0.21699106693267822,
+        "dists": 0.06489500403404236,
+        "psnr_y": 34.70309720145683,
+        "detail_energy": 0.5697665983346034,
+        "fine_correlation": 0.6841458245989307,
+        "static_flicker": 0.37745571235815684,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.137967374920845
+      }
+    },
+    {
+      "sequence_id": "johnny-vp9-1000000",
+      "source_id": "johnny",
+      "variant": "forced-reset",
+      "metrics": {
+        "lpips": 0.21712351217865944,
+        "dists": 0.06524579226970673,
+        "psnr_y": 34.6411717239822,
+        "detail_energy": 0.562278589422452,
+        "fine_correlation": 0.6805706498702011,
+        "static_flicker": 0.360740851983428,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.1270306802044314
+      }
+    },
+    {
+      "sequence_id": "johnny-vp9-1000000",
+      "source_id": "johnny",
+      "variant": "lanczos-plus-residual",
+      "metrics": {
+        "lpips": 0.19988038763403893,
+        "dists": 0.06244702637195587,
+        "psnr_y": 34.83609958010368,
+        "detail_energy": 0.734901514732422,
+        "fine_correlation": 0.7084236149318566,
+        "static_flicker": 0.4477004200220108,
+        "static_coverage": 0.5047707609953703,
+        "temporal_residual_l1": 2.168481994668643
+      }
+    }
+  ],
+  "complete": true,
+  "summary": {
+    "bilinear": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.5079154334962368,
+          "dists": 0.19556846469640732,
+          "psnr_y": 22.73493789165498,
+          "detail_energy": 0.29636832051902645,
+          "fine_correlation": 0.34176645536426536,
+          "static_flicker": 2.103440337379774,
+          "static_coverage": 0.24121332465277778,
+          "temporal_residual_l1": 10.112533164024352
+        },
+        "four_people": {
+          "lpips": 0.27350497618317604,
+          "dists": 0.11424636468291283,
+          "psnr_y": 29.362194185561563,
+          "detail_energy": 0.4260301694958082,
+          "fine_correlation": 0.5848717017841016,
+          "static_flicker": 0.20130064428085462,
+          "static_coverage": 0.5285455729166667,
+          "temporal_residual_l1": 2.001758984379315
+        },
+        "johnny": {
+          "lpips": 0.30329085141420364,
+          "dists": 0.12084407731890678,
+          "psnr_y": 32.094352149689996,
+          "detail_energy": 0.4120656793892669,
+          "fine_correlation": 0.5236039907667678,
+          "static_flicker": 0.2926833455295612,
+          "static_coverage": 0.5047707609953703,
+          "temporal_residual_l1": 2.195511418658619
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.36157042036453885,
+        "dists": 0.14355296889940897,
+        "psnr_y": 28.063828075635513,
+        "detail_energy": 0.3781547231347005,
+        "fine_correlation": 0.48341404930504495,
+        "static_flicker": 0.8658081090633966,
+        "static_coverage": 0.424843219521605,
+        "temporal_residual_l1": 4.769934522354095
+      }
+    },
+    "lanczos": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.495750118046999,
+          "dists": 0.17145344987511635,
+          "psnr_y": 22.931814922224575,
+          "detail_energy": 0.4056827459253679,
+          "fine_correlation": 0.3584202039433989,
+          "static_flicker": 2.439032334089279,
+          "static_coverage": 0.24121332465277778,
+          "temporal_residual_l1": 10.294971148173016
+        },
+        "four_people": {
+          "lpips": 0.25478613283485174,
+          "dists": 0.10223440453410149,
+          "psnr_y": 30.235900313200972,
+          "detail_energy": 0.5752431459644255,
+          "fine_correlation": 0.6186566818904617,
+          "static_flicker": 0.23211625856347382,
+          "static_coverage": 0.5285455729166667,
+          "temporal_residual_l1": 2.0244368890145172
+        },
+        "johnny": {
+          "lpips": 0.2862754901871085,
+          "dists": 0.11048152670264244,
+          "psnr_y": 32.727748372258255,
+          "detail_energy": 0.5406715677440711,
+          "fine_correlation": 0.5508953088498255,
+          "static_flicker": 0.338254377959917,
+          "static_coverage": 0.5047707609953703,
+          "temporal_residual_l1": 2.215015134929369
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.3456039136896531,
+        "dists": 0.1280564603706201,
+        "psnr_y": 28.63182120256127,
+        "detail_energy": 0.5071991532112882,
+        "fine_correlation": 0.5093240648945621,
+        "static_flicker": 1.0031343235375567,
+        "static_coverage": 0.424843219521605,
+        "temporal_residual_l1": 4.844807724038968
+      }
+    },
+    "causal": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.5243658870458603,
+          "dists": 0.17836091667413712,
+          "psnr_y": 22.796720412099887,
+          "detail_energy": 0.357416462787475,
+          "fine_correlation": 0.3487092061309073,
+          "static_flicker": 2.3318831394116084,
+          "static_coverage": 0.24121332465277778,
+          "temporal_residual_l1": 10.211623843510944
+        },
+        "four_people": {
+          "lpips": 0.26447284407913685,
+          "dists": 0.10479144752025604,
+          "psnr_y": 29.794301271722617,
+          "detail_energy": 0.5355622181525205,
+          "fine_correlation": 0.6155951897043688,
+          "static_flicker": 0.2522624249259631,
+          "static_coverage": 0.5285455729166667,
+          "temporal_residual_l1": 2.030825368066629
+        },
+        "johnny": {
+          "lpips": 0.2941713109612465,
+          "dists": 0.1128234937787056,
+          "psnr_y": 32.149253838497,
+          "detail_energy": 0.5025818598400793,
+          "fine_correlation": 0.546922783903677,
+          "static_flicker": 0.3415177337825298,
+          "static_coverage": 0.5047707609953703,
+          "temporal_residual_l1": 2.21641433686018
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.36100334736208123,
+        "dists": 0.13199195265769958,
+        "psnr_y": 28.246758507439836,
+        "detail_energy": 0.4651868469266916,
+        "fine_correlation": 0.5037423932463176,
+        "static_flicker": 0.9752210993733672,
+        "static_coverage": 0.424843219521605,
+        "temporal_residual_l1": 4.8196211828125834
+      }
+    },
+    "forced-reset": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.5233755093067884,
+          "dists": 0.17887938395142555,
+          "psnr_y": 22.79255729361077,
+          "detail_energy": 0.3550204470146735,
+          "fine_correlation": 0.3479028923361561,
+          "static_flicker": 2.317360110084216,
+          "static_coverage": 0.24121332465277778,
+          "temporal_residual_l1": 10.21195281346639
+        },
+        "four_people": {
+          "lpips": 0.26505301147699356,
+          "dists": 0.10534295439720154,
+          "psnr_y": 29.738293499495335,
+          "detail_energy": 0.5260772278364254,
+          "fine_correlation": 0.6124952876776492,
+          "static_flicker": 0.22432014156365765,
+          "static_coverage": 0.5285455729166667,
+          "temporal_residual_l1": 2.014592702155157
+        },
+        "johnny": {
+          "lpips": 0.2941857920959592,
+          "dists": 0.11315156519412994,
+          "psnr_y": 32.11828867786578,
+          "detail_energy": 0.49538951893941613,
+          "fine_correlation": 0.5446822415963049,
+          "static_flicker": 0.32580458608766394,
+          "static_coverage": 0.5047707609953703,
+          "temporal_residual_l1": 2.207234791666269
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.3608714376265804,
+        "dists": 0.13245796784758568,
+        "psnr_y": 28.21637982365729,
+        "detail_energy": 0.4588290645968383,
+        "fine_correlation": 0.5016934738700367,
+        "static_flicker": 0.9558282792451792,
+        "static_coverage": 0.424843219521605,
+        "temporal_residual_l1": 4.811260102429272
+      }
+    },
+    "lanczos-plus-residual": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.4986667949706316,
+          "dists": 0.16220129653811455,
+          "psnr_y": 22.72688713460652,
+          "detail_energy": 0.4736339849224379,
+          "fine_correlation": 0.3570150624789928,
+          "static_flicker": 2.6916493574778237,
+          "static_coverage": 0.24121332465277778,
+          "temporal_residual_l1": 10.497709703445434
+        },
+        "four_people": {
+          "lpips": 0.2499441895633936,
+          "dists": 0.09970932453870773,
+          "psnr_y": 29.842605351972974,
+          "detail_energy": 0.698558386504952,
+          "fine_correlation": 0.6254241836274428,
+          "static_flicker": 0.2852841777106126,
+          "static_coverage": 0.5285455729166667,
+          "temporal_residual_l1": 2.062376258770625
+        },
+        "johnny": {
+          "lpips": 0.2810578914359212,
+          "dists": 0.10814124718308449,
+          "psnr_y": 32.14957380623675,
+          "detail_energy": 0.6422308358336895,
+          "fine_correlation": 0.5575024578880972,
+          "static_flicker": 0.388330289721489,
+          "static_coverage": 0.5047707609953703,
+          "temporal_residual_l1": 2.244690995166699
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.3432229586566488,
+        "dists": 0.12335062275330226,
+        "psnr_y": 28.239688764272085,
+        "detail_energy": 0.6048077357536931,
+        "fine_correlation": 0.5133139013315109,
+        "static_flicker": 1.1217546083033085,
+        "static_coverage": 0.424843219521605,
+        "temporal_residual_l1": 4.93492565246092
+      }
+    }
+  }
+}

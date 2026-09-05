@@ -27,6 +27,42 @@ Remote directory: `C:/lucid/causal-frontier-20260904-v1`. Actual command: `causa
 
 The early model trades fidelity/detail for stability and fails promotion. Finish the controlled experiment before attributing this to recurrence. A promising runtime is not sufficient: future changes must preserve a strong spatial reconstruction floor, demonstrate that history adds useful detail, and improve perceptual quality without adding shimmer. Native color/preprocessing parity also requires verification before any trained graph enters playback.
 
+## Completed causal run: checkpoint 20,000 also rejected
+
+The causal run completed 20,000 steps in approximately ten minutes on the RTX 4080. Its matched history-free control is a separate run; no control conclusion is inferred from an inference-only reset. `causal-final-evaluation.json` contains the complete 12-condition independent development screen. Compared with Lanczos, final LPIPS is 0.36100 versus 0.34560, DISTS 0.13199 versus 0.12806, PSNR Y 28.2468 versus 28.6318, and fine-detail correlation 0.50374 versus 0.50932. Static flicker is slightly lower, 0.97522 versus 1.00313. The model still fails the quality gate.
+
+`causal-final-diagnostic.json` holds a controlled inference diagnostic:
+
+| Variant | LPIPS ↓ | DISTS ↓ | Detail correlation ↑ | Static flicker ↓ |
+|---|---:|---:|---:|---:|
+| Bilinear | 0.36157 | 0.14355 | 0.48341 | 0.86581 |
+| Lanczos | 0.34560 | 0.12806 | 0.50932 | 1.00313 |
+| Trained causal | 0.36100 | 0.13199 | 0.50374 | 0.97522 |
+| Same weights, reset every frame | 0.36087 | 0.13246 | 0.50169 | 0.95583 |
+| Lanczos plus the unchanged learned residual | 0.34322 | 0.12335 | 0.51331 | 1.12175 |
+
+The weak spatial result persists with history disabled. Simply substituting a sharper base recovers perceptual/detail scores but raises flicker approximately 11.8% versus Lanczos and reduces PSNR. That post-hoc variant was not trained and is not a promotion candidate. It motivates training a stronger spatial path, rather than assuming temporal recurrence is the primary cause.
+
+The trained checkpoint also passes six-frame Core ML conversion checks with independently accumulated native/Torch history and a mid-sequence reset. Both tested compute-unit configurations remain below one 8-bit image level of maximum discrepancy. CPU+GPU 1080p→4K prediction measured 20.44/24.45 ms mean/p95 in the first run and 18.77/20.59 ms in the repeat that records the final profiler hash. Both reports are retained, rather than selecting only the faster measurement. These short graph timings exclude capture, video decoding and display; they do not establish sustained cadence or quality. Explicit float32 history consumes 16.59 MB.
+
+```sh
+.venv-convert/bin/python Tools/frontier_eval/diagnose_causal_detail.py \
+  --manifest .build/frontier-sequences-2x/sequences.json \
+  --checkpoint .build/causal-detail-ch32/step020000.pth \
+  --report .build/causal-detail-ch32/diagnostic-final.json
+.venv-convert/bin/python Tools/experiments/profile_causal_detail.py \
+  --checkpoint .build/causal-detail-ch32/step020000.pth \
+  --sizes 640x360 1920x1080 --out .build/causal-trained-profile-verified
+```
+
+## Spatial-path experiment v2
+
+`Tools/architectures/causal_detail_v2.py` retains the v1 causal trunk and adds two deliberately explicit changes: a fixed half-pixel-centered Lanczos-3 floor and a direct packed-pixel bypass into the reconstruction head. This preserves the source samples beside the compressed temporal features. The correction still starts at zero. The fixed filter has no learned parameters and does not mix colors; replicated borders differ from PIL's truncated boundary kernels. Overshoot is clipped only after adding the learned correction.
+
+This is an engineering experiment informed by the measured failure and the native-detail principle in the reviewed August 2026 MoCRA paper, not a reproduction or a claimed new interpolation method. V1 code and checkpoints remain intact. The same source bank, sample seed, curriculum and training budget are used to evaluate this combined architecture change; a positive result alone would not isolate which of its two changes helped.
+
+Nine experiment tests pass, including constant-color preservation, channel isolation, a continuous-sinusoid reference that tests interpolation detail fidelity, reset independence, and gradients through the new pixel bypass. A CPU training smoke completes forward/backward, validation and checkpoint serialization. The nonzero random-head v2 graph passes recurrent Core ML conversion and costs approximately 21.4 ms mean at 1080p→4K on CPU+GPU in its initial probe. It has not yet established trained quality or playback performance. `causal-v2-training-command.ps1` refuses existing GPU jobs and writes to a separate experiment directory, reusing the immutable v1 bank.
+
 ## Reproduce the bank and training
 
 ```sh
