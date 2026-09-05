@@ -1,0 +1,22 @@
+{
+  "date": "2026-09-04",
+  "base_commit": "eda542ea4e2e8a1391a1b3fa9b39282e42634490",
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.5.1\nBuildVersion:\t\t25F80\n",
+  "hardware": "Apple M4 Pro",
+  "files_sha256": {
+    "Lucid/Diagnostics/PipelineTiming.swift": "d2ce71a1fb08578b289e95328f8f6d81745e736a71b1bbd878a914fcc55bd6be",
+    "Lucid/LucidApp.swift": "a7a815d8f393622d34cc706309dd246e8b8a27eea79db5a7a7e9059d26b43994",
+    ".build/tests/Build/Products/Release/Lucid.app/Contents/MacOS/Lucid": "35627ee3557cd2972a74530d08825e8faed4178906473298d18c1246b1761f60",
+    ".build/causal-detail-ch32/v2-step020000.pth": "b50c8e28012daaeca3436237d86dcf8af5f5b5853871a3702502b0400b9be646",
+    ".build/causal-floor-dense/causal_ch32_x2_1920x1080.mlpackage/Data/com.apple.CoreML/model.mlmodel": "a45b124e130ed51c9c5bb98dffcb0754b1f7e511c507c9741cef5da64ec96cce",
+    ".build/causal-floor-dense/causal_ch32_x2_1920x1080.mlpackage/Data/com.apple.CoreML/weights/weight.bin": "577548dec364f0a14e1ec537af3708ddbfa550d69d0161d827e9dd8c7d670dbb",
+    ".build/causal-floor-dense/causal_ch32_x2_1920x1080.mlpackage/Manifest.json": "cfdeea2e10eb38ad16c0f0184eae8490bec32be214f7352baca485611265fc11",
+    ".build/causal-dense-stateful/causal_ch32_x2_1920x1080.mlpackage/Data/com.apple.CoreML/model.mlmodel": "4ee661ccb2a29bfdb2cf441c8b4ea1ddb90a77676b4d0f20f4621d64114c2806",
+    ".build/causal-dense-stateful/causal_ch32_x2_1920x1080.mlpackage/Data/com.apple.CoreML/weights/weight.bin": "577548dec364f0a14e1ec537af3708ddbfa550d69d0161d827e9dd8c7d670dbb",
+    ".build/causal-dense-stateful/causal_ch32_x2_1920x1080.mlpackage/Manifest.json": "955f0f67c044618de92a735b523a4d872568afbafedd4c151d9fe95062cc4381"
+  },
+  "report_sha256": "c486a56b81340d3bdb2790e19730930a118282068c6677313d49e12d2e978237",
+  "build": "xcodebuild -project Lucid.xcodeproj -scheme Lucid -configuration Release -derivedDataPath .build/tests CODE_SIGNING_ALLOWED=NO build",
+  "command": ".build/tests/Build/Products/Release/Lucid.app/Contents/MacOS/Lucid --causal-native-ms .build/causal-floor-dense/causal_ch32_x2_1920x1080.mlpackage .build/causal-dense-stateful/causal_ch32_x2_1920x1080.mlpackage .build/causal-swift-native-verified.json 60",
+  "build_log_sha256": "f6aab23ff9e259997d3d8f7bad4941bcf6d6e178476df4b33667982a64615bbc"
+}

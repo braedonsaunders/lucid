@@ -16,7 +16,155 @@
 import AVFoundation
 import CoreMedia
 import CoreVideo
+import CoreML
+import CryptoKit
 import Foundation
+
+/// Compare the candidate's two state representations through native Core ML.
+/// Runs before app state, and also times complete full-resolution NV12 packets.
+@available(macOS 15.0, *)
+enum CausalNativeTiming {
+    static func run() {
+        do {
+            let args = CommandLine.arguments
+            guard let i = args.firstIndex(of: "--causal-native-ms"), args.count > i + 3 else {
+                throw failure("usage: --causal-native-ms EXPLICIT_MODEL STATEFUL_MODEL REPORT [COUNT]")
+            }
+            let count = args.count > i + 4 ? max(10, Int(args[i + 4]) ?? 60) : 60
+            try measure(explicitURL: URL(fileURLWithPath: args[i + 1]),
+                        statefulURL: URL(fileURLWithPath: args[i + 2]),
+                        reportURL: URL(fileURLWithPath: args[i + 3]), count: count)
+            exit(0)
+        } catch { print("causal-native-ms failed: \(error)"); exit(1) }
+    }
+
+    private static func failure(_ message: String) -> NSError {
+        NSError(domain: "causal-native-ms", code: 1, userInfo: [NSLocalizedDescriptionKey: message])
+    }
+
+    private static func measure(explicitURL: URL, statefulURL: URL, reportURL: URL, count: Int) throws {
+        var temporary: [URL] = []
+        defer { for url in temporary { try? FileManager.default.removeItem(at: url) } }
+        let configuration = MLModelConfiguration(); configuration.computeUnits = .cpuAndGPU
+        func load(_ url: URL) throws -> MLModel {
+            let compiled: URL
+            if url.pathExtension == "mlmodelc" { compiled = url }
+            else { compiled = try MLModel.compileModel(at: url); temporary.append(compiled) }
+            return try MLModel(contentsOf: compiled, configuration: configuration)
+        }
+        let models = try [load(explicitURL), load(statefulURL)]
+        guard let input = models[0].modelDescription.inputDescriptionsByName["input"]?.imageConstraint,
+              let other = models[1].modelDescription.inputDescriptionsByName["input"]?.imageConstraint,
+              input.pixelsWide == other.pixelsWide, input.pixelsHigh == other.pixelsHigh,
+              let historyShape = models[0].modelDescription.inputDescriptionsByName["history_features"]?.multiArrayConstraint?.shape,
+              models[1].modelDescription.stateDescriptionsByName["history"] != nil else {
+            throw failure("incompatible candidate model interfaces")
+        }
+        let width = input.pixelsWide, height = input.pixelsHigh
+        let color = VideoColorInfo(primaries: "bt709", transfer: "iec61966-2-1", matrix: "rgb", fullRange: true)
+        var frames: [CVPixelBuffer] = []
+        for frame in 0..<4 {
+            var buffer: CVPixelBuffer?
+            guard CVPixelBufferCreate(nil, width, height, input.pixelFormatType,
+                [kCVPixelBufferIOSurfacePropertiesKey: [:], kCVPixelBufferMetalCompatibilityKey: true] as CFDictionary,
+                &buffer) == kCVReturnSuccess, let buffer,
+                input.pixelFormatType == kCVPixelFormatType_32BGRA else { throw failure("BGRA input required") }
+            CVPixelBufferLockBaseAddress(buffer, [])
+            let bytes = CVPixelBufferGetBaseAddress(buffer)!.assumingMemoryBound(to: UInt8.self)
+            let stride = CVPixelBufferGetBytesPerRow(buffer)
+            for y in 0..<height { for x in 0..<width {
+                let p = y * stride + x * 4
+                bytes[p] = UInt8((x * 13 + y * 7 + frame * 11) % 256)
+                bytes[p + 1] = UInt8((x * 3 + y * 17 + frame * 5) % 256)
+                bytes[p + 2] = UInt8((x * 23 + y * 3 + frame * 7) % 256)
+                bytes[p + 3] = 255
+            }}
+            CVPixelBufferUnlockBaseAddress(buffer, []); color.apply(to: buffer); frames.append(buffer)
+        }
+        let valid = try MLMultiArray(shape: [1,1,1,1], dataType: .float32)
+        var reportRows: [[String: Any]] = []
+        var parityMaximum = 0
+        for deliver in [false, true] {
+            var history = try MLMultiArray(shape: historyShape, dataType: .float32)
+            memset(history.dataPointer, 0, history.count * MemoryLayout<Float>.size)
+            let state = models[1].makeState()
+            let senders = [EnhancedFrameSender(), EnhancedFrameSender()]
+            for sender in senders { sender.maximumWidth = width * 2 }
+            var timings = [[Double](), [Double]()], packing = [[Double](), [Double]()]
+            var packetBytes = 0
+            var packetDigests = ["", ""]
+            for step in 0..<(count + 10) {
+                valid[0] = step == 0 ? 0 : 1
+                var outputs: [Int: CVPixelBuffer] = [:]
+                for index in (step % 2 == 0 ? [0, 1] : [1, 0]) {
+                    var features: [String: MLFeatureValue] = ["input": MLFeatureValue(pixelBuffer: frames[step % 4]),
+                                                             "valid": MLFeatureValue(multiArray: valid)]
+                    if index == 0 { features["history_features"] = MLFeatureValue(multiArray: history) }
+                    let provider = try MLDictionaryFeatureProvider(dictionary: features)
+                    let start = ContinuousClock.now
+                    let result = index == 0 ? try models[index].prediction(from: provider)
+                        : try models[index].prediction(from: provider, using: state)
+                    if index == 0 {
+                        guard let next = result.featureValue(for: "next_state")?.multiArrayValue else { throw failure("missing history") }
+                        history = next // Native object reuse: do not manufacture a Python-style copy.
+                    }
+                    guard let image = result.featureValue(for: "output")?.imageBufferValue else { throw failure("missing output") }
+                    let inferred = ContinuousClock.now
+                    var serialized: Data?
+                    if deliver {
+                        color.apply(to: image)
+                        guard let packet = senders[index].packet(for: image, sequence: step, session: "native-bench") else {
+                            throw failure("NV12 packet failed")
+                        }
+                        packetBytes = packet.count
+                        serialized = packet
+                    }
+                    let end = ContinuousClock.now
+                    // Consume the complete payload outside timing so an
+                    // optimizer cannot turn packet creation into a size query.
+                    if let serialized { packetDigests[index] = SHA256.hash(data: serialized).description }
+                    outputs[index] = image
+                    if step >= 10 {
+                        timings[index].append((inferred - start).milliseconds)
+                        packing[index].append((end - inferred).milliseconds)
+                    }
+                }
+                if [0, 10, count + 9].contains(step), let a = outputs[0], let b = outputs[1] {
+                    guard CVPixelBufferGetPixelFormatType(a) == kCVPixelFormatType_32BGRA,
+                          CVPixelBufferGetWidth(a) == CVPixelBufferGetWidth(b),
+                          CVPixelBufferGetHeight(a) == CVPixelBufferGetHeight(b) else { throw failure("incompatible output") }
+                    CVPixelBufferLockBaseAddress(a, .readOnly); CVPixelBufferLockBaseAddress(b, .readOnly)
+                    let pa = CVPixelBufferGetBaseAddress(a)!.assumingMemoryBound(to: UInt8.self)
+                    let pb = CVPixelBufferGetBaseAddress(b)!.assumingMemoryBound(to: UInt8.self)
+                    for y in 0..<CVPixelBufferGetHeight(a) { for x in 0..<CVPixelBufferGetWidth(a) { for c in 0..<3 {
+                        parityMaximum = max(parityMaximum, abs(Int(pa[y * CVPixelBufferGetBytesPerRow(a) + x * 4 + c])
+                            - Int(pb[y * CVPixelBufferGetBytesPerRow(b) + x * 4 + c])))
+                    }}}
+                    CVPixelBufferUnlockBaseAddress(a, .readOnly); CVPixelBufferUnlockBaseAddress(b, .readOnly)
+                    guard parityMaximum <= 2 else { throw failure("state representation changed pixels: \(parityMaximum)") }
+                }
+            }
+            for index in 0..<2 {
+                let totals = zip(timings[index], packing[index]).map(+)
+                let sorted = totals.sorted()
+                reportRows.append(["state": index == 0 ? "explicit_native_object" : "MLState", "nv12_packet": deliver,
+                    "graph_mean_ms": timings[index].reduce(0, +) / Double(count),
+                    "packet_mean_ms": packing[index].reduce(0, +) / Double(count),
+                    "total_mean_ms": totals.reduce(0, +) / Double(count),
+                    "total_p95_ms": sorted[Int(Double(count - 1) * 0.95)],
+                    "graph_samples_ms": timings[index], "packet_samples_ms": packing[index], "packet_bytes": packetBytes,
+                    "last_packet_digest": packetDigests[index]])
+            }
+        }
+        let report: [String: Any] = ["purpose": "Native Swift Core ML comparison; optional full-resolution NV12 serialization",
+            "input": [width, height], "output": [width * 2, height * 2], "samples": count, "warmup": 10,
+            "maximum_pixel_difference": parityMaximum, "rows": reportRows,
+            "limitations": ["Synthetic BGRA input; capture/decode/input conversion and browser transport/render excluded",
+                            "Explicit history reuses MLMultiArray directly, unlike the Python benchmark"]]
+        try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys]).write(to: reportURL, options: .atomic)
+        print("causal-native-ms completed: \(reportURL.path), pixel difference \(parityMaximum)")
+    }
+}
 
 @available(macOS 26.0, *)
 enum PipelineTiming {

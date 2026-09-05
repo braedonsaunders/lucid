@@ -2,7 +2,7 @@
 
 The user directed work toward quality/performance on September 4, deferring flicker work. The stationary-loss experiment was stopped; its partial checkpoint and local patch are retained outside shipping code. Current training uses the existing reconstruction objective and reference-feature supervision.
 
-## Measured execution improvement
+## Measured execution improvement through Python
 
 The causal 1080p→4K prototype previously returned a 16,588,800-byte FP32 feature tensor after each prediction and supplied it to the next one. Core ML's persistent `MLState` removes that explicit round trip. This uses an established [Apple runtime capability](https://apple.github.io/coremltools/docs-guides/source/stateful-models.html), not a claim of inventing stateful inference. The learned architecture and weights are unchanged.
 
@@ -20,6 +20,19 @@ Internal state reduces mean graph time **37.6%**, or **1.60× throughput** in th
 The separable filter reduces fixed-filter arithmetic from 588 to 126 MACs per source RGB pixel but delivers no meaningful native speed benefit. It remains an optional experiment; dense filtering remains the default. This distinction matters: lower operation count alone did not predict runtime.
 
 `causal-native-stateful.json` verifies six consecutive Core ML predictions against independently advanced Torch history, including a reset. Maximum image error is 0.712 RGB levels and state error 0.000669. The alternating native comparison differs by at most one RGB level across execution variants. State is initialized separately for each model; timing does not read it back to Python.
+
+## Native Swift confirmation, including 4K packet creation
+
+The Release Lucid executable now has an offline `--causal-native-ms` diagnostic. Unlike Python, the explicit Swift path directly reuses the returned `MLMultiArray`. This is a stricter check of whether the runtime improvement survives native integration. The final alternating 60-sample run after ten warmups is in `causal-swift-native.json`, with executable, source, checkpoint and model-package hashes in `causal-swift-native-provenance.json`.
+
+| Native Swift path | Explicit history mean / p95 ms | MLState mean / p95 ms |
+|---|---:|---:|
+| Core ML prediction | 17.101 / 17.671 | 11.059 / 11.433 |
+| Prediction + full 4K NV12 packet | 17.935 / 18.234 | 12.248 / 12.456 |
+
+Internal state reduces native prediction time **35.3%** and prediction-plus-packet time **31.7%** in this run. Each packet contains 12,441,796 bytes; its entire payload is consumed with SHA256 outside timing. Three independently advanced frames per delivery mode are compared across state representations, with maximum difference **one RGB level**. Release compilation and the executable diagnostic both succeed.
+
+The input is deterministic synthetic BGRA. Packet creation uses the real `EnhancedFrameSender`, at full 3840×2160 without its normal width reduction. Capture, decoding, input conversion, network transfer, browser drawing, sustained power and thermal behavior remain unmeasured here. This validates the native execution route; it does not establish 60 fps browser playback or promote the candidate's quality.
 
 ## Spending the saved time on quality
 
