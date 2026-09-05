@@ -60,6 +60,8 @@ History gives v1 a small detail/DISTS benefit, but no convincing overall gain an
 
 This comparison changes the next work: finish v2, test feature supervision with a matched control, and address source-specific static-region instability. The separately built full-frame codec bank is a later data experiment; combining it into the feature-loss comparison would hide which change helped.
 
+V2 subsequently completed 20,000 steps in 10.54 minutes. `causal-v2-final-evaluation.json` records a weaker independent result than checkpoint 12k despite slightly improved internal validation: LPIPS 0.34421, DISTS 0.12810, PSNR Y 28.4078, detail correlation 0.51565, static flicker 1.00595 and flow residual 3.49643. Against Lanczos, LPIPS improves only 0.40% and DISTS worsens 0.03%. Four People's flicker remains 7.72% worse, Johnny's 3.22% worse. The final model is rejected. The feature-supervision pair deliberately starts from this same fixed completed checkpoint; it does not select different starting weights for the two arms.
+
 ```sh
 .venv-convert/bin/python Tools/frontier_eval/diagnose_causal_detail.py \
   --manifest .build/frontier-sequences-2x/sequences.json \
