@@ -25,14 +25,25 @@ def digest(package):
 
 def verify():
     manifest = json.loads(MANIFEST.read_text())
-    for item in manifest['models']:
+    names = set()
+    references = {item['name']: item for item in manifest['models']}
+    for item in manifest.get('tensor_models', []):
+        reference = references.get(item['reference'])
+        if reference is None or any(item[k] != reference[k] for k in ('width', 'height', 'scale')):
+            raise ValueError('Tensor alternative must match an existing shipping geometry')
+    for item in all_models(manifest):
         name = item['name']
-        if not re.fullmatch(r'[A-Za-z0-9_]+', name):
+        if not re.fullmatch(r'[A-Za-z0-9_]+', name) or name in names:
             raise ValueError('Invalid model name')
+        names.add(name)
         package = ROOT / 'Model' / (name + '.mlpackage')
         if not (package / 'Manifest.json').is_file() or digest(package) != item['sha256']:
             raise ValueError(f'{name}: missing model or checksum mismatch; update the model manifest deliberately')
     return manifest
+
+
+def all_models(manifest):
+    return manifest['models'] + manifest.get('tensor_models', [])
 
 
 def package(destination):
@@ -44,7 +55,7 @@ def package(destination):
     except (OSError, ValueError):
         prior = {}
     toolchain = subprocess.check_output(['xcodebuild', '-version'], text=True).strip()
-    for item in manifest['models']:
+    for item in all_models(manifest):
         name = item['name']
         target = destination / (name + '.mlmodelc')
         identity = item['sha256'] + ':' + toolchain
@@ -64,8 +75,8 @@ def package(destination):
             staged.rename(target)
         prior[name] = identity
     # Only write the receipt once the complete ladder has compiled successfully.
-    receipt_path.write_text(json.dumps({x['name']: prior[x['name']] for x in manifest['models']}, indent=2) + '\n')
-    print(f"Verified {len(manifest['models'])} packaged SR models")
+    receipt_path.write_text(json.dumps({x['name']: prior[x['name']] for x in all_models(manifest)}, indent=2) + '\n')
+    print(f"Verified {len(all_models(manifest))} packaged SR models")
 
 
 if __name__ == '__main__':
@@ -75,4 +86,4 @@ if __name__ == '__main__':
     if args.destination:
         package(args.destination)
     else:
-        print(f"Verified {len(verify()['models'])} source models")
+        print(f"Verified {len(all_models(verify()))} source models")

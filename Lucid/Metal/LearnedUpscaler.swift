@@ -37,6 +37,7 @@
 //
 
 import CoreML
+import Metal
 import CoreVideo
 import Foundation
 import VideoToolbox
@@ -97,12 +98,11 @@ final class LearnedUpscaler: @unchecked Sendable {
         Variant(width: 864, height: 480, milliseconds: 17.8),   // covers 854x480
     ]
 
-    /// 1280x720 is the ceiling, and it is a real one rather than a near miss:
-    /// measured at 37.0-37.5 ms against a 33.3 ms frame, of which the model
-    /// alone is 33.4-33.9. Removing every stage after the model would still
-    /// leave it over budget, so this is a property of the model at that size
-    /// and not something tuning can recover. It is also where the returns stop
-    /// - a 720p source is already close to what most windows display.
+    /// 720p remains outside the supported ladder. The 2026-09-05 full-4x
+    /// tensor boundary now measures 23.45 ms on M4 Pro, but the preserved
+    /// coverage evaluation fails the joint perceptual-quality gates versus
+    /// Lanczos and bicubic. A faster boundary alone does not admit that tier.
+    /// See Benchmarks/frontier/tensor-output-720 for both results.
 
     /// The target window is Microsoft Edge's: enabled below 720p. Edge arrived
     /// at that independently, from inside a browser compositor, which is worth
@@ -232,10 +232,13 @@ final class LearnedUpscaler: @unchecked Sendable {
     let detailReferenceRadius: Int
     let inputWidth: Int
     let inputHeight: Int
-    private let model: MLModel
+    private var model: MLModel
     private let inputName: String
     private let outputName: String
-    private let tensorPacker: CoreMLTensorImagePacker?
+    private var tensorPacker: CoreMLTensorImagePacker?
+    private var fallbackModel: MLModel?
+    typealias Prediction = (MLModel, MLFeatureProvider) throws -> MLFeatureProvider
+    private let predict: Prediction
     private let inputFormat: OSType
     private var transfer: VTPixelTransferSession?
     private var rgbPool: CVPixelBufferPool?
@@ -258,7 +261,9 @@ final class LearnedUpscaler: @unchecked Sendable {
         return 2
     }
 
-    init(width: Int, height: Int) throws {
+    init(width: Int, height: Int,
+         prediction: @escaping Prediction = { try $0.prediction(from: $1) }) throws {
+        predict = prediction
         guard let url = Self.model(width: width, height: height) else { throw Failure.noModel }
         let compiled = url.pathExtension == "mlmodelc" ? url : try MLModel.compileModel(at: url)
         let ownsCompilation = url.pathExtension != "mlmodelc"
@@ -320,7 +325,25 @@ final class LearnedUpscaler: @unchecked Sendable {
         // Engine.
         configuration.computeUnits = Self.computeUnits
         print("   🧠 SPAN compute units: \(Self.computeUnitsLabel)")
-        model = try MLModel(contentsOf: compiled, configuration: configuration)
+        let referenceModel = try MLModel(contentsOf: compiled, configuration: configuration)
+        var optimized: ValidatedTensorOutput?
+        if configuration.computeUnits == .cpuAndGPU,
+           ValidatedTensorOutput.eligible(deviceName: MTLCreateSystemDefaultDevice()?.name ?? "",
+                version: ProcessInfo.processInfo.operatingSystemVersion,
+                arguments: CommandLine.arguments, environment: ProcessInfo.processInfo.environment),
+           let input = referenceModel.modelDescription.inputDescriptionsByName.first?.value.imageConstraint,
+           let tensorURL = Bundle.main.url(forResource: "SPAN_x4_ch32utc_tensor_\(input.pixelsWide)x\(input.pixelsHigh)", withExtension: "mlmodelc") {
+            do {
+                optimized = try ValidatedTensorOutput.load(reference: referenceModel, url: tensorURL, configuration: configuration)
+                print(optimized == nil ? "   Tensor compatibility check declined; using image output" :
+                    "   Tensor compatibility check passed; image fallback retained")
+            } catch {
+                print("   Tensor compatibility check failed; using image output: \(error)")
+            }
+            fflush(stdout)
+        }
+        model = optimized?.model ?? referenceModel
+        fallbackModel = optimized == nil ? nil : referenceModel
         guard let input = model.modelDescription.inputDescriptionsByName.first,
               let output = model.modelDescription.outputDescriptionsByName.first,
               let constraint = input.value.imageConstraint else { throw Failure.noModel }
@@ -329,7 +352,7 @@ final class LearnedUpscaler: @unchecked Sendable {
         if let image = output.value.imageConstraint {
             outputWidth = image.pixelsWide; outputHeight = image.pixelsHigh
             tensorPacker = nil
-        } else if Self.permitsTensorOutput(arguments: CommandLine.arguments, environment: ProcessInfo.processInfo.environment),
+        } else if (optimized != nil || Self.permitsTensorOutput(arguments: CommandLine.arguments, environment: ProcessInfo.processInfo.environment)),
                   configuration.computeUnits == .cpuAndGPU,
                   let tensor = output.value.multiArrayConstraint,
                   tensor.dataType == .float32,
@@ -337,9 +360,9 @@ final class LearnedUpscaler: @unchecked Sendable {
                   metadata["lucid.output_range"] == "0..255",
                   metadata["lucid.output_scale"] == "4",
                   metadata["lucid.checkpoint_sha256"] == "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65" {
-            // Measurement-only admission until full native/color/browser gates pass.
+            // Bundled alternatives require runtime admission; overrides remain explicit experiments.
             outputWidth = constraint.pixelsWide * 4; outputHeight = constraint.pixelsHigh * 4
-            tensorPacker = try CoreMLTensorImagePacker(width: outputWidth, height: outputHeight)
+            tensorPacker = try optimized?.packer ?? CoreMLTensorImagePacker(width: outputWidth, height: outputHeight)
             print("   Tensor RGB8 output: shared Metal storage, binary16 precision then nearest-even")
         } else { throw Failure.noModel }
         guard let reconstructionScale = Self.reconstructionScale(
@@ -376,13 +399,24 @@ final class LearnedUpscaler: @unchecked Sendable {
 
         let provider = try MLDictionaryFeatureProvider(
             dictionary: [inputName: MLFeatureValue(pixelBuffer: rgb)])
-        let result = try model.prediction(from: provider)
         let value: CVPixelBuffer
-        if let tensorPacker {
-            guard let array = result.featureValue(for: outputName)?.multiArrayValue else { throw Failure.prediction }
-            value = try tensorPacker.pack(array)
-        } else {
-            guard let image = result.featureValue(for: outputName)?.imageBufferValue else { throw Failure.prediction }
+        do {
+            let result = try predict(model, provider)
+            if let tensorPacker {
+                guard let array = result.featureValue(for: outputName)?.multiArrayValue else { throw Failure.prediction }
+                value = try tensorPacker.pack(array)
+            } else {
+                guard let image = result.featureValue(for: outputName)?.imageBufferValue else { throw Failure.prediction }
+                value = image
+            }
+        } catch {
+            guard let fallbackModel else { throw error }
+            model = fallbackModel
+            tensorPacker = nil
+            self.fallbackModel = nil
+            print("   Tensor prediction failed; restored image output: \(error)")
+            fflush(stdout)
+            guard let image = try predict(model, provider).featureValue(for: outputName)?.imageBufferValue else { throw Failure.prediction }
             value = image
         }
         guard CVPixelBufferGetWidth(value) == outputWidth,

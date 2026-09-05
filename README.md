@@ -120,7 +120,11 @@ xcodebuild -project Lucid.xcodeproj -scheme Lucid -configuration Release \
 Every Xcode build verifies the source model hashes in
 `Lucid/Resources/Models.json` and compiles the required models into the app.
 Changed models invalidate their compilation receipt. Missing or corrupt source
-models fail the build. The six shipping model packages are tracked in git.
+models fail the build. The six image models and six tensor-output alternatives
+are tracked in git. On the measured M4 Pro/macOS 26.5.1 backend, Lucid checks
+the bundled alternatives against the image model before using their faster
+output conversion. Other backends and failed checks use the image model;
+a prediction failure also restores it. Reconstruction weights are unchanged.
 
 Open the app at `.build/release/Build/Products/Release/Lucid.app`.
 For Chrome or Edge, open `chrome://extensions` or `edge://extensions`, enable

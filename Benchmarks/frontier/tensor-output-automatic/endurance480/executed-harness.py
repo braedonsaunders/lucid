@@ -171,11 +171,9 @@ def main():
             app.terminate();app.wait(timeout=15);app=None;app_log.close();app_log=None
             if label=='candidate' and args.candidate_automatic_tensor:
                 log_path=args.out/f'{index}-{label}-app.log'
-                # SIGTERM may leave a partial UTF-8 diagnostic at the end of a
-                # buffered log. Admission markers are flushed ASCII lines.
-                native_log=log_path.read_bytes()
-                admitted=b'Tensor compatibility check passed; image fallback retained' in native_log
-                recovered=b'Tensor prediction failed; restored image output' in native_log
+                native_log=log_path.read_text()
+                admitted='Tensor compatibility check passed; image fallback retained' in native_log
+                recovered='Tensor prediction failed; restored image output' in native_log
                 report['runs'][-1]['automatic_tensor_admission']={
                     'passed':admitted,'recovered_to_image':recovered,'native_log_sha256':digest(log_path)}
                 save()

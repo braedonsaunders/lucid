@@ -50,7 +50,6 @@ def main():
     for port in [48111,48112,48113]:
         with socket.socket() as check:check.bind(('127.0.0.1',port))
     args.out.mkdir(parents=True)
-    (args.out/'executed-harness.py').write_bytes(Path(__file__).read_bytes())
     env={k:v for k,v in os.environ.items() if not k.startswith('LUCID_')}
     env['PLAYWRIGHT_SKIP_BROWSER_GC']='1'
     server_log=(args.out/'server.log').open('w')
@@ -169,18 +168,6 @@ def main():
             print(index,label,args.samples,'samples complete',flush=True)
             cli('close');session=None
             app.terminate();app.wait(timeout=15);app=None;app_log.close();app_log=None
-            if label=='candidate' and args.candidate_automatic_tensor:
-                log_path=args.out/f'{index}-{label}-app.log'
-                # SIGTERM may leave a partial UTF-8 diagnostic at the end of a
-                # buffered log. Admission markers are flushed ASCII lines.
-                native_log=log_path.read_bytes()
-                admitted=b'Tensor compatibility check passed; image fallback retained' in native_log
-                recovered=b'Tensor prediction failed; restored image output' in native_log
-                report['runs'][-1]['automatic_tensor_admission']={
-                    'passed':admitted,'recovered_to_image':recovered,'native_log_sha256':digest(log_path)}
-                save()
-                if not admitted or recovered:
-                    raise RuntimeError('candidate did not remain on the automatically admitted tensor route')
         report['complete']=True;save()
     except Exception as error:
         report['failure']=repr(error)

@@ -7,6 +7,98 @@ import Testing
 @testable import Lucid
 
 struct TensorImagePackerTests {
+    @Test func automaticTensorAdmissionRequiresMeasuredBackendAndNoOverrides() {
+        let version = OperatingSystemVersion(majorVersion: 26, minorVersion: 5, patchVersion: 1)
+        func eligible(_ device: String = "Apple M4 Pro", _ os: OperatingSystemVersion? = nil,
+                      _ args: [String] = [], _ env: [String:String] = [:]) -> Bool {
+            ValidatedTensorOutput.eligible(deviceName: device, version: os ?? version, arguments: args, environment: env)
+        }
+        #expect(eligible())
+        #expect(!eligible("Apple M4"))
+        let nextOS = OperatingSystemVersion(majorVersion: 26, minorVersion: 5, patchVersion: 2)
+        let acceptsUnmeasuredOS = eligible("Apple M4 Pro", nextOS)
+        #expect(acceptsUnmeasuredOS == false)
+        #expect(!eligible("Apple M4 Pro", nil, ["--pipeline-ms"]))
+        for key in ["LUCID_MODEL_STEM", "LUCID_PIPELINE_MODEL", "LUCID_DISABLE_TENSOR_OUTPUT"] {
+            #expect(!eligible("Apple M4 Pro", nil, [], [key:"1"]))
+        }
+    }
+
+    @Test func tensorAdmissionRejectsChangedPixelsBackingAndMetadata() throws {
+        func buffer(_ width: Int = 8, surface: Bool = false) throws -> CVPixelBuffer {
+            var b: CVPixelBuffer?
+            let attrs = surface ? [kCVPixelBufferIOSurfacePropertiesKey: [:]] as CFDictionary : nil
+            #expect(CVPixelBufferCreate(nil, width, 8, kCVPixelFormatType_32BGRA, attrs, &b) == kCVReturnSuccess)
+            let result = try #require(b)
+            CVPixelBufferLockBaseAddress(result, [])
+            memset(CVPixelBufferGetBaseAddress(result), 128, CVPixelBufferGetDataSize(result))
+            CVPixelBufferUnlockBaseAddress(result, [])
+            return result
+        }
+        let a = try buffer(), b = try buffer()
+        #expect(ValidatedTensorOutput.buffersMatch(a, b))
+        #expect(!ValidatedTensorOutput.buffersMatch(a, try buffer(16)))
+        #expect(!ValidatedTensorOutput.buffersMatch(a, try buffer(surface: true)))
+        CVBufferSetAttachment(b, kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_sRGB, .shouldPropagate)
+        #expect(!ValidatedTensorOutput.buffersMatch(a, b))
+        CVBufferRemoveAllAttachments(b)
+        CVPixelBufferLockBaseAddress(b, [])
+        CVPixelBufferGetBaseAddress(b)!.assumingMemoryBound(to: UInt8.self)[3] = 255
+        CVPixelBufferUnlockBaseAddress(b, [])
+        #expect(!ValidatedTensorOutput.buffersMatch(a, b))
+    }
+
+    @Test func everyBundledTensorAlternativePassesActualImageComparison() throws {
+        guard ValidatedTensorOutput.eligible(deviceName: MTLCreateSystemDefaultDevice()?.name ?? "",
+            version: ProcessInfo.processInfo.operatingSystemVersion, arguments: [], environment: [:]) else { return }
+        let config = MLModelConfiguration(); config.computeUnits = .cpuAndGPU
+        for variant in LearnedUpscaler.variants {
+            try autoreleasepool {
+                let size = "\(variant.width)x\(variant.height)"
+                let imageURL = try #require(Bundle.main.url(forResource: "SPAN_x4_ch32utc_" + size, withExtension: "mlmodelc"))
+                let tensorURL = try #require(Bundle.main.url(forResource: "SPAN_x4_ch32utc_tensor_" + size, withExtension: "mlmodelc"))
+                let reference = try MLModel(contentsOf: imageURL, configuration: config)
+                #expect(try ValidatedTensorOutput.load(reference: reference, url: tensorURL, configuration: config) != nil)
+                #expect(try ValidatedTensorOutput.load(reference: reference, url: imageURL, configuration: config) == nil)
+            }
+        }
+    }
+
+    @Test func failedTensorPredictionRetriesSameFrameAndStaysOnImageFallback() throws {
+        guard ValidatedTensorOutput.eligible(deviceName: MTLCreateSystemDefaultDevice()?.name ?? "",
+            version: ProcessInfo.processInfo.operatingSystemVersion,
+            arguments: CommandLine.arguments, environment: ProcessInfo.processInfo.environment) else { return }
+        var tensorAttempts = 0, imageAttempts = 0
+        let model = try LearnedUpscaler(width: 256, height: 144, prediction: { model, input in
+            if model.modelDescription.outputDescriptionsByName.first?.value.multiArrayConstraint != nil {
+                tensorAttempts += 1
+                throw LearnedUpscaler.Failure.prediction
+            }
+            imageAttempts += 1
+            return try model.prediction(from: input)
+        })
+        var buffer: CVPixelBuffer?
+        #expect(CVPixelBufferCreate(nil, 256, 144, kCVPixelFormatType_32BGRA, nil, &buffer) == kCVReturnSuccess)
+        let frame = try #require(buffer)
+        CVPixelBufferLockBaseAddress(frame, [])
+        memset(CVPixelBufferGetBaseAddress(frame), 128, CVPixelBufferGetDataSize(frame))
+        CVPixelBufferUnlockBaseAddress(frame, [])
+        let first = try model.upscale(frame), second = try model.upscale(frame)
+        #expect(tensorAttempts == 1)
+        #expect(imageAttempts == 2)
+        #expect(CVPixelBufferGetWidth(first) == 1024 && CVPixelBufferGetHeight(first) == 576)
+        CVPixelBufferLockBaseAddress(first, .readOnly)
+        CVPixelBufferLockBaseAddress(second, .readOnly)
+        defer {
+            CVPixelBufferUnlockBaseAddress(first, .readOnly)
+            CVPixelBufferUnlockBaseAddress(second, .readOnly)
+        }
+        for y in 0..<576 {
+            #expect(memcmp(CVPixelBufferGetBaseAddress(first)!.advanced(by: y*CVPixelBufferGetBytesPerRow(first)),
+                           CVPixelBufferGetBaseAddress(second)!.advanced(by: y*CVPixelBufferGetBytesPerRow(second)), 1024*4) == 0)
+        }
+    }
+
     @Test func tensorExperimentRequiresExplicitEphemeralOptIn() {
         #expect(!LearnedUpscaler.permitsTensorOutput(arguments: [], environment: [:]))
         #expect(!LearnedUpscaler.permitsTensorOutput(arguments: [], environment: ["LUCID_EXPERIMENTAL_TENSOR_OUTPUT":"1"]))
