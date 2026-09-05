@@ -1,0 +1,18 @@
+# Frozen broader-data comparison
+
+This experiment changes the training data while retaining the completed August-2026 PixRestore-supervised recipe. It tests a data-diversity hypothesis, not a new architecture. The prior candidate improved perceptual distances but failed real-detail guards on the independent holdout. Those observed sources now remain regression evidence; they cannot serve as untouched promotion evidence for later tuning.
+
+The original 168-sequence bank and its pinned teacher targets are combined with the new REDS bank: **29 source identities, 208 training sequences and 24 development-validation sequences**, each 16 frames, with 256px LR / 512px reference patches. The new teacher cache contains 768 training-only frames. Source-family and content-hash split rules are checked across both banks. Original data and caches remain intact; combined manifests reference their checked absolute paths. All teacher generation settings, model identity, source provenance, code hash and seed must match before composition. Seven tests cover changed bytes, incompatible geometry, duplicate IDs, family/content leakage, teacher validation leakage, incomplete caches and mixed teacher recipes.
+
+The comparison uses the same shipping initialization folded to direct 2×, training seed 20260914, 8,000 steps, batch four, crop 96, cosine learning rate 0.00002→0.000002, fixed 50/50 shipping/PixRestore targets, reconstruction objectives, and released DINO discriminator weight 0.005. No temporal loss or filter changes are included. The existing original-bank 8,000-step adversarial run is the reference arm. Equal step counts compare equal training exposure, rather than equal epochs; adding footage changes the sampled sequence identities.
+
+Before training starts, the primary candidate is fixed to the final checkpoint interpolated **80% trained / 20% folded shipping**, matching the previous development-selected calibration. Raw final weights are a secondary diagnostic. No new coefficient or postfilter selection will use the failed eight-source holdout. Development evaluation compares both fixed variants and the previous calibrated candidate on the same frames; a promising outcome still needs fresh independent promotion footage and native delivery evaluation. Neither the teacher nor discriminator is added to Mac inference.
+
+`presented-diversity-command.ps1` pins training code, initialization and composed bank hashes, refuses an occupied Python worker or existing outputs, runs one exclusive RTX 4080 job, and records its exit result. This document is the pre-run protocol, not a claim of a quality gain.
+
+
+## Completed data comparison
+
+Training completed 8,000 steps in **5.86 minutes**, exit zero; target-cache preparation is additional. The frozen 80% candidate improves development LPIPS **6.75%** and DISTS **10.17%** versus shipping, but fails fine-correlation guards on Four People and Johnny. Its mean fine correlation is 0.551729 versus shipping 0.564311. Raw final weights improve perceptual scores further and fail all three source detail guards. Thus broader footage alone did not produce a joint quality win. No weights are promoted and no new interpolation coefficient is selected.
+
+The evaluation reuses the exact prior frozen development frame manifest, and recomputes shipping and the previous calibrated candidate in the same run. `presented-diversity-development.json` contains all rows; `presented-diversity-development-gate.json` derives the unchanged gates using sample identities from the earlier committed development report. The completed training experiment, log, exit receipt and composed-bank provenance are retained separately.

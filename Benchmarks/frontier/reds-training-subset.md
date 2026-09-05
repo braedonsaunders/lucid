@@ -10,3 +10,6 @@ The subsequent full-frame codec bank uses H.264 and VP9, source 640×360, refere
 
 
 All eight lossless masters passed their complete RGB round trip. Codec-bank construction completed with exit zero: **48 training sequences / 16 development-validation sequences**, with 16 frames each. `reds-master-receipts.json`, `reds-stream-bank-manifest.json` and `reds-stream-bank-result.json` record these results. These new sources have not yet contributed to a training run. The pinned bank is ready for a controlled data-diversity experiment; it has not altered the completed frozen checkpoint or holdout.
+
+
+Teacher generation has now completed on the RTX 4080 with exit zero: **768 training-only frames**, using the same pinned PixRestore teacher, code, seed and inference settings as the original bank. The source and teacher manifests compose into a 29-source development bank without moving validation footage into training. The subsequent 8,000-step adversarial data-diversity run has completed; see [the frozen comparison protocol](presented-diversity-experiment.md). These additional sources are no longer unused training data. The previous eight-source holdout failure remains recorded.
