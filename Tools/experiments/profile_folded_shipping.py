@@ -45,6 +45,8 @@ def main():
                     help='Optional trained 2x checkpoint; otherwise use the exact area-folded initialization')
     ap.add_argument('--anchored-probe', action='store_true',
                     help='Also measure a nonzero untrained frozen-base detail branch; no quality claim')
+    ap.add_argument('--precision',choices=['mul-fp32','shuffle-fp32','fp16'],default='mul-fp32',
+                    help='Experimental conversion policy; every graph must pass RGB correctness checks')
     ap.add_argument('--sizes', nargs='+', default=['640x360', '1280x720'])
     ap.add_argument('--samples', type=int, default=40)
     ap.add_argument('--compute-units', nargs='+', choices=['CPU_AND_GPU', 'ALL'], default=['CPU_AND_GPU'])
@@ -81,6 +83,7 @@ def main():
         'checkpoint_sha256': digest(args.checkpoint), 'profiler_sha256': digest(__file__),
         'direct_checkpoint_sha256': digest(args.direct_checkpoint) if args.direct_checkpoint else None,
         'fold_sha256': digest(Path(__file__).with_name('fold_shipping_head.py')),
+        'precision_policy': args.precision,
         'torch': str(torch.__version__), 'coremltools': str(ct.__version__),
         'platform': platform.platform(), 'samples': args.samples,
         'excludes': 'capture, network, presentation; 4x output downsampling is not timed',
@@ -108,10 +111,13 @@ def main():
             with torch.inference_mode():
                 traced = torch.jit.trace(wrapper, example)
                 expected = wrapper(example)[0].permute(1, 2, 0).numpy()
+            precision = (selective_fp16() if args.precision == 'mul-fp32' else
+                ct.transform.FP16ComputePrecision(op_selector=lambda op: op.op_type != 'pixel_shuffle')
+                if args.precision == 'shuffle-fp32' else ct.precision.FLOAT16)
             converted = ct.convert(traced, inputs=[ct.ImageType(name='input', shape=example.shape,
                 color_layout=ct.colorlayout.RGB, scale=1/255)],
                 outputs=[ct.ImageType(name='output', color_layout=ct.colorlayout.RGB)],
-                convert_to='mlprogram', compute_precision=selective_fp16(),
+                convert_to='mlprogram', compute_precision=precision,
                 minimum_deployment_target=ct.target.macOS15)
             converted.user_defined_metadata['lucid.checkpoint_sha256'] = digest(
                 args.direct_checkpoint if label != 'shipping4x' and args.direct_checkpoint else args.checkpoint)
@@ -136,6 +142,8 @@ def main():
                 errors[label] = {'max_rgb': float(delta.max()), 'mean_rgb': float(delta.mean()),
                                  'output_shape': list(output.shape)}
                 if delta.max() > 3 or delta.mean() > 0.6:
+                    report['rejected']={'input_size':size,'variant':label,'compute_units':units,'errors':errors[label]}
+                    save()
                     raise ValueError(f'native conversion mismatch: {label} {units} {errors[label]}')
                 output_hashes[label] = hashlib.sha256(output.tobytes()).hexdigest()
             for iteration in range(args.samples + 10):
