@@ -1,0 +1,109 @@
+{
+  "untrained": true,
+  "purpose": "Core ML graph correctness and latency feasibility only",
+  "channels": 32,
+  "blocks": 4,
+  "scale": 2,
+  "parameters": 48296,
+  "coremltools": "9.0",
+  "torch": "2.14.0",
+  "architecture_sha256": "cd195f8b02d53401560cbc81a786cc552207df0558c5b6407bc1ef036872ddea",
+  "includes": "synchronous Python Core ML prediction with PIL image and explicit feature-state copies",
+  "excludes": "video decode, browser transport, app rendering; no trained quality result",
+  "rows": [
+    {
+      "input": "1280x720",
+      "output": "2560x1440",
+      "compute_units": "CPU_AND_GPU",
+      "mean_ms": 9.217799990437925,
+      "p95_ms": 9.931995818624273,
+      "samples_ms": [
+        8.95883294288069,
+        8.87137500103563,
+        9.122082963585854,
+        9.133166982792318,
+        8.896374958567321,
+        8.798666996881366,
+        9.687292040325701,
+        9.59666701965034,
+        10.132208000868559,
+        8.981332997791469
+      ],
+      "conversion_max_pixel_error_255": 0.6198577880859375,
+      "conversion_max_state_error": 0.0005440115928649902,
+      "state_bytes_fp32": 7372800
+    },
+    {
+      "input": "1280x720",
+      "output": "2560x1440",
+      "compute_units": "ALL",
+      "mean_ms": 16.627499915193766,
+      "p95_ms": 16.795174835715443,
+      "samples_ms": [
+        16.64033392444253,
+        16.655500046908855,
+        16.6754579404369,
+        16.893125022761524,
+        16.619166010059416,
+        16.59687503706664,
+        16.579375020228326,
+        16.530750086531043,
+        16.53437502682209,
+        16.55004103668034
+      ],
+      "conversion_max_pixel_error_255": 0.6824798583984375,
+      "conversion_max_state_error": 0.0023055672645568848,
+      "state_bytes_fp32": 7372800
+    },
+    {
+      "input": "1920x1080",
+      "output": "3840x2160",
+      "compute_units": "CPU_AND_GPU",
+      "mean_ms": 19.360595708712935,
+      "p95_ms": 22.48901861021295,
+      "samples_ms": [
+        18.211666028946638,
+        23.27462495304644,
+        18.186042085289955,
+        18.117915955372155,
+        21.528833080083132,
+        21.380041958764195,
+        18.260708078742027,
+        18.46329099498689,
+        18.008666927926242,
+        18.174167023971677
+      ],
+      "conversion_max_pixel_error_255": 0.6183319091796875,
+      "conversion_max_state_error": 0.000594794750213623,
+      "state_bytes_fp32": 16588800
+    },
+    {
+      "input": "1920x1080",
+      "output": "3840x2160",
+      "compute_units": "ALL",
+      "mean_ms": 33.57333759777248,
+      "p95_ms": 34.78973736055195,
+      "samples_ms": [
+        32.90962497703731,
+        33.125916961580515,
+        34.9568750243634,
+        33.55987498071045,
+        32.94954099692404,
+        33.84783398360014,
+        34.5854579936713,
+        33.881459035910666,
+        33.396000042557716,
+        32.52079198136926
+      ],
+      "conversion_max_pixel_error_255": 0.6814422607421875,
+      "conversion_max_state_error": 0.002244234085083008,
+      "state_bytes_fp32": 16588800
+    }
+  ],
+  "hardware": {
+    "chip": "Apple M4 Pro",
+    "cpu_cores": 12,
+    "memory_gb": 24
+  },
+  "measurement_date": "2026-09-04"
+}
