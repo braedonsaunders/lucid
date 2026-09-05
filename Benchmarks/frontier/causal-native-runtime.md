@@ -40,7 +40,17 @@ A nonzero, untrained 64-channel graph has **152,712 parameters**, versus 57,512 
 
 `Tools/experiments/widen_causal.py` expands the best existing feature-supervised 32-channel candidate to 64 channels. Duplicated channels use complementary outgoing weights whose sum preserves the original function, while allowing different gradients. A trained four-frame check, including reset, changes output by at most 1.1921e-7 in normalized RGB. Tests also verify that the extra channels can receive different gradients. `causal-capacity-initialization.json` records the source, seed and transformation hash.
 
-An RTX 4080 experiment now compares this expanded model with the original 32-channel initialization: 8,000 steps each, same seed 20260912, full-frame codec bank, crop/batch/schedule and DINO feature weight 0.03. See `causal-capacity-training-command.ps1`. Its quality outcome is pending; no candidate is enabled in Lucid.
+The RTX 4080 experiment completed both models: 8,000 steps each, same seed 20260912, full-frame codec bank, crop/batch/schedule and DINO feature weight 0.03. See `causal-capacity-training-command.ps1`. An SSH disconnect stopped the original control before it saved a checkpoint; `causal-capacity-control-recovery.ps1` reran only that control from the identical initialization in a fresh directory, supervised independently of SSH. It completed in 6.03 minutes with exit code zero.
+
+The matched development evaluation (`causal-capacity-matched-evaluation.json`, 12 sequences from three source identities) does **not** justify the extra capacity:
+
+| Variant | LPIPS ↓ | DISTS ↓ | Fine-detail correlation ↑ |
+|---|---:|---:|---:|
+| Lanczos | 0.345604 | 0.128056 | 0.509324 |
+| Matched 32-channel control | 0.339608 | 0.127991 | 0.513671 |
+| 64-channel candidate | 0.339344 | 0.127935 | 0.513596 |
+
+Doubling width improves LPIPS only **0.078%** over the matched control and DISTS **0.043%**, with slightly lower fine-detail correlation. Both remain below the quality promotion gate. This rules out this particular short width-expansion experiment as a useful quality/performance tradeoff; it does not prove capacity never matters. Preserve the faster 32-channel experimental route while improving its supervision and data. Shipping weights remain unchanged.
 
 ## Reproduction
 
