@@ -1,0 +1,58 @@
+{
+  "report_sha256": "954dd56c27f8beb22d8f70e70275093329d8f2e7251f192b1c72fe7263cbfdd6",
+  "metric": "capture to canvas draw submission acknowledgment; not physical scanout",
+  "limits": {
+    "minimum_seconds": 120,
+    "minimum_fps": 57,
+    "maximum_p95_ms": 50
+  },
+  "runs": [
+    {
+      "variant": "shipping",
+      "seconds": 122.91269995117187,
+      "actual_draws": 7402,
+      "actual_fps": 60.22160446349733,
+      "median_ms": 24.400146484375,
+      "p95_ms": 33.5,
+      "p99_ms": 39.300048828125,
+      "max_ms": 78.999755859375,
+      "gates": {
+        "duration": true,
+        "cadence": true,
+        "latency": true,
+        "off": true
+      },
+      "pass": true,
+      "minute_bins": [
+        {
+          "start_second": 0,
+          "seconds": 60.0,
+          "draws": 3614,
+          "fps": 60.233333333333334,
+          "p95_ms": 33.39990234375
+        },
+        {
+          "start_second": 60,
+          "seconds": 60.0,
+          "draws": 3615,
+          "fps": 60.25,
+          "p95_ms": 33.60009765625
+        },
+        {
+          "start_second": 120,
+          "seconds": 2.912699951171875,
+          "draws": 173,
+          "fps": 59.39506399565682,
+          "p95_ms": 32.699951171875
+        }
+      ],
+      "native_rss_mib": {
+        "samples": 4,
+        "first": 198.203125,
+        "last": 199.40625,
+        "peak": 199.40625
+      }
+    }
+  ],
+  "pass": true
+}
