@@ -45,3 +45,14 @@ The integrated route recorded **36,944 draws over 621.2254 seconds: 59.4696 fps*
 ## Reproducing historical route comparisons
 
 The prototype builder applies checked replacements to the pre-integration source. Extract `BrowserExtension/` from commit `e4b8634` into an isolated directory and pass that directory with `--source`; it is not intended to patch the already-integrated current source. Exact executed builder snapshots and receipts are preserved with both comparisons. The regular installed-browser harness accepts the integrated extension directly, after assigning the isolated test ports.
+
+
+## Sustained source-timestamp cadence
+
+The new test-only probe reads the existing source PTS in each native output header and associates it with that packet's canvas acknowledgment. It retains at most 256 metadata entries per socket, never pixel buffers. Missing or invalid timestamp evidence fails the stronger analyzer. The production packet protocol is unchanged. Counting consecutive PTS changes accommodates the fixture's video loops; it does not assert pixel uniqueness or physical scanout.
+
+The 123-second initial run delivered 7,300 changing-timestamp draws (**59.35 fps**) and 73 repeated-timestamp draws, at 37.60 ms p95. The **620.4595-second** sustained run delivered 36,223 changing-timestamp draws (**58.3809 fps**) and 381 repeated-timestamp draws, at **40.9001 ms p95** / 42.6003 ms p99. Its 31 backward timestamp changes correspond to the looping 20-second fixture. The source-cadence, total-draw cadence, duration, latency and Off gates all pass. Native RSS fell from 194.59 to 177.78 MiB across 20 samples.
+
+`surface-capture-sourcepts/` and `surface-capture-sourcepts-10min/` preserve the complete reports, traces, gates and executed instrumentation. The long test's extension matches the committed product scripts byte-for-byte after the documented isolated-port substitutions. Three JS probe tests verify timestamp association, loop-zero values, missing/foreign evidence and bounded retention; six analyzer tests include a synthetic 50-draw-fps/25-source-fps trace that must fail source cadence. All owned browser/native/fixture processes were closed by the harness and their absence was verified.
+
+This closes the sustained **360p60 local installed-Chrome cadence/latency screen** for the shipping model with the direct surface route. Other resolutions, third-party sites, Safari, physical scanout and a full browser memory gate remain unverified.

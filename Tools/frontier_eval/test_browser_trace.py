@@ -68,6 +68,27 @@ class BrowserTraceTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'complete'):
             analyze(self.save())
 
+    def test_repeated_source_frames_cannot_pass_source_cadence(self):
+        for row in self.rows:
+            row['sourceTimestamp'] = (row['seq'] // 2) * 40000
+        result = analyze(self.save(), minimum_seconds=10, minimum_fps=50, require_source_timestamps=True)
+        self.assertTrue(result['runs'][0]['gates']['cadence'])
+        self.assertFalse(result['pass'])
+        self.assertEqual(result['runs'][0]['source_cadence']['changed_timestamp_fps'], 25)
+        self.assertEqual(result['runs'][0]['source_cadence']['repeated_timestamp_draws'], 250)
+
+    def test_looping_source_timestamps_and_missing_evidence(self):
+        with self.assertRaisesRegex(ValueError, 'source timestamps'):
+            analyze(self.save(), require_source_timestamps=True)
+        for row in self.rows:
+            row['sourceTimestamp'] = (row['seq'] % 100) * 20000
+        result = analyze(self.save(), minimum_seconds=10, minimum_fps=50, require_source_timestamps=True)
+        self.assertTrue(result['pass'])
+        self.assertEqual(result['runs'][0]['source_cadence']['backward_timestamp_changes'], 5)
+        self.rows[8]['sourceTimestamp'] = None
+        with self.assertRaisesRegex(ValueError, 'source timestamps'):
+            analyze(self.save(), require_source_timestamps=True)
+
 
 if __name__ == '__main__':
     unittest.main()
