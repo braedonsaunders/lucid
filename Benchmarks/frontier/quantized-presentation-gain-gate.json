@@ -1,0 +1,83 @@
+{
+  "spatial_gate_pass": true,
+  "failure_reasons": [],
+  "frames_per_variant": 48,
+  "source_balanced": {
+    "shipping4x": {
+      "lpips": 0.27349909860640764,
+      "dists": 0.12593108788132668,
+      "fine_correlation": 0.5258513564517759
+    },
+    "candidate": {
+      "lpips": 0.2615311338255803,
+      "dists": 0.12230399375160535,
+      "fine_correlation": 0.5429195959687485
+    }
+  },
+  "per_source": {
+    "shipping4x": {
+      "crowd_run": {
+        "lpips": 0.39452760480344296,
+        "dists": 0.1649707295000553,
+        "fine_correlation": 0.35634315484479623
+      },
+      "four_people": {
+        "lpips": 0.19690733589231968,
+        "dists": 0.09933047369122505,
+        "fine_correlation": 0.6348000146508805
+      },
+      "johnny": {
+        "lpips": 0.2290623551234603,
+        "dists": 0.11349206045269966,
+        "fine_correlation": 0.586410899859651
+      }
+    },
+    "candidate": {
+      "crowd_run": {
+        "lpips": 0.3755924245342612,
+        "dists": 0.16068077459931374,
+        "fine_correlation": 0.36670030422645095
+      },
+      "four_people": {
+        "lpips": 0.18752751871943474,
+        "dists": 0.09344848617911339,
+        "fine_correlation": 0.6506249269141797
+      },
+      "johnny": {
+        "lpips": 0.22147345822304487,
+        "dists": 0.11278272047638893,
+        "fine_correlation": 0.6114335567656147
+      }
+    }
+  },
+  "perceptual_improvements": {
+    "lpips": 0.04375869917600872,
+    "dists": 0.028802213899234985
+  },
+  "per_source_changes": {
+    "crowd_run": {
+      "lpips": 0.04799456372289945,
+      "dists": 0.02600433976222516,
+      "fine_correlation": 0.010357149381654718
+    },
+    "four_people": {
+      "lpips": 0.04763569183635885,
+      "dists": 0.059216344124122355,
+      "fine_correlation": 0.015824912263299185
+    },
+    "johnny": {
+      "lpips": 0.033130266631219873,
+      "dists": 0.00625012862997909,
+      "fine_correlation": 0.025022656905963725
+    }
+  },
+  "status": "native delivered development nominal-gain ablation; no release or browser cadence claim",
+  "thresholds": {
+    "source_balanced_lpips_improvement_min": -0.005,
+    "source_balanced_dists_improvement_min": -0.005,
+    "per_source_perceptual_regression_max": 0.005,
+    "per_source_fine_correlation_drop_max": 0.002
+  },
+  "baseline_controls_max_absolute_delta": 0.0,
+  "promotion_authorized": false
+}

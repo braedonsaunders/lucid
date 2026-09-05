@@ -452,8 +452,14 @@ enum PipelineTiming {
             if learned == nil {
                 learned = try LearnedUpscaler(width: width, height: height)
                 detail.settings = t.detailSettings(radius: learned!.scale)
+                // Diagnostic ablation: preserve the user's nominal gain when a
+                // presentation transform changes output scale without retraining.
+                if ProcessInfo.processInfo.environment["LUCID_PIPELINE_PRESERVE_GAIN"] == "1" {
+                    detail.settings.referenceRadius = learned!.scale
+                }
                 print("pipeline-ms input \(width)x\(height) → model \(learned!.inputWidth)x\(learned!.inputHeight) → output \(learned!.outputWidth)x\(learned!.outputHeight)")
                 print("pipeline-ms detail radius=\(detail.settings.radius)")
+                print("pipeline-ms detail referenceRadius=\(detail.settings.referenceRadius)")
                 let incoming = CVBufferCopyAttachment(frame, kCVImageBufferChromaLocationTopFieldKey, nil)
                     .map { "\($0)" } ?? "nil"
                 print("pipeline-ms chroma incoming=\(incoming)")

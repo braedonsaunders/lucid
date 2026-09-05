@@ -1,0 +1,224 @@
+{
+  "mode": "bank",
+  "gate": {
+    "source_balanced_lpips_improvement_min": 0.03,
+    "source_balanced_dists_improvement_min": 0.03,
+    "per_source_perceptual_regression_max": 0.02,
+    "per_source_fine_correlation_drop_max": 0.01
+  },
+  "controls_max_absolute_delta": 0.0,
+  "results": {
+    "unconstrained": {
+      "spatial_gate_pass": false,
+      "failure_reasons": [
+        "reds_154: fine correlation drop exceeds limit",
+        "reds_073: fine correlation drop exceeds limit"
+      ],
+      "frames_per_variant": 96,
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.40222197367499274,
+          "dists": 0.22276637516915798,
+          "fine_correlation": 0.3040961481273848
+        },
+        "shipping": {
+          "lpips": 0.36410116745779914,
+          "dists": 0.2224731333553791,
+          "fine_correlation": 0.32143244640958385
+        },
+        "unconstrained": {
+          "lpips": 0.33185864829768735,
+          "dists": 0.21265069395303726,
+          "fine_correlation": 0.3032795942294646
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "sintel": {
+            "lpips": 0.2696159854531288,
+            "dists": 0.2091157976537943,
+            "fine_correlation": 0.32946662473652005
+          },
+          "reds_154": {
+            "lpips": 0.5052469009533525,
+            "dists": 0.26318140141665936,
+            "fine_correlation": 0.2450867044727926
+          },
+          "reds_073": {
+            "lpips": 0.4318030346184969,
+            "dists": 0.1960019264370203,
+            "fine_correlation": 0.3377351151728416
+          }
+        },
+        "shipping": {
+          "sintel": {
+            "lpips": 0.2692622817121446,
+            "dists": 0.21591424942016602,
+            "fine_correlation": 0.32653072984915327
+          },
+          "reds_154": {
+            "lpips": 0.45876778941601515,
+            "dists": 0.2634068951010704,
+            "fine_correlation": 0.2698841119849202
+          },
+          "reds_073": {
+            "lpips": 0.3642734312452376,
+            "dists": 0.1880982555449009,
+            "fine_correlation": 0.3678824973946781
+          }
+        },
+        "unconstrained": {
+          "sintel": {
+            "lpips": 0.23368372954428196,
+            "dists": 0.19724611565470695,
+            "fine_correlation": 0.32307540712971006
+          },
+          "reds_154": {
+            "lpips": 0.4254380874335766,
+            "dists": 0.2570414822548628,
+            "fine_correlation": 0.23782031335327874
+          },
+          "reds_073": {
+            "lpips": 0.33645412791520357,
+            "dists": 0.18366448394954205,
+            "fine_correlation": 0.34894306220540505
+          }
+        }
+      },
+      "perceptual_improvements": {
+        "lpips": 0.0885537373725912,
+        "dists": 0.04415112626948736
+      },
+      "per_source_changes": {
+        "sintel": {
+          "lpips": 0.13213344231368418,
+          "dists": 0.0864608696072261,
+          "fine_correlation": -0.00345532271944321
+        },
+        "reds_154": {
+          "lpips": 0.07265048408229646,
+          "dists": 0.024165703193780086,
+          "fine_correlation": -0.03206379863164144
+        },
+        "reds_073": {
+          "lpips": 0.07636929005482529,
+          "dists": 0.023571572115406836,
+          "fine_correlation": -0.018939435189273046
+        }
+      },
+      "status": "development screen only; no independent holdout or release admission"
+    },
+    "constrained": {
+      "spatial_gate_pass": false,
+      "failure_reasons": [
+        "lpips: aggregate improvement below minimum",
+        "dists: aggregate improvement below minimum"
+      ],
+      "frames_per_variant": 96,
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.40222197367499274,
+          "dists": 0.22276637516915798,
+          "fine_correlation": 0.3040961481273848
+        },
+        "shipping": {
+          "lpips": 0.36410116745779914,
+          "dists": 0.2224731333553791,
+          "fine_correlation": 0.32143244640958385
+        },
+        "constrained": {
+          "lpips": 0.3598630049576362,
+          "dists": 0.2214866727590561,
+          "fine_correlation": 0.3197413864432292
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "sintel": {
+            "lpips": 0.2696159854531288,
+            "dists": 0.2091157976537943,
+            "fine_correlation": 0.32946662473652005
+          },
+          "reds_154": {
+            "lpips": 0.5052469009533525,
+            "dists": 0.26318140141665936,
+            "fine_correlation": 0.2450867044727926
+          },
+          "reds_073": {
+            "lpips": 0.4318030346184969,
+            "dists": 0.1960019264370203,
+            "fine_correlation": 0.3377351151728416
+          }
+        },
+        "shipping": {
+          "sintel": {
+            "lpips": 0.2692622817121446,
+            "dists": 0.21591424942016602,
+            "fine_correlation": 0.32653072984915327
+          },
+          "reds_154": {
+            "lpips": 0.45876778941601515,
+            "dists": 0.2634068951010704,
+            "fine_correlation": 0.2698841119849202
+          },
+          "reds_073": {
+            "lpips": 0.3642734312452376,
+            "dists": 0.1880982555449009,
+            "fine_correlation": 0.3678824973946781
+          }
+        },
+        "constrained": {
+          "sintel": {
+            "lpips": 0.26663031382486224,
+            "dists": 0.21291637048125267,
+            "fine_correlation": 0.3278515135917634
+          },
+          "reds_154": {
+            "lpips": 0.45450985338538885,
+            "dists": 0.26364956609904766,
+            "fine_correlation": 0.2678051510580786
+          },
+          "reds_073": {
+            "lpips": 0.3584488476626575,
+            "dists": 0.18789408169686794,
+            "fine_correlation": 0.3635674946798455
+          }
+        }
+      },
+      "perceptual_improvements": {
+        "lpips": 0.011640068417671845,
+        "dists": 0.004434066178891083
+      },
+      "per_source_changes": {
+        "sintel": {
+          "lpips": 0.009774736626855463,
+          "dists": 0.013884581249102856,
+          "fine_correlation": 0.001320783742610132
+        },
+        "reds_154": {
+          "lpips": 0.009281244518161147,
+          "dists": -0.0009212780777212437,
+          "fine_correlation": -0.0020789609268415665
+        },
+        "reds_073": {
+          "lpips": 0.015989592111258943,
+          "dists": 0.0010854638042308018,
+          "fine_correlation": -0.004315002714832594
+        }
+      },
+      "status": "development screen only; no independent holdout or release admission"
+    }
+  },
+  "constrained_minus_unconstrained": {
+    "lpips": 0.028004356659948826,
+    "dists": 0.00883597880601883,
+    "fine_correlation": 0.016461792213764592
+  },
+  "promotion_authorized": false,
+  "evidence_sha256": {
+    "Benchmarks/frontier/local-fidelity-bank.json": "9de558a2b4c2a068a0d0c6b52a2a138d0ca8c4fb4df889a0a0c6eccbbb8cb5e1",
+    "Benchmarks/frontier/anchored-lowpass-bank.json": "c9bb4d34a5add87a5c0d9becd2101ed3dbd9ed3ba30740404fe5bfd552c6cd48",
+    "Benchmarks/frontier/local-fidelity-score.py": "a7c8d859c32cb30c3d4123e135d6b649d0ebdd2ecc8145bca700baf683fa34b2",
+    "Tools/frontier_eval/gate_frozen_holdout.py": "cfc05cc6c7dc64a703070afd1b6147f38cae1ed3031413ca6f417c8e6ce1769b"
+  }
+}

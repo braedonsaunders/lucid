@@ -28,7 +28,11 @@ def main():
         ap.add_argument('--'+key,type=Path,required=True)
     ap.add_argument('--development-presentation', action='store_true',
                     help='Use the fixed 48-pair development screen for the quantized shipping presentation')
+    ap.add_argument('--preserve-display-gain', action='store_true',
+                    help='Diagnostic: keep nominal gain when the presentation candidate changes output scale')
     args=ap.parse_args()
+    if args.preserve_display_gain and not args.development_presentation:
+        ap.error('--preserve-display-gain requires --development-presentation')
     if args.out.exists():ap.error('fresh output directory required')
     sequences=json.loads(args.manifest.read_text())
     frames=json.loads((args.frozen_frames/'manifest.json').read_text())
@@ -75,6 +79,7 @@ def main():
         report['purpose']='native presentation development regression; no fresh holdout or promotion'
         report['configuration']=f"Standard shipping sharpness0.75/radius4; quantized presentation sharpness{config['tuning']['sharpness']}/radius2. Fixed grain phase0."
         report['limitations'][-1]='Repeated development sources; unchanged weights, standard postprocessing and real sender compared before product integration'
+        report['preserve_display_gain']=args.preserve_display_gain
     def save():
         (args.out/'manifest.json').write_text(json.dumps(report,indent=2)+'\n')
     for sequence in sequences:
@@ -105,9 +110,14 @@ def main():
             env={k:v for k,v in os.environ.items() if not k.startswith('LUCID_')}
             env.update(LUCID_COMPUTE_UNITS='gpu',LUCID_PIPELINE_MODEL=str(package.resolve()),LUCID_PIPELINE_PACKETS=str(target.resolve()))
             if label=='candidate':env['LUCID_TUNING']=str(tuning.resolve())
+            if label=='candidate' and args.preserve_display_gain:env['LUCID_PIPELINE_PRESERVE_GAIN']='1'
             result=subprocess.run([str(args.executable.resolve()),'--pipeline-ms',str(descriptor_path.resolve()),str(sequence['frames']-8)],
                 env=env,capture_output=True,text=True,timeout=180)
             (args.out/(target.name+'.log')).write_text(result.stdout+result.stderr);result.check_returncode()
+            if args.preserve_display_gain:
+                reference_radius=2 if label=='candidate' else 4
+                if f'pipeline-ms detail referenceRadius={reference_radius}' not in result.stdout:
+                    raise ValueError('diagnostic gain reference radius differs')
             actual_tuning=json.loads((target/'tuning.json').read_text())
             expected_tuning=dict(config['tuning'],sharpness=.75 if label=='shipping4x' else config['tuning']['sharpness'])
             if actual_tuning!=expected_tuning:raise ValueError('actual native tuning differs from frozen arm')

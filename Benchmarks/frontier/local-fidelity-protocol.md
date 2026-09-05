@@ -27,3 +27,14 @@ The accepted implementation is committed with strict deterministic execution. Te
 Remote experiment directory: `C:\lucid\local-fidelity-20260905-r4`. Task `LucidJob-local-fidelity-train-r4-20260905` checks resize equivalence, exact repeated unconstrained smokes, the matched constrained smoke, then runs both 8,000-step arms. `LucidJob-local-fidelity-eval-r4-20260905` waits for successful completion and scores the final checkpoints on both frozen sets. It refuses competing Python jobs and takes an exclusive experiment lock. It stops on failed training or controls; completing the task does not mean the quality gates passed. Both tasks survive an initiating SSH disconnect.
 
 Fetch `Benchmarks/frontier/local-fidelity-{development,bank}.json` and corresponding `-gate.json` files, both final checkpoints and experiment/completion receipts after completion. Re-run `local-fidelity-score.py` locally against downloaded checkpoint hashes and independently inspect the frozen reconstruction tensors before considering native evaluation. No remote result automatically changes bundled models or authorizes promotion.
+
+## Completed matched experiment: neither arm promoted
+
+Both strict deterministic 8,000-step arms and both automatic evaluations complete successfully. Downloaded tensors independently reproduce the completion hashes; the frozen anchor is unchanged, and all ten initial provenance fields match. Training takes 9.18 minutes unconstrained and 10.39 minutes constrained on the RTX 4080. Local gate recomputation reproduces both shipping/interpolation controls exactly.
+
+| Set | Unconstrained LPIPS / DISTS improvement | Constrained LPIPS / DISTS improvement | Detail result |
+|---|---|---|---|
+| 48 development pairs | 5.71% / 6.24% | 1.00% / −0.10% | Unconstrained fails all three; constrained passes all |
+| 96 bank-validation pairs | 8.86% / 4.42% | 1.16% / 0.44% | Unconstrained fails both REDS sources; constrained passes all |
+
+The local penalty protects detail on both repeated development sets, but removes most perceptual improvement. Neither arm meets the unchanged joint gate. No coefficient/checkpoint sweep follows, and no bundled model is replaced. The completed receipts, raw scores, gates and independent verifier remain beside this protocol; final checkpoints remain in `.build/local-fidelity-results` and the remote r4 experiment directory.

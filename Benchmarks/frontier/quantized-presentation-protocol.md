@@ -29,3 +29,15 @@ The initial packet export had correct effective settings but included unused his
 Standard preprocessing/detail and actual NV12 delivery fail the same noninferiority screen despite the raw-model pass. Aggregate LPIPS improves 3.76% and DISTS 0.55%, but FourPeople LPIPS regresses 6.58%, Johnny DISTS regresses 3.35%, and fine correlation falls by 0.02997/0.04010/0.03743 on CrowdRun/FourPeople/Johnny. The route remains experimental. No weight change or production switch follows the faster stage timing.
 
 The source exposes a concrete spatial gain difference to isolate next: `gainNormalisation(radius:reference:)` multiplies the default gain by 1.5 at radius two versus 1.0 at radius four. The pipeline correctly derives geometric radius from model output scale, but retains reference radius four; nominal sharpness 0.75 therefore becomes 1.125 for this 2× model. This is a measured-code observation, not yet a proved explanation of the entire delivered-quality loss.
+
+## Separate nominal-gain ablation
+
+Before its outputs are inspected, fix one diagnostic intervention: candidate geometric radius remains two, while its gain reference radius is also two, making gain normalization exactly one. Keep nominal sharpness 0.75 and every tuning value, checkpoint, input and gate unchanged. Shipping remains radius/reference four and gain normalization one. This tests removal of the extra 1.5× gain, not a gain sweep or an inferred full correction. The change is opt-in to the offline diagnostic and does not modify production behavior. Verify the effective reference radius in each native process log.
+
+For this fixed ablation, fine/mid/micro gains are zero and lobeScale is 0.3. The effective lobe sampling distance rounds to one pixel with either reference radius, so changing reference radius affects the active sharpening gain without changing this kernel's sampling offsets.
+
+## Nominal-gain result: limited native screen passes
+
+The fixed nominal-gain correction passes all 48 native delivered pairs under the unchanged presentation thresholds. Source-balanced LPIPS improves 4.38% and DISTS 2.88%; fine correlation improves by 0.01036/0.01582/0.02502 on CrowdRun/FourPeople/Johnny. Every per-source perceptual score improves. Shipping control scores reproduce the preceding native run exactly (maximum difference zero). This supports the gain mismatch as a cause of the preceding regression on these sources. It does not prove equivalence for every setting or scene.
+
+The earlier 48.6% stage-time reduction excludes the detail pipeline, so it cannot yet be combined with this quality result into a measured end-to-end gain. The route remains an offline prototype pending broader native regression, sustained full-pipeline/browser timing and resolution/color checks. No production defaults or shipping weights change.
