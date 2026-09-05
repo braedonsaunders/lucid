@@ -144,14 +144,15 @@ def save(path, report):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--manifest', type=Path, required=True)
-    ap.add_argument('--checkpoint', nargs=2, action='append', metavar=('LABEL', 'PATH'), required=True)
+    ap.add_argument('--checkpoint', nargs=2, action='append', default=[], metavar=('LABEL', 'PATH'))
+    ap.add_argument('--causal', nargs=2, action='append', default=[], metavar=('LABEL', 'PATH'))
     ap.add_argument('--efrlfn', nargs=3, action='append', default=[], metavar=('LABEL', 'REPOSITORY', 'WEIGHTS'))
     ap.add_argument('--report', type=Path, required=True)
     ap.add_argument('--device', default='mps')
     ap.add_argument('--spatial-stride', type=int, default=4)
     args = ap.parse_args()
-    labels = [label for label, _ in args.checkpoint] + [label for label, _, _ in args.efrlfn]
-    if len(set(labels)) != len(labels) or 'lanczos' in labels or args.spatial_stride < 1:
+    labels = [label for label, _ in args.checkpoint + args.causal] + [label for label, _, _ in args.efrlfn]
+    if not labels or len(set(labels)) != len(labels) or 'lanczos' in labels or args.spatial_stride < 1:
         ap.error('unique checkpoint labels excluding lanczos, and a positive stride, required')
     manifest = json.loads(args.manifest.read_text())
     if not manifest or len({r['id'] for r in manifest}) != len(manifest):
@@ -164,9 +165,18 @@ def main():
     scorer = Scorer(device)
     models = {label: load(path, device) for label, path in args.checkpoint}
     models.update({label: load_efrlfn(repo, weights, device) for label, repo, weights in args.efrlfn})
+    for label, path in args.causal:
+        from architectures.causal_detail import CausalDetail
+        state = torch.load(path, map_location='cpu', weights_only=False)
+        if state['architecture'] != 'causal_detail_v1':
+            raise ValueError('unrecognized causal architecture')
+        model = CausalDetail(state['channels'], state['blocks'], state['scale']).eval().to(device)
+        model.load_state_dict(state['model'], strict=True)
+        model.no_history = state['no_history']
+        models[label] = model, state['step'], 0
     report = {'schema': 1, 'purpose': 'short development screening; no release promotion claim',
         'manifest_sha256': digest(args.manifest), 'sequences': manifest,
-        'checkpoint_sha256': {label: digest(path) for label, path in args.checkpoint},
+        'checkpoint_sha256': {label: digest(path) for label, path in args.checkpoint + args.causal},
         'external_models': {label: {'weights_sha256': digest(weights),
             'code_sha256': {str(p.relative_to(repo)): digest(p) for p in sorted(Path(repo).glob('code/*.py'))},
             'provenance': 'https://github.com/EvgeneyBogatyrev/EfRLFN',
@@ -190,9 +200,18 @@ def main():
                 tensors = [torch.from_numpy(np.asarray(s, dtype=np.float32) / 255).permute(2, 0, 1) for s in sources]
                 outputs = []
                 with torch.inference_mode():
+                    recurrent_state = None
                     for i in range(len(sources)):
-                        x = torch.cat([tensors[max(0, i-k)] for k in range(history-1, -1, -1)], dim=0)[None].to(device)
-                        y = model(x).clamp(0, 1)[0].permute(1, 2, 0).cpu().numpy()
+                        if history == 0:
+                            x = tensors[i][None].to(device)
+                            if recurrent_state is None:
+                                recurrent_state = model.initial_state(x)
+                            valid = x.new_full((1, 1, 1, 1), float(i > 0 and not model.no_history))
+                            y, recurrent_state = model(x, recurrent_state, valid)
+                        else:
+                            x = torch.cat([tensors[max(0, i-k)] for k in range(history-1, -1, -1)], dim=0)[None].to(device)
+                            y = model(x)
+                        y = y.clamp(0, 1)[0].permute(1, 2, 0).cpu().numpy()
                         outputs.append(Image.fromarray((y * 255).round().astype(np.uint8)))
             if any(o.size != r.size for o, r in zip(outputs, references)):
                 raise ValueError('wrong model output scale')

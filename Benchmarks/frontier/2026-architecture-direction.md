@@ -16,7 +16,7 @@ These papers combine established and newer ideas. Selecting a new title is not t
 
 `Tools/architectures/causal_detail.py` is a small, explicitly causal reconstruction prototype, separate from shipping. It accepts the current frame and caller-owned feature history. It packs every source sample into channels on a grid with 16× less area, updates bounded history, applies image-conditioned low-rank channel mixing and local gated detail blocks, then reconstructs a 2× or 4× residual. A bilinear path preserves the initial image; the residual starts at zero.
 
-This is an original engineering combination for experimentation, not a reproduction of the papers and not a verified novelty claim. There is currently no trained quality result. The first tests cover reset isolation, bounded recurrence, both output scales and an effective gradient path through temporal state. The Core ML probe uses nonzero random residual weights so constant folding cannot remove the reconstruction work. It checks conversion agreement before measuring runtime and includes explicit state transfers.
+This is an original engineering combination for experimentation, not a reproduction of the papers and not a verified novelty claim. The subsequent 8,000-step screen now records a quality failure versus Lanczos; see `causal-training-v1.md`. No trained weights have been promoted. The first tests cover reset isolation, bounded recurrence, both output scales and an effective gradient path through temporal state. The Core ML probe uses nonzero random residual weights so constant folding cannot remove the reconstruction work. It checks conversion agreement before measuring runtime and includes explicit state transfers.
 
 ## Mac feasibility results
 
