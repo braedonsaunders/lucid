@@ -993,14 +993,13 @@ final class EnhancementSession {
                 }
                 upscaler = first
             }
-            // SPAN is a fixed 4x, so the detail stage that follows works at
-            // that scale rather than the tiled pass count.
-            let outputScale = learned != nil ? 4.0 : (kind.rescales ? pow(2, Double(built)) : stretch)
+            // Match detail's spatial radius to the loaded reconstruction graph.
+            let outputScale = learned.map { Double($0.scale) } ?? (kind.rescales ? pow(2, Double(built)) : stretch)
             let settings = detailSettings(for: report, outputScale: outputScale)
             let detail = kind.usesDetail ? try? DetailEnhancer(device: compositor.device, settings: settings) : nil
             let label: String
             if let learned {
-                label = "\(kind.label): SPAN 4× → \(learned.outputWidth)x\(learned.outputHeight), input \(width)x\(height)"
+                label = "\(kind.label): \(learned.scale)× → \(learned.outputWidth)x\(learned.outputHeight), input \(width)x\(height)"
             } else if let upscaler {
                 label = "\(kind.label): \(Int(pow(2.0, Double(built))))× in \(built) pass\(built == 1 ? "" : "es") → \(upscaler.outputWidth)x\(upscaler.outputHeight), \(upscaler.totalTileCount) tiles, input \(width)x\(height), radius \(settings.radius)"
             } else {

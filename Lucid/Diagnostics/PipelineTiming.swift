@@ -343,7 +343,9 @@ enum PipelineTiming {
             let height = CVPixelBufferGetHeight(frame)
             if learned == nil {
                 learned = try LearnedUpscaler(width: width, height: height)
+                detail.settings = t.detailSettings(radius: learned!.scale)
                 print("pipeline-ms input \(width)x\(height) → model \(learned!.inputWidth)x\(learned!.inputHeight) → output \(learned!.outputWidth)x\(learned!.outputHeight)")
+                print("pipeline-ms detail radius=\(detail.settings.radius)")
                 let incoming = CVBufferCopyAttachment(frame, kCVImageBufferChromaLocationTopFieldKey, nil)
                     .map { "\($0)" } ?? "nil"
                 print("pipeline-ms chroma incoming=\(incoming)")
