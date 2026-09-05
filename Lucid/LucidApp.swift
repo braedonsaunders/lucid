@@ -18,6 +18,11 @@ final class LucidAppDelegate: NSObject, NSApplicationDelegate {
 @main
 enum LucidMain {
     static func main() {
+        if CommandLine.arguments.contains("--presented-native-ms") {
+            Task.detached { PresentedNativeTiming.run() }
+            RunLoop.main.run()
+            exit(2)
+        }
         if CommandLine.arguments.contains("--causal-native-ms") {
             Task.detached { CausalNativeTiming.run() }
             RunLoop.main.run()

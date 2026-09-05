@@ -1,0 +1,28 @@
+{
+  "files": {
+    "Lucid/Diagnostics/PipelineTiming.swift": "cb82a11cb2ffeac18972f12a317c556f8a3cbddd95d1a7d76d367968289c69e0",
+    "Lucid/LucidApp.swift": "1d5ff11f69cf8fbffa31e8053d770a041a3cf14ca6562c874f80de6e19197d46",
+    "Lucid/Bridge/EnhancedFrameSender.swift": "2ba18f96ec2b8e4bf4da465beb2538a6e010ae52039a62729fc43e075110c3fc",
+    ".build/tests/Build/Products/Release/Lucid.app/Contents/MacOS/Lucid": "a96a4659e2bea11ef62850643ac5e4e64449bb0ffa4cc2680e8266ae57d42308",
+    ".build/tc/w4.0/span_ch32utc.pth": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65",
+    "Benchmarks/frontier/presented-detail-training-command.ps1": "64869e3177c8378db8a28cc0b68d7ce1f059a0ce843ede273e9584bf553e3cde",
+    ".build/presented-detail-source.tar": "a4688d1298d5ea0a1b8c15c91e21d6696bda3c3a94497e8209fc86a6baddabdc",
+    ".build/shipping-direct2x-native-v3/shipping4x_1280x720.mlpackage/Manifest.json": "a0fc86fc6c1b5a265d3735ba8c6c76f38add57786c252ccb8cbaf56adff2b6c4",
+    ".build/shipping-direct2x-native-v3/shipping4x_1280x720.mlpackage/Data/com.apple.CoreML/model.mlmodel": "c756960b4b32c754abe26cc4d0103c4d98cbbcd500c9048a2c89f9d215e5d9db",
+    ".build/shipping-direct2x-native-v3/shipping4x_1280x720.mlpackage/Data/com.apple.CoreML/weights/weight.bin": "3b43b4c514cb65db9bbf54d2b0941dc7392c26f2099e12a77dab6faa085cdfb8",
+    ".build/shipping-direct2x-native-v3/direct2x_area_1280x720.mlpackage/Manifest.json": "70a302b3e8adf3c2dada6d34709c6d6a5c280322daf889b718a48ef30c978d62",
+    ".build/shipping-direct2x-native-v3/direct2x_area_1280x720.mlpackage/Data/com.apple.CoreML/model.mlmodel": "f3d4db17f8b502ad53ae7ff2a96a5532c707e818906b72443af5e05a2b6b6903",
+    ".build/shipping-direct2x-native-v3/direct2x_area_1280x720.mlpackage/Data/com.apple.CoreML/weights/weight.bin": "6cb630e42b13c3a272abac8c06f489588b40ef09c0ec6e23bfdfc529b5c621ff",
+    ".build/shipping-direct2x-native-540/shipping4x_960x540.mlpackage/Manifest.json": "f7adfeab90a5632fcf2348aa1046a1fd9667d40f5d84cb6c8e32359da54a87bd",
+    ".build/shipping-direct2x-native-540/shipping4x_960x540.mlpackage/Data/com.apple.CoreML/model.mlmodel": "5779b457687e17e229634ff63f70b8e91fb861210049cfca3f1747b47caee52d",
+    ".build/shipping-direct2x-native-540/shipping4x_960x540.mlpackage/Data/com.apple.CoreML/weights/weight.bin": "3b43b4c514cb65db9bbf54d2b0941dc7392c26f2099e12a77dab6faa085cdfb8",
+    ".build/shipping-direct2x-native-540/direct2x_area_960x540.mlpackage/Manifest.json": "c1237e3c4385aa7fb22a3104bb04b7e12f9646fcfd8d8a4962d7484250489a59",
+    ".build/shipping-direct2x-native-540/direct2x_area_960x540.mlpackage/Data/com.apple.CoreML/model.mlmodel": "50867347270bd321b623f55a7ae0a1e4a32e6ce96d7f77cee0b020aa7e4054f4",
+    ".build/shipping-direct2x-native-540/direct2x_area_960x540.mlpackage/Data/com.apple.CoreML/weights/weight.bin": "6cb630e42b13c3a272abac8c06f489588b40ef09c0ec6e23bfdfc529b5c621ff"
+  },
+  "build": "xcodebuild -project Lucid.xcodeproj -scheme Lucid -configuration Release -derivedDataPath .build/tests CODE_SIGNING_ALLOWED=NO build",
+  "command": ".build/tests/Build/Products/Release/Lucid.app/Contents/MacOS/Lucid --presented-native-ms .build/shipping-direct2x-native-v3/shipping4x_1280x720.mlpackage .build/shipping-direct2x-native-v3/direct2x_area_1280x720.mlpackage .build/shipping-direct2x-swift720.json 60",
+  "release_build_succeeded": true,
+  "benchmark_exit_code": 0,
+  "additional_command": ".build/tests/Build/Products/Release/Lucid.app/Contents/MacOS/Lucid --presented-native-ms .build/shipping-direct2x-native-540/shipping4x_960x540.mlpackage .build/shipping-direct2x-native-540/direct2x_area_960x540.mlpackage .build/shipping-direct2x-swift540.json 60"
+}

@@ -20,6 +20,113 @@ import CoreML
 import CryptoKit
 import Foundation
 
+/// Compare different reconstruction scales at the same delivered NV12 size.
+/// No model selection or shipping enhancement behavior is changed by this probe.
+@available(macOS 15.0, *)
+enum PresentedNativeTiming {
+    static func run() {
+        do {
+            let args = CommandLine.arguments
+            guard let i = args.firstIndex(of: "--presented-native-ms"), args.count > i + 3 else {
+                throw failure("usage: --presented-native-ms SHIPPING_4X DIRECT_2X REPORT [COUNT]")
+            }
+            try measure(urls: [URL(fileURLWithPath: args[i + 1]), URL(fileURLWithPath: args[i + 2])],
+                        reportURL: URL(fileURLWithPath: args[i + 3]),
+                        count: args.count > i + 4 ? max(20, Int(args[i + 4]) ?? 60) : 60)
+            exit(0)
+        } catch { print("presented-native-ms failed: \(error)"); exit(1) }
+    }
+
+    private static func failure(_ message: String) -> NSError {
+        NSError(domain: "presented-native-ms", code: 1, userInfo: [NSLocalizedDescriptionKey: message])
+    }
+
+    private static func measure(urls: [URL], reportURL: URL, count: Int) throws {
+        var temporary: [URL] = []
+        defer { for url in temporary { try? FileManager.default.removeItem(at: url) } }
+        let configuration = MLModelConfiguration(); configuration.computeUnits = .cpuAndGPU
+        let models = try urls.map { url in
+            let compiled: URL
+            if url.pathExtension == "mlmodelc" { compiled = url }
+            else { compiled = try MLModel.compileModel(at: url); temporary.append(compiled) }
+            return try MLModel(contentsOf: compiled, configuration: configuration)
+        }
+        guard let input = models[0].modelDescription.inputDescriptionsByName["input"]?.imageConstraint,
+              let other = models[1].modelDescription.inputDescriptionsByName["input"]?.imageConstraint,
+              input.pixelsWide == other.pixelsWide, input.pixelsHigh == other.pixelsHigh,
+              input.pixelFormatType == kCVPixelFormatType_32BGRA,
+              other.pixelFormatType == input.pixelFormatType else { throw failure("matching BGRA inputs required") }
+        let width = input.pixelsWide, height = input.pixelsHigh
+        let color = VideoColorInfo(primaries: "bt709", transfer: "iec61966-2-1", matrix: "rgb", fullRange: true)
+        var frames: [CVPixelBuffer] = []
+        for frame in 0..<4 {
+            var buffer: CVPixelBuffer?
+            guard CVPixelBufferCreate(nil, width, height, kCVPixelFormatType_32BGRA,
+                [kCVPixelBufferIOSurfacePropertiesKey: [:], kCVPixelBufferMetalCompatibilityKey: true] as CFDictionary,
+                &buffer) == kCVReturnSuccess, let buffer else { throw failure("input allocation failed") }
+            CVPixelBufferLockBaseAddress(buffer, [])
+            let bytes = CVPixelBufferGetBaseAddress(buffer)!.assumingMemoryBound(to: UInt8.self)
+            for y in 0..<height { for x in 0..<width {
+                let p = y * CVPixelBufferGetBytesPerRow(buffer) + x * 4
+                bytes[p] = UInt8((x * 13 + y * 7 + frame * 11) % 256)
+                bytes[p + 1] = UInt8((x * 3 + y * 17 + frame * 5) % 256)
+                bytes[p + 2] = UInt8((x * 23 + y * 3 + frame * 7) % 256)
+                bytes[p + 3] = 255
+            }}
+            CVPixelBufferUnlockBaseAddress(buffer, []); color.apply(to: buffer); frames.append(buffer)
+        }
+        let senders = [EnhancedFrameSender(), EnhancedFrameSender()]
+        for sender in senders { sender.maximumWidth = width * 2 }
+        var graph = [[Double](), [Double]()], packing = [[Double](), [Double]()]
+        var packetSizes = [0, 0], packetHashes = ["", ""]
+        for step in 0..<(count + 10) {
+            let provider = try MLDictionaryFeatureProvider(dictionary:
+                ["input": MLFeatureValue(pixelBuffer: frames[step % 4])])
+            for index in (step % 2 == 0 ? [0, 1] : [1, 0]) {
+                let start = ContinuousClock.now
+                let result = try models[index].prediction(from: provider)
+                guard let image = result.featureValue(for: "output")?.imageBufferValue,
+                      CVPixelBufferGetWidth(image) == width * (index == 0 ? 4 : 2),
+                      CVPixelBufferGetHeight(image) == height * (index == 0 ? 4 : 2) else {
+                    throw failure("unexpected reconstruction scale")
+                }
+                let inferred = ContinuousClock.now
+                color.apply(to: image)
+                guard let packet = senders[index].packet(for: image, sequence: step, session: "presented-bench") else {
+                    throw failure("NV12 packet creation failed")
+                }
+                let end = ContinuousClock.now
+                packetSizes[index] = packet.count
+                packetHashes[index] = SHA256.hash(data: packet).description
+                if step >= 10 {
+                    graph[index].append((inferred - start).milliseconds)
+                    packing[index].append((end - inferred).milliseconds)
+                }
+            }
+            guard packetSizes[0] == packetSizes[1] else { throw failure("delivery sizes differ") }
+        }
+        var rows: [[String: Any]] = []
+        for index in 0..<2 {
+            let total = zip(graph[index], packing[index]).map(+)
+            rows.append(["variant": index == 0 ? "shipping4x" : "direct2x_area",
+                "graph_mean_ms": graph[index].reduce(0, +) / Double(count),
+                "packet_mean_ms": packing[index].reduce(0, +) / Double(count),
+                "total_mean_ms": total.reduce(0, +) / Double(count),
+                "total_p95_ms": total.sorted()[Int(Double(count - 1) * 0.95)],
+                "graph_samples_ms": graph[index], "packet_samples_ms": packing[index],
+                "packet_bytes": packetSizes[index], "last_packet_sha256": packetHashes[index]])
+        }
+        let report: [String: Any] = ["purpose": "Native graph plus real NV12 serialization at common delivered size",
+            "input": [width, height], "delivered_output": [width * 2, height * 2], "rows": rows,
+            "samples": count, "warmup": 10, "compute_units": "CPU_AND_GPU",
+            "limitations": ["Synthetic BGRA; capture/decode/input conversion, detail postprocessing, network and rendering excluded",
+                "Shipping 4x uses sender's native downscaler; quality is not equivalent to PIL bicubic development adapter",
+                "Different reconstruction filters; numerical equivalence between variants is not claimed"]]
+        try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys]).write(to: reportURL, options: .atomic)
+        print("presented-native-ms completed: \(reportURL.path)")
+    }
+}
+
 /// Compare the candidate's two state representations through native Core ML.
 /// Runs before app state, and also times complete full-resolution NV12 packets.
 @available(macOS 15.0, *)

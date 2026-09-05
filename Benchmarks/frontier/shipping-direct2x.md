@@ -38,3 +38,16 @@ Output dimensions differ deliberately: 4× versus the requested 2×. Shipping's 
 The new 2× student starts from the folded shipping weights, rather than the much weaker causal student. Two 8,000-step RTX 4080 arms share initialization, batch/crop, seed 20260914 and cosine learning rate 0.00002→0.000002. Both cache the complete 256-pixel LR / 512-pixel presented shipping training targets before random crops. Control targets are shipping alone; candidate targets are the fixed 50/50 shipping/PixRestore mixture. Training uses L1 + 0.2 signed Sobel + 0.05 FFT to the target, plus 0.1 L1 to the real reference. Eight output border pixels are excluded. There is no new temporal/flicker loss.
 
 The bank still has only 21 training/validation source identities and correlated crops. This test determines whether the measured complementary target can transfer into the stronger native route. It cannot establish broad generalization. Final checkpoints require matched development evaluation and then untouched holdout evidence before any promotion.
+
+## Native Swift delivery confirmation
+
+The Release app's offline `--presented-native-ms` probe alternates 60 measured predictions after ten warmups, then uses the real `EnhancedFrameSender` to produce identically sized 2560×1440 NV12 packets. Each full 5,529,799-byte packet is consumed with SHA256 outside timing. The two graphs have matching 1280×720 BGRA inputs and verified 4×/2× output sizes.
+
+| Native Swift path | Graph mean ms | Packet mean ms | Total mean / p95 ms |
+|---|---:|---:|---:|
+| Shipping 4× → native downscale to 1440p | 31.768 | 13.923 | 45.691 / 46.855 |
+| Direct 2× → 1440p NV12 | 19.587 | 0.412 | 19.999 / 20.498 |
+
+Total measured time falls **56.2% (2.28× throughput)** at this fixed delivery size. Avoiding the large BGRA downscale saves substantial time beyond the graph reduction. This is an actual native delivery-stage saving, not a claim of 2.28× whole-browser throughput. It excludes capture/decode/input conversion, detail postprocessing, network and rendering. The native downscaler is not numerically equivalent to PIL bicubic in the quality screen. `shipping-direct2x-swift720.json` contains raw timings; `shipping-direct2x-swift-provenance.json` pins executable, source and model bytes. The local unsigned Release build succeeds.
+
+At 960×540 input with 1920×1080 delivered output, the same Swift diagnostic measures **25.242→11.634 ms** mean and **25.935→12.271 ms** p95, a 53.9% mean reduction. Each packet is 3,110,599 bytes. Native graph / packet means are 18.170 / 7.072 ms for shipping and 11.319 / 0.315 for direct 2×. `shipping-direct2x-swift540.json` preserves all samples. Independent Python/Core ML conversion checks at this additional size pass; `shipping-direct2x-native540.json` records 20.036→12.088 ms graph means. These stage timings leave useful room in a 16.7 ms frame budget, but do not establish sustained 60 fps playback.
