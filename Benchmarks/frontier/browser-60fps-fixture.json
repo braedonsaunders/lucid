@@ -1,0 +1,34 @@
+{
+  "purpose": "60 fps performance fixture; not an independent quality holdout",
+  "source": ".build/corpus-sources/fast-netflix-DrivingPOV.mp4",
+  "source_sha256": "6379954265a8697bd5f9d596bc97b11fe4efe2f96e951cc1914ecd57c769933e",
+  "clip_sha256": "b3940fb85ad2f6b373219ad9e2b7119473995fef2f64aaa1432eec4167c0d378",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "width": 640,
+        "height": 360,
+        "r_frame_rate": "60/1",
+        "nb_frames": "1200"
+      }
+    ],
+    "format": {
+      "duration": "20.000000"
+    }
+  },
+  "filter": "crop=3840:2160,scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+  "encoder": "libx264, preset fast, bitrate 1000k, maxrate 1500k, buffer 2000k, GOP60, yuv420p, explicit Rec709, threads4",
+  "files": {
+    ".build/browser-60fps-comparison/bridge-auth.js": "46b8838600bbf96fab6d4dc0d7c065c447c8fef1f72c8f40016f8509f4085b92",
+    ".build/browser-60fps-comparison/index.html": "f864894dda3357c4a7aed5a806f219a6a1e6682bf1f0b3dda316eae71f200cf4",
+    ".build/browser-60fps-comparison/worker-harness.js": "5ca8b7cb91a9406c487948f07a66d2d50a86370800f68c74ebb222ae292c8479",
+    ".build/browser-60fps-comparison/background.js": "655b15256d7a5cbc047a12519ec0cd86b36e0a69c1faa4e634a53b55f7a3b613",
+    ".build/browser-60fps-comparison/runtime-harness.js": "9d0718bf7bdab0b953ca9d3af8b7e7b3509bcb3ebe51f04daefa4667095faf8d",
+    ".build/browser-60fps-comparison/stream-policy.js": "04ddfecc1f1b0c47e7017e061c60729f4c007b6013ca212276aa3c0ae810b005",
+    ".build/browser-60fps-comparison/surface.js": "3d6b5cb35e1aed797685ed4f2f838d70b4ed9f81bc1091db3dc6a3d64350a1d5",
+    ".build/browser-60fps-comparison/content.js": "e28b49923b270da5ba1adeec6253e669141739a8722b8367067ac5c7950b9cdb",
+    ".build/browser-60fps-comparison/surface.html": "28b3ef515ac4504a3f2b14a6696829d640abc2746aa552ad56aae03052941d80"
+  }
+}
