@@ -1,0 +1,51 @@
+{
+  "bank_sha256": "711433dce3193629207d50e391707eca9489a658aed6d7d894bbbe856c64ea8c",
+  "builder_sha256": "e9fc0f38115aa282016fbef873f25c69ebd80b55ef630807fca1aa599f318c05",
+  "sequences": 168,
+  "source_windows": 42,
+  "source_count": 21,
+  "train_sequences": 160,
+  "validation_sequences": 8,
+  "codecs": [
+    "h264",
+    "vp9"
+  ],
+  "warmup_frames": [
+    8,
+    16,
+    24
+  ],
+  "reference_sizes": [
+    [
+      1280,
+      672
+    ],
+    [
+      1280,
+      720
+    ],
+    [
+      1920,
+      816
+    ],
+    [
+      1920,
+      1008
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "target_bitrate_range": [
+    188006,
+    3110400
+  ],
+  "all_sequence_hashes_verified": true,
+  "zero_variance_patches": 0,
+  "limitations": [
+    "Four spatial crops share each source window; 168 patches are not 168 independent videos.",
+    "Same documented source families as the original prototype bank; validation is development data.",
+    "Full-frame compression and bitrate control differ from the frozen architecture-comparison bank."
+  ]
+}

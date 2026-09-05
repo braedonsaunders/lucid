@@ -110,6 +110,11 @@ def main():
     ap.add_argument('--steps', type=int, default=20000)
     ap.add_argument('--channels', type=int, default=32)
     ap.add_argument('--architecture', choices=('causal_detail_v1', 'causal_detail_v2'), default='causal_detail_v1')
+    ap.add_argument('--init', type=Path, help='Trusted local checkpoint; starts a new optimizer/schedule for fine-tuning')
+    ap.add_argument('--dino-weight', type=float, default=0)
+    ap.add_argument('--dino-repository', type=Path)
+    ap.add_argument('--dino-checkpoint', type=Path)
+    ap.add_argument('--dino-size', type=int, default=224)
     ap.add_argument('--blocks', type=int, default=4)
     ap.add_argument('--batch', type=int, default=4)
     ap.add_argument('--crop', type=int, default=96)
@@ -121,6 +126,10 @@ def main():
     args = ap.parse_args()
     if args.steps < 1 or args.batch < 1 or args.crop < 16 or args.crop % 4:
         ap.error('positive steps/batch and crop >=16 divisible by 4 required')
+    if not math.isfinite(args.dino_weight) or args.dino_weight < 0:
+        ap.error('DINO weight must be finite and nonnegative')
+    if args.dino_weight and (not args.dino_repository or not args.dino_checkpoint):
+        ap.error('DINO supervision requires a pinned local repository and checkpoint')
     random.seed(args.seed); np.random.seed(args.seed); torch.manual_seed(args.seed)
     torch.set_num_threads(4)
     device = torch.device(args.device)
@@ -132,11 +141,27 @@ def main():
         ap.error('crop exceeds bank dimensions')
     rng = np.random.default_rng(args.seed)
     model = make_model(args.architecture, args.channels, args.blocks, scale=2).to(device)
+    if args.init:
+        initial = torch.load(args.init, map_location='cpu', weights_only=False)
+        expected = {'architecture': args.architecture, 'channels': args.channels,
+                    'blocks': args.blocks, 'scale': 2, 'no_history': args.no_history}
+        if any(initial[k] != value for k, value in expected.items()):
+            ap.error('initial checkpoint architecture/history differs from this experiment')
+        model.load_state_dict(initial['model'], strict=True)
+        del initial
+    teacher = None
+    if args.dino_weight:
+        from dino_supervision import DinoSupervision
+        teacher = DinoSupervision(args.dino_repository, args.dino_checkpoint, args.dino_size).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.99), weight_decay=0)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.steps, eta_min=args.lr*0.01)
     args.out.mkdir(parents=True, exist_ok=True)
     metadata = {'architecture': args.architecture, 'scale': 2, 'channels': args.channels,
         'parameters': sum(p.numel() for p in model.parameters()),
+        'init_sha256': digest(args.init) if args.init else None,
+        'dino': teacher.metadata if teacher is not None else None,
+        'dino_code_sha256': digest(Path(__file__).with_name('dino_supervision.py')) if teacher is not None else None,
+        'dino_frame_selection': 'one frame per sequence; zero-based step modulo curriculum frame count',
         'blocks': args.blocks, 'no_history': args.no_history, 'arguments': {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
         'bank_sha256': digest(args.bank/'manifest.json'), 'torch': str(torch.__version__),
         'device': str(device), 'training_code_sha256': digest(__file__),
@@ -161,6 +186,12 @@ def main():
         spectral = (torch.fft.rfft2(output, norm='ortho')-torch.fft.rfft2(hr, norm='ortho')).abs().mean()
         temporal = torch.diff(difference, dim=1).abs().mean()
         loss = pixel + 0.05*edge + 0.01*spectral + 0.02*temporal
+        if teacher is not None:
+            selected = step % frames
+            with torch.autocast(device_type=device.type, dtype=torch.bfloat16,
+                                enabled=device.type == 'cuda' and args.precision == 'bf16'):
+                feature = teacher(output[:, selected], hr[:, selected], lr[:, selected])
+            loss = loss + args.dino_weight*feature
         if not torch.isfinite(loss):
             raise RuntimeError(f'nonfinite training loss at step {step+1}')
         loss.backward()

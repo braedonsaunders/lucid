@@ -14,6 +14,27 @@ The active objective uses the regular Codex goal. These are measured development
 
 EfRLFN 4× comparison (`efrlfn-evaluation.json`): source-balanced LPIPS 0.53910 and DISTS 0.22861 versus shipping 0.45957 / 0.20856 on this short 180p→720p screen. EfRLFN has less static flicker (0.87535 versus 0.90169), but substantially less accurate fine detail (correlation 0.14523 versus 0.24498). This does not establish overall competitiveness or independence from EfRLFN training. Upstream commit: `1f7f3678f1bd7ba04ca8ccb04726eef71bf8520a`; loader strictly checks weights and records source hashes.
 
+The subsequent causal 2× experiments are documented in `causal-training-v1.md` and `2026-architecture-direction.md`. Their 360p→720p inputs differ from the shipping 180p→720p screen, so their metric values cannot be used as a direct model ranking against shipping. The completed v1 causal model fails against Lanczos; v2 changes its spatial floor and pixel bypass while retaining the original training bank for the architecture comparison.
+
+## Stream-context training bank
+
+`causal-stream-bank-manifest.json` is a separate, verified bank: 168 aligned 16-frame patch sequences from 42 full-frame encoded windows, four crops per window. Its 160 training and eight validation patches keep the same source-family separation as the original bank. These crops are correlated within each window; they are not 168 independent scenes.
+
+The builder first decodes a full reference canvas at 1280 or 1920 pixels wide, preserving aspect ratio to a multiple of eight pixels. It encodes the complete 2× downsampled sequence as H.264 or VP9 under a recorded bitrate constraint, decodes it once, then extracts aligned HR/LR crops after 8, 16 or 24 warmup frames. Codec decisions therefore see the surrounding image and prior frames. References remain compressed source masters. This bank changes several data-generation factors and is reserved for a subsequent controlled data experiment; it does not silently replace the frozen bank used by v1 and v2.
+
+```sh
+.venv-convert/bin/python Tools/experiments/build_stream_bank.py \
+  --sources .build/causal-training-sources.json --out .build/causal-stream-bank-v1
+```
+
+`causal-stream-bank-validation.json` records the verified counts, bitrates, dimensions and bank hash. Every NPZ hash passes the trainer's provenance loader, and none of the new patches has zero reference variance.
+
+## Motion-compensated scoring
+
+The sequence evaluator accepts `--flow-width 640` to supplement static flicker and unwarped temporal residuals. Install the pinned optional dependency from `Tools/frontier_eval/requirements-flow.txt`. Reference-only [OpenCV DIS flow](https://docs.opencv.org/4.x/de/d4f/classcv_1_1DISOpticalFlow.html) supplies both directions; forward/backward disagreement, image bounds and reference photometric disagreement define visibility. The same maps and masks score every model. Output frames cannot influence correspondence or exclude their own errors.
+
+`flow_residual_l1` measures the temporal change in reconstruction error after warping. `flow_motion_residual_l1` restricts it to motion of at least one output pixel. Coverage, valid-pair fraction and reference-warp error accompany the scores; an empty valid region returns null, not a perfect zero. This remains estimated motion at the recorded flow resolution, not ground-truth flow, and no temporal score replaces perceptual/detail checks. The short development clips still do not meet the long-duration release gate.
+
 ## Reproduce
 
 ```sh

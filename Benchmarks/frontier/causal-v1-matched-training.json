@@ -1,0 +1,46 @@
+{
+  "causal-v1": {
+    "architecture": "causal_detail_v1",
+    "step": 20000,
+    "no_history": false,
+    "bank_sha256": "0f320e3ee53249e1345b3c9df9194e4fb2dc120fb97d2ff46aad52080ca66a81",
+    "training_code_sha256": "af72d414970e534c5848070c98ccf825e7b5fa7e44c1baeba0402a37b1c18c35",
+    "architecture_sha256": "cd195f8b02d53401560cbc81a786cc552207df0558c5b6407bc1ef036872ddea",
+    "arguments": {
+      "bank": "bank",
+      "out": "causal",
+      "steps": 20000,
+      "channels": 32,
+      "blocks": 4,
+      "batch": 4,
+      "crop": 96,
+      "lr": 0.0002,
+      "seed": 20260906,
+      "device": "cuda",
+      "no_history": false,
+      "precision": "bf16"
+    }
+  },
+  "control-v1": {
+    "architecture": "causal_detail_v1",
+    "step": 20000,
+    "no_history": true,
+    "bank_sha256": "0f320e3ee53249e1345b3c9df9194e4fb2dc120fb97d2ff46aad52080ca66a81",
+    "training_code_sha256": "af72d414970e534c5848070c98ccf825e7b5fa7e44c1baeba0402a37b1c18c35",
+    "architecture_sha256": "cd195f8b02d53401560cbc81a786cc552207df0558c5b6407bc1ef036872ddea",
+    "arguments": {
+      "bank": "bank",
+      "out": "control",
+      "steps": 20000,
+      "channels": 32,
+      "blocks": 4,
+      "batch": 4,
+      "crop": 96,
+      "lr": 0.0002,
+      "seed": 20260906,
+      "device": "cuda",
+      "no_history": true,
+      "precision": "bf16"
+    }
+  }
+}

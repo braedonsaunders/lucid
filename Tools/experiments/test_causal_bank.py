@@ -2,9 +2,19 @@ import unittest
 import numpy as np
 from build_causal_bank import validate_sources
 from train_causal_detail import batch
+from build_stream_bank import aligned_patch
 
 
 class CausalBankTests(unittest.TestCase):
+    def test_full_frame_patch_preserves_codec_warmup_and_pixel_alignment(self):
+        lr = np.random.default_rng(7).integers(0, 256, (24, 40, 48, 3), dtype=np.uint8)
+        hr = lr.repeat(2, axis=1).repeat(2, axis=2)
+        a, b = aligned_patch(lr, hr, 8, 16, 7, 5, 32)
+        np.testing.assert_array_equal(a, lr[8:, 5:37, 7:39])
+        np.testing.assert_array_equal(b[:, ::2, ::2], a)
+        with self.assertRaisesRegex(ValueError, 'outside'):
+            aligned_patch(lr, hr, 9, 16, 7, 5, 32)
+
     def test_family_leakage_is_rejected(self):
         records = [{'id':'a','family':'movie','split':'train','sha256':'a'},
                    {'id':'b','family':'movie','split':'validation','sha256':'b'}]

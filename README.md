@@ -49,9 +49,15 @@ at driver level.
 
 ## Evidence, September 4, 2026
 
-The [benchmark artifacts](Benchmarks/2026-09-04/) include corpus hashes,
+The [current development evidence](Benchmarks/frontier/README.md) records
+source-disjoint sequence screening, rejected candidates, temporal fixes, trained
+Core ML conversion checks and the experimental causal 2× architecture. No new
+model has passed promotion, and native 720p/1080p support remains experimental.
+
+The initial [benchmark artifacts](Benchmarks/2026-09-04/) include corpus hashes,
 per-frame metrics, CUDA training logs, native ablations, and browser checks.
-The checkpoint evaluation contains 120 paired images across six resolutions.
+That checkpoint evaluation contains 120 paired images from one crowd scene
+across six resolutions; it is not broad source-disjoint evidence.
 These image metrics evaluate reconstruction; they do not establish temporal
 quality or superiority to RTX VSR.
 
@@ -71,11 +77,13 @@ rate. They completed in approximately 1.0 and 0.8 minutes. Their improvement in
 pixel fidelity did not justify the perceptual regression. Shipping weights were
 preserved.
 
-The native motion filter is a separate change. In a 12-frame ablation on each
+The initial native motion filter is a separate change. In a 12-frame ablation on each
 of two matched clips, it lowered LPIPS from 0.5532 to 0.5385 on Crowdrun and
 0.2524 to 0.2509 on Dinner. Fine-detail energy increased. Static-pixel flicker
 also increased from 2.044 to 2.488 and 0.382 to 0.406 respectively. It trades
 some smoothing for retained detail; it is not a universal temporal-quality win.
+The subsequent stationary-history fix reduces flicker on those clips, but the
+crowd still flickers more than motion-off; see the current evidence above.
 
 The final optimized native pipeline was also timed for 60 frames after eight
 warmup frames, with the browser test stopped:
@@ -93,7 +101,10 @@ An isolated Chrome 152 test verified real WebCodecs input, MessageChannel
 structured cloning through the actual companion worker, Core ML inference,
 visible iframe output, original comparison, and no frame capture while Off.
 The worker/iframe snapshot recorded about 36 presented frames/s and 39 ms p95
-at 640×360 → 2560×1440 on an M4 Pro. The harness emulates the runtime ports;
+with 640×360 input and 2560×1440 internal reconstruction on an M4 Pro.
+Internal reconstruction dimensions do not prove delivered transport resolution;
+the later copy/presentation fixture delivers a 1280×720 display surface.
+The harness emulates the runtime ports;
 it does not certify extension installation, third-party CSP behavior, or Safari
 playback. The Safari companion was separately build-verified.
 

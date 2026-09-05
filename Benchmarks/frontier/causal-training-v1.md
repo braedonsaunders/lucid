@@ -45,6 +45,21 @@ The weak spatial result persists with history disabled. Simply substituting a sh
 
 The trained checkpoint also passes six-frame Core ML conversion checks with independently accumulated native/Torch history and a mid-sequence reset. Both tested compute-unit configurations remain below one 8-bit image level of maximum discrepancy. CPU+GPU 1080p→4K prediction measured 20.44/24.45 ms mean/p95 in the first run and 18.77/20.59 ms in the repeat that records the final profiler hash. Both reports are retained, rather than selecting only the faster measurement. These short graph timings exclude capture, video decoding and display; they do not establish sustained cadence or quality. Explicit float32 history consumes 16.59 MB.
 
+## Completed matched control and v2 checkpoint screen
+
+Both v1 runs finished 20,000 steps. `causal-v1-matched-training.json` verifies their identical code/bank hashes and all training arguments except history and output directory. `causal-matched-flow-evaluation.json` scores the completed pair and a v2 checkpoint at 12,000 steps on all 12 conditions with reference-defined flow and occlusion masks.
+
+| Variant | LPIPS ↓ | DISTS ↓ | Detail correlation ↑ | Static flicker ↓ | Flow residual ↓ |
+|---|---:|---:|---:|---:|---:|
+| Lanczos | 0.34560 | 0.12806 | 0.50932 | 1.00313 | 3.50559 |
+| Causal v1, 20k | 0.36100 | 0.13199 | 0.50374 | 0.97522 | 3.46090 |
+| No-history v1, 20k | 0.36093 | 0.13243 | 0.50192 | 0.95724 | 3.45420 |
+| Causal v2, 12k | 0.34192 | 0.12747 | 0.51535 | 1.01377 | 3.50192 |
+
+History gives v1 a small detail/DISTS benefit, but no convincing overall gain and slightly worse flicker than its matched control. V2 recovers spatial detail: source-balanced LPIPS improves 1.07% and DISTS 0.46% versus Lanczos. Both miss the 3% gate. Its aggregate flicker increase of 1.06% also hides increases of 8.70% on Four People and 8.76% on Johnny. It is not eligible for promotion. Reference-flow coverage averages 86.8%; reference warp error averages 2.90 gray levels, so these estimated-motion scores remain imperfect evidence. The unwarped metrics are retained alongside them.
+
+This comparison changes the next work: finish v2, test feature supervision with a matched control, and address source-specific static-region instability. The separately built full-frame codec bank is a later data experiment; combining it into the feature-loss comparison would hide which change helped.
+
 ```sh
 .venv-convert/bin/python Tools/frontier_eval/diagnose_causal_detail.py \
   --manifest .build/frontier-sequences-2x/sequences.json \

@@ -150,7 +150,11 @@ def main():
     ap.add_argument('--report', type=Path, required=True)
     ap.add_argument('--device', default='mps')
     ap.add_argument('--spatial-stride', type=int, default=4)
+    ap.add_argument('--flow-width', type=int, default=0,
+                    help='Reference-only DIS flow width; 0 omits motion-compensated metrics')
     args = ap.parse_args()
+    if args.flow_width and args.flow_width < 64:
+        ap.error('--flow-width must be zero or >=64')
     labels = [label for label, _ in args.checkpoint + args.causal] + [label for label, _, _ in args.efrlfn]
     if not labels or len(set(labels)) != len(labels) or 'lanczos' in labels or args.spatial_stride < 1:
         ap.error('unique checkpoint labels excluding lanczos, and a positive stride, required')
@@ -181,15 +185,22 @@ def main():
             'training_overlap': 'not verified; comparison is a development baseline, not an independent generalization claim'}
             for label, repo, weights in args.efrlfn},
         'torch': str(torch.__version__), 'device': str(device),
+        'evaluator_sha256': digest(__file__),
+        'flow_code_sha256': digest(Path(__file__).with_name('flow_temporal.py')) if args.flow_width else None,
         'spatial_stride': args.spatial_stride,
         'limitations': ['16-frame excerpts do not establish long-duration stability',
-          'temporal residual is not flow-compensated',
+          'temporal_residual_l1 is unwarped; optional flow_* metrics use estimated reference motion and visibility',
           'raw sources were excluded by identity from documented training inputs; legacy bank provenance is incomplete',
           'spatial metrics use a deterministic frame subset; temporal metrics use every consecutive frame'],
         'rows': [], 'complete': False}
     for seq in manifest:
         sources = decode(seq['degraded'], seq['frames'])
         references = decode(seq['reference'], seq['frames'])
+        motion = None
+        if args.flow_width:
+            from flow_temporal import ReferenceMotion
+            motion = ReferenceMotion(references, args.flow_width)
+            report.setdefault('flow', {})[seq['id']] = motion.metadata
         for label in ['lanczos', *models]:
             if label == 'lanczos':
                 outputs = [s.resize(r.size, Image.Resampling.LANCZOS) for s, r in zip(sources, references)]
@@ -217,6 +228,8 @@ def main():
                       for i in range(0, len(outputs), args.spatial_stride)]
             metrics = average([{k: v for k, v in f.items() if k != 'index'} for f in frames])
             metrics.update(temporal_metrics(outputs, references))
+            if motion is not None:
+                metrics.update(motion.score(outputs))
             report['rows'].append({'sequence_id': seq['id'], 'source_id': seq['source_id'],
                                   'variant': label, 'metrics': metrics, 'spatial_frames': frames})
             report['summary'] = summarize(report['rows'])
