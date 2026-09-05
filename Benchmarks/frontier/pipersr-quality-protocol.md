@@ -1,0 +1,9 @@
+# PiperSR native quality comparison
+
+Frozen September 5 before quality scoring. Use the already pinned complete video package by Ben Racicot / ModelPiper (CC BY 4.0), revision `8daecfccbbe023de6580e7eecbff3d44a51d0b13`, with its published RGB NCHW [0,1] interface and requested CPU+ANE execution. Verify every package file against `pipersr-download-receipt.json`. Do not import the separately licensed application implementation or change model weights.
+
+Export all 48 full-frame development pairs at the package's supported 640×360→1280×720 shape. Input manifest SHA256 is `aac663ad088fede87e1ede68cb46501603fc0f0b066b5ae6c07726b6555d923f`. Use common clamp/nearest RGB8 rounding, rather than the author's example CLI's truncation. No resizing, tiling, color correction, sharpening or native Lucid postfilter is added. These are Core ML model outputs, not complete browser frames.
+
+Use Lucid's existing LPIPS/DISTS/detail scorer. The Mac may score outputs while the RTX 4080 trains a separate experiment. Reuse the frozen CUDA shipping comparison only if Lanczos reproduces every control metric within 1e-5 on the identical inputs. Otherwise recompute the shipping control on the same scoring backend; never silently combine disagreeing metrics. Apply the unchanged 3% LPIPS/DISTS minimum improvements, 2% per-source perceptual-regression maximum and 0.01 fine-correlation-drop maximum. Do not tune preprocessing on results. These three sources are recurring development footage and upstream pretraining overlap is unknown.
+
+The earlier warmed native speed measurements remain the runtime evidence. Export timings include cold prediction and are not another performance benchmark. A favorable quality result would motivate wider testing, not automatic shipping replacement or a real-time playback claim.
