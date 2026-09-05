@@ -1,0 +1,120 @@
+{
+  "spatial_gate_pass": false,
+  "failure_reasons": [
+    "dists: aggregate improvement below minimum",
+    "crowd_run: fine correlation drop exceeds limit",
+    "four_people: lpips regression exceeds limit",
+    "four_people: dists regression exceeds limit",
+    "four_people: fine correlation drop exceeds limit",
+    "johnny: dists regression exceeds limit",
+    "johnny: fine correlation drop exceeds limit"
+  ],
+  "frames_per_variant": 48,
+  "source_balanced": {
+    "lanczos": {
+      "lpips": 0.3456039136896531,
+      "dists": 0.1280564603706201,
+      "fine_correlation": 0.5093240648945621
+    },
+    "shipping": {
+      "lpips": 0.30248340653876465,
+      "dists": 0.12834738940000534,
+      "fine_correlation": 0.5643107409154196
+    },
+    "plksr_rep": {
+      "lpips": 0.25600782378266257,
+      "dists": 0.137709628790617,
+      "fine_correlation": 0.42952497942214435
+    }
+  },
+  "per_source": {
+    "lanczos": {
+      "crowd_run": {
+        "lpips": 0.495750118046999,
+        "dists": 0.17145344987511635,
+        "fine_correlation": 0.3584202039433989
+      },
+      "four_people": {
+        "lpips": 0.25478613283485174,
+        "dists": 0.10223440453410149,
+        "fine_correlation": 0.6186566818904616
+      },
+      "johnny": {
+        "lpips": 0.2862754901871085,
+        "dists": 0.11048152670264244,
+        "fine_correlation": 0.5508953088498255
+      }
+    },
+    "shipping": {
+      "crowd_run": {
+        "lpips": 0.43213558197021484,
+        "dists": 0.16417091339826584,
+        "fine_correlation": 0.3826486426147748
+      },
+      "four_people": {
+        "lpips": 0.2165464572608471,
+        "dists": 0.10294333472847939,
+        "fine_correlation": 0.6708326990081547
+      },
+      "johnny": {
+        "lpips": 0.25876818038523197,
+        "dists": 0.1179279200732708,
+        "fine_correlation": 0.6394508811233292
+      }
+    },
+    "plksr_rep": {
+      "crowd_run": {
+        "lpips": 0.28154407255351543,
+        "dists": 0.16695822775363922,
+        "fine_correlation": 0.2276085764571297
+      },
+      "four_people": {
+        "lpips": 0.22382251732051373,
+        "dists": 0.1100468747317791,
+        "fine_correlation": 0.5557497338756493
+      },
+      "johnny": {
+        "lpips": 0.2626568814739585,
+        "dists": 0.13612378388643265,
+        "fine_correlation": 0.5052166279336541
+      }
+    }
+  },
+  "perceptual_improvements": {
+    "lpips": 0.15364671830402055,
+    "dists": -0.07294452527922823
+  },
+  "per_source_changes": {
+    "crowd_run": {
+      "lpips": 0.3484820868721683,
+      "dists": -0.01697812540405108,
+      "fine_correlation": -0.15504006615764512
+    },
+    "four_people": {
+      "lpips": -0.03360045761867192,
+      "dists": -0.069004370433849,
+      "fine_correlation": -0.11508296513250538
+    },
+    "johnny": {
+      "lpips": -0.015027740593674732,
+      "dists": -0.1542964872258954,
+      "fine_correlation": -0.13423425318967508
+    }
+  },
+  "status": "spatial development screen only; upstream overlap unknown; no release admission",
+  "controls_max_absolute_delta": 0.0,
+  "gate": {
+    "source_balanced_lpips_improvement_min": 0.03,
+    "source_balanced_dists_improvement_min": 0.03,
+    "per_source_perceptual_regression_max": 0.02,
+    "per_source_fine_correlation_drop_max": 0.01
+  },
+  "promotion_authorized": false,
+  "evidence_sha256": {
+    "Benchmarks/frontier/plksr-rep-quality.json": "10147f0cf90d5163a710bb426015af40c8127634e81fb898d80aebaa4ce07904",
+    "Benchmarks/frontier/pipersr-shipping-mps.json": "767dade00cb4f85365293ba3527eb7145a7ee737dde6d0e817630d8b47448583",
+    "Benchmarks/frontier/plksr-rep-output-manifest.json": "92d394924a81bb0b178aa05e953656e9c38108be976e005c88b97ad6b4d7095b",
+    "/Users/braedonsaunders/Documents/Code/lucid/Tools/frontier_eval/gate_external_development.py": "151ff075141e1f193fc01051bef993b0fa378b04d15f56e5587955e3ba35fe9d",
+    "/Users/braedonsaunders/Documents/Code/lucid/Tools/frontier_eval/gate_frozen_holdout.py": "cfc05cc6c7dc64a703070afd1b6147f38cae1ed3031413ca6f417c8e6ce1769b"
+  }
+}
