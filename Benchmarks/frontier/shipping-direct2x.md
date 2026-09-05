@@ -51,3 +51,19 @@ The Release app's offline `--presented-native-ms` probe alternates 60 measured p
 Total measured time falls **56.2% (2.28× throughput)** at this fixed delivery size. Avoiding the large BGRA downscale saves substantial time beyond the graph reduction. This is an actual native delivery-stage saving, not a claim of 2.28× whole-browser throughput. It excludes capture/decode/input conversion, detail postprocessing, network and rendering. The native downscaler is not numerically equivalent to PIL bicubic in the quality screen. `shipping-direct2x-swift720.json` contains raw timings; `shipping-direct2x-swift-provenance.json` pins executable, source and model bytes. The local unsigned Release build succeeds.
 
 At 960×540 input with 1920×1080 delivered output, the same Swift diagnostic measures **25.242→11.634 ms** mean and **25.935→12.271 ms** p95, a 53.9% mean reduction. Each packet is 3,110,599 bytes. Native graph / packet means are 18.170 / 7.072 ms for shipping and 11.319 / 0.315 for direct 2×. `shipping-direct2x-swift540.json` preserves all samples. Independent Python/Core ML conversion checks at this additional size pass; `shipping-direct2x-native540.json` records 20.036→12.088 ms graph means. These stage timings leave useful room in a 16.7 ms frame budget, but do not establish sustained 60 fps playback.
+
+## Pixel-target transfer result: not promoted
+
+Both 8,000-step RTX 4080 arms completed in 2.01 minutes each, exit zero. `presented-detail-training-results.json` records exact checkpoints and objectives. Each completed evaluation uses the same 12 source/codec conditions and frame indices.
+
+| Variant | LPIPS ↓ | DISTS ↓ | Fine correlation ↑ |
+|---|---:|---:|---:|
+| Direct 2× initialization | 0.296885 | 0.128084 | 0.557484 |
+| Matched shipping-only target control | 0.307230 | 0.128811 | 0.564920 |
+| 50/50 teacher target candidate | 0.320489 | 0.124426 | 0.558477 |
+
+The candidate improves DISTS 3.40% over its control but worsens LPIPS 4.32%. Fine correlation also falls 0.00644. Plain pixel/edge/FFT regression has not transferred the blended target's joint advantage. The initial folded weights retain the best LPIPS of these deployable graphs. Keep them as the experimental performance baseline; no new training checkpoint is promoted.
+
+One plausible limitation is regression toward the average of generative teacher textures. This is a hypothesis, not a diagnosis proved by these metrics. PixRestore's official August 2026 implementation includes adversarial feedback through frozen multi-layer DINO features. The next controlled arm adds that released discriminator against known training HQ references, retaining the same reconstruction target/objective, initialization, data seed and schedule. The completed 50/50 candidate is the no-adversary control. `dino_adversary.py` verifies the exact upstream GAN file hash and the existing pinned DINO code/weights. Its discriminator and feature encoder are discarded at inference.
+
+The adapted discriminator uses the released six spectrally normalized token heads and real label 0.8. Its optimizer is AdamW at 1e-4; the loss is half the sum of real/fake BCE and gradients are clipped at one. Generator adversarial weight is 0.005. Training logs compare weighted adversarial and reconstruction output-head gradient norms at steps 1, 200 and 1000. A two-step CUDA smoke run precedes the full arm; a focused gradient test verifies that generator gradients traverse the frozen encoder without updating its weights, while discriminator updates cannot alter the generator or reference. This is a tested adaptation, not a claim of reproducing the entire PixRestore training pipeline or inventing an adversarial method.

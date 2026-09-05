@@ -70,11 +70,19 @@ def main():
     ap.add_argument('--crop', type=int, default=96)
     ap.add_argument('--lr', type=float, default=0.00002)
     ap.add_argument('--seed', type=int, default=20260914)
+    ap.add_argument('--dino-gan-weight', type=float, default=0)
+    ap.add_argument('--pixrestore-repository', type=Path)
+    ap.add_argument('--dino-repository', type=Path)
+    ap.add_argument('--dino-checkpoint', type=Path)
     args = ap.parse_args()
     if args.out.exists() or args.teacher_mix not in (0, .5) or args.steps < 1 or args.batch < 1 or args.crop < 32 or args.crop % 2:
         ap.error('fresh output, fixed teacher mix 0/.5, positive steps/batch and even crop >=32 required')
     if not math.isfinite(args.lr) or args.lr <= 0:
         ap.error('positive finite learning rate required')
+    if not math.isfinite(args.dino_gan_weight) or args.dino_gan_weight < 0:
+        ap.error('nonnegative finite adversarial weight required')
+    if args.dino_gan_weight and not all((args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)):
+        ap.error('adversarial supervision requires pinned PixRestore and DINO sources/weights')
     if not torch.cuda.is_available():
         raise ValueError('this experiment requires the authorized CUDA worker')
     torch.set_num_threads(4)
@@ -96,6 +104,10 @@ def main():
     del shipping
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=0)
     rng = np.random.default_rng(args.seed)
+    adversary = None
+    if args.dino_gan_weight:
+        from dino_adversary import DinoAdversary
+        adversary = DinoAdversary(args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)
     args.out.mkdir(parents=True)
     experiment = {'args': {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
         'bank_sha256': bank_hash, 'checkpoint_sha256': digest(args.init),
@@ -109,6 +121,10 @@ def main():
         'precision': 'CUDA BF16 autocast; AdamW FP32; no compilation',
         'torch': str(torch.__version__), 'gpu': torch.cuda.get_device_name(),
         'purpose': 'controlled quality/performance experiment; not shipping promotion'}
+    if adversary:
+        experiment['adversary'] = adversary.metadata
+        experiment['source_hashes']['dino_adversary.py'] = digest(Path(__file__).with_name('dino_adversary.py'))
+        experiment['source_hashes']['dino_supervision.py'] = digest(Path(__file__).with_name('dino_supervision.py'))
     (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
     started = time.monotonic()
     for step in range(1, args.steps + 1):
@@ -120,20 +136,39 @@ def main():
         output, reference, intended = (v.float()[:, :, 8:-8, 8:-8] for v in (output, reference, intended))
         loss = F.l1_loss(output, intended) + .2 * sobel_loss(output, intended) \
              + .05 * fft_loss(output, intended) + .1 * F.l1_loss(output, reference)
+        gan_loss, discriminator_loss = None, None
+        if adversary:
+            with torch.autocast('cuda', dtype=torch.bfloat16):
+                gan_loss, fake_features = adversary.generator_loss(output)
+            if step in (1, 200, 1000):
+                head = model.core.upsampler[0].weight
+                base_gradient = torch.autograd.grad(loss, head, retain_graph=True)[0].float().norm()
+                adversarial_gradient = torch.autograd.grad(args.dino_gan_weight * gan_loss, head, retain_graph=True)[0].float().norm()
+                print(json.dumps({'step': step, 'head_base_gradient_norm': float(base_gradient),
+                    'head_adversarial_gradient_norm': float(adversarial_gradient),
+                    'head_gradient_ratio': float(adversarial_gradient / base_gradient.clamp_min(1e-12))}), flush=True)
+            loss = loss + args.dino_gan_weight * gan_loss
         if not torch.isfinite(loss):
             raise ValueError('nonfinite training loss')
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1)
         optimizer.step()
+        if adversary:
+            with torch.autocast('cuda', dtype=torch.bfloat16):
+                discriminator_loss = adversary.update(reference, fake_features)
         rate = args.lr * (.1 + .9 * .5 * (1 + math.cos(math.pi * step / args.steps)))
         for group in optimizer.param_groups:
             group['lr'] = rate
         if step % 200 == 0:
-            print(f'step {step}/{args.steps} loss={float(loss):.6f} minutes={(time.monotonic()-started)/60:.2f}', flush=True)
+            extra = f' generator={float(gan_loss.detach()):.5f} discriminator={discriminator_loss:.5f}' if adversary else ''
+            print(f'step {step}/{args.steps} loss={float(loss):.6f} minutes={(time.monotonic()-started)/60:.2f}{extra}', flush=True)
         if step % 2000 == 0 or step == args.steps:
             torch.save({'model': model.state_dict(), 'channels': model.core.conv_1.eval_conv.out_channels,
                 'scale': 2, 'frames': 1, 'version': model.version, 'step': step,
                 'architecture': 'shipping_direct2x_area', 'experiment': experiment}, args.out / f'step{step:06d}.pth')
+            if adversary:
+                torch.save({'discriminator': adversary.discriminator.state_dict(),
+                    'optimizer': adversary.optimizer.state_dict(), 'step': step}, args.out / f'discriminator{step:06d}.pth')
     (args.out / 'complete.json').write_text(json.dumps({'steps': args.steps,
         'minutes': (time.monotonic()-started)/60}) + '\n')
 
