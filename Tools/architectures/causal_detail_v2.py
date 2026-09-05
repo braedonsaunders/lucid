@@ -38,6 +38,38 @@ differs from PIL's truncated-kernel normalization and is recorded explicitly.
             return F.pixel_shuffle(samples, 2)
 
 
+class SeparableLanczos2x(Lanczos2x):
+    """Equivalent fixed floor with two 1-D passes: 126 vs 588 MACs/LR pixel.
+
+    This changes execution, not the reconstruction filter or learned weights.
+    Measure native graph latency: reshape/transpose costs may erase MAC savings.
+    """
+    def __init__(self):
+        super().__init__()
+        positions = torch.arange(-3, 4, dtype=torch.float64)
+        phases = []
+        for phase in (-0.25, 0.25):
+            distance = phase - positions
+            weights = torch.sinc(distance) * torch.sinc(distance / 3)
+            weights = torch.where(distance.abs() < 3, weights, 0)
+            phases.append(weights / weights.sum())
+        taps = torch.stack(phases).float().repeat(3, 1)
+        self.register_buffer('horizontal', taps[:, None, None, :], persistent=False)
+        self.register_buffer('vertical', taps[:, None, :, None], persistent=False)
+
+    def forward(self, frame):
+        with torch.autocast(device_type=frame.device.type, enabled=False):
+            # Core ML variants have fixed image sizes. Materialize these sizes
+            # during tracing to avoid dynamic scalar casts in the converter.
+            b, c, h, w = (int(size) for size in frame.shape)
+            x = F.conv2d(F.pad(frame.float(), (3, 3, 0, 0), mode='replicate'),
+                         self.horizontal.float(), groups=3)
+            x = x.reshape(b, c, 2, h, w).permute(0, 1, 3, 4, 2).reshape(b, c, h, w * 2)
+            x = F.conv2d(F.pad(x, (0, 0, 3, 3), mode='replicate'),
+                         self.vertical.float(), groups=3)
+            return x.reshape(b, c, 2, h, w * 2).permute(0, 1, 3, 2, 4).reshape(b, c, h * 2, w * 2)
+
+
 class CausalDetailV2(CausalDetail):
     """Same causal trunk, stronger fixed floor and an uncompressed pixel bypass."""
     def __init__(self, channels=32, blocks=4, scale=2, fold=4):

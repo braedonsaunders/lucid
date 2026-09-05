@@ -6,10 +6,17 @@ import torch
 from torch.nn import functional as F
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from architectures.causal_detail_v2 import Lanczos2x, CausalDetailV2
+from architectures.causal_detail_v2 import Lanczos2x, SeparableLanczos2x, CausalDetailV2
 
 
 class SpatialEvidenceTests(unittest.TestCase):
+    def test_separable_floor_preserves_phases_borders_and_color(self):
+        torch.manual_seed(4)
+        dense, separable = Lanczos2x(), SeparableLanczos2x()
+        for shape in [(1, 3, 1, 1), (2, 3, 17, 19), (1, 3, 32, 48)]:
+            frame = torch.rand(shape)
+            frame[..., 0, 0] = 1
+            torch.testing.assert_close(dense(frame), separable(frame), rtol=1e-6, atol=1e-6)
     def test_constant_color_and_channel_isolation_at_borders(self):
         floor = Lanczos2x()
         frame = torch.tensor([0.1, 0.5, 0.9]).reshape(1, 3, 1, 1).expand(1, 3, 8, 12)
