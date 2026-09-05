@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Matched dynamic/static activation-controller experiment; frozen reconstruction."""
 import argparse
+import copy
 import json
 import math
 from pathlib import Path
@@ -28,6 +29,7 @@ def main():
     ap.add_argument('--mode', choices=('static', 'dynamic'), required=True)
     ap.add_argument('--steps', type=int, default=8000)
     ap.add_argument('--seed', type=int, default=20260914)
+    ap.add_argument('--local-fidelity-constraint', action='store_true')
     args = ap.parse_args()
     if args.out.exists() or args.steps < 1:
         ap.error('fresh output and positive steps required')
@@ -45,7 +47,9 @@ def main():
         raise ValueError('cached shipping identity changed')
     mixed = {identity: np.rint(.5*pixels.astype(np.float32)+.5*teacher[identity].astype(np.float32)).astype(np.uint8)
              for identity, pixels in shipping.items()}
-    del shipping, teacher
+    if not args.local_fidelity_constraint:
+        del shipping
+    del teacher
     anchor, _, frames = load(args.init, 'cuda')
     if frames != 1:
         raise ValueError('single-frame initialization required')
@@ -60,6 +64,10 @@ def main():
     optimizer = torch.optim.AdamW(model.controller.parameters(), lr=.0002, weight_decay=0)
     from dino_adversary import DinoAdversary
     adversary = DinoAdversary(args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)
+    penalty = None
+    if args.local_fidelity_constraint:
+        from local_fidelity_constraint import violations, AdaptiveFidelityPenalty
+        penalty = AdaptiveFidelityPenalty('cuda')
     rng = np.random.default_rng(args.seed)
     args.out.mkdir(parents=True)
     experiment = {
@@ -81,17 +89,32 @@ def main():
             Path(__file__).with_name('train_presented_detail.py'), Path(__file__).with_name('dino_adversary.py'),
             Path(__file__).resolve().parents[1]/'architectures/activation_control.py']}}
     experiment_path = args.out/'experiment.json'
+    if penalty is not None:
+        experiment['local_fidelity_constraint'] = {
+            'domains': ['RGB squared error', 'signed RGB Sobel squared error'],
+            'baseline': 'aligned cached full-context shipping RGB8 presentation',
+            'tiles': 8, 'energy_floor': 1e-4, 'initial_multipliers': [1., 1.],
+            'multiplier_rate': penalty.rate, 'quadratic_rho': penalty.rho,
+            'scope': 'training data only; no inference operations or fidelity guarantee',
+            'code_sha256': digest(Path(__file__).with_name('local_fidelity_constraint.py'))}
     experiment_path.write_text(json.dumps(experiment, indent=2)+'\n')
     started = time.monotonic()
     parameters = list(model.controller.parameters())
     for step in range(1, args.steps+1):
+        baseline_rng = copy.deepcopy(rng) if penalty is not None else None
         x, reference, intended = (v[:, 0].cuda() for v in batch(data['train'], rng, 4, 1, 96, mixed))
+        if penalty is not None:
+            bx, br, baseline = (v[:, 0].cuda() for v in batch(data['train'], baseline_rng, 4, 1, 96, shipping))
+            if not torch.equal(bx, x) or not torch.equal(br, reference):
+                raise ValueError('cached shipping crop or augmentation differs')
         optimizer.zero_grad(set_to_none=True)
         with torch.autocast('cuda', dtype=torch.bfloat16):
             output = model(x)
         if step == 1:
             experiment['first_batch_sha256'] = state_digest({'source': x, 'reference': reference, 'intended': intended})
             experiment['first_output_sha256'] = state_digest({'output': output})
+            if penalty is not None:
+                experiment['first_fidelity_baseline_sha256'] = state_digest({'baseline': baseline})
             with torch.no_grad(), torch.autocast('cuda', dtype=torch.bfloat16):
                 if not torch.equal(output, model.anchor(x)):
                     raise ValueError('initial controller changes BF16 anchor output')
@@ -101,11 +124,16 @@ def main():
         with torch.autocast('cuda', dtype=torch.bfloat16):
             gan, fake = adversary.generator_loss(output)
         loss = reconstruction+.005*gan
+        if penalty is not None:
+            fidelity_values = violations(output, reference, baseline.float()[:, :, 8:-8, 8:-8])
+            loss = loss+penalty.loss(fidelity_values)
         if not torch.isfinite(loss):
             raise ValueError('nonfinite training loss')
         loss.backward()
         norm = torch.nn.utils.clip_grad_norm_(parameters, 1, error_if_nonfinite=True)
         optimizer.step()
+        if penalty is not None:
+            penalty.update(fidelity_values)
         with torch.autocast('cuda', dtype=torch.bfloat16):
             discriminator_loss = adversary.update(reference, fake)
         for group in optimizer.param_groups:
@@ -113,6 +141,9 @@ def main():
         if step % 200 == 0:
             print(f'step {step}/{args.steps} loss={float(loss.detach()):.6f} controller_grad={float(norm):.6f} '
                   f'discriminator={discriminator_loss:.5f} minutes={(time.monotonic()-started)/60:.2f}', flush=True)
+            if penalty is not None:
+                print(f'  fidelity_violation={fidelity_values.detach().tolist()} '
+                      f'multipliers={penalty.multipliers.tolist()}', flush=True)
         if step % 2000 == 0 or step == args.steps:
             if frozen() != frozen_hash:
                 raise ValueError('frozen reconstruction or control mask changed')
@@ -122,10 +153,12 @@ def main():
             torch.save({'optimizer': optimizer.state_dict(), 'discriminator': adversary.discriminator.state_dict(),
                 'discriminator_optimizer': adversary.optimizer.state_dict(), 'step': step,
                 'numpy_rng': rng.bit_generator.state, 'torch_rng': torch.get_rng_state(),
-                'cuda_rng': torch.cuda.get_rng_state_all()}, args.out/f'training{step:06d}.pth')
+                'cuda_rng': torch.cuda.get_rng_state_all(),
+                'fidelity_multipliers': penalty.multipliers if penalty is not None else None}, args.out/f'training{step:06d}.pth')
     (args.out/'complete.json').write_text(json.dumps({'steps': args.steps,
         'minutes': (time.monotonic()-started)/60, 'frozen_anchor_unchanged': frozen() == frozen_hash,
-        'controller_final_sha256': state_digest(model.controller.state_dict())})+'\n')
+        'controller_final_sha256': state_digest(model.controller.state_dict()),
+        'fidelity_multipliers': penalty.multipliers.tolist() if penalty is not None else None})+'\n')
 
 
 if __name__ == '__main__':
