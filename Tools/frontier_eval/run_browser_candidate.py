@@ -41,7 +41,7 @@ def main():
     server_log=(args.out/'server.log').open('w')
     server=subprocess.Popen(['python3','-m','http.server','48113','--bind','127.0.0.1','--directory',str(args.fixture.resolve())],stdout=server_log,stderr=subprocess.STDOUT)
     app=None;session=None;app_log=None
-    report={'purpose':f'{"headed" if args.headed else "headless"} Chrome native playback comparison at 640x360 to 1280x720',
+    report={'purpose':f'{"headed" if args.headed else "headless"} Chrome native playback comparison; source and delivered dimensions recorded in run telemetry',
         'clip_sha256':digest(args.fixture/'video.mp4'),'app_sha256':digest(args.app),
         'script_sha256':digest(__file__),'browser_config_sha256':digest(args.config),
         'scope':'Real companion scripts and MessageChannels, isolated native app/ports; not installed-extension or third-party CSP coverage',

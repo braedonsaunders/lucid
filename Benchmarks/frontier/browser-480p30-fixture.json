@@ -1,0 +1,60 @@
+{
+  "purpose": "480p30 performance fixture; not quality holdout",
+  "source_sha256": "6379954265a8697bd5f9d596bc97b11fe4efe2f96e951cc1914ecd57c769933e",
+  "clip_sha256": "edbd81750adf362204d62c9fcce82d97dfbfdcdf9f0c30e54b0c87f160be4da0",
+  "index_sha256": "213a47384be2f667e90a18270510c2041745862f9d51170e593cb057e74e14f9",
+  "command": [
+    "ffmpeg",
+    "-nostdin",
+    "-v",
+    "error",
+    "-i",
+    ".build/corpus-sources/fast-netflix-DrivingPOV.mp4",
+    "-t",
+    "20",
+    "-vf",
+    "crop=3840:2160,fps=30,scale=854:480:flags=lanczos:out_color_matrix=bt709:out_range=tv,pad=864:480:5:0",
+    "-an",
+    "-c:v",
+    "libx264",
+    "-preset",
+    "fast",
+    "-b:v",
+    "1500k",
+    "-maxrate",
+    "2000k",
+    "-bufsize",
+    "3000k",
+    "-g",
+    "30",
+    "-pix_fmt",
+    "yuv420p",
+    "-color_primaries",
+    "bt709",
+    "-color_trc",
+    "bt709",
+    "-colorspace",
+    "bt709",
+    "-color_range",
+    "tv",
+    "-threads",
+    "4",
+    ".build/browser-installed-480p30/video.mp4"
+  ],
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "width": 864,
+        "height": 480,
+        "r_frame_rate": "30/1",
+        "nb_frames": "600"
+      }
+    ],
+    "format": {
+      "duration": "20.000000"
+    }
+  },
+  "padding": "pad width from 854 to 864; exact filter recorded above"
+}
