@@ -1,0 +1,9 @@
+# Bound the adversarial contribution without changing inference
+
+The reference-detail experiment's weighted GAN gradient at the output head grew from 0.149× the reconstruction gradient at initialization to 9.112× at step 200. It still lost detail on full-frame faces. This experiment tests whether keeping that contribution near its initial magnitude improves the fidelity/perception tradeoff.
+
+At every step compute the norms of the reconstruction gradient and the already-weighted GAN gradient at the output convolution weights. Multiply the GAN term by `min(1, 0.15 * reconstruction_norm / max(weighted_GAN_norm, 1e-12))`, detached from autograd. This only attenuates the existing adversary; it cannot amplify it. The cap of 0.15 is fixed from the measured initial ratio before running this experiment. It is a head-gradient proxy, not a bound on every parameter or a guarantee of detail fidelity.
+
+Keep the reference-detail run's data, caches, initialization, seed, architecture, losses, reference detail targets, optimizer and 8,000-step schedule. The pinned August 2026 PixRestore discriminator stays unchanged. Reuse its completed uncapped control after matching new two-step smoke runs on first-batch and discriminator hashes. New code records the maximum applied head ratio across all steps and minimum scale. Unit tests verify attenuation, detachment, zero-gradient behavior and the actual combined-head gradient.
+
+Evaluate only the raw final checkpoint and the same predetermined 80% blend on the frozen 48 full-frame and 96 validation-patch pairs. Use the existing 3% LPIPS/DISTS minima and per-source perceptual/detail guards. No post-result cap or blend sweep is allowed. Any winner still needs native correctness, matched end-to-end timing and fresh release footage. Shipping weights, native processing, and flicker filters remain unchanged.

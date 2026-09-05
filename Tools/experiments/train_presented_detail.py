@@ -34,6 +34,13 @@ def reconstruction_objective(output, reference, intended, detail_target='mixture
             + .05 * fft_loss(output, detail) + .1 * F.l1_loss(output, reference))
 
 
+def bounded_adversarial_scale(base_norm, weighted_adversarial_norm, ratio_cap):
+    """Only attenuate the GAN term; the detached scale adds no second derivatives."""
+    if not math.isfinite(ratio_cap) or ratio_cap <= 0:
+        raise ValueError('positive finite head-gradient ratio cap required')
+    return (ratio_cap * base_norm.detach() / weighted_adversarial_norm.detach().clamp_min(1e-12)).clamp(0, 1)
+
+
 def state_digest(state):
     result = hashlib.sha256()
     for name, value in sorted(state.items()):
@@ -93,6 +100,8 @@ def main():
     ap.add_argument('--detail-target', choices=['mixture', 'reference'], default='mixture',
                     help='Controlled supervision ablation; inference architecture and weights format are unchanged')
     ap.add_argument('--dino-gan-weight', type=float, default=0)
+    ap.add_argument('--gan-head-ratio-cap', type=float, default=0,
+                    help='Optional per-step GAN/reconstruction gradient-norm cap at the output head; zero preserves control')
     ap.add_argument('--pixrestore-repository', type=Path)
     ap.add_argument('--dino-repository', type=Path)
     ap.add_argument('--dino-checkpoint', type=Path)
@@ -105,6 +114,8 @@ def main():
         ap.error('detail channels >=4 and positive block count required')
     if not math.isfinite(args.dino_gan_weight) or args.dino_gan_weight < 0:
         ap.error('nonnegative finite adversarial weight required')
+    if not math.isfinite(args.gan_head_ratio_cap) or args.gan_head_ratio_cap < 0 or (args.gan_head_ratio_cap and not args.dino_gan_weight):
+        ap.error('nonnegative finite ratio cap requires an adversary when enabled')
     if args.dino_gan_weight and not all((args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)):
         ap.error('adversarial supervision requires pinned PixRestore and DINO sources/weights')
     if not torch.cuda.is_available():
@@ -163,6 +174,8 @@ def main():
     (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
     started = time.monotonic()
     anchor_hash = None
+    max_applied_head_ratio = torch.zeros((), device='cuda')
+    min_adversarial_scale = torch.ones((), device='cuda')
     for step in range(1, args.steps + 1):
         x, reference, intended = batch(data['train'], rng, args.batch, 1, args.crop, mixed)
         x, reference, intended = (v[:, 0].cuda() for v in (x, reference, intended))
@@ -181,16 +194,25 @@ def main():
         loss = reconstruction_objective(output, reference, intended, args.detail_target)
         gan_loss, discriminator_loss = None, None
         if adversary:
+            adversarial_scale = 1
             with torch.autocast('cuda', dtype=torch.bfloat16):
                 gan_loss, fake_features = adversary.generator_loss(output)
-            if step in (1, 200, 1000):
+            if args.gan_head_ratio_cap or step in (1, 200, 1000):
                 head = model.head.weight if args.architecture == 'anchored_detail' else model.core.upsampler[0].weight
                 base_gradient = torch.autograd.grad(loss, head, retain_graph=True)[0].float().norm()
                 adversarial_gradient = torch.autograd.grad(args.dino_gan_weight * gan_loss, head, retain_graph=True)[0].float().norm()
+                if args.gan_head_ratio_cap:
+                    adversarial_scale = bounded_adversarial_scale(base_gradient, adversarial_gradient, args.gan_head_ratio_cap)
+                    applied_ratio = adversarial_scale * adversarial_gradient / base_gradient.clamp_min(1e-12)
+                    max_applied_head_ratio = torch.maximum(max_applied_head_ratio, applied_ratio.detach())
+                    min_adversarial_scale = torch.minimum(min_adversarial_scale, adversarial_scale)
+            if step in (1, 200, 1000) or (args.gan_head_ratio_cap and step % 200 == 0):
                 print(json.dumps({'step': step, 'head_base_gradient_norm': float(base_gradient),
                     'head_adversarial_gradient_norm': float(adversarial_gradient),
-                    'head_gradient_ratio': float(adversarial_gradient / base_gradient.clamp_min(1e-12))}), flush=True)
-            loss = loss + args.dino_gan_weight * gan_loss
+                    'head_gradient_ratio': float(adversarial_gradient / base_gradient.clamp_min(1e-12)),
+                    'adversarial_scale': float(adversarial_scale),
+                    'applied_head_gradient_ratio': float(adversarial_scale * adversarial_gradient / base_gradient.clamp_min(1e-12))}), flush=True)
+            loss = loss + (args.dino_gan_weight * gan_loss) * adversarial_scale
         if not torch.isfinite(loss):
             raise ValueError('nonfinite training loss')
         loss.backward()
@@ -220,7 +242,9 @@ def main():
                 torch.save({'discriminator': adversary.discriminator.state_dict(),
                     'optimizer': adversary.optimizer.state_dict(), 'step': step}, args.out / f'discriminator{step:06d}.pth')
     (args.out / 'complete.json').write_text(json.dumps({'steps': args.steps,
-        'minutes': (time.monotonic()-started)/60}) + '\n')
+        'minutes': (time.monotonic()-started)/60,
+        'max_applied_head_gradient_ratio': float(max_applied_head_ratio) if args.gan_head_ratio_cap else None,
+        'min_adversarial_scale': float(min_adversarial_scale) if args.gan_head_ratio_cap else None}) + '\n')
 
 
 if __name__ == '__main__':
