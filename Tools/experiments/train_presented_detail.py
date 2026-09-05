@@ -26,6 +26,14 @@ from reconstruction_loss import sobel_loss
 from train_span import fft_loss
 
 
+def reconstruction_objective(output, reference, intended, detail_target='mixture'):
+    if detail_target not in ('mixture', 'reference'):
+        raise ValueError('unknown detail supervision target')
+    detail = reference if detail_target == 'reference' else intended
+    return (F.l1_loss(output, intended) + .2 * sobel_loss(output, detail)
+            + .05 * fft_loss(output, detail) + .1 * F.l1_loss(output, reference))
+
+
 def state_digest(state):
     result = hashlib.sha256()
     for name, value in sorted(state.items()):
@@ -82,6 +90,8 @@ def main():
     ap.add_argument('--architecture', choices=['coupled', 'anchored_detail'], default='coupled')
     ap.add_argument('--detail-channels', type=int, default=32)
     ap.add_argument('--detail-blocks', type=int, default=4)
+    ap.add_argument('--detail-target', choices=['mixture', 'reference'], default='mixture',
+                    help='Controlled supervision ablation; inference architecture and weights format are unchanged')
     ap.add_argument('--dino-gan-weight', type=float, default=0)
     ap.add_argument('--pixrestore-repository', type=Path)
     ap.add_argument('--dino-repository', type=Path)
@@ -137,7 +147,7 @@ def main():
             Path(__file__).with_name('fold_shipping_head.py'), Path(__file__).with_name('train_causal_detail.py'),
             Path(__file__).resolve().parents[1] / 'train_span.py',
             Path(__file__).resolve().parents[1] / 'architectures/span_arch.py')},
-        'loss': 'L1 to fixed mixture + 0.2 signed Sobel to mixture + 0.05 FFT to mixture + 0.1 L1 to reference; 8 output-pixel border excluded',
+        'loss': f'L1 to fixed mixture + 0.2 signed Sobel to {args.detail_target} + 0.05 FFT to {args.detail_target} + 0.1 L1 to reference; 8 output-pixel border excluded',
         'precision': 'CUDA BF16 autocast; AdamW FP32; no compilation',
         'torch': str(torch.__version__), 'gpu': torch.cuda.get_device_name(),
         'purpose': 'controlled quality/performance experiment; not shipping promotion'}
@@ -168,8 +178,7 @@ def main():
                 experiment['anchor_initial_sha256'] = anchor_hash
             (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
         output, reference, intended = (v.float()[:, :, 8:-8, 8:-8] for v in (output, reference, intended))
-        loss = F.l1_loss(output, intended) + .2 * sobel_loss(output, intended) \
-             + .05 * fft_loss(output, intended) + .1 * F.l1_loss(output, reference)
+        loss = reconstruction_objective(output, reference, intended, args.detail_target)
         gan_loss, discriminator_loss = None, None
         if adversary:
             with torch.autocast('cuda', dtype=torch.bfloat16):
