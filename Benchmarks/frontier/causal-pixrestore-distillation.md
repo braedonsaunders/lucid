@@ -35,3 +35,19 @@ The gate itself favors pixel accuracy, while the teacher's advantage is perceptu
 The weight-1 checkpoint converts successfully with persistent state at all four tested input sizes. Thirty-sample synchronous Python/Core ML mean/p95 times on M4 Pro are 2.842/3.042 ms at 640×360, 5.006/5.923 at 960×540, 8.670/9.584 at 1280×720, and 13.847/14.470 at 1920×1080; every output dimension is doubled. The six-frame independently evolved Torch/Core ML checks include history resets and stay below 0.725 RGB levels. `causal-pixrestore-native.json` records samples, checkpoint identity and converter checks.
 
 These are graph timings, not browser cadence or full app latency. The separate native Swift state-representation comparison establishes the Swift benefit; the new graph profiles establish conversion across resolutions. Useful reconstruction quality remains the blocker to enabling this route.
+
+## Stronger and unfiltered supervision: completed
+
+The weight-10 guarded run completed 4,000 steps in 3.65 minutes. LPIPS / DISTS / fine correlation are **0.338836 / 0.127235 / 0.512988**: essentially unchanged LPIPS and 0.42% better DISTS than the matched control. The unfiltered weight-3 run completed in 3.64 minutes and scores **0.341428 / 0.125673 / 0.512317**. It improves DISTS 1.64%, but worsens LPIPS 0.76% and slightly reduces fine correlation. Reports are `causal-pixrestore-strong-evaluation.json` and `causal-pixrestore-unfiltered-evaluation.json`. Neither clears the joint quality gate; no weights are promoted.
+
+## Shipping comparison at a common presentation size
+
+`causal-shipping-presentation-evaluation.json` compares the same 640×360 inputs and 1280×720 references. Shipping produces its genuine 4× output, clamped/rounded to RGB8, then explicitly resized with PIL bicubic to 2×. The evaluator rejects incorrect native scales before that declared adapter. This is a weight-only comparator; native postprocessing, NV12 conversion and browser scaling are not simulated.
+
+| Variant | LPIPS ↓ | DISTS ↓ | Fine correlation ↑ |
+|---|---:|---:|---:|
+| Shipping 4× presented at 2× | 0.302483 | 0.128347 | 0.564311 |
+| Guarded teacher weight 10 student | 0.338836 | 0.127235 | 0.512988 |
+| Tiled PixRestore teacher, separate identical spatial frames | 0.276422 | 0.113650 | 0.525790 |
+
+Shipping remains much stronger than the students on LPIPS and detail. PixRestore improves perceptual distances over shipping but loses fine correlation. A stronger training target must address that tradeoff; simply making another small student fine-tune is not supported by these results. All screens reuse three development identities and are not independent release evidence.

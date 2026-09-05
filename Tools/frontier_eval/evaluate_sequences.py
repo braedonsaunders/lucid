@@ -73,6 +73,18 @@ def decode(path, count):
     return result
 
 
+def present_4x_at_2x(image, source_size):
+    """Explicit shipping-weight comparator: 4x RGB8 output displayed at 2x.
+
+    This is a declared baseline pipeline, not automatic repair of model output.
+    Native postprocessing, NV12 conversion and browser scaling are not simulated.
+    """
+    width, height = source_size
+    if image.size != (width * 4, height * 4):
+        raise ValueError('presentation adapter requires genuine 4x model output')
+    return image.resize((width * 2, height * 2), Image.Resampling.BICUBIC)
+
+
 def temporal_metrics(outputs, references):
     """Reference-static flicker and temporal error over the entire frame.
 
@@ -150,6 +162,8 @@ def main():
     ap.add_argument('--report', type=Path, required=True)
     ap.add_argument('--device', default='mps')
     ap.add_argument('--spatial-stride', type=int, default=4)
+    ap.add_argument('--present-4x-at-2x', nargs='+', default=[], metavar='LABEL',
+                    help='Explicitly compare registered 4x checkpoints after RGB8 bicubic downsampling to 2x')
     ap.add_argument('--flow-width', type=int, default=0,
                     help='Reference-only DIS flow width; 0 omits motion-compensated metrics')
     args = ap.parse_args()
@@ -158,6 +172,8 @@ def main():
     labels = [label for label, _ in args.checkpoint + args.causal] + [label for label, _, _ in args.efrlfn]
     if not labels or len(set(labels)) != len(labels) or 'lanczos' in labels or args.spatial_stride < 1:
         ap.error('unique checkpoint labels excluding lanczos, and a positive stride, required')
+    if not set(args.present_4x_at_2x) <= {label for label, _ in args.checkpoint}:
+        ap.error('presentation adapters must name regular --checkpoint labels')
     manifest = json.loads(args.manifest.read_text())
     if not manifest or len({r['id'] for r in manifest}) != len(manifest):
         ap.error('manifest must contain unique sequences')
@@ -188,6 +204,8 @@ def main():
         'evaluator_sha256': digest(__file__),
         'flow_code_sha256': digest(Path(__file__).with_name('flow_temporal.py')) if args.flow_width else None,
         'spatial_stride': args.spatial_stride,
+        'presentation_adapters': {label: 'validate native 4x; clamp/round RGB8; PIL bicubic resize to 2x'
+                                  for label in args.present_4x_at_2x},
         'limitations': ['16-frame excerpts do not establish long-duration stability',
           'temporal_residual_l1 is unwarped; optional flow_* metrics use estimated reference motion and visibility',
           'raw sources were excluded by identity from documented training inputs; legacy bank provenance is incomplete',
@@ -221,7 +239,10 @@ def main():
                             x = torch.cat([tensors[max(0, i-k)] for k in range(history-1, -1, -1)], dim=0)[None].to(device)
                             y = model(x)
                         y = y.clamp(0, 1)[0].permute(1, 2, 0).cpu().numpy()
-                        outputs.append(Image.fromarray((y * 255).round().astype(np.uint8)))
+                        image = Image.fromarray((y * 255).round().astype(np.uint8))
+                        if label in args.present_4x_at_2x:
+                            image = present_4x_at_2x(image, sources[i].size)
+                        outputs.append(image)
             if any(o.size != r.size for o, r in zip(outputs, references)):
                 raise ValueError('wrong model output scale')
             frames = [{'index': i, **scorer.spatial(outputs[i], references[i])}
