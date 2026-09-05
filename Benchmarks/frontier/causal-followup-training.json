@@ -1,0 +1,387 @@
+{
+  "purpose": "Matched DINO feature-supervision and full-frame codec-data fine-tune ablations; none promoted",
+  "shared_fields_verified": [
+    "architecture",
+    "scale",
+    "channels",
+    "blocks",
+    "parameters",
+    "init_sha256",
+    "training_code_sha256",
+    "architecture_sha256",
+    "architecture_v2_sha256",
+    "step"
+  ],
+  "runs": {
+    "dino-step004000": {
+      "architecture": "causal_detail_v2",
+      "scale": 2,
+      "channels": 32,
+      "parameters": 57512,
+      "init_sha256": "b50c8e28012daaeca3436237d86dcf8af5f5b5853871a3702502b0400b9be646",
+      "dino": {
+        "inspiration": "https://github.com/csslc/PixRestore",
+        "reviewed_pixrestore_commit": "909ca06e614cf72e218d52b4fa41077c603d872b",
+        "encoder_repository": "https://github.com/facebookresearch/dinov2",
+        "encoder_commit": "7764ea0f912e53c92e82eb78a2a1631e92725fc8",
+        "encoder_weight_sha256": "b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9",
+        "layers": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10
+        ],
+        "size": 224,
+        "temperature": 1.0,
+        "normalization": "ImageNet RGB; raw intermediate patch tokens; cosine distance",
+        "weighting": "softmax((1-mean_LQ_HQ_cosine)/temperature), detached",
+        "inference_cost": "none; used only for training"
+      },
+      "dino_code_sha256": "d99d245ff19a85fe63c3cd3d2d8427b8e847c8eb1d11c25f6f5921e91075d60b",
+      "dino_frame_selection": "one frame per sequence; zero-based step modulo curriculum frame count",
+      "blocks": 4,
+      "no_history": false,
+      "arguments": {
+        "bank": "C:\\lucid\\causal-frontier-20260904-v1\\bank",
+        "out": "dino",
+        "steps": 4000,
+        "channels": 32,
+        "architecture": "causal_detail_v2",
+        "init": "C:\\lucid\\causal-frontier-20260904-v2\\causal\\step020000.pth",
+        "dino_weight": 0.03,
+        "dino_repository": "third_party\\dinov2",
+        "dino_checkpoint": "C:\\lucid\\frontier-teachers-20260904\\dinov2_vits14_pretrain.pth",
+        "dino_size": 224,
+        "blocks": 4,
+        "batch": 4,
+        "crop": 96,
+        "lr": 2e-05,
+        "seed": 20260908,
+        "device": "cuda",
+        "no_history": false,
+        "precision": "bf16"
+      },
+      "bank_sha256": "0f320e3ee53249e1345b3c9df9194e4fb2dc120fb97d2ff46aad52080ca66a81",
+      "torch": "2.6.0+cu124",
+      "device": "cuda",
+      "training_code_sha256": "fe156b4ecee541a8ddf2ffc76d306855c5dc38be1c1c22d4e0fd1852ad195cdf",
+      "architecture_sha256": "cd195f8b02d53401560cbc81a786cc552207df0558c5b6407bc1ef036872ddea",
+      "architecture_v2_sha256": "5693aa3c890df3faa5474789f07b7ef88bdf8081c817746386afdb1023154991",
+      "step": 4000,
+      "validation": [
+        {
+          "id": "sintel-000",
+          "psnr_rgb": 24.61598309723907,
+          "mse_rgb": 0.003454631194472313,
+          "bilinear_mse_rgb": 0.0038175329100340605,
+          "floor_mse_rgb": 0.0034867320209741592,
+          "bilinear_psnr_rgb": 24.182172103070133,
+          "temporal_residual_l1": 0.005804569460451603
+        },
+        {
+          "id": "sintel-001",
+          "psnr_rgb": 42.509519698131996,
+          "mse_rgb": 5.6111002777470276e-05,
+          "bilinear_mse_rgb": 0.00012260364019311965,
+          "floor_mse_rgb": 0.00012710914597846568,
+          "bilinear_psnr_rgb": 39.11496635100512,
+          "temporal_residual_l1": 0.004762176889926195
+        },
+        {
+          "id": "sintel-002",
+          "psnr_rgb": 42.2704885211397,
+          "mse_rgb": 5.9285863244440407e-05,
+          "bilinear_mse_rgb": 0.00010657469101715833,
+          "floor_mse_rgb": 0.00010709297930588946,
+          "bilinear_psnr_rgb": 39.723459177916695,
+          "temporal_residual_l1": 0.003402031259611249
+        },
+        {
+          "id": "sintel-003",
+          "psnr_rgb": 35.94862369022789,
+          "mse_rgb": 0.00025417780852876604,
+          "bilinear_mse_rgb": 0.0003121235058642924,
+          "floor_mse_rgb": 0.0003144199145026505,
+          "bilinear_psnr_rgb": 35.0567352360398,
+          "temporal_residual_l1": 0.016462691128253937
+        },
+        {
+          "id": "sintel-004",
+          "psnr_rgb": 49.65108477140009,
+          "mse_rgb": 1.0836562069016509e-05,
+          "bilinear_mse_rgb": 0.0,
+          "floor_mse_rgb": 0.0,
+          "bilinear_psnr_rgb": 120.0,
+          "temporal_residual_l1": 6.730546010658145e-05
+        },
+        {
+          "id": "sintel-005",
+          "psnr_rgb": 32.77628904745417,
+          "mse_rgb": 0.0005276805604808033,
+          "bilinear_mse_rgb": 0.0006121722981333733,
+          "floor_mse_rgb": 0.0005848110886290669,
+          "bilinear_psnr_rgb": 32.131263268785354,
+          "temporal_residual_l1": 0.017247909680008888
+        },
+        {
+          "id": "sintel-006",
+          "psnr_rgb": 30.21110318253279,
+          "mse_rgb": 0.0009525541681796312,
+          "bilinear_mse_rgb": 0.000964836566708982,
+          "floor_mse_rgb": 0.0010091639123857021,
+          "bilinear_psnr_rgb": 30.155462453998258,
+          "temporal_residual_l1": 0.026655584573745728
+        },
+        {
+          "id": "sintel-007",
+          "psnr_rgb": 31.164276602909112,
+          "mse_rgb": 0.000764843076467514,
+          "bilinear_mse_rgb": 0.0008282135240733624,
+          "floor_mse_rgb": 0.00080100167542696,
+          "bilinear_psnr_rgb": 30.818576820895217,
+          "temporal_residual_l1": 0.024135038256645203
+        }
+      ],
+      "checkpoint_sha256": "7911b9dc829ad5f72d964f146cdfc19787f0b36c1917682e48dc0424e86b4cbe"
+    },
+    "dino-control004000": {
+      "architecture": "causal_detail_v2",
+      "scale": 2,
+      "channels": 32,
+      "parameters": 57512,
+      "init_sha256": "b50c8e28012daaeca3436237d86dcf8af5f5b5853871a3702502b0400b9be646",
+      "dino": null,
+      "dino_code_sha256": null,
+      "dino_frame_selection": "one frame per sequence; zero-based step modulo curriculum frame count",
+      "blocks": 4,
+      "no_history": false,
+      "arguments": {
+        "bank": "C:\\lucid\\causal-frontier-20260904-v1\\bank",
+        "out": "control",
+        "steps": 4000,
+        "channels": 32,
+        "architecture": "causal_detail_v2",
+        "init": "C:\\lucid\\causal-frontier-20260904-v2\\causal\\step020000.pth",
+        "dino_weight": 0,
+        "dino_repository": null,
+        "dino_checkpoint": null,
+        "dino_size": 224,
+        "blocks": 4,
+        "batch": 4,
+        "crop": 96,
+        "lr": 2e-05,
+        "seed": 20260908,
+        "device": "cuda",
+        "no_history": false,
+        "precision": "bf16"
+      },
+      "bank_sha256": "0f320e3ee53249e1345b3c9df9194e4fb2dc120fb97d2ff46aad52080ca66a81",
+      "torch": "2.6.0+cu124",
+      "device": "cuda",
+      "training_code_sha256": "fe156b4ecee541a8ddf2ffc76d306855c5dc38be1c1c22d4e0fd1852ad195cdf",
+      "architecture_sha256": "cd195f8b02d53401560cbc81a786cc552207df0558c5b6407bc1ef036872ddea",
+      "architecture_v2_sha256": "5693aa3c890df3faa5474789f07b7ef88bdf8081c817746386afdb1023154991",
+      "step": 4000,
+      "validation": [
+        {
+          "id": "sintel-000",
+          "psnr_rgb": 24.616726033445396,
+          "mse_rgb": 0.0034540402702987194,
+          "bilinear_mse_rgb": 0.0038175329100340605,
+          "floor_mse_rgb": 0.0034867320209741592,
+          "bilinear_psnr_rgb": 24.182172103070133,
+          "temporal_residual_l1": 0.0058072470128536224
+        },
+        {
+          "id": "sintel-001",
+          "psnr_rgb": 42.56021323261162,
+          "mse_rgb": 5.5459848226746544e-05,
+          "bilinear_mse_rgb": 0.00012260364019311965,
+          "floor_mse_rgb": 0.00012710914597846568,
+          "bilinear_psnr_rgb": 39.11496635100512,
+          "temporal_residual_l1": 0.004762884229421616
+        },
+        {
+          "id": "sintel-002",
+          "psnr_rgb": 42.304987922449975,
+          "mse_rgb": 5.881677498109639e-05,
+          "bilinear_mse_rgb": 0.00010657469101715833,
+          "floor_mse_rgb": 0.00010709297930588946,
+          "bilinear_psnr_rgb": 39.723459177916695,
+          "temporal_residual_l1": 0.0034012135583907366
+        },
+        {
+          "id": "sintel-003",
+          "psnr_rgb": 35.97839593065355,
+          "mse_rgb": 0.00025244129938073456,
+          "bilinear_mse_rgb": 0.0003121235058642924,
+          "floor_mse_rgb": 0.0003144199145026505,
+          "bilinear_psnr_rgb": 35.0567352360398,
+          "temporal_residual_l1": 0.016438689082860947
+        },
+        {
+          "id": "sintel-004",
+          "psnr_rgb": 50.477921678465734,
+          "mse_rgb": 8.957933459896594e-06,
+          "bilinear_mse_rgb": 0.0,
+          "floor_mse_rgb": 0.0,
+          "bilinear_psnr_rgb": 120.0,
+          "temporal_residual_l1": 7.739697321085259e-05
+        },
+        {
+          "id": "sintel-005",
+          "psnr_rgb": 32.78324055410005,
+          "mse_rgb": 0.0005268366076052189,
+          "bilinear_mse_rgb": 0.0006121722981333733,
+          "floor_mse_rgb": 0.0005848110886290669,
+          "bilinear_psnr_rgb": 32.131263268785354,
+          "temporal_residual_l1": 0.01724921353161335
+        },
+        {
+          "id": "sintel-006",
+          "psnr_rgb": 30.210107841121978,
+          "mse_rgb": 0.0009527725051157176,
+          "bilinear_mse_rgb": 0.000964836566708982,
+          "floor_mse_rgb": 0.0010091639123857021,
+          "bilinear_psnr_rgb": 30.155462453998258,
+          "temporal_residual_l1": 0.026671234518289566
+        },
+        {
+          "id": "sintel-007",
+          "psnr_rgb": 31.167229111670153,
+          "mse_rgb": 0.0007643232820555568,
+          "bilinear_mse_rgb": 0.0008282135240733624,
+          "floor_mse_rgb": 0.00080100167542696,
+          "bilinear_psnr_rgb": 30.818576820895217,
+          "temporal_residual_l1": 0.024134814739227295
+        }
+      ],
+      "checkpoint_sha256": "43e4b1a6a738d4ab274fd988050a0ed42d65dc545ea03c93aca2c1decfceca7a"
+    },
+    "stream-data004000": {
+      "architecture": "causal_detail_v2",
+      "scale": 2,
+      "channels": 32,
+      "parameters": 57512,
+      "init_sha256": "b50c8e28012daaeca3436237d86dcf8af5f5b5853871a3702502b0400b9be646",
+      "dino": null,
+      "dino_code_sha256": null,
+      "dino_frame_selection": "one frame per sequence; zero-based step modulo curriculum frame count",
+      "blocks": 4,
+      "no_history": false,
+      "arguments": {
+        "bank": "C:\\lucid\\causal-stream-bank-20260904\\bank",
+        "out": "stream-data",
+        "steps": 4000,
+        "channels": 32,
+        "architecture": "causal_detail_v2",
+        "init": "C:\\lucid\\causal-frontier-20260904-v2\\causal\\step020000.pth",
+        "dino_weight": 0,
+        "dino_repository": null,
+        "dino_checkpoint": null,
+        "dino_size": 224,
+        "blocks": 4,
+        "batch": 4,
+        "crop": 96,
+        "lr": 2e-05,
+        "seed": 20260908,
+        "device": "cuda",
+        "no_history": false,
+        "precision": "bf16"
+      },
+      "bank_sha256": "711433dce3193629207d50e391707eca9489a658aed6d7d894bbbe856c64ea8c",
+      "torch": "2.6.0+cu124",
+      "device": "cuda",
+      "training_code_sha256": "fe156b4ecee541a8ddf2ffc76d306855c5dc38be1c1c22d4e0fd1852ad195cdf",
+      "architecture_sha256": "cd195f8b02d53401560cbc81a786cc552207df0558c5b6407bc1ef036872ddea",
+      "architecture_v2_sha256": "5693aa3c890df3faa5474789f07b7ef88bdf8081c817746386afdb1023154991",
+      "step": 4000,
+      "validation": [
+        {
+          "id": "sintel-stream-000-00",
+          "psnr_rgb": 33.471010416588264,
+          "mse_rgb": 0.00044967522262595594,
+          "bilinear_mse_rgb": 0.0004706751788035035,
+          "floor_mse_rgb": 0.00048065156443044543,
+          "bilinear_psnr_rgb": 33.27278703739084,
+          "temporal_residual_l1": 0.015215819701552391
+        },
+        {
+          "id": "sintel-stream-000-01",
+          "psnr_rgb": 39.297919359801156,
+          "mse_rgb": 0.00011754605657188222,
+          "bilinear_mse_rgb": 0.000141883734613657,
+          "floor_mse_rgb": 0.00014416147314477712,
+          "bilinear_psnr_rgb": 38.48067388703357,
+          "temporal_residual_l1": 0.005119796376675367
+        },
+        {
+          "id": "sintel-stream-000-02",
+          "psnr_rgb": 34.98891021920195,
+          "mse_rgb": 0.00031703629065304995,
+          "bilinear_mse_rgb": 0.0003545153886079788,
+          "floor_mse_rgb": 0.00036094614188186824,
+          "bilinear_psnr_rgb": 34.503649084570014,
+          "temporal_residual_l1": 0.009222117252647877
+        },
+        {
+          "id": "sintel-stream-000-03",
+          "psnr_rgb": 34.856424418737205,
+          "mse_rgb": 0.00032685682526789606,
+          "bilinear_mse_rgb": 0.0003369557380210608,
+          "floor_mse_rgb": 0.00034579471684992313,
+          "bilinear_psnr_rgb": 34.72427143626258,
+          "temporal_residual_l1": 0.011258143931627274
+        },
+        {
+          "id": "sintel-stream-001-00",
+          "psnr_rgb": 36.478965363816954,
+          "mse_rgb": 0.0002249590470455587,
+          "bilinear_mse_rgb": 0.0002554166712798178,
+          "floor_mse_rgb": 0.00023981157573871315,
+          "bilinear_psnr_rgb": 35.927507593492784,
+          "temporal_residual_l1": 0.008186494931578636
+        },
+        {
+          "id": "sintel-stream-001-01",
+          "psnr_rgb": 31.825177503827607,
+          "mse_rgb": 0.0006568742683157325,
+          "bilinear_mse_rgb": 0.0007739262655377388,
+          "floor_mse_rgb": 0.0007290192297659814,
+          "bilinear_psnr_rgb": 31.113004139882705,
+          "temporal_residual_l1": 0.024100923910737038
+        },
+        {
+          "id": "sintel-stream-001-02",
+          "psnr_rgb": 31.940426305652917,
+          "mse_rgb": 0.0006396720418706536,
+          "bilinear_mse_rgb": 0.0007488495903089643,
+          "floor_mse_rgb": 0.0007111425511538982,
+          "bilinear_psnr_rgb": 31.25605403473452,
+          "temporal_residual_l1": 0.024026378989219666
+        },
+        {
+          "id": "sintel-stream-001-03",
+          "psnr_rgb": 31.345222087521883,
+          "mse_rgb": 0.0007336311973631382,
+          "bilinear_mse_rgb": 0.0008932558703236282,
+          "floor_mse_rgb": 0.0007849227404221892,
+          "bilinear_psnr_rgb": 30.49024121007659,
+          "temporal_residual_l1": 0.022964488714933395
+        }
+      ],
+      "checkpoint_sha256": "43ccc19666a6c15814fc6fa554ca2dd236841904ffad7d95b9f957cc03b2b91c"
+    }
+  },
+  "gpu_completion_check": {
+    "python_processes": 0,
+    "utilization_percent": 0,
+    "memory_mib": 747
+  },
+  "limitations": [
+    "Single training seed; three-source development screen, not final untouched test set",
+    "Full-frame codec data replaces the bank, including patch sampling and degradation distribution; cannot attribute change to a single codec parameter"
+  ]
+}

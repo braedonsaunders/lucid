@@ -4,6 +4,7 @@ The active objective uses the regular Codex goal. These are measured development
 
 ## Current decisions
 
+- Latest causal experiments: [August-2026 feature-supervision and full-frame codec-data ablations](causal-followups.md) are complete and rejected for promotion; spatial gains remain small and face flicker regresses. [Native/browser color correction](browser-color.md) fixes darkened sRGB midtones, with a reproducible Chrome chart and 34 passing native tests.
 - Shipping ch32utc weights remain unchanged. Both 4,000-step RTX 4080 fine-tunes failed the independent sequence screen. Feature/edge supervision helped relative to its matched control but still lost to shipping.
 - `sequence-evaluation.json` contains all 48 condition/model results: 3 source identities × 2 codecs × 2 bitrates × 4 variants. Every sequence has 16 consecutive frames at 320×180 → 1280×720. Spatial scores use frames 0, 4, 8, 12; temporal scores use all consecutive frames. A source-balanced average prevents repeated conditions from overweighting a scene.
 - Shipping: LPIPS 0.45957, DISTS 0.20856, static flicker 0.90169. Feature/edge candidate: 0.46883, 0.20967, 0.92492. Control: 0.47498, 0.20872, 0.93144. Lower is better for these three metrics. Candidate detail energy also fell from 0.31256 to 0.29517 relative to the reference's 1.0.
