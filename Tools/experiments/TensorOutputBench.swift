@@ -111,7 +111,7 @@ static func main() throws {
         }
     }
     var predictions = Array(repeating:[Double](),count:labels.count), packing = predictions
-    let correct = accuracy.values.flatMap { $0 }.allSatisfy { $0["max_rgb"]! <= 3 && $0["mean_rgb"]! <= 0.6 }
+    let correct = accuracy.values.flatMap { $0 }.allSatisfy { $0["max_rgb"]! == 0 && $0["mean_rgb"]! == 0 }
     if correct {
         for step in 0..<(count+10) {
             try autoreleasepool {

@@ -13,7 +13,7 @@ struct TensorImagePackerTests {
         storage.initializeMemory(as: UInt8.self, repeating: 0, count: 256)
         let array = try MLMultiArray(dataPointer: storage, shape: [1,3,2,3], dataType: .float32,
             strides: [48,16,5,1], deallocator: { $0.deallocate() })
-        let levels: [Float] = [-5,0.49,0.51,127.4,254.7,300]
+        let levels: [Float] = [-5,141.4453125,110.504150390625,128.51,254.51,300]
         for c in 0..<3 { for y in 0..<2 { for x in 0..<3 {
             storage.assumingMemoryBound(to: Float.self)[c*16+y*5+x] = levels[(y*3+x+c)%6]
         } } }
@@ -23,7 +23,8 @@ struct TensorImagePackerTests {
         CVPixelBufferLockBaseAddress(output, .readOnly)
         defer { CVPixelBufferUnlockBaseAddress(output, .readOnly) }
         let pixels = CVPixelBufferGetBaseAddress(output)!.assumingMemoryBound(to: UInt8.self)
-        let expected = [0,0,1,127,255,255]
+        // Core ML RGB8 output rounds through binary16, then nearest-even.
+        let expected = [0,142,110,128,254,255]
         for y in 0..<2 { for x in 0..<3 {
             let at = y*CVPixelBufferGetBytesPerRow(output)+x*4
             for c in 0..<3 { #expect(Int(pixels[at+2-c]) == expected[(y*3+x+c)%6]) }
@@ -37,6 +38,19 @@ struct TensorImagePackerTests {
         let wrongType = try MLMultiArray(shape: [1,3,2,3], dataType: .double)
         #expect(throws: (any Error).self) { try packer.pack(wrongShape) }
         #expect(throws: (any Error).self) { try packer.pack(wrongType) }
+    }
+
+    @Test func packedOutputRetainsSharedStorageAfterAdapterRelease() throws {
+        var packer: CoreMLTensorImagePacker? = try CoreMLTensorImagePacker(width: 1, height: 1)
+        let array = try MLMultiArray(shape: [1,3,1,1], dataType: .float32)
+        array[0] = 20; array[1] = 40; array[2] = 60
+        let output = try packer!.pack(array)
+        #expect(CVPixelBufferGetIOSurface(output) == nil)
+        packer = nil
+        CVPixelBufferLockBaseAddress(output, .readOnly)
+        defer { CVPixelBufferUnlockBaseAddress(output, .readOnly) }
+        let pixels = CVPixelBufferGetBaseAddress(output)!.assumingMemoryBound(to: UInt8.self)
+        #expect(Array(UnsafeBufferPointer(start: pixels, count: 4)) == [60,40,20,255])
     }
 }
 
