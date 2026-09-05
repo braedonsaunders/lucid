@@ -8,9 +8,9 @@ smoothness, which is exactly what an L1 objective asks for - L1's optimum for an
 uncertain pixel is the mean of everything it could be, and the mean of plausible
 textures is grey.
 
-A discriminator changes the question from "is this pixel right" to "is this
-texture real". That is the only known way to get the energy up, and it is what
-every super-resolution model people call impressive is trained with.
+A discriminator rewards plausible texture. That can improve appearance, but
+also invent detail. This optional experiment must beat matched perceptual and
+edge-supervised controls on independent footage before its weights ship.
 
 Three deliberate choices:
 
@@ -77,33 +77,7 @@ class UNetDiscriminator(nn.Module):
         return self.out1(act(self.out0(u1)))
 
 
-class VGGFeatures(nn.Module):
-    """Perceptual loss on VGG19 features, at the layers and weights Real-ESRGAN
-    uses. Deliberately NOT LPIPS: LPIPS is what the result is judged by, and a
-    model trained on its own scoreboard tells you nothing."""
-
-    LAYERS = {"2": 0.1, "7": 0.1, "16": 1.0, "25": 1.0, "34": 1.0}
-
-    def __init__(self, device):
-        super().__init__()
-        from torchvision.models import vgg19, VGG19_Weights
-        features = vgg19(weights=VGG19_Weights.IMAGENET1K_V1).features
-        self.slices = features[:35].eval().to(device)
-        for p in self.slices.parameters():
-            p.requires_grad = False
-        self.register_buffer("mean", torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1).to(device))
-        self.register_buffer("std", torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1).to(device))
-
-    def forward(self, a, b):
-        a = (a - self.mean) / self.std
-        b = (b - self.mean) / self.std
-        loss = 0.0
-        for index, layer in enumerate(self.slices):
-            a, b = layer(a), layer(b)
-            weight = self.LAYERS.get(str(index))
-            if weight:
-                loss = loss + weight * F.l1_loss(a, b)
-        return loss
+from reconstruction_loss import VGGFeatures
 
 
 def detail_energy(x):

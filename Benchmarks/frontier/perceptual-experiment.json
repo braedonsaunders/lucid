@@ -1,0 +1,85 @@
+{
+  "date": "2026-09-04",
+  "gpu": "NVIDIA RTX 4080",
+  "remote_directory": "C:/lucid/frontier-perceptual-20260904",
+  "initial_existing_jobs": "no remote Python training job; GPU idle",
+  "after_training": "nvidia-smi: 0% GPU, 747 MiB",
+  "decision": "reject both candidates; retain shipping",
+  "training_bank_limitation": "17,394 training patches plus 446 held-out patches; legacy bank lacks source-level holdout provenance",
+  "models": {
+    "shipping": {
+      "sha256": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65",
+      "arguments": null,
+      "step": 6000,
+      "environment": null
+    },
+    "perceptual": {
+      "sha256": "412e02e399db94285d67fc97749d0a96b6b12b0211b24c119377114d1a26fa8b",
+      "arguments": {
+        "corpus": ".build/corpus4",
+        "bank_dir": "C:\\lucid\\build-t",
+        "bank": false,
+        "per_pair": 8,
+        "min_correlation": 0.85,
+        "channels": 32,
+        "version": 1,
+        "fft": 0.05,
+        "temporal": 0.15,
+        "input_frames": 1,
+        "steps": 4000,
+        "batch": 8,
+        "lr": 1e-05,
+        "out": "candidate",
+        "device": "cuda",
+        "resume": "",
+        "init": "baseline.pth",
+        "motion_temporal": false,
+        "seed": 20260905,
+        "perceptual": 0.025,
+        "edge": 0.1,
+        "keep_checkpoints": true
+      },
+      "step": 4000,
+      "environment": {
+        "torch": "2.6.0+cu124",
+        "device": "cuda"
+      }
+    },
+    "control": {
+      "sha256": "e7df050008b35267000251a701281a5e82a37c56ceb9ca2d80e78b0fca3778ad",
+      "arguments": {
+        "corpus": ".build/corpus4",
+        "bank_dir": "C:\\lucid\\build-t",
+        "bank": false,
+        "per_pair": 8,
+        "min_correlation": 0.85,
+        "channels": 32,
+        "version": 1,
+        "fft": 0.05,
+        "temporal": 0.15,
+        "input_frames": 1,
+        "steps": 4000,
+        "batch": 8,
+        "lr": 1e-05,
+        "out": "control",
+        "device": "cuda",
+        "resume": "",
+        "init": "baseline.pth",
+        "motion_temporal": false,
+        "seed": 20260905,
+        "perceptual": 0.0,
+        "edge": 0.0,
+        "keep_checkpoints": true
+      },
+      "step": 4000,
+      "environment": {
+        "torch": "2.6.0+cu124",
+        "device": "cuda"
+      }
+    }
+  },
+  "training_code": {
+    "Tools/train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+    "Tools/reconstruction_loss.py": "c18c1e767070911fc3b5f1b79cc0dab7684e070a2a661385a3956a43dd6af9c5"
+  }
+}

@@ -1,0 +1,54 @@
+name, utilization.gpu [%], memory.used [MiB]
+NVIDIA GeForce RTX 4080, 0 %, 747 MiB
+17394 training patches, 446 held out
+ch32utc: 1057K parameters, 1 input frame, Charbonnier + 0.025 x VGG19 + 0.1 x Sobel + 0.05 x FFT + 0.15 x temporal, on cuda
+fine-tuning from baseline.pth (step 6000) at a fresh step 0
+  step 200/4000  loss 0.14766  lr 9.94e-06  14.0 it/s
+  step 400/4000  loss 0.14343  lr 9.76e-06  14.3 it/s
+  step 600/4000  loss 0.14362  lr 9.46e-06  14.5 it/s
+  step 800/4000  loss 0.14199  lr 9.05e-06  14.5 it/s
+  step 1000/4000  loss 0.14171  lr 8.55e-06  14.6 it/s
+  step 1200/4000  loss 0.14368  lr 7.96e-06  14.6 it/s
+  step 1400/4000  loss 0.14126  lr 7.30e-06  14.6 it/s
+  step 1600/4000  loss 0.14797  lr 6.58e-06  14.6 it/s
+  step 1800/4000  loss 0.14090  lr 5.82e-06  14.6 it/s
+  step 2000/4000  loss 0.14217  lr 5.05e-06  14.6 it/s
+  ── step 2000: PSNR 35.25 dB  fine 0.8582
+  step 2200/4000  loss 0.14134  lr 4.28e-06  14.6 it/s
+  step 2400/4000  loss 0.14252  lr 3.52e-06  14.6 it/s
+  step 2600/4000  loss 0.14284  lr 2.80e-06  14.6 it/s
+  step 2800/4000  loss 0.14116  lr 2.14e-06  14.6 it/s
+  step 3000/4000  loss 0.13984  lr 1.55e-06  14.7 it/s
+  step 3200/4000  loss 0.14124  lr 1.05e-06  14.7 it/s
+  step 3400/4000  loss 0.14326  lr 6.40e-07  14.7 it/s
+  step 3600/4000  loss 0.13873  lr 3.42e-07  14.7 it/s
+  step 3800/4000  loss 0.14718  lr 1.61e-07  14.7 it/s
+  step 4000/4000  loss 0.14035  lr 1.00e-07  14.7 it/s
+  ── step 4000: PSNR 35.25 dB  fine 0.8587
+done in 4.5 min → candidate/span_ch32utc.pth
+17394 training patches, 446 held out
+ch32utc: 1057K parameters, 1 input frame, Charbonnier + 0.05 x FFT + 0.15 x temporal, on cuda
+fine-tuning from baseline.pth (step 6000) at a fresh step 0
+  step 200/4000  loss 0.01700  lr 9.94e-06  38.4 it/s
+  step 400/4000  loss 0.01640  lr 9.76e-06  38.8 it/s
+  step 600/4000  loss 0.01634  lr 9.46e-06  40.5 it/s
+  step 800/4000  loss 0.01625  lr 9.05e-06  42.1 it/s
+  step 1000/4000  loss 0.01623  lr 8.55e-06  41.7 it/s
+  step 1200/4000  loss 0.01648  lr 7.96e-06  41.2 it/s
+  step 1400/4000  loss 0.01614  lr 7.30e-06  41.8 it/s
+  step 1600/4000  loss 0.01729  lr 6.58e-06  42.1 it/s
+  step 1800/4000  loss 0.01615  lr 5.82e-06  42.1 it/s
+  step 2000/4000  loss 0.01641  lr 5.05e-06  42.1 it/s
+  ── step 2000: PSNR 35.44 dB  fine 0.8708
+  step 2200/4000  loss 0.01636  lr 4.28e-06  41.7 it/s
+  step 2400/4000  loss 0.01665  lr 3.52e-06  42.2 it/s
+  step 2600/4000  loss 0.01665  lr 2.80e-06  42.4 it/s
+  step 2800/4000  loss 0.01635  lr 2.14e-06  42.3 it/s
+  step 3000/4000  loss 0.01609  lr 1.55e-06  42.5 it/s
+  step 3200/4000  loss 0.01640  lr 1.05e-06  42.7 it/s
+  step 3400/4000  loss 0.01655  lr 6.40e-07  42.6 it/s
+  step 3600/4000  loss 0.01614  lr 3.42e-07  42.6 it/s
+  step 3800/4000  loss 0.01735  lr 1.61e-07  42.7 it/s
+  step 4000/4000  loss 0.01630  lr 1.00e-07  42.9 it/s
+  ── step 4000: PSNR 35.47 dB  fine 0.8715
+done in 1.6 min → control/span_ch32utc.pth

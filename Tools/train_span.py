@@ -395,7 +395,12 @@ def main():
                              "fresh optimiser - a fine-tune, not a resume")
     parser.add_argument("--motion-temporal", action="store_true", help="align temporal supervision and reject occlusions")
     parser.add_argument("--seed", type=int, default=20260904)
+    parser.add_argument("--perceptual", type=float, default=0.0, help="VGG19 feature loss weight (training only)")
+    parser.add_argument("--edge", type=float, default=0.0, help="signed Sobel gradient loss weight")
+    parser.add_argument("--keep-checkpoints", action="store_true", help="keep each validation checkpoint as well as latest")
     args = parser.parse_args()
+    if args.perceptual < 0 or args.edge < 0:
+        parser.error("loss weights must be nonnegative")
     random.seed(args.seed); np.random.seed(args.seed); torch.manual_seed(args.seed)
     if torch.cuda.is_available(): torch.cuda.manual_seed_all(args.seed)
     torch.backends.cudnn.benchmark = False
@@ -430,8 +435,14 @@ def main():
     consistency_loss = aligned_temporal_loss if args.motion_temporal else temporal_loss
     device = pick_device(args.device)
     model = Unshuffled(args.channels, frames=input_frames, version=args.version).to(device)
+    from reconstruction_loss import VGGFeatures, sobel_loss
+    perceptual = VGGFeatures(device) if args.perceptual else None
     parameters = sum(p.numel() for p in model.parameters())
-    terms = ["L1"]
+    terms = ["Charbonnier"]
+    if args.perceptual:
+        terms.append(f"{args.perceptual:.3g} x VGG19")
+    if args.edge:
+        terms.append(f"{args.edge:.3g} x Sobel")
     if args.fft > 0:
         terms.append(f"{args.fft:.3g} x FFT")
     if args.temporal > 0:
@@ -489,6 +500,10 @@ def main():
         current = lr[:, -3 * input_frames:]
         output = model(current)
         loss = charbonnier(output, hr)
+        if perceptual is not None:
+            loss = loss + args.perceptual * perceptual(output, hr)
+        if args.edge:
+            loss = loss + args.edge * sobel_loss(output, hr)
         if args.fft > 0:
             loss = loss + args.fft * fft_loss(output, hr)
         if args.temporal > 0:
@@ -527,17 +542,22 @@ def main():
             print(f"  ── step {step+1}: PSNR {psnr_total/seen:.2f} dB  "
                   f"fine {fine_total/seen:.4f}", flush=True)
             model.train()
-            torch.save({"model": model.state_dict(), "optimiser": optimiser.state_dict(),
+            checkpoint = {"model": model.state_dict(), "optimiser": optimiser.state_dict(),
                         "schedule": schedule.state_dict(), "step": step + 1,
                         "channels": args.channels, "frames": input_frames,
                         "version": args.version, "arguments": vars(args),
                         "environment": {"torch": str(torch.__version__), "device": str(device)},
                         "rng": {"numpy_generator": rng.bit_generator.state,
                                 "python": random.getstate(), "torch": torch.get_rng_state(),
-                                "cuda": torch.cuda.get_rng_state_all() if device.type == "cuda" else []}},
-                       os.path.join(args.out,
-                                    f"span_ch{args.channels}u{suffix}"
-                                    f"{'v2' if args.version == 2 else ''}.pth"))
+                                "cuda": torch.cuda.get_rng_state_all() if device.type == "cuda" else []}}
+            name = f"span_ch{args.channels}u{suffix}{'v2' if args.version == 2 else ''}"
+            destination = os.path.join(args.out, name + ".pth")
+            temporary = destination + ".tmp"
+            torch.save(checkpoint, temporary)
+            os.replace(temporary, destination)
+            if args.keep_checkpoints:
+                import shutil
+                shutil.copyfile(destination, os.path.join(args.out, f"{name}_step{step+1}.pth"))
 
     print(f"done in {(time.time()-began)/60:.1f} min → "
           f"{args.out}/span_ch{args.channels}u{suffix}"
