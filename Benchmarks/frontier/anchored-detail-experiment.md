@@ -24,3 +24,20 @@ Use the composed 29-source bank, exact existing teacher/shipping caches, shippin
 Branch initialization occurs inside a saved/restored Torch RNG scope, preserving the subsequent discriminator initialization stream. Two-step coupled and anchored smoke runs must record matching initial discriminator hashes and first source/reference/target batch hashes before the main anchored run starts. They also exercise CUDA, checkpoint loading and immutable-anchor checks. The completed coupled 8,000-step run is reused; changing architecture does not justify wasting another identical full control run.
 
 A quality win still needs source-disjoint validation, proper native postprocessing and fresh promotion footage. The failed eight-source holdout remains historical regression evidence. No shipping weights or native tuning defaults change for this experiment.
+
+## Completed RTX 4080 result
+
+Both smoke runs matched the initial discriminator SHA and first training-batch SHA. The anchored 8,000-step run completed in 5.51 minutes and passed every immutable-anchor check. Its raw checkpoint improved source-balanced LPIPS by **1.27%** and DISTS by **1.03%** on the 48 full-frame development pairs. All three per-source fine-detail guards passed, but the perceptual gains missed the predefined 3% minimum. This branch is not a shipping replacement.
+
+An additional fixed evaluation exported 96 byte-exact LR/HR pairs from the composed bank's declared validation sequences: Sintel, REDS 154 and REDS 073. Training sequences were excluded. These are development validation patches, not untouched release footage; foundation-model and shipping-model pretraining exposure is unknown. No architecture, weights or coefficient changed for this evaluation.
+
+| Candidate | LPIPS improvement | DISTS improvement | Validation patch gate |
+|---|---:|---:|---|
+| Anchored detail, raw | 1.07% | 0.21% | Fail: perceptual minimum and Sintel detail |
+| Expanded-data coupled, raw | 8.29% | 8.97% | Fail: all detail guards and Sintel LPIPS |
+| Expanded-data coupled, fixed 80% | 10.78% | 6.58% | Pass on these three sources |
+| Previous coupled, fixed 80% | 5.91% | 4.62% | Pass on these three sources |
+
+The expanded-data 80% candidate still fails detail on full-frame FourPeople and Johnny. The previous 80% candidate still fails the eight-source native holdout. Patch validation does not override either failure. The anchored approach as trained adds computation without enough perceptual benefit; future training must improve the supervision tradeoff, not merely enlarge this branch.
+
+The adjacent `anchored-detail-*-experiment.json`, completion receipts, exact PowerShell commands, full-frame development scores, validation manifest and validation scores preserve the run inputs and outcome. Shipping weights remain unchanged.

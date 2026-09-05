@@ -1,0 +1,504 @@
+{
+  "results": {
+    "anchored": {
+      "spatial_gate_pass": false,
+      "failure_reasons": [
+        "lpips: aggregate improvement below minimum",
+        "dists: aggregate improvement below minimum",
+        "sintel: fine correlation drop exceeds limit"
+      ],
+      "frames_per_variant": 96,
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.40222197367499274,
+          "dists": 0.22276637516915798,
+          "fine_correlation": 0.3040961481273848
+        },
+        "shipping": {
+          "lpips": 0.36410116745779914,
+          "dists": 0.2224731333553791,
+          "fine_correlation": 0.32143244640958385
+        },
+        "anchored": {
+          "lpips": 0.36020080496867496,
+          "dists": 0.2220019573966662,
+          "fine_correlation": 0.3132845110928513
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "sintel": {
+            "lpips": 0.2696159854531288,
+            "dists": 0.2091157976537943,
+            "fine_correlation": 0.32946662473652005
+          },
+          "reds_154": {
+            "lpips": 0.5052469009533525,
+            "dists": 0.26318140141665936,
+            "fine_correlation": 0.2450867044727926
+          },
+          "reds_073": {
+            "lpips": 0.4318030346184969,
+            "dists": 0.1960019264370203,
+            "fine_correlation": 0.3377351151728416
+          }
+        },
+        "shipping": {
+          "sintel": {
+            "lpips": 0.2692622817121446,
+            "dists": 0.21591424942016602,
+            "fine_correlation": 0.32653072984915327
+          },
+          "reds_154": {
+            "lpips": 0.45876778941601515,
+            "dists": 0.2634068951010704,
+            "fine_correlation": 0.2698841119849202
+          },
+          "reds_073": {
+            "lpips": 0.3642734312452376,
+            "dists": 0.1880982555449009,
+            "fine_correlation": 0.3678824973946781
+          }
+        },
+        "anchored": {
+          "sintel": {
+            "lpips": 0.2709931982681155,
+            "dists": 0.2153795287013054,
+            "fine_correlation": 0.3130947516755661
+          },
+          "reds_154": {
+            "lpips": 0.45368923246860504,
+            "dists": 0.2630955334752798,
+            "fine_correlation": 0.26455305031979476
+          },
+          "reds_073": {
+            "lpips": 0.35591998416930437,
+            "dists": 0.18753081001341343,
+            "fine_correlation": 0.3622057312831931
+          }
+        }
+      },
+      "perceptual_improvements": {
+        "lpips": 0.010712304265204642,
+        "dists": 0.002117900492551783
+      },
+      "per_source_changes": {
+        "sintel": {
+          "lpips": -0.006428366219600523,
+          "dists": 0.0024765420545267425,
+          "fine_correlation": -0.01343597817358716
+        },
+        "reds_154": {
+          "lpips": 0.011069994591108578,
+          "dists": 0.0011820557152504296,
+          "fine_correlation": -0.005331061665125425
+        },
+        "reds_073": {
+          "lpips": 0.022931804406864598,
+          "dists": 0.003016750633032861,
+          "fine_correlation": -0.005676766111484988
+        }
+      },
+      "status": "Declared bank validation patches; separate from full-frame development and native holdout. No promotion."
+    },
+    "coupled_raw": {
+      "spatial_gate_pass": false,
+      "failure_reasons": [
+        "sintel: lpips regression exceeds limit",
+        "sintel: fine correlation drop exceeds limit",
+        "reds_154: fine correlation drop exceeds limit",
+        "reds_073: fine correlation drop exceeds limit"
+      ],
+      "frames_per_variant": 96,
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.40222197367499274,
+          "dists": 0.22276637516915798,
+          "fine_correlation": 0.3040961481273848
+        },
+        "shipping": {
+          "lpips": 0.36410116745779914,
+          "dists": 0.2224731333553791,
+          "fine_correlation": 0.32143244640958385
+        },
+        "coupled_raw": {
+          "lpips": 0.3339012722329547,
+          "dists": 0.20251362894972166,
+          "fine_correlation": 0.2891659715961667
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "sintel": {
+            "lpips": 0.2696159854531288,
+            "dists": 0.2091157976537943,
+            "fine_correlation": 0.32946662473652005
+          },
+          "reds_154": {
+            "lpips": 0.5052469009533525,
+            "dists": 0.26318140141665936,
+            "fine_correlation": 0.2450867044727926
+          },
+          "reds_073": {
+            "lpips": 0.4318030346184969,
+            "dists": 0.1960019264370203,
+            "fine_correlation": 0.3377351151728416
+          }
+        },
+        "shipping": {
+          "sintel": {
+            "lpips": 0.2692622817121446,
+            "dists": 0.21591424942016602,
+            "fine_correlation": 0.32653072984915327
+          },
+          "reds_154": {
+            "lpips": 0.45876778941601515,
+            "dists": 0.2634068951010704,
+            "fine_correlation": 0.2698841119849202
+          },
+          "reds_073": {
+            "lpips": 0.3642734312452376,
+            "dists": 0.1880982555449009,
+            "fine_correlation": 0.3678824973946781
+          }
+        },
+        "coupled_raw": {
+          "sintel": {
+            "lpips": 0.30736678070388734,
+            "dists": 0.19362765550613403,
+            "fine_correlation": 0.2697525192959984
+          },
+          "reds_154": {
+            "lpips": 0.37174692191183567,
+            "dists": 0.24295127764344215,
+            "fine_correlation": 0.24431410332168227
+          },
+          "reds_073": {
+            "lpips": 0.3225901140831411,
+            "dists": 0.17096195369958878,
+            "fine_correlation": 0.35343129217081937
+          }
+        }
+      },
+      "perceptual_improvements": {
+        "lpips": 0.08294369236908516,
+        "dists": 0.08971647094920931
+      },
+      "per_source_changes": {
+        "sintel": {
+          "lpips": -0.1415144325059179,
+          "dists": 0.10321965305153435,
+          "fine_correlation": -0.05677821055315485
+        },
+        "reds_154": {
+          "lpips": 0.18968390874815344,
+          "dists": 0.07765786635835537,
+          "fine_correlation": -0.025570008663237914
+        },
+        "reds_073": {
+          "lpips": 0.11442865053211715,
+          "dists": 0.09110292807166154,
+          "fine_correlation": -0.014451205223858732
+        }
+      },
+      "status": "Declared bank validation patches; separate from full-frame development and native holdout. No promotion."
+    },
+    "coupled80": {
+      "spatial_gate_pass": true,
+      "failure_reasons": [],
+      "frames_per_variant": 96,
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.40222197367499274,
+          "dists": 0.22276637516915798,
+          "fine_correlation": 0.3040961481273848
+        },
+        "shipping": {
+          "lpips": 0.36410116745779914,
+          "dists": 0.2224731333553791,
+          "fine_correlation": 0.32143244640958385
+        },
+        "coupled80": {
+          "lpips": 0.3248684727586806,
+          "dists": 0.20783926111956438,
+          "fine_correlation": 0.3189189620295219
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "sintel": {
+            "lpips": 0.2696159854531288,
+            "dists": 0.2091157976537943,
+            "fine_correlation": 0.32946662473652005
+          },
+          "reds_154": {
+            "lpips": 0.5052469009533525,
+            "dists": 0.26318140141665936,
+            "fine_correlation": 0.2450867044727926
+          },
+          "reds_073": {
+            "lpips": 0.4318030346184969,
+            "dists": 0.1960019264370203,
+            "fine_correlation": 0.3377351151728416
+          }
+        },
+        "shipping": {
+          "sintel": {
+            "lpips": 0.2692622817121446,
+            "dists": 0.21591424942016602,
+            "fine_correlation": 0.32653072984915327
+          },
+          "reds_154": {
+            "lpips": 0.45876778941601515,
+            "dists": 0.2634068951010704,
+            "fine_correlation": 0.2698841119849202
+          },
+          "reds_073": {
+            "lpips": 0.3642734312452376,
+            "dists": 0.1880982555449009,
+            "fine_correlation": 0.3678824973946781
+          }
+        },
+        "coupled80": {
+          "sintel": {
+            "lpips": 0.2373132724314928,
+            "dists": 0.19670022279024124,
+            "fine_correlation": 0.33473461869190796
+          },
+          "reds_154": {
+            "lpips": 0.4039653651416302,
+            "dists": 0.25106093659996986,
+            "fine_correlation": 0.26162620999688924
+          },
+          "reds_073": {
+            "lpips": 0.33332678070291877,
+            "dists": 0.17575662396848202,
+            "fine_correlation": 0.36039605739976865
+          }
+        }
+      },
+      "perceptual_improvements": {
+        "lpips": 0.10775218045315882,
+        "dists": 0.06577815493989803
+      },
+      "per_source_changes": {
+        "sintel": {
+          "lpips": 0.11865386075427731,
+          "dists": 0.08898915509987748,
+          "fine_correlation": 0.008203888842754692
+        },
+        "reds_154": {
+          "lpips": 0.11945569313866888,
+          "dists": 0.0468702935675368,
+          "fine_correlation": -0.008257901988030947
+        },
+        "reds_073": {
+          "lpips": 0.08495445423107129,
+          "dists": 0.0656126849271752,
+          "fine_correlation": -0.007486439994909444
+        }
+      },
+      "status": "Declared bank validation patches; separate from full-frame development and native holdout. No promotion."
+    },
+    "previous80": {
+      "spatial_gate_pass": true,
+      "failure_reasons": [],
+      "frames_per_variant": 96,
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.40222197367499274,
+          "dists": 0.22276637516915798,
+          "fine_correlation": 0.3040961481273848
+        },
+        "shipping": {
+          "lpips": 0.36410116745779914,
+          "dists": 0.2224731333553791,
+          "fine_correlation": 0.32143244640958385
+        },
+        "previous80": {
+          "lpips": 0.3425722935547431,
+          "dists": 0.21219011706610522,
+          "fine_correlation": 0.32473917849381223
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "sintel": {
+            "lpips": 0.2696159854531288,
+            "dists": 0.2091157976537943,
+            "fine_correlation": 0.32946662473652005
+          },
+          "reds_154": {
+            "lpips": 0.5052469009533525,
+            "dists": 0.26318140141665936,
+            "fine_correlation": 0.2450867044727926
+          },
+          "reds_073": {
+            "lpips": 0.4318030346184969,
+            "dists": 0.1960019264370203,
+            "fine_correlation": 0.3377351151728416
+          }
+        },
+        "shipping": {
+          "sintel": {
+            "lpips": 0.2692622817121446,
+            "dists": 0.21591424942016602,
+            "fine_correlation": 0.32653072984915327
+          },
+          "reds_154": {
+            "lpips": 0.45876778941601515,
+            "dists": 0.2634068951010704,
+            "fine_correlation": 0.2698841119849202
+          },
+          "reds_073": {
+            "lpips": 0.3642734312452376,
+            "dists": 0.1880982555449009,
+            "fine_correlation": 0.3678824973946781
+          }
+        },
+        "previous80": {
+          "sintel": {
+            "lpips": 0.24775982135906816,
+            "dists": 0.20176689699292183,
+            "fine_correlation": 0.3421245264634362
+          },
+          "reds_154": {
+            "lpips": 0.4325447604060173,
+            "dists": 0.2546657267957926,
+            "fine_correlation": 0.26715372242461355
+          },
+          "reds_073": {
+            "lpips": 0.34741229889914393,
+            "dists": 0.1801377274096012,
+            "fine_correlation": 0.364939286593387
+          }
+        }
+      },
+      "perceptual_improvements": {
+        "lpips": 0.05912882414899512,
+        "dists": 0.04622138473164661
+      },
+      "per_source_changes": {
+        "sintel": {
+          "lpips": 0.07985693434798902,
+          "dists": 0.06552301418380979,
+          "fine_correlation": 0.015593796614282951
+        },
+        "reds_154": {
+          "lpips": 0.05715969955819755,
+          "dists": 0.03318503982943877,
+          "fine_correlation": -0.002730389560306634
+        },
+        "reds_073": {
+          "lpips": 0.046287022054985805,
+          "dists": 0.042321116228531075,
+          "fine_correlation": -0.0029432108012911185
+        }
+      },
+      "status": "Declared bank validation patches; separate from full-frame development and native holdout. No promotion."
+    },
+    "folded": {
+      "spatial_gate_pass": false,
+      "failure_reasons": [
+        "lpips: aggregate improvement below minimum",
+        "dists: aggregate improvement below minimum",
+        "sintel: fine correlation drop exceeds limit"
+      ],
+      "frames_per_variant": 96,
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.40222197367499274,
+          "dists": 0.22276637516915798,
+          "fine_correlation": 0.3040961481273848
+        },
+        "shipping": {
+          "lpips": 0.36410116745779914,
+          "dists": 0.2224731333553791,
+          "fine_correlation": 0.32143244640958385
+        },
+        "folded": {
+          "lpips": 0.35854115926971036,
+          "dists": 0.22164260099331537,
+          "fine_correlation": 0.31160950197325704
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "sintel": {
+            "lpips": 0.2696159854531288,
+            "dists": 0.2091157976537943,
+            "fine_correlation": 0.32946662473652005
+          },
+          "reds_154": {
+            "lpips": 0.5052469009533525,
+            "dists": 0.26318140141665936,
+            "fine_correlation": 0.2450867044727926
+          },
+          "reds_073": {
+            "lpips": 0.4318030346184969,
+            "dists": 0.1960019264370203,
+            "fine_correlation": 0.3377351151728416
+          }
+        },
+        "shipping": {
+          "sintel": {
+            "lpips": 0.2692622817121446,
+            "dists": 0.21591424942016602,
+            "fine_correlation": 0.32653072984915327
+          },
+          "reds_154": {
+            "lpips": 0.45876778941601515,
+            "dists": 0.2634068951010704,
+            "fine_correlation": 0.2698841119849202
+          },
+          "reds_073": {
+            "lpips": 0.3642734312452376,
+            "dists": 0.1880982555449009,
+            "fine_correlation": 0.3678824973946781
+          }
+        },
+        "folded": {
+          "sintel": {
+            "lpips": 0.2722201286815107,
+            "dists": 0.21457506716251373,
+            "fine_correlation": 0.3091957187373663
+          },
+          "reds_154": {
+            "lpips": 0.45012065675109625,
+            "dists": 0.2628534883260727,
+            "fine_correlation": 0.2642232532230018
+          },
+          "reds_073": {
+            "lpips": 0.3532826923765242,
+            "dists": 0.1874992474913597,
+            "fine_correlation": 0.3614095339594031
+          }
+        }
+      },
+      "perceptual_improvements": {
+        "lpips": 0.015270503599066898,
+        "dists": 0.0037331804948197433
+      },
+      "per_source_changes": {
+        "sintel": {
+          "lpips": -0.010985002988751935,
+          "dists": 0.006202380163646604,
+          "fine_correlation": -0.01733501111178698
+        },
+        "reds_154": {
+          "lpips": 0.018848604597821006,
+          "dists": 0.00210095781579811,
+          "fine_correlation": -0.005660858761918408
+        },
+        "reds_073": {
+          "lpips": 0.03017167305104429,
+          "dists": 0.003184548691352429,
+          "fine_correlation": -0.006472963435274981
+        }
+      },
+      "status": "Declared bank validation patches; separate from full-frame development and native holdout. No promotion."
+    }
+  },
+  "report_sha256": "7b38c5329a443f940d1c2b90e140ef7866e1ec6a5ed778aa8c01d5c32452adfe",
+  "manifest_sha256": "eb8ad3792cc1999f4dc593494f959656be28b815ee21d3a9094c47b683f3a7fe"
+}

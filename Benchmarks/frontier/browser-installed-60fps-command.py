@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Own an isolated Chrome/MessageChannel/native comparison and clean up every process."""
 import argparse
-import gzip
 import hashlib
 import json
 import os
@@ -23,16 +22,11 @@ def main():
     ap.add_argument('--config',type=Path,required=True)
     ap.add_argument('--extension',type=Path,
                     help='Install this unpacked companion through Chrome CDP in the owned browser profile')
-    ap.add_argument('--samples',type=int,default=30)
-    ap.add_argument('--order',nargs='+',choices=['shipping','candidate'],default=['shipping','candidate','candidate','shipping'])
-    ap.add_argument('--presentation-trace',action='store_true',help='Record actual draw acknowledgments in the extension iframe')
     ap.add_argument('--out',type=Path,required=True)
     args=ap.parse_args()
     if args.out.exists():ap.error('fresh browser evidence directory required')
     if args.extension and not (args.extension/'manifest.json').is_file():
         ap.error('extension manifest required')
-    if not 1 <= args.samples <= 3600 or (args.presentation_trace and not args.extension):
-        ap.error('1..3600 samples required; presentation tracing requires an installed extension')
     for port in [48111,48112,48113]:
         with socket.socket() as check:check.bind(('127.0.0.1',port))
     args.out.mkdir(parents=True)
@@ -41,12 +35,11 @@ def main():
     server_log=(args.out/'server.log').open('w')
     server=subprocess.Popen(['python3','-m','http.server','48113','--bind','127.0.0.1','--directory',str(args.fixture.resolve())],stdout=server_log,stderr=subprocess.STDOUT)
     app=None;session=None;app_log=None
-    report={'purpose':f'{"headed" if args.headed else "headless"} Chrome native playback comparison at 640x360 to 1280x720',
+    report={'purpose':f'ABBA {"headed" if args.headed else "headless"} Chrome native playback comparison at 640x360 to 1280x720',
         'clip_sha256':digest(args.fixture/'video.mp4'),'app_sha256':digest(args.app),
         'script_sha256':digest(__file__),'browser_config_sha256':digest(args.config),
         'scope':'Real companion scripts and MessageChannels, isolated native app/ports; not installed-extension or third-party CSP coverage',
-        'order':args.order,'samples_per_run':args.samples,'warmup_seconds':5,
-        'presentation_trace':args.presentation_trace,'runs':[],'complete':False}
+        'order':['shipping','candidate','candidate','shipping'],'runs':[],'complete':False}
     report['fixture_files']={p.name:digest(p) for p in args.fixture.iterdir() if p.suffix in ('.js','.html','.json')}
     if args.extension:
         report['scope']='Installed unpacked companion in an owned Chrome profile; real extension messaging and extension iframe; local fixture, not third-party CSP coverage'
@@ -76,24 +69,6 @@ def main():
             app=subprocess.Popen([str(args.app.resolve()),'-strength','standard'],env=native_env,stdout=app_log,stderr=subprocess.STDOUT)
             cli('open','about:blank' if args.extension else 'http://127.0.0.1:48113','--browser','chrome','--config',str(args.config.resolve()),*(['--headed'] if args.headed else []))
             installation=None
-            if args.presentation_trace:
-                js('''async page => {
-                  await page.context().addInitScript(() => {
-                    const samples=globalThis.__lucidDrawProbe=[];
-                    const original=WebSocket.prototype.send;
-                    WebSocket.prototype.send=function(data) {
-                      if(typeof data==='string') {
-                        try {
-                          const value=JSON.parse(data);
-                          if(value.type==='presented' && samples.length<250000)
-                            samples.push({at:performance.timeOrigin+performance.now(),session:value.session,seq:value.seq,latencyMilliseconds:value.latencyMilliseconds});
-                        } catch {}
-                      }
-                      return original.apply(this,arguments);
-                    };
-                  });
-                  return {purpose:'presentation-probe-installed'};
-                }''')
             if args.extension:
                 installation=js('''async page => {
                   const cdp=await page.context().browser().newBrowserCDPSession();
@@ -113,39 +88,16 @@ def main():
               return await page.evaluate(() => ({purpose:'setup',status:window.latestStatus,browser:navigator.userAgent,video:{w:document.querySelector('video').videoWidth,h:document.querySelector('video').videoHeight},viewport:[innerWidth,innerHeight,devicePixelRatio]}));
             }'''.replace('GAIN','.4' if label=='candidate' else '.75'))
             if app.poll() is not None:raise RuntimeError('native process ended during setup')
-            chunks=[]
-            for start in range(0,args.samples,30):
-                chunk=js('''async page => {
+            samples=js('''async page => {
               const result=await page.evaluate(async () => {
-                const startedEpoch=performance.timeOrigin+performance.now();
                 const samples=[];
-                for(let i=0;i<SAMPLE_COUNT;i++) { await new Promise(resolve=>setTimeout(resolve,1000)); samples.push({time:performance.now(),status:window.latestStatus,frameStats:document.documentElement.dataset.lucidFrames}); }
-                return {purpose:'cadence',startedEpoch,endedEpoch:performance.timeOrigin+performance.now(),samples,video:document.querySelector('video').getVideoPlaybackQuality().toJSON?.() ?? {totalVideoFrames:document.querySelector('video').getVideoPlaybackQuality().totalVideoFrames,droppedVideoFrames:document.querySelector('video').getVideoPlaybackQuality().droppedVideoFrames}};
+                for(let i=0;i<30;i++) { await new Promise(resolve=>setTimeout(resolve,1000)); samples.push({time:performance.now(),status:window.latestStatus,frameStats:document.documentElement.dataset.lucidFrames}); }
+                return {purpose:'cadence',samples,video:document.querySelector('video').getVideoPlaybackQuality().toJSON?.() ?? {totalVideoFrames:document.querySelector('video').getVideoPlaybackQuality().totalVideoFrames,droppedVideoFrames:document.querySelector('video').getVideoPlaybackQuality().droppedVideoFrames}};
               });
               result.frames=[];
               for(const frame of page.frames()) result.frames.push({url:frame.url(),canvases:await frame.locator('canvas').evaluateAll(nodes=>nodes.map(n=>({width:n.width,height:n.height,alpha:getComputedStyle(n).opacity})))});
               return result;
-            }'''.replace('SAMPLE_COUNT',str(min(30,args.samples-start))))
-                chunk['native_rss_kib']=int(subprocess.check_output(['ps','-o','rss=','-p',str(app.pid)],text=True).strip())
-                chunks.append(chunk)
-                (args.out/f'{index}-{label}-chunks.json').write_text(json.dumps(chunks,indent=2)+'\n')
-                print(index,label,start+len(chunk['samples']),'samples collected',flush=True)
-            samples={**chunks[-1],'startedEpoch':chunks[0]['startedEpoch'],
-                     'samples':[s for chunk in chunks for s in chunk['samples']],
-                     'native_memory_samples':[{'at':chunk['endedEpoch'],'rss_kib':chunk['native_rss_kib']} for chunk in chunks]}
-            if args.presentation_trace:
-                trace=js('''async page => {
-                  const surfaces=[];
-                  for(const frame of page.frames()) {
-                    const samples=await frame.evaluate(()=>globalThis.__lucidDrawProbe??[]);
-                    if(samples.length) surfaces.push({url:frame.url(),samples});
-                  }
-                  return {purpose:'presentation-trace',surfaces};
-                }''')
-                if not trace['surfaces']:raise RuntimeError('no actual surface presentation acknowledgments recorded')
-                path=args.out/f'{index}-{label}-presentations.json.gz'
-                path.write_bytes(gzip.compress(json.dumps(trace).encode(),mtime=0))
-                samples['presentation_trace']={'file':path.name,'sha256':digest(path)}
+            }''')
             if not all(x['status']['enhancing'] and x['status']['presentedFPS']>0 for x in samples['samples']):
                 raise RuntimeError('playback stalled or enhancement stopped during sample')
             off=js('''async page => {
@@ -155,7 +107,7 @@ def main():
             }''')
             if off['enabled'] or off['enhancing']:raise RuntimeError('Off did not settle')
             report['runs'].append({'variant':label,'installation':installation,'setup':setup,'measurement':samples,'off':off});save()
-            print(index,label,args.samples,'samples complete',flush=True)
+            print(index,label,'30 samples complete',flush=True)
             cli('close');session=None
             app.terminate();app.wait(timeout=15);app=None;app_log.close();app_log=None
         report['complete']=True;save()
