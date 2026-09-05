@@ -1,0 +1,4661 @@
+{
+  "purpose": "spatial development complementarity; no release claim",
+  "manifest_sha256": "aac663ad088fede87e1ede68cb46501603fc0f0b066b5ae6c07726b6555d923f",
+  "checkpoint_sha256": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65",
+  "code_sha256": "f3671feba7f2cb6e24f3c95d1433225fb94dfc24da54dac5962937b0a73023af",
+  "fold_sha256": "750795d69cce54883e601440b64344e25cd137b90c05e0e0d990d3bcf205d01e",
+  "weights": [
+    0.25,
+    0.5,
+    0.75
+  ],
+  "frequency_split": "PIL GaussianBlur radius 1.2",
+  "reference_used_for_reconstruction": false,
+  "teacher_hashes": {
+    "crowd_run-h264-350000-001.png": "59df9813b0222c154a885be89bb821dc9efa948ecb77504412e0d9d24156e0f1",
+    "crowd_run-h264-350000-002.png": "817c358c0e2b330dacc66f5138fb81c34a0558c27c5300c5b7af1e1be8409892",
+    "crowd_run-h264-350000-003.png": "d20fbe25b43eb24afef525165e72ffaf32d59c5bf5530674cbd0236c6324709a",
+    "crowd_run-h264-350000-004.png": "86d1074aaae6ccdfcf0734a0657207bb7dc4f89c3339bb411acd7a8527fa894e",
+    "crowd_run-h264-1000000-001.png": "6c360c1b91a8c5ed73f1997d1b747374ef66832544d9c3288e6866873353b6b4",
+    "crowd_run-h264-1000000-002.png": "28309096780c6fefc08f9aa240625174c979409bb4769a0a20593133c3cb2481",
+    "crowd_run-h264-1000000-003.png": "09388e6a7dcab2513a5fa6060b8cdcd98960321c10a265dc07c099d117d65b6e",
+    "crowd_run-h264-1000000-004.png": "284dc540d0c1786509e82d6e4bf13daae45aec75ea503635d8ab6a609a01f5b1",
+    "crowd_run-vp9-350000-001.png": "10079dcfcc26b6b4c61e38c1ecfa29cf8a745d51fcfe67d90eb013c3242bf8d9",
+    "crowd_run-vp9-350000-002.png": "8f9c062daadc7385cbe0b9f191cac70599f72627d1ac6e497041597dd68fd109",
+    "crowd_run-vp9-350000-003.png": "45239403d6540117751db916463c829c9f91576b553cf2ea05b21f882b5af764",
+    "crowd_run-vp9-350000-004.png": "611da947361bcae7047eaf003398df7127e15693f5baec456ed12eb8606e2ae0",
+    "crowd_run-vp9-1000000-001.png": "0e6619f2e16fd30a9c229eb80595af9757244e33340e4f5d25ea0252108276e3",
+    "crowd_run-vp9-1000000-002.png": "9305eb00402b020d36294160a73a647ba95fd7bf2a70ea4afdf022590b85ac51",
+    "crowd_run-vp9-1000000-003.png": "f3571e25eee98a8711f770fa38b12075b9aa95b718e95efc759d82af2b3b901d",
+    "crowd_run-vp9-1000000-004.png": "df692232f028d41c366c66e1bd526eadede4451417d9cd1c4d8a40f310a8b07d",
+    "four_people-h264-350000-001.png": "f2d1b234aac0282461ae190499ea6937cf60e2129240fee46647127d2638af92",
+    "four_people-h264-350000-002.png": "a5577f6c26243bc2f89ad0d1c68c6f92016c73c306eb16f4826ec1a053226b5a",
+    "four_people-h264-350000-003.png": "3ba0f157f48adec277aa20341afb404bf4b5b5f7293e13e4d44500d50e4544ef",
+    "four_people-h264-350000-004.png": "b4afbce5a7fad08b29165752d19fde09deab8b4e2d337a67399111284e3f5f92",
+    "four_people-h264-1000000-001.png": "d112be84b38e62a945c714235189e5c064aecfe9c95b86c6289a50b7da33d2ab",
+    "four_people-h264-1000000-002.png": "bb0b5ecd57472bd308a17defe05017976ae28b2efc991c72392662241b20cd84",
+    "four_people-h264-1000000-003.png": "67260fbd208b11da3e53e5b8157e56f81bde42c8a505fe95146aa4abe139159a",
+    "four_people-h264-1000000-004.png": "1b2735055dbd7150a3a7885be1f6189fc15af4c915d6551773890547d7b9a870",
+    "four_people-vp9-350000-001.png": "51315cb6cb7003bb877b53dcf730358face15d1b019c8d7cf9add38b3f475b32",
+    "four_people-vp9-350000-002.png": "90c0ae555cda3cc57427cdd2b6e588da261ce0be73148c4360eed206844eed4b",
+    "four_people-vp9-350000-003.png": "4366bfd887b322068e891ce34b0cb2dbfffad967c5d42a122079a5cb1ebf3ae2",
+    "four_people-vp9-350000-004.png": "5eebc8699fc6b1f47b4e2ce7ad772a8a6ad1dd7fa8c86cdd01ba3342fb582187",
+    "four_people-vp9-1000000-001.png": "9e6c81265b815ec92994a8d3b6109247a62bc6ecae250caac5c583af33329eec",
+    "four_people-vp9-1000000-002.png": "4bbb8482fa901a31a825421397351183954c500096564a0f25d5c4c28438f6eb",
+    "four_people-vp9-1000000-003.png": "73ad326295ae9a70ce62c8ecbf4e890cc9b302698f2fc3c3a3c90f402bd0b1ac",
+    "four_people-vp9-1000000-004.png": "b553a1396f8cf591358e6fa3a7e7fdead47b2eca3aa2c60845b0133de229a8aa",
+    "johnny-h264-350000-001.png": "fe70329964154f7816e0f61d276415bb68c8729fd9fc8971254082ceabd26790",
+    "johnny-h264-350000-002.png": "e65b436e14288329f2033af18961d266f165ff3c22a6d0c2d71b273d8dd4f1ca",
+    "johnny-h264-350000-003.png": "33c43862fc836816dc58745722a268b62d7345f014842ea18ddde5f31dc84aa0",
+    "johnny-h264-350000-004.png": "e74b5347c68a4fd79d7ae54bedb28827b56e7d52ad8b6394157f7a2b4f7143f8",
+    "johnny-h264-1000000-001.png": "f1b407e051392da41895dc6b988d2bef0a516a0b530c6c1d09bd5a389769d8dc",
+    "johnny-h264-1000000-002.png": "b1e0b4c17747cde0cbbb7f4dd4b2a08664ead9f9ac868acc361f3ae3fcff5321",
+    "johnny-h264-1000000-003.png": "1327e7b76c457ac69c595774973d0713cec5b02f2a54bb3a22ece35fff966939",
+    "johnny-h264-1000000-004.png": "31805eac34e30470a237d759e43ce5f334276e52f18397e28d1b99ac1e701558",
+    "johnny-vp9-350000-001.png": "e0145ecf16b98645b67a8c9128ef9969cb75f3acedeb3ed0dae70eccecb385ba",
+    "johnny-vp9-350000-002.png": "02868f2a6a778c63502c45c9b7cf1ad0840884ebdfed6d20c169821d6ce7424e",
+    "johnny-vp9-350000-003.png": "f9a3e9a645d52c63d81b48f8aaf659a5710dfeff655438bcb8d2d8299aed69f7",
+    "johnny-vp9-350000-004.png": "e3949200d64927eda3d5b43f9be8894c7dae5e124396f81efe22da73edbfbf91",
+    "johnny-vp9-1000000-001.png": "4bf4a842abe6bf91f758b0b82a2f22bc0c777f4aa0c6add1a4e86708d23fcfd5",
+    "johnny-vp9-1000000-002.png": "0172058e6dd273c19274cfd252007af69a572dfa748c8cad83acdddfdf6f980d",
+    "johnny-vp9-1000000-003.png": "759248fdcae677be67c887e789558a5e3f9f611508a934beb6fdd2d12b8d6caf",
+    "johnny-vp9-1000000-004.png": "1b2a6e8e0a0bb20f9ad18f3932f6d82307e8388c3986370ceacf846514ea7e05"
+  },
+  "rows": [
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5401264429092407,
+        "dists": 0.2538474202156067,
+        "psnr_y": 21.40108982752158,
+        "detail_energy": 0.3290298343273752,
+        "fine_correlation": 0.19557917133781572
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 0,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.5138524174690247,
+        "dists": 0.23602008819580078,
+        "psnr_y": 21.17280442505065,
+        "detail_energy": 0.39980629153739844,
+        "fine_correlation": 0.18703806257827787
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 0,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.5332536101341248,
+        "dists": 0.25360190868377686,
+        "psnr_y": 21.393109311365677,
+        "detail_energy": 0.33732706826050973,
+        "fine_correlation": 0.19002967177630067
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 0,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.5436400175094604,
+        "dists": 0.24514859914779663,
+        "psnr_y": 21.30878356398766,
+        "detail_energy": 0.35353744294100126,
+        "fine_correlation": 0.19999640741648775
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.5467217564582825,
+        "dists": 0.25094521045684814,
+        "psnr_y": 21.397861907020122,
+        "detail_energy": 0.33272934781408353,
+        "fine_correlation": 0.20077434676379063
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.5415001511573792,
+        "dists": 0.24679601192474365,
+        "psnr_y": 21.35795546647212,
+        "detail_energy": 0.34630080767323057,
+        "fine_correlation": 0.20071241137877213
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.5286904573440552,
+        "dists": 0.2415953278541565,
+        "psnr_y": 21.282239203643346,
+        "detail_energy": 0.3692870549711448,
+        "fine_correlation": 0.1952133508977373
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5683396458625793,
+        "dists": 0.26588112115859985,
+        "psnr_y": 20.06190009627272,
+        "detail_energy": 0.28377557799662223,
+        "fine_correlation": 0.14507579866492562
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 4,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.5338432788848877,
+        "dists": 0.247084379196167,
+        "psnr_y": 19.77691624529571,
+        "detail_energy": 0.3809681269197403,
+        "fine_correlation": 0.127232143143417
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 4,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.5610643625259399,
+        "dists": 0.2654680013656616,
+        "psnr_y": 20.06080931007508,
+        "detail_energy": 0.290757549692116,
+        "fine_correlation": 0.14074365852398069
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 4,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.5675950050354004,
+        "dists": 0.25629788637161255,
+        "psnr_y": 19.930400567491013,
+        "detail_energy": 0.3153807748747468,
+        "fine_correlation": 0.14296604762553652
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.5708777904510498,
+        "dists": 0.2625974416732788,
+        "psnr_y": 20.02801211615126,
+        "detail_energy": 0.2954500030165336,
+        "fine_correlation": 0.14539880687041254
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.5628101825714111,
+        "dists": 0.2578829526901245,
+        "psnr_y": 19.968673613592756,
+        "detail_energy": 0.31663914264113363,
+        "fine_correlation": 0.14117932127137786
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.5491819977760315,
+        "dists": 0.2515403628349304,
+        "psnr_y": 19.88462149468332,
+        "detail_energy": 0.3458440998858486,
+        "fine_correlation": 0.13482016475520434
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5721047520637512,
+        "dists": 0.26693910360336304,
+        "psnr_y": 19.531548341296748,
+        "detail_energy": 0.2900525970961849,
+        "fine_correlation": 0.12405332637923304
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 8,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.539732038974762,
+        "dists": 0.25265711545944214,
+        "psnr_y": 19.263181922429975,
+        "detail_energy": 0.3876382627614537,
+        "fine_correlation": 0.10710090421797644
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 8,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.5640669465065002,
+        "dists": 0.2666007876396179,
+        "psnr_y": 19.531985451659303,
+        "detail_energy": 0.29784753064861136,
+        "fine_correlation": 0.12050141257115687
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 8,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.5731010437011719,
+        "dists": 0.2601221799850464,
+        "psnr_y": 19.409346971509173,
+        "detail_energy": 0.3213072255708692,
+        "fine_correlation": 0.12174412928478326
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.5747054815292358,
+        "dists": 0.2638193368911743,
+        "psnr_y": 19.495433622073215,
+        "detail_energy": 0.3017766557001196,
+        "fine_correlation": 0.12321847105759894
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.567171573638916,
+        "dists": 0.2606622576713562,
+        "psnr_y": 19.43817331573394,
+        "detail_energy": 0.3229701457740356,
+        "fine_correlation": 0.11943356527627984
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.5539438128471375,
+        "dists": 0.2570992708206177,
+        "psnr_y": 19.360322919551834,
+        "detail_energy": 0.3522385872593997,
+        "fine_correlation": 0.11375634221379223
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5730745792388916,
+        "dists": 0.26353925466537476,
+        "psnr_y": 19.623281568783927,
+        "detail_energy": 0.27782798849358337,
+        "fine_correlation": 0.11496212421391491
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 12,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.5422985553741455,
+        "dists": 0.2549525499343872,
+        "psnr_y": 19.36791081330074,
+        "detail_energy": 0.3696605159679342,
+        "fine_correlation": 0.10329648946583876
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 12,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.5656880736351013,
+        "dists": 0.2634902596473694,
+        "psnr_y": 19.622975328589835,
+        "detail_energy": 0.28616384362704456,
+        "fine_correlation": 0.11195829557125735
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 12,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.5739256143569946,
+        "dists": 0.2593887448310852,
+        "psnr_y": 19.50154465918417,
+        "detail_energy": 0.3079241613987232,
+        "fine_correlation": 0.11392018921422005
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.576178789138794,
+        "dists": 0.26108318567276,
+        "psnr_y": 19.590002096946883,
+        "detail_energy": 0.2886588009338991,
+        "fine_correlation": 0.1161274425456792
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.5689512491226196,
+        "dists": 0.2589266300201416,
+        "psnr_y": 19.53558572800658,
+        "detail_energy": 0.3085376711145518,
+        "fine_correlation": 0.11335323216983405
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.5561730265617371,
+        "dists": 0.2568495273590088,
+        "psnr_y": 19.461361369071145,
+        "detail_energy": 0.3361257587426262,
+        "fine_correlation": 0.10855849644728212
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.38370704650878906,
+        "dists": 0.1164555549621582,
+        "psnr_y": 25.344447098591225,
+        "detail_energy": 0.6308007187085691,
+        "fine_correlation": 0.5415736016455073
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 0,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.36658722162246704,
+        "dists": 0.1041252613067627,
+        "psnr_y": 24.948381457330857,
+        "detail_energy": 0.6441731965260271,
+        "fine_correlation": 0.5078257293528222
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 0,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.3710079491138458,
+        "dists": 0.11672019958496094,
+        "psnr_y": 25.32295306745764,
+        "detail_energy": 0.6361254943990111,
+        "fine_correlation": 0.5360313548650042
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 0,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.3822610676288605,
+        "dists": 0.1104932427406311,
+        "psnr_y": 25.234902084559373,
+        "detail_energy": 0.6290468233761353,
+        "fine_correlation": 0.5426649493575064
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.3908812403678894,
+        "dists": 0.11315542459487915,
+        "psnr_y": 25.395528181967165,
+        "detail_energy": 0.6196789483975226,
+        "fine_correlation": 0.54537851240669
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.39006710052490234,
+        "dists": 0.10943931341171265,
+        "psnr_y": 25.342451687103043,
+        "detail_energy": 0.6180611703434193,
+        "fine_correlation": 0.5408563904316831
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.38130471110343933,
+        "dists": 0.10587882995605469,
+        "psnr_y": 25.190631735183302,
+        "detail_energy": 0.626354226915862,
+        "fine_correlation": 0.5279681707205035
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4413920044898987,
+        "dists": 0.1528337597846985,
+        "psnr_y": 22.475841537345147,
+        "detail_energy": 0.501341817647224,
+        "fine_correlation": 0.3664434680083082
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 4,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.3967732787132263,
+        "dists": 0.13773298263549805,
+        "psnr_y": 22.037383744090626,
+        "detail_energy": 0.6162578612717219,
+        "fine_correlation": 0.32369081267530647
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 4,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.4289643168449402,
+        "dists": 0.153428316116333,
+        "psnr_y": 22.47715543221808,
+        "detail_energy": 0.5038383302494731,
+        "fine_correlation": 0.3618031563128396
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 4,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.44038647413253784,
+        "dists": 0.14414596557617188,
+        "psnr_y": 22.365527846770323,
+        "detail_energy": 0.5227819924585193,
+        "fine_correlation": 0.36318963185198916
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.4431219696998596,
+        "dists": 0.14862608909606934,
+        "psnr_y": 22.449111446395612,
+        "detail_energy": 0.513887569413788,
+        "fine_correlation": 0.3650174787300916
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.43392515182495117,
+        "dists": 0.14332151412963867,
+        "psnr_y": 22.364622124580308,
+        "detail_energy": 0.5383627766597185,
+        "fine_correlation": 0.3558840779992841
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.41712141036987305,
+        "dists": 0.13918131589889526,
+        "psnr_y": 22.22572569778089,
+        "detail_energy": 0.5729806708793931,
+        "fine_correlation": 0.3412477147435573
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.45592254400253296,
+        "dists": 0.1699334979057312,
+        "psnr_y": 21.427850475624158,
+        "detail_energy": 0.49672692211149205,
+        "fine_correlation": 0.29133860119495997
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 8,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.4243183434009552,
+        "dists": 0.16112345457077026,
+        "psnr_y": 21.06043561853636,
+        "detail_energy": 0.6033251703252962,
+        "fine_correlation": 0.26131099570921623
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 8,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.4432486891746521,
+        "dists": 0.17039942741394043,
+        "psnr_y": 21.4315977285785,
+        "detail_energy": 0.5007891238355039,
+        "fine_correlation": 0.28693134284571187
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 8,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.4570995271205902,
+        "dists": 0.16422152519226074,
+        "psnr_y": 21.32045518563345,
+        "detail_energy": 0.5195903798054226,
+        "fine_correlation": 0.28854503055967057
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.4610397219657898,
+        "dists": 0.16637533903121948,
+        "psnr_y": 21.39717418434501,
+        "detail_energy": 0.508380713153926,
+        "fine_correlation": 0.2910766592481282
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.4554532766342163,
+        "dists": 0.16357725858688354,
+        "psnr_y": 21.323877542939798,
+        "detail_energy": 0.5308683228918825,
+        "fine_correlation": 0.2847146790375194
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.4417349398136139,
+        "dists": 0.16179293394088745,
+        "psnr_y": 21.210568599152204,
+        "detail_energy": 0.5629655755382535,
+        "fine_correlation": 0.2744541727707
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4654916524887085,
+        "dists": 0.17612224817276,
+        "psnr_y": 21.973705652610853,
+        "detail_energy": 0.486852215403093,
+        "fine_correlation": 0.29145073800797805
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 12,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.4429032504558563,
+        "dists": 0.17128920555114746,
+        "psnr_y": 21.56630635690894,
+        "detail_energy": 0.5880652816218922,
+        "fine_correlation": 0.2633722332272475
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 12,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.4528026878833771,
+        "dists": 0.17679738998413086,
+        "psnr_y": 21.971588549507914,
+        "detail_energy": 0.49188413937698294,
+        "fine_correlation": 0.28639670614868845
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 12,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.46987417340278625,
+        "dists": 0.17323511838912964,
+        "psnr_y": 21.841095493028313,
+        "detail_energy": 0.509828686926226,
+        "fine_correlation": 0.28886101255839364
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.4727894067764282,
+        "dists": 0.17409878969192505,
+        "psnr_y": 21.9372764609744,
+        "detail_energy": 0.49734158389103167,
+        "fine_correlation": 0.29174845694957274
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.4695059657096863,
+        "dists": 0.17211103439331055,
+        "psnr_y": 21.855623705241072,
+        "detail_energy": 0.5185039685341611,
+        "fine_correlation": 0.2860550803628638
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.4585764706134796,
+        "dists": 0.17086654901504517,
+        "psnr_y": 21.730708253195115,
+        "detail_energy": 0.5493117443246247,
+        "fine_correlation": 0.2760074018267661
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.29190754890441895,
+        "dists": 0.06272590160369873,
+        "psnr_y": 28.293157382440025,
+        "detail_energy": 0.690862356043483,
+        "fine_correlation": 0.6972119060591007
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 0,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.26906028389930725,
+        "dists": 0.04924750328063965,
+        "psnr_y": 27.373964962309913,
+        "detail_energy": 0.6982624834433081,
+        "fine_correlation": 0.6424319465312079
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 0,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.2752639055252075,
+        "dists": 0.061905741691589355,
+        "psnr_y": 28.271341773389373,
+        "detail_energy": 0.6951317867483421,
+        "fine_correlation": 0.6935556371879353
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 0,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.2900267541408539,
+        "dists": 0.05475682020187378,
+        "psnr_y": 28.05411756496868,
+        "detail_energy": 0.683920682380642,
+        "fine_correlation": 0.6973792336380795
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.2972986698150635,
+        "dists": 0.059395670890808105,
+        "psnr_y": 28.356285574094734,
+        "detail_energy": 0.678395243986144,
+        "fine_correlation": 0.6975620090248151
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.2944464385509491,
+        "dists": 0.0550495982170105,
+        "psnr_y": 28.205385211158912,
+        "detail_energy": 0.6754414735478184,
+        "fine_correlation": 0.6883461417421305
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.28445184230804443,
+        "dists": 0.05121302604675293,
+        "psnr_y": 27.864554957718553,
+        "detail_energy": 0.6822610311873831,
+        "fine_correlation": 0.6695406565941299
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4391671419143677,
+        "dists": 0.16446727514266968,
+        "psnr_y": 21.889419217457565,
+        "detail_energy": 0.44100821024206394,
+        "fine_correlation": 0.37956228230846456
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 4,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.3527100384235382,
+        "dists": 0.13942909240722656,
+        "psnr_y": 21.459407504518634,
+        "detail_energy": 0.584200251873539,
+        "fine_correlation": 0.33282512080094107
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 4,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.4281747341156006,
+        "dists": 0.164414644241333,
+        "psnr_y": 21.890631097096602,
+        "detail_energy": 0.4426852252640702,
+        "fine_correlation": 0.3760210708179173
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 4,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.4248790442943573,
+        "dists": 0.14769762754440308,
+        "psnr_y": 21.75358851983492,
+        "detail_energy": 0.47271214648234605,
+        "fine_correlation": 0.3771844700309667
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.42727985978126526,
+        "dists": 0.1572718620300293,
+        "psnr_y": 21.86542818329599,
+        "detail_energy": 0.4600476884267987,
+        "fine_correlation": 0.3783690974500947
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.40407150983810425,
+        "dists": 0.1501297950744629,
+        "psnr_y": 21.78306576646381,
+        "detail_energy": 0.4915777931334964,
+        "fine_correlation": 0.3679743108083984
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.37777358293533325,
+        "dists": 0.14391779899597168,
+        "psnr_y": 21.64589100351388,
+        "detail_energy": 0.5336994914878199,
+        "fine_correlation": 0.3514683408822997
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4692378342151642,
+        "dists": 0.19163811206817627,
+        "psnr_y": 21.535606831975002,
+        "detail_energy": 0.38063667552716535,
+        "fine_correlation": 0.3312312228971743
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 8,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.37267985939979553,
+        "dists": 0.16439247131347656,
+        "psnr_y": 21.145028965117938,
+        "detail_energy": 0.5338924820026829,
+        "fine_correlation": 0.28710714871211024
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 8,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.45918717980384827,
+        "dists": 0.1917564868927002,
+        "psnr_y": 21.53389679167255,
+        "detail_energy": 0.38350086458244753,
+        "fine_correlation": 0.32692804724106916
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 8,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.44944339990615845,
+        "dists": 0.17604297399520874,
+        "psnr_y": 21.40037559155069,
+        "detail_energy": 0.4154766390102586,
+        "fine_correlation": 0.32881808740676427
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.45262596011161804,
+        "dists": 0.18318313360214233,
+        "psnr_y": 21.513709209169107,
+        "detail_energy": 0.4018577963375736,
+        "fine_correlation": 0.3304484461384962
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.4264064431190491,
+        "dists": 0.17571371793746948,
+        "psnr_y": 21.439162958004104,
+        "detail_energy": 0.43635185595418396,
+        "fine_correlation": 0.3199147806158893
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.3981173038482666,
+        "dists": 0.17026162147521973,
+        "psnr_y": 21.315131558542397,
+        "detail_energy": 0.48121469747058393,
+        "fine_correlation": 0.30450401869497984
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.39189887046813965,
+        "dists": 0.1325966715812683,
+        "psnr_y": 24.122779282173266,
+        "detail_energy": 0.5582496796888778,
+        "fine_correlation": 0.47584400048183595
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 12,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.3278048038482666,
+        "dists": 0.11494362354278564,
+        "psnr_y": 23.588332537924387,
+        "detail_energy": 0.6696564282660801,
+        "fine_correlation": 0.4312061841775075
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 12,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.37748438119888306,
+        "dists": 0.13363325595855713,
+        "psnr_y": 24.11463640339848,
+        "detail_energy": 0.5611122556442167,
+        "fine_correlation": 0.4707759057410287
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 12,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.3846932053565979,
+        "dists": 0.12023860216140747,
+        "psnr_y": 23.992846283308626,
+        "detail_energy": 0.5742714566802033,
+        "fine_correlation": 0.4757021847038086
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.38833656907081604,
+        "dists": 0.12661820650100708,
+        "psnr_y": 24.125080519689007,
+        "detail_energy": 0.5676756611708788,
+        "fine_correlation": 0.47790843180254616
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.37327879667282104,
+        "dists": 0.11978012323379517,
+        "psnr_y": 24.032079345139135,
+        "detail_energy": 0.5904142153341458,
+        "fine_correlation": 0.4694560549001076
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.35169708728790283,
+        "dists": 0.11636000871658325,
+        "psnr_y": 23.84918566348587,
+        "detail_energy": 0.6249411700819383,
+        "fine_correlation": 0.452584647366425
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2510705590248108,
+        "dists": 0.04770505428314209,
+        "psnr_y": 28.96511959000363,
+        "detail_energy": 0.7080772351980114,
+        "fine_correlation": 0.7221306397439011
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.23751002550125122,
+        "dists": 0.03873443603515625,
+        "psnr_y": 27.86148928458306,
+        "detail_energy": 0.7017182247109403,
+        "fine_correlation": 0.664627214219701
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 0,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.23179374635219574,
+        "dists": 0.04672497510910034,
+        "psnr_y": 28.95213577318625,
+        "detail_energy": 0.7119236039434114,
+        "fine_correlation": 0.719259730871224
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.2516172528266907,
+        "dists": 0.04162454605102539,
+        "psnr_y": 28.662600878282728,
+        "detail_energy": 0.6983615425809243,
+        "fine_correlation": 0.7222428010901475
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.2582511305809021,
+        "dists": 0.043804168701171875,
+        "psnr_y": 29.02115384425707,
+        "detail_energy": 0.6928710506353393,
+        "fine_correlation": 0.721613748161051
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.25820571184158325,
+        "dists": 0.0410999059677124,
+        "psnr_y": 28.831683881805468,
+        "detail_energy": 0.6866884381249756,
+        "fine_correlation": 0.7116449859492195
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.2508711516857147,
+        "dists": 0.03945291042327881,
+        "psnr_y": 28.42781110710224,
+        "detail_energy": 0.6897137893385402,
+        "fine_correlation": 0.6924172590292348
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.35916632413864136,
+        "dists": 0.12581396102905273,
+        "psnr_y": 23.815481140874127,
+        "detail_energy": 0.5472285585705939,
+        "fine_correlation": 0.4806772480052057
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.30231326818466187,
+        "dists": 0.10597723722457886,
+        "psnr_y": 23.289480200364675,
+        "detail_energy": 0.6503858714117563,
+        "fine_correlation": 0.4343467350931113
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 4,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.34429535269737244,
+        "dists": 0.1254623532295227,
+        "psnr_y": 23.814192119261083,
+        "detail_energy": 0.5489670656883487,
+        "fine_correlation": 0.47665015629965407
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.35623544454574585,
+        "dists": 0.1130794882774353,
+        "psnr_y": 23.6533386729,
+        "detail_energy": 0.5658220510808091,
+        "fine_correlation": 0.47949993646301764
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.3556515574455261,
+        "dists": 0.11974930763244629,
+        "psnr_y": 23.8073520657519,
+        "detail_energy": 0.5571475999337633,
+        "fine_correlation": 0.4804723676036368
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.34247010946273804,
+        "dists": 0.11334121227264404,
+        "psnr_y": 23.71238364740462,
+        "detail_energy": 0.5785006344868406,
+        "fine_correlation": 0.47119496967588514
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.323456346988678,
+        "dists": 0.10869818925857544,
+        "psnr_y": 23.53681007462724,
+        "detail_energy": 0.6101742694082094,
+        "fine_correlation": 0.4548598058976306
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.39037251472473145,
+        "dists": 0.16212081909179688,
+        "psnr_y": 22.975145326353783,
+        "detail_energy": 0.46144486206239926,
+        "fine_correlation": 0.40093709103203234
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.32239609956741333,
+        "dists": 0.13165485858917236,
+        "psnr_y": 22.45632081353897,
+        "detail_energy": 0.6160378468454684,
+        "fine_correlation": 0.357352205801573
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 8,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.37664544582366943,
+        "dists": 0.16235119104385376,
+        "psnr_y": 22.971140634526243,
+        "detail_energy": 0.4637415789683622,
+        "fine_correlation": 0.39643837032471296
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.3870895802974701,
+        "dists": 0.14309144020080566,
+        "psnr_y": 22.825132942349818,
+        "detail_energy": 0.49370648394654554,
+        "fine_correlation": 0.3998591633212622
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.38434067368507385,
+        "dists": 0.1534678339958191,
+        "psnr_y": 22.959827339525376,
+        "detail_energy": 0.48164116209935265,
+        "fine_correlation": 0.40211069472380845
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.3661743998527527,
+        "dists": 0.14484268426895142,
+        "psnr_y": 22.86406112198535,
+        "detail_energy": 0.515861610498383,
+        "fine_correlation": 0.39258344484903906
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.34382471442222595,
+        "dists": 0.13716453313827515,
+        "psnr_y": 22.693233652798455,
+        "detail_energy": 0.5615622617414009,
+        "fine_correlation": 0.3764104688005697
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.32118985056877136,
+        "dists": 0.0741148591041565,
+        "psnr_y": 25.251220375663745,
+        "detail_energy": 0.6311611460560884,
+        "fine_correlation": 0.5643070618560395
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.27833959460258484,
+        "dists": 0.06515228748321533,
+        "psnr_y": 24.744130646189273,
+        "detail_energy": 0.6912865789002014,
+        "fine_correlation": 0.5182460592529343
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 12,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.30439579486846924,
+        "dists": 0.07488572597503662,
+        "psnr_y": 25.24463978384148,
+        "detail_energy": 0.633650289720321,
+        "fine_correlation": 0.5599720382141599
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.32105720043182373,
+        "dists": 0.06513643264770508,
+        "psnr_y": 25.14526994456382,
+        "detail_energy": 0.6340715632970795,
+        "fine_correlation": 0.5646645910863304
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.3227648437023163,
+        "dists": 0.06962841749191284,
+        "psnr_y": 25.28665850211113,
+        "detail_energy": 0.6298026833970216,
+        "fine_correlation": 0.5662516265037113
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.3147770166397095,
+        "dists": 0.06550002098083496,
+        "psnr_y": 25.208897486731175,
+        "detail_energy": 0.6397589708081411,
+        "fine_correlation": 0.558146819784482
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.2988283634185791,
+        "dists": 0.06329405307769775,
+        "psnr_y": 25.023291210170445,
+        "detail_energy": 0.6606087004823087,
+        "fine_correlation": 0.5412986125495214
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3638690114021301,
+        "dists": 0.18898850679397583,
+        "psnr_y": 25.891273467760524,
+        "detail_energy": 0.511628340111939,
+        "fine_correlation": 0.41540047065709584
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 0,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.344465434551239,
+        "dists": 0.1777857542037964,
+        "psnr_y": 25.535541223248256,
+        "detail_energy": 0.5981940515740362,
+        "fine_correlation": 0.4073126282615238
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 0,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.36266791820526123,
+        "dists": 0.1890210509300232,
+        "psnr_y": 25.875355792683532,
+        "detail_energy": 0.5226391788753212,
+        "fine_correlation": 0.4053156347222143
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 0,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.36013418436050415,
+        "dists": 0.18329262733459473,
+        "psnr_y": 25.73570675528743,
+        "detail_energy": 0.5459580621206912,
+        "fine_correlation": 0.4222230388876755
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.3610055446624756,
+        "dists": 0.18766623735427856,
+        "psnr_y": 25.923610255684494,
+        "detail_energy": 0.514093360290655,
+        "fine_correlation": 0.4278841200383957
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.35502174496650696,
+        "dists": 0.18490451574325562,
+        "psnr_y": 25.873035805983406,
+        "detail_energy": 0.5300776464106364,
+        "fine_correlation": 0.4296741292636763
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.3496694266796112,
+        "dists": 0.18153852224349976,
+        "psnr_y": 25.74182071578744,
+        "detail_energy": 0.5587394743195478,
+        "fine_correlation": 0.4222626421412443
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.36335334181785583,
+        "dists": 0.18813073635101318,
+        "psnr_y": 25.89969144931611,
+        "detail_energy": 0.5117422607763403,
+        "fine_correlation": 0.42302499650643927
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 4,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.3437296152114868,
+        "dists": 0.1766374707221985,
+        "psnr_y": 25.5535036403756,
+        "detail_energy": 0.598801921121654,
+        "fine_correlation": 0.415125807084351
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 4,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.3620268404483795,
+        "dists": 0.18812263011932373,
+        "psnr_y": 25.884191804345935,
+        "detail_energy": 0.5225577738544914,
+        "fine_correlation": 0.4131119251073731
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 4,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.35923144221305847,
+        "dists": 0.18191254138946533,
+        "psnr_y": 25.74688263250415,
+        "detail_energy": 0.5461109449499737,
+        "fine_correlation": 0.42867012765517776
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.3606213331222534,
+        "dists": 0.18713164329528809,
+        "psnr_y": 25.924421084330955,
+        "detail_energy": 0.5148495585696425,
+        "fine_correlation": 0.43549533475098295
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.354367196559906,
+        "dists": 0.18346768617630005,
+        "psnr_y": 25.873130682069938,
+        "detail_energy": 0.530862315336909,
+        "fine_correlation": 0.43667699908227714
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.3487364947795868,
+        "dists": 0.1808387041091919,
+        "psnr_y": 25.747404044053084,
+        "detail_energy": 0.5598137184425266,
+        "fine_correlation": 0.42962058528474434
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.36422979831695557,
+        "dists": 0.18636059761047363,
+        "psnr_y": 25.637444498271414,
+        "detail_energy": 0.5119383842629527,
+        "fine_correlation": 0.41788616485725344
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 8,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.34385108947753906,
+        "dists": 0.1745588183403015,
+        "psnr_y": 25.269089018774746,
+        "detail_energy": 0.6022212978028921,
+        "fine_correlation": 0.4086487157266936
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 8,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.3629225194454193,
+        "dists": 0.18647843599319458,
+        "psnr_y": 25.62363269456585,
+        "detail_energy": 0.5227477496213374,
+        "fine_correlation": 0.4080133567678785
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 8,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.3595728278160095,
+        "dists": 0.17929863929748535,
+        "psnr_y": 25.465385455477655,
+        "detail_energy": 0.5468995503609752,
+        "fine_correlation": 0.4233016826453656
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.3610914945602417,
+        "dists": 0.18463486433029175,
+        "psnr_y": 25.65355213153541,
+        "detail_energy": 0.5152329920393126,
+        "fine_correlation": 0.4301510946695955
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.35465678572654724,
+        "dists": 0.18134748935699463,
+        "psnr_y": 25.595706683783426,
+        "detail_energy": 0.5320328604214328,
+        "fine_correlation": 0.4311940803175723
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.3489992916584015,
+        "dists": 0.17801159620285034,
+        "psnr_y": 25.464899069715297,
+        "detail_energy": 0.5617958673457129,
+        "fine_correlation": 0.4234409153623604
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3638243079185486,
+        "dists": 0.18222934007644653,
+        "psnr_y": 25.70492563228084,
+        "detail_energy": 0.5093342034065589,
+        "fine_correlation": 0.42129606326269026
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 12,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.3439839482307434,
+        "dists": 0.16954129934310913,
+        "psnr_y": 25.351513460658907,
+        "detail_energy": 0.6049938831408672,
+        "fine_correlation": 0.414229303860812
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 12,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.36234477162361145,
+        "dists": 0.18248456716537476,
+        "psnr_y": 25.69042497012557,
+        "detail_energy": 0.5201415732136487,
+        "fine_correlation": 0.4112829253159424
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 12,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.3588908612728119,
+        "dists": 0.17431116104125977,
+        "psnr_y": 25.54422439167906,
+        "detail_energy": 0.5459522382406855,
+        "fine_correlation": 0.4271254418274228
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.36092641949653625,
+        "dists": 0.18015795946121216,
+        "psnr_y": 25.72214013663427,
+        "detail_energy": 0.5141815004386907,
+        "fine_correlation": 0.43414582397571494
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.3545183539390564,
+        "dists": 0.175811767578125,
+        "psnr_y": 25.667343506766926,
+        "detail_energy": 0.5323292036628622,
+        "fine_correlation": 0.436016010163381
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.3491140604019165,
+        "dists": 0.173179030418396,
+        "psnr_y": 25.541106956427857,
+        "detail_energy": 0.563177507982628,
+        "fine_correlation": 0.4286109853396067
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.20773375034332275,
+        "dists": 0.09839391708374023,
+        "psnr_y": 30.5012191075514,
+        "detail_energy": 0.7408055801719184,
+        "fine_correlation": 0.6902256686264655
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 0,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.21046483516693115,
+        "dists": 0.09242349863052368,
+        "psnr_y": 30.01656083306816,
+        "detail_energy": 0.7477527212210104,
+        "fine_correlation": 0.6723225095440126
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 0,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.20521333813667297,
+        "dists": 0.09832781553268433,
+        "psnr_y": 30.449263889444037,
+        "detail_energy": 0.7498810235713973,
+        "fine_correlation": 0.680344633918097
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 0,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.20854173600673676,
+        "dists": 0.09483271837234497,
+        "psnr_y": 30.34332702997874,
+        "detail_energy": 0.7471087561064956,
+        "fine_correlation": 0.6920420672623768
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.20944100618362427,
+        "dists": 0.09754347801208496,
+        "psnr_y": 30.624426496510626,
+        "detail_energy": 0.7271492186686366,
+        "fine_correlation": 0.699903760799713
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.20980040729045868,
+        "dists": 0.09557271003723145,
+        "psnr_y": 30.5837426270624,
+        "detail_energy": 0.7235725471218817,
+        "fine_correlation": 0.7005256185848721
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.21074098348617554,
+        "dists": 0.0935702919960022,
+        "psnr_y": 30.37166537338472,
+        "detail_energy": 0.7305265371517032,
+        "fine_correlation": 0.6908900413950168
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.20854178071022034,
+        "dists": 0.0995560884475708,
+        "psnr_y": 30.310339433210956,
+        "detail_energy": 0.7410828091219888,
+        "fine_correlation": 0.6865958905266836
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 4,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.2094462662935257,
+        "dists": 0.0923762321472168,
+        "psnr_y": 29.849134621780244,
+        "detail_energy": 0.7534539360602749,
+        "fine_correlation": 0.6686425719668975
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 4,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.20591658353805542,
+        "dists": 0.09944629669189453,
+        "psnr_y": 30.262066184349948,
+        "detail_energy": 0.7500604101152305,
+        "fine_correlation": 0.6766761828429864
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 4,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.20796215534210205,
+        "dists": 0.09516286849975586,
+        "psnr_y": 30.179821661662572,
+        "detail_energy": 0.7483349735725692,
+        "fine_correlation": 0.6880739298348817
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.20995056629180908,
+        "dists": 0.09842461347579956,
+        "psnr_y": 30.42917240687727,
+        "detail_energy": 0.7287230541328636,
+        "fine_correlation": 0.6962648341709096
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.2098103165626526,
+        "dists": 0.09588634967803955,
+        "psnr_y": 30.390041129353847,
+        "detail_energy": 0.7263228710546206,
+        "fine_correlation": 0.6966096299904493
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.2097766250371933,
+        "dists": 0.09381043910980225,
+        "psnr_y": 30.188347563906053,
+        "detail_energy": 0.7346868498128678,
+        "fine_correlation": 0.6870313132611345
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.21032729744911194,
+        "dists": 0.1044967770576477,
+        "psnr_y": 30.009896538610427,
+        "detail_energy": 0.7363874053230537,
+        "fine_correlation": 0.6815389037935305
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 8,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.21258047223091125,
+        "dists": 0.09501522779464722,
+        "psnr_y": 29.534083005324682,
+        "detail_energy": 0.7495842661088161,
+        "fine_correlation": 0.6605895756442043
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 8,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.2075551152229309,
+        "dists": 0.10435730218887329,
+        "psnr_y": 29.965141421890372,
+        "detail_energy": 0.7453739708839925,
+        "fine_correlation": 0.6716167172182339
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 8,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.2106102705001831,
+        "dists": 0.09965962171554565,
+        "psnr_y": 29.869800064750468,
+        "detail_energy": 0.7439422576992063,
+        "fine_correlation": 0.6825746423232939
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.211658775806427,
+        "dists": 0.10344833135604858,
+        "psnr_y": 30.11119947427978,
+        "detail_energy": 0.7240782966997436,
+        "fine_correlation": 0.6903886697331652
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.2118762880563736,
+        "dists": 0.10077399015426636,
+        "psnr_y": 30.064297483825847,
+        "detail_energy": 0.7218026676751402,
+        "fine_correlation": 0.6899632416724806
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.21237888932228088,
+        "dists": 0.0976296067237854,
+        "psnr_y": 29.865723884997934,
+        "detail_energy": 0.7306034849535181,
+        "fine_correlation": 0.6797690241835007
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.20917820930480957,
+        "dists": 0.09793347120285034,
+        "psnr_y": 30.15449921741118,
+        "detail_energy": 0.7345635603534373,
+        "fine_correlation": 0.6816680518567024
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 12,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.21075573563575745,
+        "dists": 0.08795416355133057,
+        "psnr_y": 29.685739813793912,
+        "detail_energy": 0.751251811742242,
+        "fine_correlation": 0.6619808944680873
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 12,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.20638889074325562,
+        "dists": 0.0973048210144043,
+        "psnr_y": 30.108300565889003,
+        "detail_energy": 0.7435345495180966,
+        "fine_correlation": 0.6717911563353484
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 12,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.2092234194278717,
+        "dists": 0.09184139966964722,
+        "psnr_y": 30.02250319538596,
+        "detail_energy": 0.7430846981432248,
+        "fine_correlation": 0.6829332794488346
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.21051625907421112,
+        "dists": 0.0962744951248169,
+        "psnr_y": 30.26050742337201,
+        "detail_energy": 0.7230508719297337,
+        "fine_correlation": 0.6908337361227108
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.2106093168258667,
+        "dists": 0.09358584880828857,
+        "psnr_y": 30.215077738123092,
+        "detail_energy": 0.7215516600542603,
+        "fine_correlation": 0.6910096120477932
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.2109239548444748,
+        "dists": 0.09044915437698364,
+        "psnr_y": 30.015642784978596,
+        "detail_energy": 0.7312346164496571,
+        "fine_correlation": 0.6809930303621521
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.16025179624557495,
+        "dists": 0.071006178855896,
+        "psnr_y": 33.146996503940365,
+        "detail_energy": 0.7816445832229323,
+        "fine_correlation": 0.780330735165416
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 0,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.15566414594650269,
+        "dists": 0.05745965242385864,
+        "psnr_y": 32.535282709123166,
+        "detail_energy": 0.798458863218164,
+        "fine_correlation": 0.7515806894534435
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 0,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.15670748054981232,
+        "dists": 0.07030856609344482,
+        "psnr_y": 33.07618121835999,
+        "detail_energy": 0.7888095310853618,
+        "fine_correlation": 0.7721521798005966
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 0,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.15554013848304749,
+        "dists": 0.061719536781311035,
+        "psnr_y": 33.156472884967336,
+        "detail_energy": 0.7849946572316866,
+        "fine_correlation": 0.7813271014641447
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.1608438640832901,
+        "dists": 0.06722426414489746,
+        "psnr_y": 33.35958886236456,
+        "detail_energy": 0.7713648918114611,
+        "fine_correlation": 0.7870160640916704
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.15923386812210083,
+        "dists": 0.0643388032913208,
+        "psnr_y": 33.32226699011321,
+        "detail_energy": 0.7707830139975305,
+        "fine_correlation": 0.7844236932066772
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.15738949179649353,
+        "dists": 0.06112957000732422,
+        "psnr_y": 33.03285297967483,
+        "detail_energy": 0.779726865616098,
+        "fine_correlation": 0.7723274937200112
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.17353273928165436,
+        "dists": 0.07809972763061523,
+        "psnr_y": 32.354091530175346,
+        "detail_energy": 0.7686819099298201,
+        "fine_correlation": 0.7650852428860719
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 4,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.1637003868818283,
+        "dists": 0.05990421772003174,
+        "psnr_y": 31.90261345847216,
+        "detail_energy": 0.7676362805322896,
+        "fine_correlation": 0.7349323131421241
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 4,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.17018643021583557,
+        "dists": 0.0776740312576294,
+        "psnr_y": 32.29630622792407,
+        "detail_energy": 0.7758050111244884,
+        "fine_correlation": 0.7569778860457838
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 4,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.16664737462997437,
+        "dists": 0.06580173969268799,
+        "psnr_y": 32.43038059556875,
+        "detail_energy": 0.7684023949374685,
+        "fine_correlation": 0.766360342621544
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.17250511050224304,
+        "dists": 0.07414400577545166,
+        "psnr_y": 32.546889775359084,
+        "detail_energy": 0.7543240354722252,
+        "fine_correlation": 0.771418961660342
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.16933323442935944,
+        "dists": 0.06940293312072754,
+        "psnr_y": 32.534844757026335,
+        "detail_energy": 0.7490640173824266,
+        "fine_correlation": 0.7686175156333789
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.16620668768882751,
+        "dists": 0.06481897830963135,
+        "psnr_y": 32.309833586677804,
+        "detail_energy": 0.7537561630426851,
+        "fine_correlation": 0.7562131345137684
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.1659918576478958,
+        "dists": 0.07193624973297119,
+        "psnr_y": 32.39025833372851,
+        "detail_energy": 0.7737729702880938,
+        "fine_correlation": 0.7666543668994602
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 8,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.15923529863357544,
+        "dists": 0.05697447061538696,
+        "psnr_y": 31.810154732961244,
+        "detail_energy": 0.7954459463528993,
+        "fine_correlation": 0.7375094071683058
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 8,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.16239194571971893,
+        "dists": 0.07152622938156128,
+        "psnr_y": 32.33097735903976,
+        "detail_energy": 0.7808531149214998,
+        "fine_correlation": 0.7583022914066315
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 8,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.16073182225227356,
+        "dists": 0.06083410978317261,
+        "psnr_y": 32.37116428841903,
+        "detail_energy": 0.7787605278066669,
+        "fine_correlation": 0.7673768965616813
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.1660020500421524,
+        "dists": 0.068398118019104,
+        "psnr_y": 32.55809796178102,
+        "detail_energy": 0.7645529607312138,
+        "fine_correlation": 0.7733587260977314
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.16363705694675446,
+        "dists": 0.06385791301727295,
+        "psnr_y": 32.51136663950731,
+        "detail_energy": 0.7650054546926,
+        "fine_correlation": 0.7705827273498121
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.16139212250709534,
+        "dists": 0.059826552867889404,
+        "psnr_y": 32.24830143086268,
+        "detail_energy": 0.7755836114234368,
+        "fine_correlation": 0.7581819058950597
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.1613193154335022,
+        "dists": 0.06911700963973999,
+        "psnr_y": 32.81335621279423,
+        "detail_energy": 0.7780639517907713,
+        "fine_correlation": 0.7731984958835246
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 12,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.1542268991470337,
+        "dists": 0.054621100425720215,
+        "psnr_y": 32.185250294947245,
+        "detail_energy": 0.8118273515124828,
+        "fine_correlation": 0.7451324482067139
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 12,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.15735413134098053,
+        "dists": 0.06831526756286621,
+        "psnr_y": 32.748105575282615,
+        "detail_energy": 0.7851072073475044,
+        "fine_correlation": 0.7648681295629193
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 12,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.15620212256908417,
+        "dists": 0.05708080530166626,
+        "psnr_y": 32.79504825482977,
+        "detail_energy": 0.7858583771528589,
+        "fine_correlation": 0.7742427254770669
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.16148731112480164,
+        "dists": 0.06416738033294678,
+        "psnr_y": 32.998343861601555,
+        "detail_energy": 0.7714627993771573,
+        "fine_correlation": 0.7803891428030802
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.1588590145111084,
+        "dists": 0.05990785360336304,
+        "psnr_y": 32.94611391006924,
+        "detail_energy": 0.7748164709615962,
+        "fine_correlation": 0.7779123753557409
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.15626056492328644,
+        "dists": 0.0562976598739624,
+        "psnr_y": 32.659990110758585,
+        "detail_energy": 0.7886588849354659,
+        "fine_correlation": 0.7657850759180818
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.12667188048362732,
+        "dists": 0.051938533782958984,
+        "psnr_y": 34.475741361347986,
+        "detail_energy": 0.8083873279254356,
+        "fine_correlation": 0.8117163995106295
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.12113912403583527,
+        "dists": 0.03970378637313843,
+        "psnr_y": 33.24128847245012,
+        "detail_energy": 0.8846966136435483,
+        "fine_correlation": 0.7757946653108209
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 0,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.12235282361507416,
+        "dists": 0.051368772983551025,
+        "psnr_y": 34.40629878786661,
+        "detail_energy": 0.8142636984197114,
+        "fine_correlation": 0.8048738376874627
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.12193644791841507,
+        "dists": 0.04123687744140625,
+        "psnr_y": 34.30651247571104,
+        "detail_energy": 0.8222081487366592,
+        "fine_correlation": 0.8117551562193551
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.12577101588249207,
+        "dists": 0.048065245151519775,
+        "psnr_y": 34.7562811948014,
+        "detail_energy": 0.811065964323958,
+        "fine_correlation": 0.817827842378019
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.12330673635005951,
+        "dists": 0.04430752992630005,
+        "psnr_y": 34.60951274150089,
+        "detail_energy": 0.8249837525605906,
+        "fine_correlation": 0.8130146248999897
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.1218506395816803,
+        "dists": 0.0416223406791687,
+        "psnr_y": 34.06077263316894,
+        "detail_energy": 0.8498068851899506,
+        "fine_correlation": 0.7983484514356204
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.12997624278068542,
+        "dists": 0.05322527885437012,
+        "psnr_y": 34.084562851760275,
+        "detail_energy": 0.8067625642339364,
+        "fine_correlation": 0.8053153019048056
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.12477399408817291,
+        "dists": 0.04106193780899048,
+        "psnr_y": 33.03501884938785,
+        "detail_energy": 0.8734827993732696,
+        "fine_correlation": 0.7706132881158415
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 4,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.12558338046073914,
+        "dists": 0.052396535873413086,
+        "psnr_y": 34.01851960065279,
+        "detail_energy": 0.8126410653446033,
+        "fine_correlation": 0.79823684935101
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.12557898461818695,
+        "dists": 0.0435752272605896,
+        "psnr_y": 34.00936215254488,
+        "detail_energy": 0.8194798074611989,
+        "fine_correlation": 0.8053421998683927
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.12918660044670105,
+        "dists": 0.04954785108566284,
+        "psnr_y": 34.34308212425223,
+        "detail_energy": 0.807539002834807,
+        "fine_correlation": 0.8111534314943943
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.12689954042434692,
+        "dists": 0.04565149545669556,
+        "psnr_y": 34.23322168561344,
+        "detail_energy": 0.8191310417615407,
+        "fine_correlation": 0.8067204309543914
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.12547416985034943,
+        "dists": 0.042969584465026855,
+        "psnr_y": 33.76273611776314,
+        "detail_energy": 0.841522497049881,
+        "fine_correlation": 0.7925779914765299
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.1289091855287552,
+        "dists": 0.052118897438049316,
+        "psnr_y": 34.09542313497493,
+        "detail_energy": 0.8072903506747328,
+        "fine_correlation": 0.8054696929376538
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.12353459000587463,
+        "dists": 0.04075062274932861,
+        "psnr_y": 32.98491596440538,
+        "detail_energy": 0.8699185016564771,
+        "fine_correlation": 0.7694343217243689
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 8,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.12431655079126358,
+        "dists": 0.05148601531982422,
+        "psnr_y": 34.02833857062027,
+        "detail_energy": 0.8131847385704671,
+        "fine_correlation": 0.798404894298767
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.12466275691986084,
+        "dists": 0.042447805404663086,
+        "psnr_y": 33.96273994396115,
+        "detail_energy": 0.8194046703236695,
+        "fine_correlation": 0.8053214234549056
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.12822437286376953,
+        "dists": 0.048432767391204834,
+        "psnr_y": 34.34728087781063,
+        "detail_energy": 0.807104574006587,
+        "fine_correlation": 0.8109721051374732
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.1260288506746292,
+        "dists": 0.04500412940979004,
+        "psnr_y": 34.22198606736194,
+        "detail_energy": 0.8177907280303235,
+        "fine_correlation": 0.8061918634084837
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.1244138777256012,
+        "dists": 0.04271048307418823,
+        "psnr_y": 33.73183420067541,
+        "detail_energy": 0.8391505976112554,
+        "fine_correlation": 0.7918512158686373
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.1270328015089035,
+        "dists": 0.053562045097351074,
+        "psnr_y": 34.26923183375452,
+        "detail_energy": 0.8091271956606119,
+        "fine_correlation": 0.8079167388560524
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.12280473113059998,
+        "dists": 0.03753221035003662,
+        "psnr_y": 33.1155275767468,
+        "detail_energy": 0.8789974563044083,
+        "fine_correlation": 0.7717278549146982
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 12,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.12246115505695343,
+        "dists": 0.05305027961730957,
+        "psnr_y": 34.199802556008684,
+        "detail_energy": 0.8151440113380223,
+        "fine_correlation": 0.800830900146053
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.12370423227548599,
+        "dists": 0.04000377655029297,
+        "psnr_y": 34.14248608452328,
+        "detail_energy": 0.8225326897388494,
+        "fine_correlation": 0.8079677374244733
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.12641790509223938,
+        "dists": 0.04914754629135132,
+        "psnr_y": 34.52798726508127,
+        "detail_energy": 0.8105544370044566,
+        "fine_correlation": 0.8137173850767939
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.12461996078491211,
+        "dists": 0.04401099681854248,
+        "psnr_y": 34.3929879343581,
+        "detail_energy": 0.8229524461108113,
+        "fine_correlation": 0.80878933067343
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.12346979230642319,
+        "dists": 0.040206193923950195,
+        "psnr_y": 33.884652512924504,
+        "detail_energy": 0.8459381802772502,
+        "fine_correlation": 0.7941689491662438
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3608609139919281,
+        "dists": 0.18360084295272827,
+        "psnr_y": 28.458701073569568,
+        "detail_energy": 0.47601310686584675,
+        "fine_correlation": 0.36562294272253865
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 0,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.3273824155330658,
+        "dists": 0.17036223411560059,
+        "psnr_y": 27.567269867202178,
+        "detail_energy": 0.5952900898160453,
+        "fine_correlation": 0.3107372973222009
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 0,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.3609982430934906,
+        "dists": 0.18414247035980225,
+        "psnr_y": 28.441987694863187,
+        "detail_energy": 0.48989293579995413,
+        "fine_correlation": 0.3558781292759004
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 0,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.34762537479400635,
+        "dists": 0.17283278703689575,
+        "psnr_y": 27.91677866963463,
+        "detail_energy": 0.5181596161978999,
+        "fine_correlation": 0.3618999895763595
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.3545827269554138,
+        "dists": 0.17966079711914062,
+        "psnr_y": 28.40792516760272,
+        "detail_energy": 0.4791402829855329,
+        "fine_correlation": 0.36855484478683237
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.34575915336608887,
+        "dists": 0.17534172534942627,
+        "psnr_y": 28.2312317068074,
+        "detail_energy": 0.5017301725706509,
+        "fine_correlation": 0.35722885221197936
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.3369479775428772,
+        "dists": 0.17187190055847168,
+        "psnr_y": 27.944791679060348,
+        "detail_energy": 0.5411717687967736,
+        "fine_correlation": 0.3365827607387121
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.36100029945373535,
+        "dists": 0.18247193098068237,
+        "psnr_y": 28.574700354016883,
+        "detail_energy": 0.48298787746347893,
+        "fine_correlation": 0.36258315329072427
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 4,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.32565614581108093,
+        "dists": 0.16939067840576172,
+        "psnr_y": 27.628125961655318,
+        "detail_energy": 0.6091390760303167,
+        "fine_correlation": 0.31162557712835465
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 4,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.36128857731819153,
+        "dists": 0.18276703357696533,
+        "psnr_y": 28.558343276498693,
+        "detail_energy": 0.49643414903558186,
+        "fine_correlation": 0.3525829153525723
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 4,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.34609049558639526,
+        "dists": 0.1711825728416443,
+        "psnr_y": 27.97350780691025,
+        "detail_energy": 0.526625988199343,
+        "fine_correlation": 0.3580648405355719
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.35373157262802124,
+        "dists": 0.17868739366531372,
+        "psnr_y": 28.511077517046207,
+        "detail_energy": 0.4875273677309919,
+        "fine_correlation": 0.3659867908081156
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.3444761335849762,
+        "dists": 0.17436248064041138,
+        "psnr_y": 28.320222649069112,
+        "detail_energy": 0.5115478000885014,
+        "fine_correlation": 0.3561203462602467
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.3351188898086548,
+        "dists": 0.17069518566131592,
+        "psnr_y": 28.01903610612262,
+        "detail_energy": 0.5530189731550087,
+        "fine_correlation": 0.3363076448674074
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3621707260608673,
+        "dists": 0.1846083402633667,
+        "psnr_y": 28.414443544753382,
+        "detail_energy": 0.45802917830892076,
+        "fine_correlation": 0.37743125757050616
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 8,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.327123761177063,
+        "dists": 0.17430782318115234,
+        "psnr_y": 27.514715377125746,
+        "detail_energy": 0.6003536464440833,
+        "fine_correlation": 0.32340770910300687
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 8,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.36244508624076843,
+        "dists": 0.18489611148834229,
+        "psnr_y": 28.39868714901497,
+        "detail_energy": 0.47001975570985544,
+        "fine_correlation": 0.36740941533859894
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 8,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.3467109799385071,
+        "dists": 0.17514961957931519,
+        "psnr_y": 27.8562861007935,
+        "detail_energy": 0.5054526709095452,
+        "fine_correlation": 0.37305447108500495
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.3548310697078705,
+        "dists": 0.18073850870132446,
+        "psnr_y": 28.37269208077613,
+        "detail_energy": 0.4661651795624019,
+        "fine_correlation": 0.3817231267591429
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.34562262892723083,
+        "dists": 0.17753392457962036,
+        "psnr_y": 28.19542813699392,
+        "detail_energy": 0.49475689040639403,
+        "fine_correlation": 0.3700819405480699
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.3367396593093872,
+        "dists": 0.17533516883850098,
+        "psnr_y": 27.90309779885297,
+        "detail_energy": 0.5406387006026094,
+        "fine_correlation": 0.3493176414273421
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3599850535392761,
+        "dists": 0.18053609132766724,
+        "psnr_y": 28.57550167821394,
+        "detail_energy": 0.4601135404880881,
+        "fine_correlation": 0.395445827619169
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 12,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.3234518766403198,
+        "dists": 0.16900432109832764,
+        "psnr_y": 27.644636353370295,
+        "detail_energy": 0.616554651774851,
+        "fine_correlation": 0.3332307980474408
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 12,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.3601018786430359,
+        "dists": 0.18090426921844482,
+        "psnr_y": 28.559622122593087,
+        "detail_energy": 0.4722862390819826,
+        "fine_correlation": 0.3856481048250284
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 12,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.3449932336807251,
+        "dists": 0.17062485218048096,
+        "psnr_y": 28.022883572663247,
+        "detail_energy": 0.5112509670938544,
+        "fine_correlation": 0.38933476130598493
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.35301053524017334,
+        "dists": 0.17669737339019775,
+        "psnr_y": 28.53452257366257,
+        "detail_energy": 0.47058178187666205,
+        "fine_correlation": 0.3981980415283181
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.3428821861743927,
+        "dists": 0.17287248373031616,
+        "psnr_y": 28.353889945296253,
+        "detail_energy": 0.502894326793097,
+        "fine_correlation": 0.38501011510526817
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.3331521153450012,
+        "dists": 0.17074644565582275,
+        "psnr_y": 28.049203466545222,
+        "detail_energy": 0.5528500987613025,
+        "fine_correlation": 0.3609868984243308
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2660437822341919,
+        "dists": 0.12414711713790894,
+        "psnr_y": 32.76394880251781,
+        "detail_energy": 0.6750577614848344,
+        "fine_correlation": 0.6511676684275636
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 0,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.2513934373855591,
+        "dists": 0.10827261209487915,
+        "psnr_y": 31.96765884669983,
+        "detail_energy": 0.7123407903224183,
+        "fine_correlation": 0.5916611700348361
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 0,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.26565325260162354,
+        "dists": 0.12394791841506958,
+        "psnr_y": 32.727598899716014,
+        "detail_energy": 0.6880681833913344,
+        "fine_correlation": 0.642330557918635
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 0,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.25998401641845703,
+        "dists": 0.11173176765441895,
+        "psnr_y": 32.48100258962001,
+        "detail_energy": 0.6923439956999126,
+        "fine_correlation": 0.6494720824589146
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.2627553939819336,
+        "dists": 0.11973440647125244,
+        "psnr_y": 32.84717134170137,
+        "detail_energy": 0.6662704569872839,
+        "fine_correlation": 0.6523740667705077
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.2584682106971741,
+        "dists": 0.11576128005981445,
+        "psnr_y": 32.73736024328765,
+        "detail_energy": 0.6697581572527785,
+        "fine_correlation": 0.6422783006804155
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.2546955943107605,
+        "dists": 0.11181741952896118,
+        "psnr_y": 32.43076463393769,
+        "detail_energy": 0.6851789541173523,
+        "fine_correlation": 0.6211572695885851
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.26738595962524414,
+        "dists": 0.12175381183624268,
+        "psnr_y": 32.69392032363357,
+        "detail_energy": 0.6804763962500546,
+        "fine_correlation": 0.6326150705606036
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 4,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.24598151445388794,
+        "dists": 0.10427939891815186,
+        "psnr_y": 31.78086543220603,
+        "detail_energy": 0.7454202184956015,
+        "fine_correlation": 0.5787992583638416
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 4,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.266999751329422,
+        "dists": 0.12151104211807251,
+        "psnr_y": 32.6625832339913,
+        "detail_energy": 0.6925885765428546,
+        "fine_correlation": 0.6240457120377206
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 4,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.25728997588157654,
+        "dists": 0.10954076051712036,
+        "psnr_y": 32.29592123218337,
+        "detail_energy": 0.7041994960504042,
+        "fine_correlation": 0.6317245876368204
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.2620064914226532,
+        "dists": 0.11735343933105469,
+        "psnr_y": 32.74690716797872,
+        "detail_energy": 0.6776331372873953,
+        "fine_correlation": 0.635162075050208
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.25581926107406616,
+        "dists": 0.11310875415802002,
+        "psnr_y": 32.60305792252871,
+        "detail_energy": 0.6880057524719534,
+        "fine_correlation": 0.6259764487767284
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.2504165470600128,
+        "dists": 0.10820114612579346,
+        "psnr_y": 32.26664726352921,
+        "detail_energy": 0.710833461672497,
+        "fine_correlation": 0.6064777900049798
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.26816433668136597,
+        "dists": 0.12327104806900024,
+        "psnr_y": 32.616057426437465,
+        "detail_energy": 0.6691266338293589,
+        "fine_correlation": 0.6374602699133914
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 8,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.244842991232872,
+        "dists": 0.10228770971298218,
+        "psnr_y": 31.776096060632884,
+        "detail_energy": 0.7407316185162874,
+        "fine_correlation": 0.5872150635269321
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 8,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.26778632402420044,
+        "dists": 0.12309843301773071,
+        "psnr_y": 32.58214241323003,
+        "detail_energy": 0.6810494507706704,
+        "fine_correlation": 0.6286907915031654
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 8,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.25737395882606506,
+        "dists": 0.10857903957366943,
+        "psnr_y": 32.26620944566339,
+        "detail_energy": 0.694232820193468,
+        "fine_correlation": 0.6377435848116884
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.2625071108341217,
+        "dists": 0.11830008029937744,
+        "psnr_y": 32.68844735634541,
+        "detail_energy": 0.6680441147362733,
+        "fine_correlation": 0.6410254406116155
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.2555183470249176,
+        "dists": 0.11281102895736694,
+        "psnr_y": 32.56481276749686,
+        "detail_energy": 0.6803366623026295,
+        "fine_correlation": 0.6326348265215327
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.249490886926651,
+        "dists": 0.1072588562965393,
+        "psnr_y": 32.245726119054304,
+        "detail_energy": 0.7048929495557803,
+        "fine_correlation": 0.6139652264594523
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2584027647972107,
+        "dists": 0.11441993713378906,
+        "psnr_y": 33.10038323357328,
+        "detail_energy": 0.6790411667325656,
+        "fine_correlation": 0.6659662431817057
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 12,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.23579253256320953,
+        "dists": 0.09436565637588501,
+        "psnr_y": 32.22569777437029,
+        "detail_energy": 0.7555540031395652,
+        "fine_correlation": 0.6159707975041651
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 12,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.2579721510410309,
+        "dists": 0.11411267518997192,
+        "psnr_y": 33.06482147511809,
+        "detail_energy": 0.6913529948374146,
+        "fine_correlation": 0.6572740722667751
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 12,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.248656764626503,
+        "dists": 0.1011548638343811,
+        "psnr_y": 32.75004413699076,
+        "detail_energy": 0.7049927730439004,
+        "fine_correlation": 0.666911035952995
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.2531508207321167,
+        "dists": 0.10947012901306152,
+        "psnr_y": 33.195285410323194,
+        "detail_energy": 0.679445315021295,
+        "fine_correlation": 0.6697233847751605
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.24640899896621704,
+        "dists": 0.10323673486709595,
+        "psnr_y": 33.0700160579204,
+        "detail_energy": 0.6927527799034289,
+        "fine_correlation": 0.662024012488347
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.2405722290277481,
+        "dists": 0.09847390651702881,
+        "psnr_y": 32.73139472719015,
+        "detail_energy": 0.7184737232302227,
+        "fine_correlation": 0.64322310932575
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.21990743279457092,
+        "dists": 0.09313416481018066,
+        "psnr_y": 35.22948056801959,
+        "detail_energy": 0.7303644116914836,
+        "fine_correlation": 0.7596703145687429
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 0,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.197694331407547,
+        "dists": 0.07382220029830933,
+        "psnr_y": 33.88396317811201,
+        "detail_energy": 0.8213232599379623,
+        "fine_correlation": 0.7013269565521771
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 0,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.2182534784078598,
+        "dists": 0.09175539016723633,
+        "psnr_y": 35.196604937644224,
+        "detail_energy": 0.7430978791830032,
+        "fine_correlation": 0.7533145921734237
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 0,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.20894131064414978,
+        "dists": 0.07856571674346924,
+        "psnr_y": 34.77033277151356,
+        "detail_energy": 0.7562624404116233,
+        "fine_correlation": 0.7585044592025048
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.21538349986076355,
+        "dists": 0.08664953708648682,
+        "psnr_y": 35.481856352797216,
+        "detail_energy": 0.7346742350981428,
+        "fine_correlation": 0.7614406704299475
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.20930862426757812,
+        "dists": 0.08118492364883423,
+        "psnr_y": 35.29288117937835,
+        "detail_energy": 0.7522510700813995,
+        "fine_correlation": 0.7509658561284951
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 0,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.2035428136587143,
+        "dists": 0.07681256532669067,
+        "psnr_y": 34.7111049889554,
+        "detail_energy": 0.7813966660831696,
+        "fine_correlation": 0.730217524150553
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2309991717338562,
+        "dists": 0.09648460149765015,
+        "psnr_y": 34.56088147389207,
+        "detail_energy": 0.7195963083538964,
+        "fine_correlation": 0.7191845747332178
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 4,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.20066295564174652,
+        "dists": 0.07648605108261108,
+        "psnr_y": 33.378109364766644,
+        "detail_energy": 0.8394468339566391,
+        "fine_correlation": 0.6755667671586945
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 4,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.22949331998825073,
+        "dists": 0.09546256065368652,
+        "psnr_y": 34.534967869920585,
+        "detail_energy": 0.7307536820152084,
+        "fine_correlation": 0.7132057383202065
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 4,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.2173917293548584,
+        "dists": 0.08154988288879395,
+        "psnr_y": 34.09630729939784,
+        "detail_energy": 0.7520928171963327,
+        "fine_correlation": 0.7210762853551286
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.22416217625141144,
+        "dists": 0.090351402759552,
+        "psnr_y": 34.78309031780745,
+        "detail_energy": 0.7306390086847848,
+        "fine_correlation": 0.7244625098333216
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.21576669812202454,
+        "dists": 0.08419936895370483,
+        "psnr_y": 34.62521435664139,
+        "detail_energy": 0.7550814516963482,
+        "fine_correlation": 0.7172773229318667
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 4,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.20819194614887238,
+        "dists": 0.07959294319152832,
+        "psnr_y": 34.12005976801354,
+        "detail_energy": 0.7917301513123256,
+        "fine_correlation": 0.7000550422925838
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2230190634727478,
+        "dists": 0.09473711252212524,
+        "psnr_y": 34.84537071210618,
+        "detail_energy": 0.7259320402224393,
+        "fine_correlation": 0.7389847384142091
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 8,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.1976524293422699,
+        "dists": 0.07428771257400513,
+        "psnr_y": 33.394287019876934,
+        "detail_energy": 0.8515140869409015,
+        "fine_correlation": 0.6849625347654008
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 8,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.2213132381439209,
+        "dists": 0.09397542476654053,
+        "psnr_y": 34.81224392952603,
+        "detail_energy": 0.7371745783573792,
+        "fine_correlation": 0.7322175435598542
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 8,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.21181325614452362,
+        "dists": 0.08027410507202148,
+        "psnr_y": 34.248254358869396,
+        "detail_energy": 0.7583736668230548,
+        "fine_correlation": 0.7389038635845798
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.21724474430084229,
+        "dists": 0.08907675743103027,
+        "psnr_y": 35.03411687475881,
+        "detail_energy": 0.7374849777641151,
+        "fine_correlation": 0.7423700107416459
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.21034805476665497,
+        "dists": 0.0836629867553711,
+        "psnr_y": 34.80250904248747,
+        "detail_energy": 0.7631688039928245,
+        "fine_correlation": 0.7327951853664664
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 8,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.20390060544013977,
+        "dists": 0.07773095369338989,
+        "psnr_y": 34.211791766878044,
+        "detail_energy": 0.8018702777672786,
+        "fine_correlation": 0.7122661483120104
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.21877610683441162,
+        "dists": 0.09185808897018433,
+        "psnr_y": 35.306992690183996,
+        "detail_energy": 0.742349982189692,
+        "fine_correlation": 0.760713357963429
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 12,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.1926545798778534,
+        "dists": 0.0697317123413086,
+        "psnr_y": 33.944032297273964,
+        "detail_energy": 0.8568140057849618,
+        "fine_correlation": 0.7067260828998853
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 12,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.21695050597190857,
+        "dists": 0.09105074405670166,
+        "psnr_y": 35.274436320418644,
+        "detail_energy": 0.7541516120838246,
+        "fine_correlation": 0.7544187543257174
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 12,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.20666472613811493,
+        "dists": 0.07583028078079224,
+        "psnr_y": 34.84704983120031,
+        "detail_energy": 0.7714679655673764,
+        "fine_correlation": 0.7609140311047713
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.21330447494983673,
+        "dists": 0.08559978008270264,
+        "psnr_y": 35.527828884823165,
+        "detail_energy": 0.7513671508103567,
+        "fine_correlation": 0.7640581674086113
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.20639216899871826,
+        "dists": 0.0789494514465332,
+        "psnr_y": 35.328168077163156,
+        "detail_energy": 0.7744955010338317,
+        "fine_correlation": 0.7546796880779086
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 12,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.19927257299423218,
+        "dists": 0.07334774732589722,
+        "psnr_y": 34.75383638047164,
+        "detail_energy": 0.8102774601938705,
+        "fine_correlation": 0.7345064130674194
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.1833016574382782,
+        "dists": 0.07352054119110107,
+        "psnr_y": 36.56727472291978,
+        "detail_energy": 0.7576987984069941,
+        "fine_correlation": 0.7987675584253111
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.15668459236621857,
+        "dists": 0.05997437238693237,
+        "psnr_y": 34.44855094671746,
+        "detail_energy": 0.8818887360422488,
+        "fine_correlation": 0.7307100577626984
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 0,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.17912346124649048,
+        "dists": 0.07263970375061035,
+        "psnr_y": 36.54638976018699,
+        "detail_energy": 0.7692510772986381,
+        "fine_correlation": 0.7940307964108555
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.17333027720451355,
+        "dists": 0.06158280372619629,
+        "psnr_y": 35.69496959190354,
+        "detail_energy": 0.7871067596874552,
+        "fine_correlation": 0.7959874678662193
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.17718364298343658,
+        "dists": 0.06639277935028076,
+        "psnr_y": 36.90475181987911,
+        "detail_energy": 0.7691063305231032,
+        "fine_correlation": 0.7988526132340514
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.16833466291427612,
+        "dists": 0.062315940856933594,
+        "psnr_y": 36.54162390424251,
+        "detail_energy": 0.7941867665646217,
+        "fine_correlation": 0.7856883071819922
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 0,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.16101647913455963,
+        "dists": 0.06030917167663574,
+        "psnr_y": 35.63139327961284,
+        "detail_energy": 0.8322959340658972,
+        "fine_correlation": 0.7618089007984735
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.18871289491653442,
+        "dists": 0.07443583011627197,
+        "psnr_y": 36.208227113935465,
+        "detail_energy": 0.7701148768287237,
+        "fine_correlation": 0.7776550434387904
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.1581355333328247,
+        "dists": 0.061235249042510986,
+        "psnr_y": 33.94565121888454,
+        "detail_energy": 0.92017534600679,
+        "fine_correlation": 0.7161415315289102
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 4,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.18488655984401703,
+        "dists": 0.07333588600158691,
+        "psnr_y": 36.19086199584367,
+        "detail_energy": 0.7808546571405638,
+        "fine_correlation": 0.7730425739131387
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.17754042148590088,
+        "dists": 0.06309497356414795,
+        "psnr_y": 35.10434548718305,
+        "detail_energy": 0.8034775915052467,
+        "fine_correlation": 0.7764709928016297
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.18126067519187927,
+        "dists": 0.06816405057907104,
+        "psnr_y": 36.46045829924019,
+        "detail_energy": 0.7861846110096725,
+        "fine_correlation": 0.7799834541403088
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.17150713503360748,
+        "dists": 0.06495934724807739,
+        "psnr_y": 36.04257951583357,
+        "detail_energy": 0.8176676726021944,
+        "fine_correlation": 0.768387121277269
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 4,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.1633165180683136,
+        "dists": 0.062276482582092285,
+        "psnr_y": 35.11761803229799,
+        "detail_energy": 0.8630341822233166,
+        "fine_correlation": 0.7458622212026428
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.18844418227672577,
+        "dists": 0.07672011852264404,
+        "psnr_y": 36.30508729161122,
+        "detail_energy": 0.7655551493058074,
+        "fine_correlation": 0.7861811336130169
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.15912680327892303,
+        "dists": 0.06145834922790527,
+        "psnr_y": 34.022195751267056,
+        "detail_energy": 0.9143694682096978,
+        "fine_correlation": 0.7210451922771187
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 8,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.18457049131393433,
+        "dists": 0.07528388500213623,
+        "psnr_y": 36.282543857869484,
+        "detail_energy": 0.7760745974721616,
+        "fine_correlation": 0.7813596962409869
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.17808718979358673,
+        "dists": 0.06587153673171997,
+        "psnr_y": 35.23227855356273,
+        "detail_energy": 0.7991195431571647,
+        "fine_correlation": 0.7842852393085356
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.18134771287441254,
+        "dists": 0.06991273164749146,
+        "psnr_y": 36.55383054940777,
+        "detail_energy": 0.7816742820561635,
+        "fine_correlation": 0.7874463009360353
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.17193593084812164,
+        "dists": 0.06535911560058594,
+        "psnr_y": 36.12997611161412,
+        "detail_energy": 0.8126894026735708,
+        "fine_correlation": 0.7748896174159606
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 8,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.16402553021907806,
+        "dists": 0.06221938133239746,
+        "psnr_y": 35.1986337526102,
+        "detail_energy": 0.8577871707561056,
+        "fine_correlation": 0.7515814875198895
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.18311654031276703,
+        "dists": 0.0711471438407898,
+        "psnr_y": 36.71363407025349,
+        "detail_energy": 0.7813247881816868,
+        "fine_correlation": 0.801764943530346
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher",
+      "metrics": {
+        "lpips": 0.15654635429382324,
+        "dists": 0.05710244178771973,
+        "psnr_y": 34.35191499802589,
+        "detail_energy": 0.9276235816121262,
+        "fine_correlation": 0.7341857610050708
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 12,
+      "variant": "direct2x_area",
+      "metrics": {
+        "lpips": 0.17888888716697693,
+        "dists": 0.06983500719070435,
+        "psnr_y": 36.68850210015783,
+        "detail_energy": 0.7926429066640457,
+        "fine_correlation": 0.7969852280767957
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher_low_shipping_high",
+      "metrics": {
+        "lpips": 0.17430585622787476,
+        "dists": 0.06002175807952881,
+        "psnr_y": 35.70463697100088,
+        "detail_energy": 0.8134908144139085,
+        "fine_correlation": 0.7998297185799342
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.25",
+      "metrics": {
+        "lpips": 0.1768345683813095,
+        "dists": 0.06416511535644531,
+        "psnr_y": 37.01805592232383,
+        "detail_energy": 0.7967594104695715,
+        "fine_correlation": 0.8028677780867786
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.5",
+      "metrics": {
+        "lpips": 0.1678602695465088,
+        "dists": 0.06024247407913208,
+        "psnr_y": 36.580897508986546,
+        "detail_energy": 0.82701016694734,
+        "fine_correlation": 0.7897110663556823
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 12,
+      "variant": "teacher_mix_0.75",
+      "metrics": {
+        "lpips": 0.16070042550563812,
+        "dists": 0.05724138021469116,
+        "psnr_y": 35.59315767135583,
+        "detail_energy": 0.871564589686568,
+        "fine_correlation": 0.7656089895704741
+      }
+    }
+  ],
+  "complete": true,
+  "summary": {
+    "shipping": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.43213558197021484,
+          "dists": 0.16417091339826584,
+          "psnr_y": 23.042974609061716,
+          "detail_energy": 0.4821922746983016,
+          "fine_correlation": 0.3826486426147748
+        },
+        "four_people": {
+          "lpips": 0.2165464572608471,
+          "dists": 0.10294333472847939,
+          "psnr_y": 30.733684444180565,
+          "detail_energy": 0.7082008373284077,
+          "fine_correlation": 0.6708326990081548
+        },
+        "johnny": {
+          "lpips": 0.25876818038523197,
+          "dists": 0.1179279200732708,
+          "psnr_y": 33.183412817477354,
+          "detail_energy": 0.660861376037742,
+          "fine_correlation": 0.639450881123329
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.30248340653876465,
+        "dists": 0.12834738940000534,
+        "psnr_y": 28.986690623573214,
+        "detail_energy": 0.6170848293548171,
+        "fine_correlation": 0.5643107409154196
+      }
+    },
+    "teacher": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.38894514739513397,
+          "dists": 0.14840728417038918,
+          "psnr_y": 22.569467218593168,
+          "detail_energy": 0.57095842964909,
+          "fine_correlation": 0.34681312405994924
+        },
+        "four_people": {
+          "lpips": 0.2090222854167223,
+          "dists": 0.09089377894997597,
+          "psnr_y": 30.100326104719905,
+          "detail_energy": 0.7554198563353333,
+          "fine_correlation": 0.6478485621620562
+        },
+        "johnny": {
+          "lpips": 0.23129889089614153,
+          "dists": 0.10164803266525269,
+          "psnr_y": 31.84211065301169,
+          "detail_energy": 0.774283713314406,
+          "fine_correlation": 0.5827070346862959
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.2764221079026659,
+        "dists": 0.11364969859520595,
+        "psnr_y": 28.17063465877492,
+        "detail_energy": 0.700220666432943,
+        "fine_correlation": 0.5257895736361005
+      }
+    },
+    "direct2x_area": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.419833573512733,
+          "dists": 0.16422754153609276,
+          "psnr_y": 23.037799284739005,
+          "detail_energy": 0.4865903594155483,
+          "fine_correlation": 0.37837478470704006
+        },
+        "four_people": {
+          "lpips": 0.21352436719462276,
+          "dists": 0.10260428860783577,
+          "psnr_y": 30.685181701190565,
+          "detail_energy": 0.7164215379878234,
+          "fine_correlation": 0.6620499687829562
+        },
+        "johnny": {
+          "lpips": 0.25729532539844513,
+          "dists": 0.11741990968585014,
+          "psnr_y": 33.15764606478705,
+          "detail_energy": 0.6728558297115295,
+          "fine_correlation": 0.6320271638462109
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.29688442203526694,
+        "dists": 0.12808391327659288,
+        "psnr_y": 28.960209016905537,
+        "detail_energy": 0.6252892423716337,
+        "fine_correlation": 0.5574839724454024
+      }
+    },
+    "teacher_low_shipping_high": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.42955780029296875,
+          "dists": 0.15467007458209991,
+          "psnr_y": 22.89995792312017,
+          "detail_energy": 0.5011087533006532,
+          "fine_correlation": 0.3817023666005603
+        },
+        "four_people": {
+          "lpips": 0.21307317353785038,
+          "dists": 0.09456321597099304,
+          "psnr_y": 30.630113616703206,
+          "detail_energy": 0.72306454716143,
+          "fine_correlation": 0.672914862061037
+        },
+        "johnny": {
+          "lpips": 0.24729997292160988,
+          "dists": 0.10547420755028725,
+          "psnr_y": 32.57880052619315,
+          "detail_energy": 0.6936656203844056,
+          "fine_correlation": 0.6377610881979152
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.29664364891747635,
+        "dists": 0.11823583270112674,
+        "psnr_y": 28.70295735533884,
+        "detail_energy": 0.6392796402821629,
+        "fine_correlation": 0.5641261056198376
+      }
+    },
+    "teacher_mix_0.25": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.4326790887862444,
+          "dists": 0.1596137136220932,
+          "psnr_y": 23.039118453360498,
+          "detail_energy": 0.489208906769236,
+          "fine_correlation": 0.3833422872487577
+        },
+        "four_people": {
+          "lpips": 0.21597810182720423,
+          "dists": 0.10027555003762245,
+          "psnr_y": 30.880411333267286,
+          "detail_energy": 0.7037079698956965,
+          "fine_correlation": 0.6794325645625433
+        },
+        "johnny": {
+          "lpips": 0.25270607601851225,
+          "dists": 0.11255964264273643,
+          "psnr_y": 33.31675110227962,
+          "detail_energy": 0.6676686026627341,
+          "fine_correlation": 0.6421393297437876
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.3004544222106536,
+        "dists": 0.1241496354341507,
+        "psnr_y": 29.078760296302466,
+        "detail_energy": 0.6201951597758889,
+        "fine_correlation": 0.5683047271850296
+      }
+    },
+    "teacher_mix_0.5": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.4230759423226118,
+          "dists": 0.15488587692379951,
+          "psnr_y": 22.95398016264764,
+          "detail_energy": 0.5071774373450073,
+          "fine_correlation": 0.37634064164079783
+        },
+        "four_people": {
+          "lpips": 0.21328616701066494,
+          "dists": 0.0967395007610321,
+          "psnr_y": 30.81466727390746,
+          "detail_energy": 0.7101924185771977,
+          "fine_correlation": 0.6779951176627753
+        },
+        "johnny": {
+          "lpips": 0.2447755290195346,
+          "dists": 0.10786887630820274,
+          "psnr_y": 33.08874182035922,
+          "detail_energy": 0.6898958360863479,
+          "fine_correlation": 0.6316093129580143
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.2937125461176038,
+        "dists": 0.11983141799767812,
+        "psnr_y": 28.952463085638104,
+        "detail_energy": 0.6357552306695177,
+        "fine_correlation": 0.5619816907538625
+      }
+    },
+    "teacher_mix_0.75": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.407234201207757,
+          "dists": 0.15094789117574692,
+          "psnr_y": 22.793880531263767,
+          "detail_energy": 0.5349551956072086,
+          "fine_correlation": 0.36344435151189586
+        },
+        "four_people": {
+          "lpips": 0.21104981703683734,
+          "dists": 0.0936630442738533,
+          "psnr_y": 30.539223997859807,
+          "detail_energy": 0.7277951088502614,
+          "fine_correlation": 0.6670045472077321
+        },
+        "johnny": {
+          "lpips": 0.23756879940629005,
+          "dists": 0.1039956659078598,
+          "psnr_y": 32.558016089655496,
+          "detail_energy": 0.7260634413737549,
+          "fine_correlation": 0.6106203167344129
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.2852842725502948,
+        "dists": 0.11620220045248668,
+        "psnr_y": 28.630373539593023,
+        "detail_energy": 0.6629379152770749,
+        "fine_correlation": 0.5470230718180136
+      }
+    }
+  }
+}

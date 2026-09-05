@@ -90,7 +90,10 @@ def score(output, reference, device):
 def load(path, device):
     state = torch.load(path, map_location="cpu", weights_only=False)
     frames = state.get("frames", 1)
-    model = Unshuffled(state.get("channels", 32), frames=frames,
+    scale = state.get("scale", 4)
+    if scale not in (2, 4):
+        raise ValueError('checkpoint reconstruction scale must be 2 or 4')
+    model = Unshuffled(state.get("channels", 32), frames=frames, scale=scale,
                        version=state.get("version", 1)).eval().to(device)
     model.load_state_dict(state["model"] if "model" in state else state)
     return model, state.get("step", "?"), frames
