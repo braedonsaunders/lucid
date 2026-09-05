@@ -31,3 +31,9 @@ The first GPU scoring launch lacked copied Python dependencies; a second exposed
 ## 480p boundary-only check
 
 The same frozen FP32 output at 864×480→3456×1920 passes all four RGB comparisons (maximum one level, mean about 0.045). In 180 balanced interleaved samples, image output averages 19.267 ms and tensor plus packing 14.610 ms (24.2% lower), p95 25.152/19.408 ms. Full native processing, source-quality, memory and browser gates at this resolution remain. The third exported storage type is not evaluated or selected; the original FP32 choice stays fixed.
+
+## Wider result: frozen FP32 implementation rejected
+
+The eight-source, 960-pair native screen completes all 1,920 CUDA scores. Aggregate LPIPS improves 0.121% and DISTS 0.036%, but OldTownCross exceeds the fixed 0.5% per-source DISTS regression limit. All fine-correlation guards pass. Therefore this implementation does not advance to browser testing or production. Its 32-condition native enhancement-stage mean is 13.994 ms shipping versus 12.552 ms candidate (10.3% lower), but that speed is insufficient for admission. All 960 shipping payload/header and decoded PNG controls match previous artifacts exactly.
+
+The downstream RGB differences average 0.23–0.36 levels by source; the 99th percentile is three levels, with isolated maxima up to fourteen after the native color/detail pipeline. These are descriptive numerical differences, not a replacement for perceptual gates. The original same-geometry reasoning alone did not guarantee sufficiently close delivered quality. Any further work must identify a concrete numerical/ABI mechanism on controlled synthetic inputs; the failed endpoint and thresholds remain fixed. No quality-driven coefficient, checkpoint, gain or rounding sweep is authorized by these results.

@@ -1,0 +1,166 @@
+{
+  "spatial_gate_pass": false,
+  "failure_reasons": [
+    "old_town_cross: dists regression exceeds limit"
+  ],
+  "frames_per_variant": 960,
+  "source_balanced": {
+    "shipping4x": {
+      "lpips": 0.3287723479637255,
+      "dists": 0.13451804220676422,
+      "fine_correlation": 0.4895045033830396
+    },
+    "candidate": {
+      "lpips": 0.32837536638447395,
+      "dists": 0.13446916944036882,
+      "fine_correlation": 0.4895009959964341
+    }
+  },
+  "per_source": {
+    "shipping4x": {
+      "ducks_take_off": {
+        "lpips": 0.473703267176946,
+        "dists": 0.18262003858884177,
+        "fine_correlation": 0.3061806760481151
+      },
+      "old_town_cross": {
+        "lpips": 0.36243146335085236,
+        "dists": 0.13378440340360007,
+        "fine_correlation": 0.5320888628678264
+      },
+      "park_joy": {
+        "lpips": 0.5706823074569305,
+        "dists": 0.2178465043505033,
+        "fine_correlation": 0.26673351147346785
+      },
+      "in_to_tree": {
+        "lpips": 0.47532106935977936,
+        "dists": 0.1454266354441643,
+        "fine_correlation": 0.43585646957854934
+      },
+      "pedestrian_area": {
+        "lpips": 0.2025613340859612,
+        "dists": 0.09828516393899918,
+        "fine_correlation": 0.5865707685274278
+      },
+      "rush_hour": {
+        "lpips": 0.18429613498349984,
+        "dists": 0.09720401763916016,
+        "fine_correlation": 0.5945723063321605
+      },
+      "sunflower": {
+        "lpips": 0.1112715570256114,
+        "dists": 0.10450706084569296,
+        "fine_correlation": 0.6821637474374693
+      },
+      "tractor": {
+        "lpips": 0.2499116502702236,
+        "dists": 0.0964705134431521,
+        "fine_correlation": 0.5118696847993004
+      }
+    },
+    "candidate": {
+      "ducks_take_off": {
+        "lpips": 0.47328032093743483,
+        "dists": 0.1824395512541135,
+        "fine_correlation": 0.30617112046763856
+      },
+      "old_town_cross": {
+        "lpips": 0.3627389711638292,
+        "dists": 0.13471977065006893,
+        "fine_correlation": 0.5320760411955735
+      },
+      "park_joy": {
+        "lpips": 0.5702645050982634,
+        "dists": 0.21761289238929749,
+        "fine_correlation": 0.2667401919677386
+      },
+      "in_to_tree": {
+        "lpips": 0.4749448078374068,
+        "dists": 0.1457434669137001,
+        "fine_correlation": 0.435843054143271
+      },
+      "pedestrian_area": {
+        "lpips": 0.20201945199320714,
+        "dists": 0.09820652157068252,
+        "fine_correlation": 0.5866049998625146
+      },
+      "rush_hour": {
+        "lpips": 0.18368010533352694,
+        "dists": 0.09717488388220469,
+        "fine_correlation": 0.5944963092538633
+      },
+      "sunflower": {
+        "lpips": 0.11065209768712521,
+        "dists": 0.10360921770334244,
+        "fine_correlation": 0.6821828369095583
+      },
+      "tractor": {
+        "lpips": 0.24942267102499802,
+        "dists": 0.09624705115954081,
+        "fine_correlation": 0.511893414171315
+      }
+    }
+  },
+  "perceptual_improvements": {
+    "lpips": 0.0012074664481678266,
+    "dists": 0.0003633175564677904
+  },
+  "per_source_changes": {
+    "ducks_take_off": {
+      "lpips": 0.0008928505856244939,
+      "dists": 0.0009883216328444577,
+      "fine_correlation": -9.55558047655014e-06
+    },
+    "old_town_cross": {
+      "lpips": -0.0008484578301612977,
+      "dists": -0.006991601581890272,
+      "fine_correlation": -1.2821672252916194e-05
+    },
+    "park_joy": {
+      "lpips": 0.0007321102357787934,
+      "dists": 0.0010723695654529797,
+      "fine_correlation": 6.680494270772108e-06
+    },
+    "in_to_tree": {
+      "lpips": 0.000791594453995903,
+      "dists": -0.0021786343923047014,
+      "fine_correlation": -1.3415435278330001e-05
+    },
+    "pedestrian_area": {
+      "lpips": 0.0026751506905265954,
+      "dists": 0.0008001448556922419,
+      "fine_correlation": 3.423133508673182e-05
+    },
+    "rush_hour": {
+      "lpips": 0.003342607537743847,
+      "dists": 0.0002997176213808128,
+      "fine_correlation": -7.599707829719637e-05
+    },
+    "sunflower": {
+      "lpips": 0.005567095087413931,
+      "dists": 0.008591219914568238,
+      "fine_correlation": 1.9089472088951176e-05
+    },
+    "tractor": {
+      "lpips": 0.0019566084442116383,
+      "dists": 0.002316379125969714,
+      "fine_correlation": 2.372937201455816e-05
+    }
+  },
+  "status": "Previously evaluated native source regression; color coverage, browser cadence and fresh release validation remain",
+  "thresholds": {
+    "source_balanced_lpips_improvement_min": -0.005,
+    "source_balanced_dists_improvement_min": -0.005,
+    "per_source_perceptual_regression_max": 0.005,
+    "per_source_fine_correlation_drop_max": 0.002
+  },
+  "promotion_authorized": false,
+  "evidence_sha256": {
+    ".build/tensor-output-regression-quality.json": "3d0c768234a84ca489d5b80615290b3f8e63fc7b3798277d1daa5285abc20890",
+    ".build/tensor-output-regression-rgb/manifest.json": "7c68dfd99ca3b2e88d8b94ea8d4a52d6aa6f3df396a2cdf33dc6d5dfa6d9b697",
+    "Benchmarks/frontier/tensor-output-native-config.json": "436cca66294edef6959959727d9f9c3c4b0be0220dc7bcbf9f45f7e88d55eacb",
+    ".build/quality-holdout-sequences-2x/sequences.json": "788123b0973b0a636dda6a21c1e2f8e9a5e2d58fc565f3dcbaad0a0853815076",
+    "/Users/braedonsaunders/Documents/Code/lucid/Tools/frontier_eval/gate_tensor_output.py": "f5df7585f6d51d97d0be2808e07da935dbc1b09b7907b3088a8a811e89e1cca3"
+  }
+}
