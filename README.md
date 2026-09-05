@@ -184,6 +184,10 @@ bitwise reproducibility across different GPU kernels or PyTorch versions.
 Patch-bank validation is an internal training diagnostic, not an independent
 benchmark. Checkpoints and training corpora are separate artifacts.
 
+The latest [matched subspace experiment](Benchmarks/frontier/subspace-adapter-protocol.md)
+completed both RTX 4080 training arms. It improved perceptual scores but failed
+reference-detail limits on both validation sets; shipping weights remain unchanged.
+
 Tuning tools require an explicitly matched reference or a registered clean pair;
 they cannot silently score an arbitrary clip against the compressed BBB video.
 The experiment called `version=2` is a learned-sigmoid SPAN adaptation, **not**

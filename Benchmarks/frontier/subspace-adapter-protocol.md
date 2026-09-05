@@ -18,4 +18,21 @@ The current mobile challenge winner was also inspected: [official NTIRE reposito
 
 ## Preflight outcome
 
-Four subspace/merge tests and four reconstruction-objective tests pass. The fixed nonzero merged graph passes CPU+GPU Core ML correctness at 360p and 720p (worst RGB error 0.999, mean 0.255 levels). Measured inference mean/p95: 5.807/6.167 ms at 360p and 21.341/21.652 ms at 720p, 20 samples after 10 warmups. This excludes native postprocessing, transport and presentation. Both two-step CUDA smoke runs finish successfully with exact BF16 merged-output checks. Their first batch, first output, discriminator, initialization and all three data/cache identities match. The constrained model has 74,924 trainable coefficients; no coefficient tensors remain in its merged checkpoint. Full training results are not yet established.
+Four subspace/merge tests and four reconstruction-objective tests pass. The fixed nonzero merged graph passes CPU+GPU Core ML correctness at 360p and 720p (worst RGB error 0.999, mean 0.255 levels). Measured inference mean/p95: 5.807/6.167 ms at 360p and 21.341/21.652 ms at 720p, 20 samples after 10 warmups. This excludes native postprocessing, transport and presentation. Both two-step CUDA smoke runs finish successfully with exact BF16 merged-output checks. Their first batch, first output, discriminator, initialization and all three data/cache identities match. The constrained model has 74,924 trainable coefficients; no coefficient tensors remain in its merged checkpoint.
+
+## Completed outcome: reject both candidates
+
+Both arms completed 8,000 steps on the RTX 4080, in 5.263 minutes (full) and 5.298 minutes (protected), excluding startup and evaluation. All seven initial identity checks also match across the full training runs and smoke runs. Every protected checkpoint passes the actual FP32 projected-update tolerance; the largest observed norm is 1.01524e-6. The corresponding unrestricted final norm reaches 0.4261. The constraint works mechanically, but does not preserve final image detail sufficiently.
+
+| Frozen set | Arm | LPIPS improvement | DISTS improvement | Fine-detail failures | Joint gate |
+|---|---|---:|---:|---|---|
+| 48 full-frame pairs | Full | 11.10% | 14.77% | CrowdRun, FourPeople, Johnny | Fail |
+| 48 full-frame pairs | Protected | 12.65% | 12.41% | CrowdRun, FourPeople, Johnny | Fail |
+| 96 validation patches | Full | 12.32% | 8.73% | Sintel, REDS154, REDS073 | Fail |
+| 96 validation patches | Protected | 13.65% | 6.85% | REDS154, REDS073 | Fail |
+
+The protected model substantially reduces Sintel's detail loss (−0.00555 versus −0.04645), but fails the unchanged 0.01 maximum drop on the other five sources. This is a localized benefit, not a joint quality win. Shipping and Lanczos reproduce every previous per-frame control metric exactly on both sets. These are repeatedly used development/validation sets, not fresh holdouts. No checkpoint selection, energy-threshold sweep, calibration blend, 720p admission or trained native promotion follows this failed gate. Shipping weights remain unchanged.
+
+Reproduce both gates with `python3 Benchmarks/frontier/subspace-score.py --mode development --checkpoints .build/subspace-results` and the same command with `--mode bank`. The checkpoint directory must contain `full/step008000.pth` and `protected/step008000.pth`; their identities are recorded in `subspace-training-controls.json`. The scorer rejects changed checkpoint/pixel identities, incomplete or duplicate samples, and control discrepancies over 1e-5. An equal-to-shipping fixture correctly fails the required improvement, and five malformed-evidence cases were checked.
+
+Both CUDA evaluations ran through the new Windows Task Scheduler launcher after the initiating SSH exited, and finished with status/exit code 0. Their copied scripts, manifests and status receipts accompany the raw report hashes. This establishes detached GPU execution over the current LAN route; it does not establish VPN enrollment, off-LAN reachability or reboot recovery.
