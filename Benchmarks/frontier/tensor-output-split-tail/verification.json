@@ -1,0 +1,14 @@
+{
+  "native_tests_passed": 41,
+  "test_log_sha256": "27c6c12964787fbc1a6cd2cb530e512af5968c2617e0c5077f9e43bb64bd0dd4",
+  "test_configuration": "Debug, only LucidTests, CODE_SIGNING_ALLOWED=NO",
+  "prior_attempt": {
+    "configuration": "Release without testability enabled",
+    "exit_code": 65,
+    "reason": "Unable to find module dependency Lucid while compiling tests",
+    "log_sha256": "ec33534caab53099d0167ac5876dd06db05e0a90f26e8677ababc2c43bbc702e"
+  },
+  "binary_compile": "swiftc -parse-as-library -O -whole-module-optimization -target arm64-apple-macos26.0; source hashes in receipt",
+  "release_build_log_sha256": "4051afe39d7b3c5ab7198b5f18cf6fbcafa3effac2c679eac081066c7dd3f2c1",
+  "native_270p_exact_pairs": 16
+}

@@ -48,6 +48,34 @@ struct TensorImagePackerTests {
         #expect(throws: (any Error).self) { try packer.pack(wrongType) }
     }
 
+    @Test func partialPageTensorPreservesPixelsAcrossSharedAndCopiedSegments() throws {
+        let width = 64, height = 47, count = width * height * 3
+        for type in [MLMultiArrayDataType.float16, .float32] {
+            let scalarBytes = type == .float16 ? 2 : 4
+            let bytes = count * scalarBytes, page = Int(getpagesize())
+            let memory = UnsafeMutableRawPointer.allocate(byteCount: bytes, alignment: page)
+            for i in 0..<count {
+                if type == .float16 { memory.assumingMemoryBound(to: Float16.self)[i] = Float16(i % 251) }
+                else { memory.assumingMemoryBound(to: Float.self)[i] = Float(i % 251) }
+            }
+            let array = try MLMultiArray(dataPointer: memory, shape: [1,3,47,64], dataType: type,
+                strides: [NSNumber(value: count),NSNumber(value: width*height),64,1], deallocator: { $0.deallocate() })
+            let packer = try CoreMLTensorImagePacker(width: width, height: height)
+            let output = try packer.pack(array)
+            #expect(packer.transferModes == ["shared page prefix with copied tail"])
+            #expect(packer.storage["copied_bytes"] as? Int == bytes % page)
+            CVPixelBufferLockBaseAddress(output, .readOnly)
+            let pixels = CVPixelBufferGetBaseAddress(output)!.assumingMemoryBound(to: UInt8.self)
+            var mismatches = 0
+            for y in 0..<height { for x in 0..<width { for c in 0..<3 {
+                let expected = UInt8((c*width*height+y*width+x) % 251)
+                if pixels[y*CVPixelBufferGetBytesPerRow(output)+x*4+2-c] != expected { mismatches += 1 }
+            } } }
+            CVPixelBufferUnlockBaseAddress(output, .readOnly)
+            #expect(mismatches == 0)
+        }
+    }
+
     @Test func packedOutputRetainsSharedStorageAfterAdapterRelease() throws {
         var packer: CoreMLTensorImagePacker? = try CoreMLTensorImagePacker(width: 1, height: 1)
         let array = try MLMultiArray(shape: [1,3,1,1], dataType: .float32)

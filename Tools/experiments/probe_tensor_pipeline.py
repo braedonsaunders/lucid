@@ -26,7 +26,8 @@ def main():
         '-show_entries','stream=width,height,r_frame_rate,pix_fmt,color_range,color_space,color_transfer,color_primaries',
         '-of','json',str(args.video)],text=True))['streams'][0]
     width,height=stream['width'],stream['height']
-    if (width,height) not in ((640,360),(864,480)):raise ValueError('fixed native fixture geometry required')
+    if (width,height) not in ((256,144),(320,180),(432,240),(480,270),(640,360),(864,480)):
+        raise ValueError('fixed shipping-ladder fixture geometry required')
     for key,expected in [('color_range','tv'),('color_space','bt709'),('color_transfer','bt709'),('color_primaries','bt709')]:
         if stream.get(key,expected)!=expected:raise ValueError('fixture contradicts the explicit Rec709 contract')
     args.out.mkdir()

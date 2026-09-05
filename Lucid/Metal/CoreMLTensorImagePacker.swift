@@ -17,6 +17,7 @@ final class CoreMLTensorImagePacker {
     let device: MTLDevice
     let queue: MTLCommandQueue
     let pipeline: MTLComputePipelineState
+    let splitPipeline: MTLComputePipelineState
     let output: CVPixelBuffer
     let outputStorage: MTLBuffer
     let width: Int
@@ -36,16 +37,20 @@ final class CoreMLTensorImagePacker {
         let source = """
         #include <metal_stdlib>
         using namespace metal;
+        constant bool splitTail [[function_constant(0)]];
         kernel void pack_rgb(device const uchar* raw [[buffer(0)]], constant uint4& p [[buffer(1)]],
             device uchar4* output [[buffer(2)]], constant uint2& size [[buffer(3)]],
+            device const uchar* tail [[buffer(4)]], constant uint& prefixScalars [[buffer(5)]],
             uint2 xy [[thread_position_in_grid]]) {
             if (xy.x >= size.x || xy.y >= size.y) return;
             uint offset = xy.y * p.y + xy.x * p.z;
             float3 rgb;
             for (uint c=0; c<3; ++c) {
                 uint at = offset + c*p.x;
-                rgb[c] = p.w == 16 ? float(reinterpret_cast<device const half*>(raw)[at])
-                                  : reinterpret_cast<device const float*>(raw)[at];
+                device const uchar* segment = raw;
+                if (splitTail && at >= prefixScalars) { segment = tail; at -= prefixScalars; }
+                rgb[c] = p.w == 16 ? float(reinterpret_cast<device const half*>(segment)[at])
+                                  : reinterpret_cast<device const float*>(segment)[at];
             }
             // Match the observed Core ML GPU RGB8 image boundary: first
             // binary16 rounding, then integer ties-to-even. Direct FP32
@@ -64,8 +69,15 @@ final class CoreMLTensorImagePacker {
         let options = MTLCompileOptions()
         options.mathMode = .safe
         let library = try device.makeLibrary(source: source, options: options)
-        guard let function = library.makeFunction(name: "pack_rgb") else { throw Self.failure("missing kernel") }
+        let constants = MTLFunctionConstantValues()
+        var split = false
+        constants.setConstantValue(&split, type: .bool, index: 0)
+        let function = try library.makeFunction(name: "pack_rgb", constantValues: constants)
         pipeline = try device.makeComputePipelineState(function: function)
+        split = true
+        constants.setConstantValue(&split, type: .bool, index: 0)
+        splitPipeline = try device.makeComputePipelineState(function:
+            library.makeFunction(name: "pack_rgb", constantValues: constants))
         // The matching Core ML image is not IOSurface-backed. Preserve that
         // representation for VideoToolbox while letting Metal write directly
         // into unified shared memory. The pixel buffer retains its storage even
@@ -100,24 +112,37 @@ final class CoreMLTensorImagePacker {
             // A no-copy Metal buffer requires page-aligned, page-sized storage.
             // Keep GPU access inside the Core ML borrowing closure and wait for it.
             let page = Int(getpagesize())
-            let canWrap = device.hasUnifiedMemory && Int(bitPattern: address) % page == 0 && raw.count % page == 0
-            let wrapped = canWrap ? device.makeBuffer(bytesNoCopy: address, length: raw.count,
+            let prefixBytes = raw.count - raw.count % page
+            let canWrap = device.hasUnifiedMemory && Int(bitPattern: address) % page == 0 && prefixBytes > 0
+            let wrapped = canWrap ? device.makeBuffer(bytesNoCopy: address, length: prefixBytes,
                 options: .storageModeShared, deallocator: nil) : nil
-            guard let buffer = wrapped ?? device.makeBuffer(bytes: address, length: raw.count, options: .storageModeShared),
+            // Never round the borrow up to a page: those bytes are not ours.
+            // At 270p the last 12 KiB require copying, not the entire 24 MiB.
+            let needsTail = wrapped != nil && prefixBytes < raw.count
+            let tail = needsTail ? device.makeBuffer(bytes: address.advanced(by: prefixBytes),
+                length: raw.count - prefixBytes, options: .storageModeShared) : nil
+            let useWrapped = wrapped != nil && (!needsTail || tail != nil)
+            guard let buffer = useWrapped ? wrapped : device.makeBuffer(bytes: address, length: raw.count, options: .storageModeShared),
                   let command = queue.makeCommandBuffer(), let encoder = command.makeComputeCommandEncoder() else {
                 throw Self.failure("Metal buffer or encoder allocation failed")
             }
-            transferModes.insert(wrapped == nil ? "explicit copy" : "page-aligned shared storage")
+            let useTail = useWrapped && needsTail
+            transferModes.insert(useTail ? "shared page prefix with copied tail" :
+                (useWrapped ? "page-aligned shared storage" : "explicit copy"))
             storage = ["shape": shape, "strides": strides, "bytes": raw.count,
                        "dtype_bits": scalarBytes * 8, "page_size": page,
+                       "copied_bytes": useTail ? raw.count - prefixBytes : (useWrapped ? 0 : raw.count),
                        "output_backing": "shared Metal buffer, non-IOSurface CVPixelBuffer"]
             var params = SIMD4<UInt32>(UInt32(strides[1]), UInt32(strides[2]), UInt32(strides[3]), UInt32(scalarBytes*8))
-            encoder.setComputePipelineState(pipeline)
+            encoder.setComputePipelineState(useTail ? splitPipeline : pipeline)
             encoder.setBuffer(buffer, offset: 0, index: 0)
             encoder.setBytes(&params, length: MemoryLayout<SIMD4<UInt32>>.stride, index: 1)
             var size = SIMD2<UInt32>(UInt32(width), UInt32(height))
             encoder.setBuffer(outputStorage, offset: 0, index: 2)
             encoder.setBytes(&size, length: MemoryLayout<SIMD2<UInt32>>.stride, index: 3)
+            encoder.setBuffer(useTail ? tail : buffer, offset: 0, index: 4)
+            var prefixScalars = UInt32(min(prefixBytes / scalarBytes, Int(UInt32.max)))
+            encoder.setBytes(&prefixScalars, length: MemoryLayout<UInt32>.stride, index: 5)
             encoder.dispatchThreads(MTLSize(width: width, height: height, depth: 1),
                 threadsPerThreadgroup: MTLSize(width: 16, height: 16, depth: 1))
             encoder.endEncoding(); command.commit(); command.waitUntilCompleted()
