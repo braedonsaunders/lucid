@@ -192,6 +192,11 @@ final class LearnedUpscaler: @unchecked Sendable {
         }
     }
 
+    static func permitsTensorOutput(arguments: [String], environment: [String: String]) -> Bool {
+        arguments.contains("--pipeline-ms") ||
+            (environment["LUCID_EPHEMERAL"] == "1" && environment["LUCID_EXPERIMENTAL_TENSOR_OUTPUT"] == "1")
+    }
+
     private static func model(width: Int, height: Int) -> URL? {
         // --pipeline-ms can load an exact-size package that is not in the
         // variants table (or is over budget). isEnhanceable still reads the
@@ -324,7 +329,8 @@ final class LearnedUpscaler: @unchecked Sendable {
         if let image = output.value.imageConstraint {
             outputWidth = image.pixelsWide; outputHeight = image.pixelsHigh
             tensorPacker = nil
-        } else if CommandLine.arguments.contains("--pipeline-ms"),
+        } else if Self.permitsTensorOutput(arguments: CommandLine.arguments, environment: ProcessInfo.processInfo.environment),
+                  configuration.computeUnits == .cpuAndGPU,
                   let tensor = output.value.multiArrayConstraint,
                   tensor.dataType == .float32,
                   tensor.shape.map(\.intValue) == [1, 3, constraint.pixelsHigh * 4, constraint.pixelsWide * 4],
@@ -334,6 +340,7 @@ final class LearnedUpscaler: @unchecked Sendable {
             // Measurement-only admission until full native/color/browser gates pass.
             outputWidth = constraint.pixelsWide * 4; outputHeight = constraint.pixelsHigh * 4
             tensorPacker = try CoreMLTensorImagePacker(width: outputWidth, height: outputHeight)
+            print("   Tensor RGB8 output: shared Metal storage, binary16 precision then nearest-even")
         } else { throw Failure.noModel }
         guard let reconstructionScale = Self.reconstructionScale(
             inputWidth: constraint.pixelsWide, inputHeight: constraint.pixelsHigh,

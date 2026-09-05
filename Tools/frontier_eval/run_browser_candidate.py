@@ -26,6 +26,8 @@ def main():
     ap.add_argument('--samples',type=int,default=30)
     ap.add_argument('--candidate-model-stem',default='direct2x_trained_')
     ap.add_argument('--candidate-sharpness',type=float,default=.4)
+    ap.add_argument('--candidate-tensor-output',action='store_true',
+                    help='Enable verified FP32 packing only in the owned ephemeral candidate process')
     ap.add_argument('--order',nargs='+',choices=['shipping','candidate'],default=['shipping','candidate','candidate','shipping'])
     ap.add_argument('--presentation-trace',action='store_true',help='Record actual draw acknowledgments in the extension iframe')
     ap.add_argument('--out',type=Path,required=True)
@@ -51,6 +53,7 @@ def main():
         'scope':'Real companion scripts and MessageChannels, isolated native app/ports; not installed-extension or third-party CSP coverage',
         'order':args.order,'samples_per_run':args.samples,'warmup_seconds':5,
         'candidate_model_stem':args.candidate_model_stem,'candidate_sharpness':args.candidate_sharpness,
+        'candidate_tensor_output':args.candidate_tensor_output,
         'presentation_trace':args.presentation_trace,'runs':[],'complete':False}
     probe_path=Path(__file__).with_name('browser_draw_probe.js')
     if args.presentation_trace:report['presentation_probe_sha256']=digest(probe_path)
@@ -80,6 +83,8 @@ def main():
             app_log=(args.out/f'{index}-{label}-app.log').open('w')
             native_env={**env,'LUCID_EPHEMERAL':'1','LUCID_BRIDGE_PORT':'48111','LUCID_TOKEN_PORT':'48112',
                 'LUCID_COMPUTE_UNITS':'gpu','LUCID_MODEL_STEM':args.candidate_model_stem if label=='candidate' else 'SPAN_x4_ch32utc_'}
+            if label=='candidate' and args.candidate_tensor_output:
+                native_env['LUCID_EXPERIMENTAL_TENSOR_OUTPUT']='1'
             app=subprocess.Popen([str(args.app.resolve()),'-strength','standard'],env=native_env,stdout=app_log,stderr=subprocess.STDOUT)
             cli('open','about:blank' if args.extension else 'http://127.0.0.1:48113','--browser','chrome','--config',str(args.config.resolve()),*(['--headed'] if args.headed else []))
             installation=None
@@ -153,6 +158,24 @@ def main():
             cli('close');session=None
             app.terminate();app.wait(timeout=15);app=None;app_log.close();app_log=None
         report['complete']=True;save()
+    except Exception as error:
+        report['failure']=repr(error)
+        report['native_exit_code']=app.poll() if app else None
+        if session:
+            try:
+                report['failure_browser_state']=js('''async page => {
+                  const state=await page.evaluate(()=>({status:window.latestStatus,statuses:window.statuses,
+                    socket:window.controlSocket?.readyState,frames:document.documentElement.dataset.lucidFrames,
+                    gate:document.documentElement.dataset.lucidGate,
+                    videos:[...document.querySelectorAll('video')].map(v=>({width:v.videoWidth,height:v.videoHeight,
+                      paused:v.paused,time:v.currentTime,readyState:v.readyState,error:v.error?.message}))}));
+                  return {purpose:'failure-diagnostic',state,frames:page.frames().map(f=>f.url()),
+                    workers:page.context().serviceWorkers().map(w=>w.url()),browser:await page.evaluate(()=>navigator.userAgent)};
+                }''')
+            except Exception as diagnostic_error:
+                report['failure_diagnostic_error']=repr(diagnostic_error)
+        save()
+        raise
     finally:
         if session:
             try:

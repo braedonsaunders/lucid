@@ -7,6 +7,14 @@ import Testing
 @testable import Lucid
 
 struct TensorImagePackerTests {
+    @Test func tensorExperimentRequiresExplicitEphemeralOptIn() {
+        #expect(!LearnedUpscaler.permitsTensorOutput(arguments: [], environment: [:]))
+        #expect(!LearnedUpscaler.permitsTensorOutput(arguments: [], environment: ["LUCID_EXPERIMENTAL_TENSOR_OUTPUT":"1"]))
+        #expect(!LearnedUpscaler.permitsTensorOutput(arguments: [], environment: ["LUCID_EPHEMERAL":"1"]))
+        #expect(LearnedUpscaler.permitsTensorOutput(arguments: [], environment: ["LUCID_EPHEMERAL":"1", "LUCID_EXPERIMENTAL_TENSOR_OUTPUT":"1"]))
+        #expect(LearnedUpscaler.permitsTensorOutput(arguments: ["--pipeline-ms"], environment: [:]))
+    }
+
     @Test func paddedFloatStoragePacksRGBAndClampsWithoutEscapingBorrow() throws {
         // Deliberately sub-page and padded: exercises the explicit-copy path.
         let storage = UnsafeMutableRawPointer.allocate(byteCount: 256, alignment: 4)
