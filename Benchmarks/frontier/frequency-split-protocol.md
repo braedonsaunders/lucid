@@ -1,0 +1,9 @@
+# Fixed spatial decomposition test
+
+The regional diagnostic found that perceptual training increases fine energy while losing reference edge alignment. Before another training run, test whether the existing candidate's perceptual gain survives when its highest-frequency changes are attenuated. This is a spatial reconstruction diagnostic, not flicker filtering.
+
+Use the existing reference-detail experiment's fixed 80% checkpoint (`C:/lucid/reference-detail-20260905/calibrated/blend-0.8.pth`) and unchanged shipping weights. Both are converted to the same RGB8 2× presentation domain used by the frozen 48-frame development scorer. Construct exactly one new output: `shipping + Gaussian(candidate - shipping)`. Fix sigma=1 output pixel, radius=3, separable RGB filtering and replicated boundaries before evaluation, based on the existing sigma-1 detail diagnostic. Do not select a different sigma, candidate, or blend after seeing this run. References supply scores only, never predictions or per-image parameter selection.
+
+This does not mathematically preserve the legacy fine-correlation metric: Gaussian filtering is not an ideal frequency projector, and quantization/clamping remain. Require the unchanged aggregate 3% LPIPS/DISTS improvements, per-source perceptual guard and 0.01 fine-correlation limit. A pass would justify testing a constrained cheap residual branch, not shipping this two-network combination. A failure rejects this fixed decomposition. No model training, shipping promotion, temporal changes, or novel-method claim is implied.
+
+Record both unmodified controls on the same frozen pixels and compare their metrics/hashes with the completed reference-detail report. Preserve the full result even if it fails. Any subsequent learned replacement still needs fresh data, native conversion correctness and end-to-end performance.
