@@ -31,6 +31,9 @@ def verify():
         reference = references.get(item['reference'])
         if reference is None or any(item[k] != reference[k] for k in ('width', 'height', 'scale')):
             raise ValueError('Tensor alternative must match an existing shipping geometry')
+    for item in manifest.get('lab_models', []):
+        if item['scale'] not in (2, 4) or item['name'].startswith(manifest['family']):
+            raise ValueError('Lab model must have its own family stem and a 2x or 4x scale')
     for item in all_models(manifest):
         name = item['name']
         if not re.fullmatch(r'[A-Za-z0-9_]+', name) or name in names:
@@ -43,7 +46,9 @@ def verify():
 
 
 def all_models(manifest):
-    return manifest['models'] + manifest.get('tensor_models', [])
+    # lab_models are candidate families the lab page can switch to; they are
+    # verified and compiled like everything else but never chosen at launch.
+    return manifest['models'] + manifest.get('tensor_models', []) + manifest.get('lab_models', [])
 
 
 def package(destination):
