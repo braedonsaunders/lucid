@@ -96,6 +96,8 @@ def main():
     ap.add_argument('--candidate', action='append', required=True)
     ap.add_argument('--baseline', default='shipping')
     ap.add_argument('--anchor', default='lanczos')
+    ap.add_argument('--anchor-report', type=Path,
+                    help='Take anchor rows from another complete report of the same samples (native reports carry no interpolation rows)')
     ap.add_argument('--out', type=Path, required=True)
     args = ap.parse_args()
     if args.out.exists():
@@ -103,8 +105,17 @@ def main():
     report = json.loads(args.report.read_text())
     if report.get('complete') is not True:
         raise ValueError('complete report required')
+    if args.anchor_report:
+        other = json.loads(args.anchor_report.read_text())
+        if other.get('complete') is not True:
+            raise ValueError('complete anchor report required')
+        if any(r['variant'] == args.anchor for r in report['rows']):
+            raise ValueError('report already contains anchor rows')
+        report['rows'] = report['rows'] + [r for r in other['rows'] if r['variant'] == args.anchor]
     results = {c: evaluate(report['rows'], c, args.baseline, args.anchor) for c in args.candidate}
     receipt = {'report': str(args.report), 'report_sha256': digest(args.report),
+               'anchor_report': str(args.anchor_report) if args.anchor_report else None,
+               'anchor_report_sha256': digest(args.anchor_report) if args.anchor_report else None,
                'checkpoint_sha256': report.get('checkpoint_sha256'), 'results': results,
                'code_sha256': digest(Path(__file__))}
     args.out.write_text(json.dumps(receipt, indent=2, allow_nan=False) + '\n')
