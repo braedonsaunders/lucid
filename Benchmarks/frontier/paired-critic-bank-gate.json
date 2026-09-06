@@ -1,0 +1,228 @@
+{
+  "mode": "bank",
+  "results": {
+    "paired_raw": {
+      "spatial_gate_pass": false,
+      "failure_reasons": [
+        "sintel: lpips regression exceeds limit",
+        "sintel: fine correlation drop exceeds limit",
+        "reds_154: fine correlation drop exceeds limit"
+      ],
+      "frames_per_variant": 96,
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.40222197367499274,
+          "dists": 0.22276637516915798,
+          "fine_correlation": 0.3040961481273848
+        },
+        "shipping": {
+          "lpips": 0.36410116745779914,
+          "dists": 0.2224731333553791,
+          "fine_correlation": 0.32143244640958385
+        },
+        "paired_raw": {
+          "lpips": 0.33142003913720447,
+          "dists": 0.19825611573954424,
+          "fine_correlation": 0.30770983159103243
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "sintel": {
+            "lpips": 0.2696159854531288,
+            "dists": 0.2091157976537943,
+            "fine_correlation": 0.32946662473652005
+          },
+          "reds_154": {
+            "lpips": 0.5052469009533525,
+            "dists": 0.26318140141665936,
+            "fine_correlation": 0.2450867044727926
+          },
+          "reds_073": {
+            "lpips": 0.4318030346184969,
+            "dists": 0.1960019264370203,
+            "fine_correlation": 0.3377351151728416
+          }
+        },
+        "shipping": {
+          "sintel": {
+            "lpips": 0.2692622817121446,
+            "dists": 0.21591424942016602,
+            "fine_correlation": 0.32653072984915327
+          },
+          "reds_154": {
+            "lpips": 0.45876778941601515,
+            "dists": 0.2634068951010704,
+            "fine_correlation": 0.2698841119849202
+          },
+          "reds_073": {
+            "lpips": 0.3642734312452376,
+            "dists": 0.1880982555449009,
+            "fine_correlation": 0.3678824973946781
+          }
+        },
+        "paired_raw": {
+          "sintel": {
+            "lpips": 0.28465161100029945,
+            "dists": 0.1901261117309332,
+            "fine_correlation": 0.31018017357730837
+          },
+          "reds_154": {
+            "lpips": 0.38991768937557936,
+            "dists": 0.24020015634596348,
+            "fine_correlation": 0.2548754875662092
+          },
+          "reds_073": {
+            "lpips": 0.31969081703573465,
+            "dists": 0.16444207914173603,
+            "fine_correlation": 0.3580738336295796
+          }
+        }
+      },
+      "perceptual_improvements": {
+        "lpips": 0.08975837278627385,
+        "dists": 0.10885367257874923
+      },
+      "per_source_changes": {
+        "sintel": {
+          "lpips": -0.05715367629769563,
+          "dists": 0.11943694201974364,
+          "fine_correlation": -0.016350556271844896
+        },
+        "reds_154": {
+          "lpips": 0.1500761422855732,
+          "dists": 0.08810224480343387,
+          "fine_correlation": -0.01500862441871098
+        },
+        "reds_073": {
+          "lpips": 0.12238777353896246,
+          "dists": 0.12576499624962179,
+          "fine_correlation": -0.00980866376509848
+        }
+      },
+      "status": "Repeated spatial development screen; independent native/release evidence required",
+      "gate": {
+        "source_balanced_lpips_improvement_min": 0.03,
+        "source_balanced_dists_improvement_min": 0.03,
+        "per_source_perceptual_regression_max": 0.02,
+        "per_source_fine_correlation_drop_max": 0.01
+      },
+      "controls_max_absolute_delta": 0.0,
+      "promotion_authorized": false
+    },
+    "paired80": {
+      "spatial_gate_pass": true,
+      "failure_reasons": [],
+      "frames_per_variant": 96,
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.40222197367499274,
+          "dists": 0.22276637516915798,
+          "fine_correlation": 0.3040961481273848
+        },
+        "shipping": {
+          "lpips": 0.36410116745779914,
+          "dists": 0.2224731333553791,
+          "fine_correlation": 0.32143244640958385
+        },
+        "paired80": {
+          "lpips": 0.32369353839506704,
+          "dists": 0.2055705195913712,
+          "fine_correlation": 0.32334821935400676
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "sintel": {
+            "lpips": 0.2696159854531288,
+            "dists": 0.2091157976537943,
+            "fine_correlation": 0.32946662473652005
+          },
+          "reds_154": {
+            "lpips": 0.5052469009533525,
+            "dists": 0.26318140141665936,
+            "fine_correlation": 0.2450867044727926
+          },
+          "reds_073": {
+            "lpips": 0.4318030346184969,
+            "dists": 0.1960019264370203,
+            "fine_correlation": 0.3377351151728416
+          }
+        },
+        "shipping": {
+          "sintel": {
+            "lpips": 0.2692622817121446,
+            "dists": 0.21591424942016602,
+            "fine_correlation": 0.32653072984915327
+          },
+          "reds_154": {
+            "lpips": 0.45876778941601515,
+            "dists": 0.2634068951010704,
+            "fine_correlation": 0.2698841119849202
+          },
+          "reds_073": {
+            "lpips": 0.3642734312452376,
+            "dists": 0.1880982555449009,
+            "fine_correlation": 0.3678824973946781
+          }
+        },
+        "paired80": {
+          "sintel": {
+            "lpips": 0.2368507361970842,
+            "dists": 0.19633162580430508,
+            "fine_correlation": 0.3423376561512538
+          },
+          "reds_154": {
+            "lpips": 0.4055413994938135,
+            "dists": 0.24802296981215477,
+            "fine_correlation": 0.26317806611356986
+          },
+          "reds_073": {
+            "lpips": 0.32868847949430346,
+            "dists": 0.1723569631576538,
+            "fine_correlation": 0.36452893579719664
+          }
+        }
+      },
+      "perceptual_improvements": {
+        "lpips": 0.11097912523835973,
+        "dists": 0.07597597745435458
+      },
+      "per_source_changes": {
+        "sintel": {
+          "lpips": 0.12037165142093709,
+          "dists": 0.09069630035280085,
+          "fine_correlation": 0.01580692630210051
+        },
+        "reds_154": {
+          "lpips": 0.11602032912981042,
+          "dists": 0.058403654479176614,
+          "fine_correlation": -0.006706045871350319
+        },
+        "reds_073": {
+          "lpips": 0.09768747511804532,
+          "dists": 0.08368654106677498,
+          "fine_correlation": -0.003353561597481458
+        }
+      },
+      "status": "Repeated spatial development screen; independent native/release evidence required",
+      "gate": {
+        "source_balanced_lpips_improvement_min": 0.03,
+        "source_balanced_dists_improvement_min": 0.03,
+        "per_source_perceptual_regression_max": 0.02,
+        "per_source_fine_correlation_drop_max": 0.01
+      },
+      "controls_max_absolute_delta": 0.0,
+      "promotion_authorized": false
+    }
+  },
+  "evidence_sha256": {
+    ".build/paired-critic-results/bank.json": "1d5c088828132d23656af5fc246bc68d327c06ef3987c53d686e42ed88f8b57b",
+    "Benchmarks/frontier/reference-detail-bank-validation.json": "7eaf302cc15a8d6e9f3d0db10f191b4445c361e71d0e5eac17f80af196ffaec7",
+    ".build/paired-critic-results/paired_raw.pth": "745e4766400cda3b80a59c5ebab1b2c0219ca3507c5fa70033f539e5d9a61d41",
+    ".build/paired-critic-results/paired80.pth": "a535c820f8397786e5ea655ada217b0c3c7679fd667daca543ef9bc4d9bcc66c",
+    "/Users/braedonsaunders/Documents/Code/lucid/Tools/frontier_eval/gate_paired_critic.py": "5579499bd6a0c33c7969f02607775d01ec7e0c590eabc8dd5525009708b87a8d",
+    "/Users/braedonsaunders/Documents/Code/lucid/Tools/frontier_eval/gate_controller_candidate.py": "7b383e612e5f0440c58de9a7faf80b4ea016d5fbf6ccc8bd1789cdff2d124399",
+    "/Users/braedonsaunders/Documents/Code/lucid/Tools/frontier_eval/gate_frozen_holdout.py": "cfc05cc6c7dc64a703070afd1b6147f38cae1ed3031413ca6f417c8e6ce1769b"
+  }
+}

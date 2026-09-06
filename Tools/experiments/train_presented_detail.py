@@ -101,6 +101,8 @@ def main():
     ap.add_argument('--detail-target', choices=['mixture', 'reference'], default='mixture',
                     help='Controlled supervision ablation; inference architecture and weights format are unchanged')
     ap.add_argument('--dino-gan-weight', type=float, default=0)
+    ap.add_argument('--paired-dino', action='store_true',
+                    help='Training-only input-conditioned critic with wrong-detail negatives')
     ap.add_argument('--gan-head-ratio-cap', type=float, default=0,
                     help='Optional per-step GAN/reconstruction gradient-norm cap at the output head; zero preserves control')
     ap.add_argument('--pixrestore-repository', type=Path)
@@ -119,6 +121,8 @@ def main():
         ap.error('nonnegative finite ratio cap requires an adversary when enabled')
     if args.dino_gan_weight and not all((args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)):
         ap.error('adversarial supervision requires pinned PixRestore and DINO sources/weights')
+    if args.paired_dino and not args.dino_gan_weight:
+        ap.error('paired critic requires a positive adversarial weight')
     if not torch.cuda.is_available():
         raise ValueError('this experiment requires the authorized CUDA worker')
     torch.set_num_threads(4)
@@ -156,7 +160,11 @@ def main():
     adversary = None
     if args.dino_gan_weight:
         from dino_adversary import DinoAdversary
-        adversary = DinoAdversary(args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)
+        if args.paired_dino:
+            from paired_dino_adversary import PairedDinoAdversary
+            adversary = PairedDinoAdversary(args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)
+        else:
+            adversary = DinoAdversary(args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)
     args.out.mkdir(parents=True)
     experiment = {'args': {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
         'bank_sha256': bank_hash, 'checkpoint_sha256': digest(args.init),
@@ -192,6 +200,8 @@ def main():
         experiment['discriminator_initial_sha256'] = state_digest(adversary.discriminator.state_dict())
         experiment['source_hashes']['dino_adversary.py'] = digest(Path(__file__).with_name('dino_adversary.py'))
         experiment['source_hashes']['dino_supervision.py'] = digest(Path(__file__).with_name('dino_supervision.py'))
+        if args.paired_dino:
+            experiment['source_hashes']['paired_dino_adversary.py'] = digest(Path(__file__).with_name('paired_dino_adversary.py'))
     (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
     started = time.monotonic()
     anchor_hash = None
@@ -218,7 +228,12 @@ def main():
         if adversary:
             adversarial_scale = 1
             with torch.autocast('cuda', dtype=torch.bfloat16):
-                gan_loss, fake_features = adversary.generator_loss(output)
+                if args.paired_dino:
+                    condition = F.interpolate(x.float(), scale_factor=2, mode='bicubic',
+                        align_corners=False, antialias=True).clamp(0, 1)[:, :, 8:-8, 8:-8]
+                    gan_loss, fake_features = adversary.generator_loss(output, condition)
+                else:
+                    gan_loss, fake_features = adversary.generator_loss(output)
             if args.gan_head_ratio_cap or step in (1, 200, 1000):
                 head = (model.core.upsampler[0].coefficients if subspace else model.head.weight
                         if args.architecture in ('anchored_detail', 'anchored_lowpass') else model.core.upsampler[0].weight)

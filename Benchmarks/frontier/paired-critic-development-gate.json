@@ -1,0 +1,229 @@
+{
+  "mode": "development",
+  "results": {
+    "paired_raw": {
+      "spatial_gate_pass": false,
+      "failure_reasons": [
+        "four_people: fine correlation drop exceeds limit",
+        "johnny: fine correlation drop exceeds limit"
+      ],
+      "frames_per_variant": 48,
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.3455616074303786,
+          "dists": 0.12805385887622833,
+          "fine_correlation": 0.5093240648945621
+        },
+        "shipping": {
+          "lpips": 0.3024238742267092,
+          "dists": 0.12832974269986153,
+          "fine_correlation": 0.5643192119145054
+        },
+        "paired_raw": {
+          "lpips": 0.2720439468200008,
+          "dists": 0.1052560123304526,
+          "fine_correlation": 0.5485174973383796
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "crowd_run": {
+            "lpips": 0.4957118332386017,
+            "dists": 0.17144159227609634,
+            "fine_correlation": 0.3584202039433989
+          },
+          "four_people": {
+            "lpips": 0.25478572119027376,
+            "dists": 0.10224039480090141,
+            "fine_correlation": 0.6186566818904616
+          },
+          "johnny": {
+            "lpips": 0.28618726786226034,
+            "dists": 0.11047958955168724,
+            "fine_correlation": 0.5508953088498255
+          }
+        },
+        "shipping": {
+          "crowd_run": {
+            "lpips": 0.4320258032530546,
+            "dists": 0.1641482375562191,
+            "fine_correlation": 0.3826510771160185
+          },
+          "four_people": {
+            "lpips": 0.21655134484171867,
+            "dists": 0.10291698202490807,
+            "fine_correlation": 0.6708610856042104
+          },
+          "johnny": {
+            "lpips": 0.25869447458535433,
+            "dists": 0.11792400851845741,
+            "fine_correlation": 0.6394454730232871
+          }
+        },
+        "paired_raw": {
+          "crowd_run": {
+            "lpips": 0.39569283463060856,
+            "dists": 0.14270421490073204,
+            "fine_correlation": 0.37335434781942434
+          },
+          "four_people": {
+            "lpips": 0.1971244616433978,
+            "dists": 0.07480489835143089,
+            "fine_correlation": 0.6572928221673214
+          },
+          "johnny": {
+            "lpips": 0.22331454418599606,
+            "dists": 0.09825892373919487,
+            "fine_correlation": 0.614905322028393
+          }
+        }
+      },
+      "perceptual_improvements": {
+        "lpips": 0.1004547920840877,
+        "dists": 0.17980033220649339
+      },
+      "per_source_changes": {
+        "crowd_run": {
+          "lpips": 0.08409907081675949,
+          "dists": 0.13063815350525898,
+          "fine_correlation": -0.009296729296594142
+        },
+        "four_people": {
+          "lpips": 0.08971028654899527,
+          "dists": 0.2731530124607955,
+          "fine_correlation": -0.013568263436888994
+        },
+        "johnny": {
+          "lpips": 0.13676337871563204,
+          "dists": 0.166760653969667,
+          "fine_correlation": -0.02454015099489415
+        }
+      },
+      "status": "Repeated spatial development screen; independent native/release evidence required",
+      "gate": {
+        "source_balanced_lpips_improvement_min": 0.03,
+        "source_balanced_dists_improvement_min": 0.03,
+        "per_source_perceptual_regression_max": 0.02,
+        "per_source_fine_correlation_drop_max": 0.01
+      },
+      "controls_max_absolute_delta": 0.0,
+      "promotion_authorized": false
+    },
+    "paired80": {
+      "spatial_gate_pass": false,
+      "failure_reasons": [
+        "johnny: fine correlation drop exceeds limit"
+      ],
+      "frames_per_variant": 48,
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.3455616074303786,
+          "dists": 0.12805385887622833,
+          "fine_correlation": 0.5093240648945621
+        },
+        "shipping": {
+          "lpips": 0.3024238742267092,
+          "dists": 0.12832974269986153,
+          "fine_correlation": 0.5643192119145054
+        },
+        "paired80": {
+          "lpips": 0.2786973165348172,
+          "dists": 0.11316962043444316,
+          "fine_correlation": 0.556860878356602
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "crowd_run": {
+            "lpips": 0.4957118332386017,
+            "dists": 0.17144159227609634,
+            "fine_correlation": 0.3584202039433989
+          },
+          "four_people": {
+            "lpips": 0.25478572119027376,
+            "dists": 0.10224039480090141,
+            "fine_correlation": 0.6186566818904616
+          },
+          "johnny": {
+            "lpips": 0.28618726786226034,
+            "dists": 0.11047958955168724,
+            "fine_correlation": 0.5508953088498255
+          }
+        },
+        "shipping": {
+          "crowd_run": {
+            "lpips": 0.4320258032530546,
+            "dists": 0.1641482375562191,
+            "fine_correlation": 0.3826510771160185
+          },
+          "four_people": {
+            "lpips": 0.21655134484171867,
+            "dists": 0.10291698202490807,
+            "fine_correlation": 0.6708610856042104
+          },
+          "johnny": {
+            "lpips": 0.25869447458535433,
+            "dists": 0.11792400851845741,
+            "fine_correlation": 0.6394454730232871
+          }
+        },
+        "paired80": {
+          "crowd_run": {
+            "lpips": 0.40756223164498806,
+            "dists": 0.1480546034872532,
+            "fine_correlation": 0.3779986601842264
+          },
+          "four_people": {
+            "lpips": 0.19216977152973413,
+            "dists": 0.08482969179749489,
+            "fine_correlation": 0.6658083792669324
+          },
+          "johnny": {
+            "lpips": 0.23635994642972946,
+            "dists": 0.10662456601858139,
+            "fine_correlation": 0.6267755956186473
+          }
+        }
+      },
+      "perceptual_improvements": {
+        "lpips": 0.07845464499970523,
+        "dists": 0.11813412811771129
+      },
+      "per_source_changes": {
+        "crowd_run": {
+          "lpips": 0.05662525576912658,
+          "dists": 0.09804329494219521,
+          "fine_correlation": -0.0046524169317920805
+        },
+        "four_people": {
+          "lpips": 0.11259026504686676,
+          "dists": 0.17574641105425803,
+          "fine_correlation": -0.005052706337278057
+        },
+        "johnny": {
+          "lpips": 0.08633554385505726,
+          "dists": 0.09581969474949992,
+          "fine_correlation": -0.012669877404639873
+        }
+      },
+      "status": "Repeated spatial development screen; independent native/release evidence required",
+      "gate": {
+        "source_balanced_lpips_improvement_min": 0.03,
+        "source_balanced_dists_improvement_min": 0.03,
+        "per_source_perceptual_regression_max": 0.02,
+        "per_source_fine_correlation_drop_max": 0.01
+      },
+      "controls_max_absolute_delta": 0.0,
+      "promotion_authorized": false
+    }
+  },
+  "evidence_sha256": {
+    ".build/paired-critic-results/development.json": "2457abe84ac561f91a7d898862e0eb75749d169c1af5bc6c1e44e9f34ec7080a",
+    "Benchmarks/frontier/reference-detail-development.json": "e8eeb1030a3455d4bc6312688df41477d747adaf1878cb4f914465afc5ec9998",
+    ".build/paired-critic-results/paired_raw.pth": "745e4766400cda3b80a59c5ebab1b2c0219ca3507c5fa70033f539e5d9a61d41",
+    ".build/paired-critic-results/paired80.pth": "a535c820f8397786e5ea655ada217b0c3c7679fd667daca543ef9bc4d9bcc66c",
+    "/Users/braedonsaunders/Documents/Code/lucid/Tools/frontier_eval/gate_paired_critic.py": "5579499bd6a0c33c7969f02607775d01ec7e0c590eabc8dd5525009708b87a8d",
+    "/Users/braedonsaunders/Documents/Code/lucid/Tools/frontier_eval/gate_controller_candidate.py": "7b383e612e5f0440c58de9a7faf80b4ea016d5fbf6ccc8bd1789cdff2d124399",
+    "/Users/braedonsaunders/Documents/Code/lucid/Tools/frontier_eval/gate_frozen_holdout.py": "cfc05cc6c7dc64a703070afd1b6147f38cae1ed3031413ca6f417c8e6ce1769b"
+  }
+}
