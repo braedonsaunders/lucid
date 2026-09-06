@@ -41,6 +41,19 @@ def bounded_adversarial_scale(base_norm, weighted_adversarial_norm, ratio_cap):
     return (ratio_cap * base_norm.detach() / weighted_adversarial_norm.detach().clamp_min(1e-12)).clamp(0, 1)
 
 
+def augment_input_noise(x, sigma, generator=None):
+    """Add per-sample Gaussian noise of random strength in [0, sigma] to the LR input only.
+
+    The reference target is unchanged, so the student learns not to amplify sensor
+    grain and codec noise into speckle; grainy holdout scenes are where every
+    candidate so far lost LPIPS.
+    """
+    if sigma <= 0:
+        return x
+    strength = torch.rand(x.shape[0], 1, 1, 1, device=x.device, generator=generator) * sigma
+    return (x + torch.randn(x.shape, device=x.device, generator=generator) * strength).clamp(0, 1)
+
+
 def state_digest(state):
     result = hashlib.sha256()
     for name, value in sorted(state.items()):
@@ -101,6 +114,8 @@ def main():
     ap.add_argument('--detail-target', choices=['mixture', 'reference'], default='mixture',
                     help='Controlled supervision ablation; inference architecture and weights format are unchanged')
     ap.add_argument('--dino-gan-weight', type=float, default=0)
+    ap.add_argument('--input-noise', type=float, default=0,
+                    help='Max Gaussian noise sigma (0-1 scale) added to LR inputs during training; targets unchanged')
     ap.add_argument('--intended', choices=['mixture', 'reference'], default='mixture',
                     help='Regression target: the fixed shipping/teacher mixture (control) or the HR reference itself')
     ap.add_argument('--paired-dino', action='store_true',
@@ -115,6 +130,8 @@ def main():
         ap.error('fresh output, fixed teacher mix 0/.5, positive steps/batch and even crop >=32 required')
     if not math.isfinite(args.lr) or args.lr <= 0:
         ap.error('positive finite learning rate required')
+    if not math.isfinite(args.input_noise) or args.input_noise < 0 or args.input_noise > .1:
+        ap.error('input noise sigma must be within [0, 0.1]')
     if args.detail_channels < 4 or args.detail_blocks < 1:
         ap.error('detail channels >=4 and positive block count required')
     if not math.isfinite(args.dino_gan_weight) or args.dino_gan_weight < 0:
@@ -183,6 +200,7 @@ def main():
             Path(__file__).resolve().parents[1] / 'architectures/span_arch.py')},
         'loss': f'L1 to {"HR reference" if args.intended == "reference" else "fixed mixture"} + 0.2 signed Sobel to {args.detail_target} + 0.05 FFT to {args.detail_target} + 0.1 L1 to reference; 8 output-pixel border excluded',
         'precision': 'CUDA BF16 autocast; AdamW FP32; no compilation',
+        'input_noise': args.input_noise,
         'torch': str(torch.__version__), 'gpu': torch.cuda.get_device_name(),
         'purpose': 'controlled quality/performance experiment; not shipping promotion'}
     if args.architecture in ('anchored_detail', 'anchored_lowpass'):
@@ -219,6 +237,7 @@ def main():
         x, reference, intended = (v[:, 0].cuda() for v in (x, reference, intended))
         if step == 1:
             experiment['first_batch_sha256'] = state_digest({'source': x, 'reference': reference, 'intended': intended})
+        x = augment_input_noise(x, args.input_noise)
         optimizer.zero_grad(set_to_none=True)
         with torch.autocast('cuda', dtype=torch.bfloat16):
             output = model(x)

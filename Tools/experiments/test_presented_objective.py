@@ -3,7 +3,7 @@ import unittest
 import torch
 from torch.nn import functional as F
 
-from train_presented_detail import reconstruction_objective, sobel_loss, fft_loss, bounded_adversarial_scale
+from train_presented_detail import reconstruction_objective, sobel_loss, fft_loss, bounded_adversarial_scale, augment_input_noise
 
 
 class PresentedObjectiveTest(unittest.TestCase):
@@ -63,6 +63,17 @@ class PresentedObjectiveTest(unittest.TestCase):
         expected = (1.1 * F.l1_loss(output, reference) + .2 * sobel_loss(output, reference)
                     + .05 * fft_loss(output, reference))
         torch.testing.assert_close(reconstruction_objective(output, reference, reference, 'reference'), expected)
+
+    def test_input_noise_is_identity_at_zero_and_bounded(self):
+        torch.manual_seed(7)
+        x = torch.rand(3, 3, 16, 16)
+        self.assertTrue(torch.equal(augment_input_noise(x, 0), x))
+        g = torch.Generator().manual_seed(1)
+        y = augment_input_noise(x, .02, g)
+        self.assertEqual(y.shape, x.shape)
+        self.assertTrue(float(y.min()) >= 0 and float(y.max()) <= 1)
+        self.assertGreater(float((y - x).abs().mean()), 0)
+        self.assertLess(float((y - x).abs().max()), .2)
 
 
 if __name__ == '__main__':

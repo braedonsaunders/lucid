@@ -21,3 +21,34 @@ Same as r1 except the pixel-regression target is the HR reference (`--intended r
 Every arm evaluates its raw final checkpoint and the predetermined 80% candidate / 20% folded-initialization blend on the frozen 48 development pairs and 96 bank-validation patches, with shipping (4× presented at 2×) and Lanczos controls. 24,000-step arms additionally score raw step 8,000 and 16,000 on the development pairs as trajectory information. Both gates are applied: the frozen development gate (`gate_paired_critic.py`) and the perceptual gate (`gate_perceptual.py`). The 960-pair eight-source holdout is scored for survivors. Passing is admission to the native delivery holdout, not release.
 
 No weight blend other than 0.8, no step other than the final, and no arm is chosen after the fact as the "result" without being reported alongside the others.
+
+## Results, r1 and r2 (receipts in `paired-ladder/`)
+
+Source-balanced LPIPS / DISTS improvement over shipping. "pass" is the recalibrated perceptual gate (`perceptual-gate-protocol.md`); the frozen fine-correlation gate is not applied to ladder arms because it rejects the NVIDIA target.
+
+| Arm | Target | Weight | Steps | 48 dev raw | 48 dev 80% | 96 bank raw | 96 bank 80% |
+|---|---|---:|---:|---|---|---|---|
+| r2 (completed earlier) | mixture | 0.005 | 8,000 | +10.05 / +17.98 pass | +7.85 / +11.81 pass | +8.98 / +10.89 Sintel LPIPS | +11.10 / +7.60 pass |
+| `w010_s8k` | mixture | 0.01 | 8,000 | +12.10 / +21.07 pass | +11.09 / +15.16 pass | +8.20 / +11.63 fail | +13.06 / +9.54 pass |
+| `w005_s24k` | mixture | 0.005 | 24,000 | +6.86 / +16.32 pass | +7.95 / +12.71 pass | +7.60 / +11.78 fail | +11.18 / +8.15 pass |
+| `w010_s24k` | mixture | 0.01 | 24,000 | +8.93 / +17.06 fail | +10.23 / +14.55 pass | +6.62 / +11.12 fail | +11.12 / +9.89 Sintel |
+| `ref_w005_s8k` | **reference** | 0.005 | 8,000 | **+15.61 / +20.00 pass** | **+12.22 / +14.13 pass** | +12.05 / +12.01 Sintel LPIPS | **+14.39 / +9.16 pass** |
+| `ref_w010_s24k` | reference | 0.01 | 24,000 | +6.30 / +16.60 fail | +12.98 / +15.41 pass | +8.17 / +9.36 fail | +12.59 / +10.08 Sintel |
+
+Two findings. **Longer schedules hurt**: every 24,000-step raw checkpoint scores below its own 8,000-step snapshot (`ref_w010_s24k` raw at 8k: +13.95 / +20.84; at 24k: +6.30 / +16.60 with LPIPS regressions on FourPeople and Johnny). The adversarial term keeps pushing after the reconstruction term has converged and the output drifts into speckle. **The reference target wins**: at matched weight and steps it adds about five LPIPS points on the development set and three on the bank over the mixture target, and its 80% blend is the best blend on every set.
+
+### 960-pair holdout, torch level (`paired-ladder/merged` reports)
+
+| Candidate | LPIPS | DISTS | Perceptual gate |
+|---|---:|---:|---|
+| NVIDIA VFX ULTRA (`nvvfx-ultra-holdout960.json`) | **+21.60%** | **+21.02%** | pass (below anchor on 4 sources, aggregate above) |
+| `w010_s8k` 80% | +7.92% | +12.25% | Sunflower −4.1% LPIPS / −6.6% DISTS |
+| `w005_s24k` 80% | +6.47% | +10.90% | Sunflower regresses |
+| paired (r2) 80% | +6.10% | +11.92% | pass |
+| paired (r2) raw | +6.27% | +14.92% | RushHour, Sunflower regress; energy 1.10 |
+
+NVIDIA gains most exactly where every Lucid candidate loses: RushHour (+45.9% LPIPS) and Sunflower (+22.1%), the grainy 1080p masters. Our stronger candidates amplify grain and codec noise into speckle (RushHour fine energy 1.09 for the doubled-weight blend); NVIDIA reconstructs clean structure there. That is the remaining gap, not aggregate sharpness.
+
+## Ladders r3 and r4, prespecified
+
+**r3** (`C:\lucid\paired-ladder-20260905-r3`): reference target, 8,000 steps, adversarial weight 0.0025 / 0.0075 / 0.01, plus 0.005 at 4,000 steps. **r4** (`-r4`, queued behind r3): reference target, 0.005, 8,000 steps, with per-sample Gaussian noise of random strength up to sigma 0.01 / 0.02 / 0.04 added to the LR input only (`--input-noise`; targets unchanged), the direct test of the grain hypothesis. Same evaluation for every arm; survivors go to the 960-pair holdout and then the native delivery holdout at a candidate-specific presentation sharpness.
