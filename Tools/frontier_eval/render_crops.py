@@ -62,9 +62,16 @@ def main():
                 if label in args.present_4x_at_2x:
                     image = present_4x_at_2x(image, source.size)
                 panels.append((label, image))
+        rows = manifest['frames']
+        row = next((r for r in rows if r['file'] == f'input/{stem}.png'), None)
         for label, folder in args.external:
             head, index = stem.rsplit('-', 1)
-            path = Path(folder) / f'{head}-{int(index) - 1:03d}-ULTRA.png'
+            names = [f'{head}-{int(index) - 1:03d}-ULTRA.png']
+            if row is not None:
+                names.insert(0, f"{head}-{row['frame']:03d}-ULTRA.png")
+            path = next((Path(folder) / n for n in names if (Path(folder) / n).exists()), None)
+            if path is None:
+                raise FileNotFoundError(f'{label}: none of {names} in {folder}')
             panels.append((label, Image.open(path).convert('RGB')))
         panels.append(('reference', reference))
         for label, image in panels:
