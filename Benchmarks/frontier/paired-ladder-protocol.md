@@ -93,3 +93,12 @@ Noise on the LR input costs sharpness everywhere (three to four LPIPS points on 
 ## Ladder r5, prespecified
 
 `C:\lucid\paired-ladder-20260905-r5`: identical to the r3 winner (reference target, 0.005) with one change in the critic, `--paired-negatives shift+smooth`: a quarter of the discriminator's negative mass is now HR with σ 0.03 noise texture painted only where the reference is locally smooth (`paired_dino_adversary.smooth_texture`, 7×7 local fine energy below 0.02). It teaches the critic that invented texture on bokeh and flats is fake, which is the exact failure in the Sunflower and RushHour crops. Arms: 4,000 and 8,000 steps. Same evaluation; the 4,000-step 80% blend is the comparator to beat on the 960-pair holdout (+9.48% / +12.65%, all eight sources up).
+
+## Results, r5: smooth-region negative (receipts `paired-ladder/ref_smooth_s4k*`, `holdout8-s4k*`)
+
+| Arm | 48 dev raw | 48 dev 80% | 96 bank raw | 96 bank 80% | 960 holdout raw | 960 holdout 80% |
+|---|---|---|---|---|---|---|
+| `ref_smooth_s4k` | +10.95 / +16.95 | +9.06 / +11.98 | +14.51 / +12.50 **pass** | +13.84 / +8.62 pass | +6.95 / +10.26; Sunflower −2.7 / −9.9, RushHour −4.0 LPIPS | +6.30 / +9.93; Sunflower DISTS −2.7 |
+| `ref_w005_s4k` (r3, comparator) | +14.79 / +19.10 | +11.49 / +13.91 | +16.22 / +12.60 | +15.93 / +9.23 pass | +10.13 / +13.10; Sunflower −13.6 / −7.6 | **+9.48 / +12.65, all eight up** |
+
+The smooth-texture negative does what it was built to do on the raw checkpoint: Sunflower goes from −13.6% to −2.7% LPIPS and RushHour fine energy from 1.20 to 1.06, and it is the first raw checkpoint to pass the bank set. It pays for that everywhere else (three to four points of aggregate holdout LPIPS/DISTS), and after the 80% blend the plain 4,000-step arm is better on seven of eight sources. Not adopted as is; a lighter weight on the smooth negative (0.05–0.1 instead of 0.125) is the obvious follow-up if grain handling is revisited. `ref_smooth_s8k` and the r6 schedule ladder (2,000 / 6,000 steps, plain negatives) are recorded when they complete.
