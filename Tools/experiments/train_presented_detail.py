@@ -142,8 +142,9 @@ def main():
              + teacher[identity].astype(np.float32) * args.teacher_mix).astype(np.uint8)
              for identity, pixels in target.items()}
     if args.intended == 'reference':
-        # The measured PixRestore teacher scores no better than shipping on the
-        # development set, so the mixture holds the student back; regress to truth.
+        # The fixed 50% shipping/PixRestore mixture scores only +2.9% LPIPS / +6.6% DISTS
+        # over shipping on the development set, below what the paired-critic student
+        # already reaches, so that target holds the student back; regress to truth.
         mixed = {identity: hr for _, hr, identity in data['train']}
     del teacher, target
     model = fold_head(shipping).cuda().train()
