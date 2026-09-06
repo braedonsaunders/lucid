@@ -121,3 +121,14 @@ The development set cannot see this at all: raw LPIPS is +15.1–15.7% at every 
 Same Release app, frozen inputs and configuration (sharpness 0.2, radius 2). Source-balanced LPIPS 0.3288 → 0.2974 (**+9.54%**), DISTS 0.1345 → 0.1148 (**+14.66%**). Every source improves on both metrics; the smallest gain is DucksTakeOff DISTS +4.9%, and the grainy masters are now among the larger ones: RushHour +9.6% / +27.4%, Sunflower +9.2% / +15.8%. Remaining advisory flags are the same as before (RushHour fine energy 1.15 from the native detail stage; the torch-anchored aggregate correlation floor, which native shipping itself fails). This supersedes the 4,000-step blend as the promotion candidate; `Tools/run-candidate.sh` now launches it by default. The disk filled during this run (the Mac reached 232 MB free); the packet dumps of the earlier regressions were deleted after confirming their scores and decoded PNG receipts were archived.
 
 Ladder r7 (1,000 and 3,000 steps) passes every gate on both development sets, like 2,000: raw +14.78 / +16.41 and +14.87 / +19.15 on the 48 pairs, +17.83 / +9.65 and +17.49 / +12.52 on the bank. Holdout scores for those and for the 0.6 / 0.9 blends of the 2,000-step checkpoint follow.
+
+### Blend weight, 2,000-step checkpoint, 960-pair holdout (`paired-ladder/holdout8-blends*`)
+
+| Blend toward raw | LPIPS | DISTS | Sources up | Gate |
+|---:|---:|---:|---|---|
+| 0.6 | +7.18% | +9.92% | 8 / 8 | pass |
+| 0.8 | +9.41% | +13.04% | 8 / 8 | pass |
+| 0.9 | +10.34% | +13.99% | 8 / 8 | pass |
+| 1.0 (raw) | +10.83% | +14.17% | 8 / 8 | aggregate correlation 0.001 below the anchor |
+
+At 2,000 steps the blend is nearly monotone in the raw weight and every setting improves every source; the blend is no longer rescuing grain the way it had to at 4,000 and 8,000 steps. 0.8 stays the measured native candidate; 0.9 is the obvious alternative if the live A/B wants a touch more detail. The 6,000-step blend regresses Sunflower DISTS 5.3%, consistent with the schedule finding.
