@@ -56,6 +56,14 @@ class PresentedObjectiveTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             reconstruction_objective(output, reference, intended, 'invalid')
 
+    def test_reference_intended_is_plain_reference_regression(self):
+        torch.manual_seed(43)
+        output = torch.rand(1, 3, 24, 24, requires_grad=True)
+        reference = torch.rand_like(output)
+        expected = (1.1 * F.l1_loss(output, reference) + .2 * sobel_loss(output, reference)
+                    + .05 * fft_loss(output, reference))
+        torch.testing.assert_close(reconstruction_objective(output, reference, reference, 'reference'), expected)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -101,6 +101,8 @@ def main():
     ap.add_argument('--detail-target', choices=['mixture', 'reference'], default='mixture',
                     help='Controlled supervision ablation; inference architecture and weights format are unchanged')
     ap.add_argument('--dino-gan-weight', type=float, default=0)
+    ap.add_argument('--intended', choices=['mixture', 'reference'], default='mixture',
+                    help='Regression target: the fixed shipping/teacher mixture (control) or the HR reference itself')
     ap.add_argument('--paired-dino', action='store_true',
                     help='Training-only input-conditioned critic with wrong-detail negatives')
     ap.add_argument('--gan-head-ratio-cap', type=float, default=0,
@@ -139,6 +141,10 @@ def main():
     mixed = {identity: np.rint(pixels.astype(np.float32) * (1-args.teacher_mix)
              + teacher[identity].astype(np.float32) * args.teacher_mix).astype(np.uint8)
              for identity, pixels in target.items()}
+    if args.intended == 'reference':
+        # The measured PixRestore teacher scores no better than shipping on the
+        # development set, so the mixture holds the student back; regress to truth.
+        mixed = {identity: hr for _, hr, identity in data['train']}
     del teacher, target
     model = fold_head(shipping).cuda().train()
     del shipping
@@ -174,7 +180,7 @@ def main():
             Path(__file__).with_name('fold_shipping_head.py'), Path(__file__).with_name('train_causal_detail.py'),
             Path(__file__).resolve().parents[1] / 'train_span.py',
             Path(__file__).resolve().parents[1] / 'architectures/span_arch.py')},
-        'loss': f'L1 to fixed mixture + 0.2 signed Sobel to {args.detail_target} + 0.05 FFT to {args.detail_target} + 0.1 L1 to reference; 8 output-pixel border excluded',
+        'loss': f'L1 to {"HR reference" if args.intended == "reference" else "fixed mixture"} + 0.2 signed Sobel to {args.detail_target} + 0.05 FFT to {args.detail_target} + 0.1 L1 to reference; 8 output-pixel border excluded',
         'precision': 'CUDA BF16 autocast; AdamW FP32; no compilation',
         'torch': str(torch.__version__), 'gpu': torch.cuda.get_device_name(),
         'purpose': 'controlled quality/performance experiment; not shipping promotion'}
