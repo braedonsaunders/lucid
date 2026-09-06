@@ -12,11 +12,18 @@ This gate keeps the perceptual minimums and per-source perceptual regression
 limits unchanged and replaces the shipping-relative correlation guard with two
 guards that a good synthesizer passes and a bad one fails:
 
-* hallucination floor: per-source fine correlation must not fall below the
+* hallucination floor: source-balanced fine correlation must not fall below the
   Lanczos anchor, which synthesizes nothing. Below the anchor, added fine energy
-  is invented rather than recovered.
+  is invented rather than recovered. Calibration on the 960-pair holdout showed
+  the NVIDIA VFX SDK itself below the anchor on four of eight sources (grain,
+  water, noise) while improving both perceptual metrics on every source, so the
+  floor is aggregate; per-source deltas are reported, not gated.
 * embellishment cap: per-source fine-band energy must not exceed the reference
   by more than 10%.
+
+Bad hallucination is caught by the per-source perceptual guard: LPIPS is far less
+tolerant of invented texture than DISTS, and a checkpoint that speckles flat dark
+surfaces regresses LPIPS on those sources.
 """
 import argparse
 import collections
@@ -27,7 +34,7 @@ from pathlib import Path
 
 GATE = {'source_balanced_lpips_improvement_min': .03, 'source_balanced_dists_improvement_min': .03,
         'per_source_perceptual_regression_max': .02, 'anchor': 'lanczos',
-        'per_source_fine_correlation_floor': 'anchor', 'per_source_detail_energy_max': 1.10}
+        'source_balanced_fine_correlation_floor': 'anchor', 'per_source_detail_energy_max': 1.10}
 METRICS = ('lpips', 'dists', 'fine_correlation', 'detail_energy')
 
 
@@ -79,10 +86,10 @@ def evaluate(rows, candidate, baseline='shipping', anchor='lanczos', gate=GATE):
         for k in ('lpips', 'dists'):
             if change[k] < -gate['per_source_perceptual_regression_max']:
                 reasons.append(f'{source}: {k} regression exceeds limit')
-        if change['fine_correlation_vs_anchor'] < 0:
-            reasons.append(f'{source}: fine correlation below the {anchor} anchor')
         if cand['detail_energy'] > gate['per_source_detail_energy_max']:
             reasons.append(f'{source}: fine-band energy exceeds the embellishment cap')
+    if balanced[candidate]['fine_correlation'] < balanced[anchor]['fine_correlation']:
+        reasons.append(f'fine correlation: source-balanced value below the {anchor} anchor')
     return {'candidate': candidate, 'baseline': baseline, 'anchor': anchor, 'gate': gate,
             'perceptual_gate_pass': not reasons, 'failure_reasons': reasons, 'frames_per_variant': count,
             'perceptual_improvements': gains, 'source_balanced': balanced, 'per_source': means,

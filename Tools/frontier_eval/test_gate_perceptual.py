@@ -23,10 +23,16 @@ class PerceptualGateTests(unittest.TestCase):
         self.assertTrue(result['perceptual_gate_pass'], result['failure_reasons'])
         self.assertLess(result['per_source_changes']['a']['fine_correlation_vs_shipping'], 0)
 
-    def test_below_anchor_fails(self):
+    def test_one_source_below_anchor_is_reported_not_gated(self):
         spec = dict(BASE, cand={'a': (0.30, 0.12, 0.29, 0.60), 'b': (0.20, 0.09, 0.62, 0.85)})
         result = evaluate(rows(spec), 'cand')
-        self.assertIn('a: fine correlation below the lanczos anchor', result['failure_reasons'])
+        self.assertTrue(result['perceptual_gate_pass'], result['failure_reasons'])
+        self.assertLess(result['per_source_changes']['a']['fine_correlation_vs_anchor'], 0)
+
+    def test_aggregate_below_anchor_fails(self):
+        spec = dict(BASE, cand={'a': (0.30, 0.12, 0.25, 0.60), 'b': (0.20, 0.09, 0.55, 0.85)})
+        result = evaluate(rows(spec), 'cand')
+        self.assertIn('fine correlation: source-balanced value below the lanczos anchor', result['failure_reasons'])
 
     def test_embellishment_cap_fails(self):
         spec = dict(BASE, cand={'a': (0.30, 0.12, 0.33, 1.2), 'b': (0.20, 0.09, 0.62, 0.85)})

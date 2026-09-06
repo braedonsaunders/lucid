@@ -1,6 +1,8 @@
 {
   "report": "Benchmarks/frontier/nvidia-vfx-rgb48-report.json",
   "report_sha256": "b19eaf594c4c165876f0e2886d0619f188221d1a6fb17467e6227a8468326d64",
+  "anchor_report": null,
+  "anchor_report_sha256": null,
   "checkpoint_sha256": null,
   "results": {
     "nvvfx_HIGH": {
@@ -12,7 +14,7 @@
         "source_balanced_dists_improvement_min": 0.03,
         "per_source_perceptual_regression_max": 0.02,
         "anchor": "lanczos",
-        "per_source_fine_correlation_floor": "anchor",
+        "source_balanced_fine_correlation_floor": "anchor",
         "per_source_detail_energy_max": 1.1
       },
       "perceptual_gate_pass": true,
@@ -138,7 +140,7 @@
         "source_balanced_dists_improvement_min": 0.03,
         "per_source_perceptual_regression_max": 0.02,
         "anchor": "lanczos",
-        "per_source_fine_correlation_floor": "anchor",
+        "source_balanced_fine_correlation_floor": "anchor",
         "per_source_detail_energy_max": 1.1
       },
       "perceptual_gate_pass": true,
@@ -264,7 +266,7 @@
         "source_balanced_dists_improvement_min": 0.03,
         "per_source_perceptual_regression_max": 0.02,
         "anchor": "lanczos",
-        "per_source_fine_correlation_floor": "anchor",
+        "source_balanced_fine_correlation_floor": "anchor",
         "per_source_detail_energy_max": 1.1
       },
       "perceptual_gate_pass": false,
@@ -273,12 +275,10 @@
         "dists: aggregate improvement below minimum",
         "crowd_run: lpips regression exceeds limit",
         "crowd_run: dists regression exceeds limit",
-        "crowd_run: fine correlation below the lanczos anchor",
         "four_people: lpips regression exceeds limit",
         "four_people: dists regression exceeds limit",
-        "four_people: fine correlation below the lanczos anchor",
         "johnny: lpips regression exceeds limit",
-        "johnny: fine correlation below the lanczos anchor"
+        "fine correlation: source-balanced value below the lanczos anchor"
       ],
       "frames_per_variant": 48,
       "perceptual_improvements": {
@@ -393,5 +393,5 @@
       "status": "development screen; native delivery, temporal and fresh-source evidence still required"
     }
   },
-  "code_sha256": "3b5f32b57306b14b804b49ead251e9655729bf4d4f6a30a2d0b96908c28ea391"
+  "code_sha256": "2a16badc80dff5d4a17d8f824f60f3f7b58075b158799bab3e060e377d9626d1"
 }
