@@ -26,6 +26,8 @@ def main():
     ap.add_argument('--checkpoint', nargs=2, action='append', default=[])
     ap.add_argument('--present-4x-at-2x', nargs='*', default=[])
     ap.add_argument('--external', nargs=3, action='append', default=[], help='LABEL DIR SUFFIX: DIR/<stem>SUFFIX.png or DIR/<seq>-<frame-1:03d>SUFFIX.png')
+    ap.add_argument('--native', nargs=3, action='append', default=[],
+                    help='LABEL DIR VARIANT: decoded native-pipeline outputs (decode_native_holdout.py manifest) for holdout frames')
     ap.add_argument('--device', default='mps')
     ap.add_argument('--out', type=Path, default=Path('output/compare'))
     ap.add_argument('--append', action='store_true', help='merge into an existing manifest instead of replacing it')
@@ -65,6 +67,12 @@ def main():
                 if candidate.exists():
                     panels.append((label, Image.open(candidate).convert('RGB')))
                     break
+        for label, folder, variant in args.native:
+            native = json.loads((Path(folder) / 'manifest.json').read_text())
+            head = stem.rsplit('-', 1)[0]
+            match = next((r for r in native['rows'] if r['sequence_id'] == head and r['frame'] == true_frame and r['variant'] == variant), None)
+            if match is not None:
+                panels.append((label, Image.open(Path(folder) / match['file']).convert('RGB')))
         panels.append(('reference', reference))
         frame_dir = args.out / stem
         frame_dir.mkdir(exist_ok=True)

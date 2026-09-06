@@ -87,10 +87,18 @@ const images = new Map();
 
 const GROUPS = [
   ['Truth and source', ['reference', 'source']],
-  ['Anchors',          ['lanczos', 'shipping']],
-  ['NVIDIA RTX (VFX SDK on the 4080)', ['nvidia_ultra', 'nvidia_high']],
-  ['Lucid candidates', null],
+  ['Today: shipping Lucid', ['shipping', 'shipping_app', 'lanczos']],
+  ['Candidate: Lucid 2k', ['lucid_2k', 'lucid_2k_app', 'lucid_2k_raw']],
+  ['Target: NVIDIA RTX VSR (VFX SDK ULTRA on the 4080)', ['nvidia_ultra', 'nvidia_high']],
+  ['Other', null],
 ];
+const NAMES = {
+  reference: 'reference (1080p master → 720p)', source: 'source (640×360 as decoded)',
+  lanczos: 'Lanczos', shipping: 'shipping weights', shipping_app: 'shipping, through the app',
+  lucid_2k: 'Lucid 2k blend (candidate)', lucid_2k_app: 'Lucid 2k blend, through the app', lucid_2k_raw: 'Lucid 2k raw checkpoint',
+  nvidia_ultra: 'NVIDIA ULTRA', nvidia_high: 'NVIDIA HIGH',
+};
+const pretty = n => NAMES[n] || n;
 
 function currentFrame() { return manifest.frames[frame]; }
 function variants() { return currentFrame().variants; }
@@ -151,7 +159,7 @@ function renderList() {
       const button = document.createElement('button');
       button.className = 'variant' + (i === variant ? ' on' : '')
         + (d === null ? '' : d > 0 ? ' win' : ' lose');
-      button.innerHTML = `<span class="n">${i + 1}</span><span>${v.name}</span>`
+      button.innerHTML = `<span class="n">${i + 1}</span><span>${pretty(v.name)}</span>`
         + `<span class="m">${d === null ? '' : (d > 0 ? '+' : '') + (d * 100).toFixed(1) + '% DISTS'}</span>`;
       button.onclick = () => select(i);
       list.append(button);
@@ -163,7 +171,7 @@ function renderList() {
 function renderBar() {
   const v = variants()[variant];
   const m = v.metrics;
-  let text = `<b>${v.name}</b>`;
+  let text = `<b>${pretty(v.name)}</b>`;
   if (m) {
     text += `<span class="m">LPIPS ${m.lpips.toFixed(4)} · DISTS ${m.dists.toFixed(4)} · fine corr ${m.fine_correlation.toFixed(3)} · fine energy ${m.detail_energy.toFixed(2)} · PSNR ${m.psnr_y.toFixed(2)}</span>`;
     const l = delta(v, 'lpips'), d = delta(v, 'dists');
