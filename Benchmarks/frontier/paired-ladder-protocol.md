@@ -52,3 +52,11 @@ NVIDIA gains most exactly where every Lucid candidate loses: RushHour (+45.9% LP
 ## Ladders r3 and r4, prespecified
 
 **r3** (`C:\lucid\paired-ladder-20260905-r3`): reference target, 8,000 steps, adversarial weight 0.0025 / 0.0075 / 0.01, plus 0.005 at 4,000 steps. **r4** (`-r4`, queued behind r3): reference target, 0.005, 8,000 steps, with per-sample Gaussian noise of random strength up to sigma 0.01 / 0.02 / 0.04 added to the LR input only (`--input-noise`; targets unchanged), the direct test of the grain hypothesis. Same evaluation for every arm; survivors go to the 960-pair holdout and then the native delivery holdout at a candidate-specific presentation sharpness.
+
+### Reference-target blend on the 960-pair holdout and through the native pipeline
+
+Torch level (`paired-ladder/ref_w005_s8k-holdout8*.json`): the raw checkpoint reaches +9.43% / +12.81% but collapses on the grainy masters (Sunflower −25.7% LPIPS / −23.2% DISTS, RushHour −17.2% LPIPS with fine energy 1.22): it paints blocky texture onto out-of-focus bokeh and film grain (`paired-critic-crops/sunflower-*.png`). The 80% blend is the best Lucid candidate measured so far, **+9.29% LPIPS / +11.79% DISTS**, improving seven of eight sources; Sunflower loses 0.9% LPIPS and 11.0% DISTS.
+
+Native delivery holdout (`paired-ladder/native-ref80-s02/`), same Release app and frozen inputs as the earlier blend, presentation sharpness lowered to 0.2 for this candidate: source-balanced LPIPS 0.3288 → 0.2997 (**+8.84%**), DISTS 0.1345 → 0.1171 (**+12.95%**); six sources improve 7–25% on both metrics; RushHour and Sunflower lose 4.6% / 3.8% LPIPS with fine energy 1.21 / 1.09. Lowering sharpness from 0.4 to 0.2 did not remove the grain-scene regression, so it is the weights, not the presentation, that over-texture grain; that is what ladder r4 tests. Not promoted.
+
+Ladder r3 so far: `ref_w0025_s8k` raw +13.13% / +16.16% dev, `ref_w0075_s8k` raw +15.40% / +21.02% dev, against 0.005's +15.61% / +20.00%: the adversarial weight is flat between 0.005 and 0.0075 and weaker at 0.0025.
