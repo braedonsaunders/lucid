@@ -2,7 +2,7 @@ import unittest
 
 import torch
 
-from paired_dino_adversary import paired_features, wrong_detail
+from paired_dino_adversary import paired_features, wrong_detail, smooth_texture
 
 
 class PairedCriticTests(unittest.TestCase):
@@ -26,6 +26,16 @@ class PairedCriticTests(unittest.TestCase):
         self.assertTrue(torch.equal(result[..., :4], textured[..., :4]))
         self.assertTrue(torch.isfinite(result).all())
         self.assertTrue(((result >= 0) & (result <= 1)).all())
+
+    def test_smooth_texture_only_touches_smooth_regions(self):
+        torch.manual_seed(3)
+        image = torch.full((1, 3, 32, 32), .5)
+        image[..., :, 16:] = torch.rand(1, 3, 32, 16)  # right half is textured
+        result = smooth_texture(image)
+        self.assertFalse(torch.equal(result[..., :, :8], image[..., :, :8]))
+        self.assertTrue(torch.equal(result[..., :, 24:], image[..., :, 24:]))
+        self.assertTrue(((result >= 0) & (result <= 1)).all())
+        self.assertLess(float((result - image).abs().max()), .2)
 
     def test_misaligned_features_rejected(self):
         with self.assertRaises(ValueError):

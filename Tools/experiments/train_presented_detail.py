@@ -118,6 +118,8 @@ def main():
                     help='Max Gaussian noise sigma (0-1 scale) added to LR inputs during training; targets unchanged')
     ap.add_argument('--intended', choices=['mixture', 'reference'], default='mixture',
                     help='Regression target: the fixed shipping/teacher mixture (control) or the HR reference itself')
+    ap.add_argument('--paired-negatives', choices=['shift', 'shift+smooth'], default='shift',
+                    help='Paired-critic negative recipe; shift+smooth adds noise texture on smooth reference regions as a fake')
     ap.add_argument('--paired-dino', action='store_true',
                     help='Training-only input-conditioned critic with wrong-detail negatives')
     ap.add_argument('--gan-head-ratio-cap', type=float, default=0,
@@ -186,7 +188,8 @@ def main():
         from dino_adversary import DinoAdversary
         if args.paired_dino:
             from paired_dino_adversary import PairedDinoAdversary
-            adversary = PairedDinoAdversary(args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)
+            adversary = PairedDinoAdversary(args.pixrestore_repository, args.dino_repository, args.dino_checkpoint,
+                                            negatives=args.paired_negatives)
         else:
             adversary = DinoAdversary(args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)
     args.out.mkdir(parents=True)

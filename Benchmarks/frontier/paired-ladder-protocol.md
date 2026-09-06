@@ -80,3 +80,16 @@ The adversarial weight is flat between 0.005 and 0.01 on the development set and
 Same Release app, frozen inputs and configuration as the 8,000-step blend run (sharpness 0.2, radius 2). Source-balanced LPIPS 0.3288 → 0.2986 (**+9.16%**), DISTS 0.1345 → 0.1156 (**+14.05%**). **Every one of the eight sources improves on both metrics** through the real pipeline, including RushHour (+2.6% / +24.5%) and Sunflower (+2.7% / +11.3%); six sources gain 7–25%. Remaining flags: RushHour fine energy 1.19 (the native detail stage still adds energy on grain; the torch-level blend was at 1.01), and the aggregate correlation floor, which compares native output against a torch-level Lanczos anchor that even native shipping (0.4895) sits below, so it is not informative for native reports. The frozen native gate fails its shipping-relative correlation guard on four sources, as it does for NVIDIA. This is the strongest native result recorded: the earlier best was +7.20% / +10.46% with three sources regressing.
 
 Native graph cost is unchanged from the folded shipping graph (`profile.json`): 5.6 ms at 640×360, 9.9 ms at 864×480 on CPU+GPU.
+
+## Results, r4: input-noise augmentation rejected (receipts in `paired-ladder/ref_noise*`)
+
+| Arm | σ | 48 dev raw | 48 dev 80% | 96 bank 80% | 960 holdout raw | 960 holdout 80% |
+|---|---:|---|---|---|---|---|
+| `ref_noise010` | 0.01 | +12.69 / +15.53 | +10.25 / +10.12 | +12.46 / +7.59 pass | +8.23 / +7.69, Sunflower −21.6 / −29.1 | +7.42 / +6.82, Sunflower −3.8 / −18.9 |
+| `ref_noise020` | 0.02 | +11.72 / +11.43 | +8.85 / +6.71, Johnny DISTS | +10.82 / +5.02 pass | — | — |
+
+Noise on the LR input costs sharpness everywhere (three to four LPIPS points on the development set per step of σ) and does not touch the failure it was meant to fix: the σ 0.01 raw checkpoint still loses 21.6% LPIPS on Sunflower and over-textures RushHour (fine energy 1.21). The grain and bokeh damage is not a denoising problem; the critic is rewarding texture on smooth regions regardless of the input's noise level. Hypothesis rejected; σ 0.04 is recorded for completeness when it completes.
+
+## Ladder r5, prespecified
+
+`C:\lucid\paired-ladder-20260905-r5`: identical to the r3 winner (reference target, 0.005) with one change in the critic, `--paired-negatives shift+smooth`: a quarter of the discriminator's negative mass is now HR with σ 0.03 noise texture painted only where the reference is locally smooth (`paired_dino_adversary.smooth_texture`, 7×7 local fine energy below 0.02). It teaches the critic that invented texture on bokeh and flats is fake, which is the exact failure in the Sunflower and RushHour crops. Arms: 4,000 and 8,000 steps. Same evaluation; the 4,000-step 80% blend is the comparator to beat on the 960-pair holdout (+9.48% / +12.65%, all eight sources up).

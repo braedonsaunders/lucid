@@ -19,6 +19,19 @@ def wrong_detail(reference):
     return (smooth + shifted).clamp(0, 1)
 
 
+def smooth_texture(reference, sigma=.03, threshold=.02):
+    """Add noise texture only where the reference is locally smooth.
+
+    A negative example of invented detail on bokeh and flat regions, which is
+    where every candidate so far lost against the reference.
+    """
+    smooth = F.avg_pool2d(F.pad(reference, (1, 1, 1, 1), mode='replicate'), 3, 1)
+    local = (reference - smooth).abs()
+    energy = F.avg_pool2d(F.pad(local, (3, 3, 3, 3), mode='replicate'), 7, 1).mean(1, keepdim=True)
+    mask = (energy < threshold).to(reference.dtype)
+    return (reference + torch.randn_like(reference) * sigma * mask).clamp(0, 1)
+
+
 def paired_features(output, condition):
     if len(output) != len(condition) or not output:
         raise ValueError('matching nonempty feature layers required')
@@ -28,16 +41,21 @@ def paired_features(output, condition):
 
 
 class PairedDinoAdversary(DinoAdversary):
-    def __init__(self, repository, dino_repository, dino_checkpoint):
+    def __init__(self, repository, dino_repository, dino_checkpoint, negatives='shift'):
         super().__init__(repository, dino_repository, dino_checkpoint)
+        if negatives not in ('shift', 'shift+smooth'):
+            raise ValueError('unknown negative recipe')
+        self.negatives = negatives
         # Use the already hash-verified upstream class; retain 96 hidden units.
         cls = type(self.discriminator)
         self.discriminator = cls(768, 6, hidden_ratio=.125).cuda().train()
         self.optimizer = torch.optim.AdamW(self.discriminator.parameters(), lr=1e-4, weight_decay=0)
         self.metadata.update(condition='detached DINO tokens of bicubic LR at matching output coordinates',
             features='concatenate output and condition tokens; 768 inputs, 96 hidden units',
-            negatives='half generated output, half HR with signed 3x3 highpass displaced two pixels right',
-            discriminator_loss='0.5 real BCE + 0.25 generated BCE + 0.25 wrong-detail BCE; clip 1',
+            negatives=('half generated output, half HR with signed 3x3 highpass displaced two pixels right' if negatives == 'shift'
+                       else 'half generated output, quarter displaced-detail HR, quarter HR with sigma-0.03 noise texture on locally smooth regions'),
+            discriminator_loss=('0.5 real BCE + 0.25 generated BCE + 0.25 wrong-detail BCE; clip 1' if negatives == 'shift'
+                                else '0.5 real BCE + 0.25 generated BCE + 0.125 wrong-detail BCE + 0.125 smooth-texture BCE; clip 1'),
             limitation='combined conditioning/negative recipe; not isolated component attribution')
 
     def generator_loss(self, image, condition):
@@ -55,9 +73,14 @@ class PairedDinoAdversary(DinoAdversary):
         with torch.no_grad():
             real = self.features.features(reference)
             negative = self.features.features(wrong_detail(reference))
+            textured = self.features.features(smooth_texture(reference)) if self.negatives == 'shift+smooth' else None
         loss = (.5 * self.discriminator(paired_features(real, low), real=True)
-                + .25 * self.discriminator(paired_features(fake, low), real=False)
-                + .25 * self.discriminator(paired_features(negative, low), real=False))
+                + .25 * self.discriminator(paired_features(fake, low), real=False))
+        if textured is None:
+            loss = loss + .25 * self.discriminator(paired_features(negative, low), real=False)
+        else:
+            loss = loss + (.125 * self.discriminator(paired_features(negative, low), real=False)
+                           + .125 * self.discriminator(paired_features(textured, low), real=False))
         if not torch.isfinite(loss):
             raise ValueError('nonfinite paired discriminator objective')
         loss.backward()

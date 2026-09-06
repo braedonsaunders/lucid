@@ -1,0 +1,2650 @@
+{
+  "purpose": "fixed decoded-pixel spatial development-validation; no temporal or release claim",
+  "split": "development-validation",
+  "manifest_sha256": "aac663ad088fede87e1ede68cb46501603fc0f0b066b5ae6c07726b6555d923f",
+  "sequence_manifest_sha256": "a42d1514b0c0ebb6b10d7107fe8c7d944022c9cca4a9f20992e560448ef4f696",
+  "checkpoint_sha256": {
+    "ref_noise010_raw": "c2137eb1e35e37b8f518233a194f53da5115c01c9daee3f87c57c9341c907992",
+    "ref_noise010_80": "a0ef4be23e67e4f285f93feb099b173a2b605bce8785c3bc61ab3db492039008",
+    "shipping": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65"
+  },
+  "presentation_adapters": [
+    "shipping"
+  ],
+  "interpolation": [
+    "lanczos"
+  ],
+  "code_sha256": "bb652063f0b90905fff4a9a4dabacc32b818a98748f58822b94fd8add46ae090",
+  "scorer_sha256": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75",
+  "torch": "2.6.0+cu124",
+  "device": "cuda",
+  "rows": [
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.571134626865387,
+        "dists": 0.25992071628570557,
+        "psnr_y": 21.388531352713855,
+        "detail_energy": 0.2969692205554689,
+        "fine_correlation": 0.18667694220809075
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 0,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.4715385138988495,
+        "dists": 0.22986412048339844,
+        "psnr_y": 21.31247903344033,
+        "detail_energy": 0.4113496765299465,
+        "fine_correlation": 0.18774779057500957
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 0,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.49543869495391846,
+        "dists": 0.23902052640914917,
+        "psnr_y": 21.373630082523608,
+        "detail_energy": 0.381506032916781,
+        "fine_correlation": 0.19637144810249726
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5399734377861023,
+        "dists": 0.25385409593582153,
+        "psnr_y": 21.40106543240215,
+        "detail_energy": 0.32900946254952596,
+        "fine_correlation": 0.19552844053663554
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.6052758693695068,
+        "dists": 0.26671302318573,
+        "psnr_y": 20.051493798881943,
+        "detail_energy": 0.25956291260102254,
+        "fine_correlation": 0.1403982997488406
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 4,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.4871402382850647,
+        "dists": 0.2389107346534729,
+        "psnr_y": 19.945894185404647,
+        "detail_energy": 0.37751043442327764,
+        "fine_correlation": 0.1289018693190064
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 4,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.5141918659210205,
+        "dists": 0.25005948543548584,
+        "psnr_y": 19.998113885570856,
+        "detail_energy": 0.34225333827094157,
+        "fine_correlation": 0.1386839977193962
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5681816339492798,
+        "dists": 0.2657656669616699,
+        "psnr_y": 20.061877388827934,
+        "detail_energy": 0.2837498304313231,
+        "fine_correlation": 0.14506035702576012
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.6100845336914062,
+        "dists": 0.2729908227920532,
+        "psnr_y": 19.52099970958465,
+        "detail_energy": 0.265141698617816,
+        "fine_correlation": 0.11812176741176411
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 8,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.4887792468070984,
+        "dists": 0.2431526780128479,
+        "psnr_y": 19.42556096570987,
+        "detail_energy": 0.3859001237979452,
+        "fine_correlation": 0.11115447539233571
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 8,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.5163939595222473,
+        "dists": 0.2534424066543579,
+        "psnr_y": 19.4688390297053,
+        "detail_energy": 0.3494737981506124,
+        "fine_correlation": 0.1192547876402379
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5719336867332458,
+        "dists": 0.2668679356575012,
+        "psnr_y": 19.53163236753677,
+        "detail_energy": 0.2900479331942337,
+        "fine_correlation": 0.12410584273886914
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.6094222664833069,
+        "dists": 0.2704029679298401,
+        "psnr_y": 19.613448594619634,
+        "detail_energy": 0.2553008174202655,
+        "fine_correlation": 0.11101474654984324
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 12,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.48952141404151917,
+        "dists": 0.23364883661270142,
+        "psnr_y": 19.504904957818272,
+        "detail_energy": 0.3750999599706503,
+        "fine_correlation": 0.10203799352857607
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 12,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.5183038711547852,
+        "dists": 0.24109172821044922,
+        "psnr_y": 19.5527526669247,
+        "detail_energy": 0.33831081622772774,
+        "fine_correlation": 0.11010488228992987
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-350000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5729857683181763,
+        "dists": 0.263515830039978,
+        "psnr_y": 19.623319750651934,
+        "detail_energy": 0.27783929604874974,
+        "fine_correlation": 0.11497429627702704
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4511212706565857,
+        "dists": 0.12456095218658447,
+        "psnr_y": 25.214278570377743,
+        "detail_energy": 0.5148192703859963,
+        "fine_correlation": 0.5035584889362934
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 0,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.33150312304496765,
+        "dists": 0.09459686279296875,
+        "psnr_y": 25.101300646756602,
+        "detail_energy": 0.6908708827423152,
+        "fine_correlation": 0.5300964243756964
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 0,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.34721606969833374,
+        "dists": 0.10193091630935669,
+        "psnr_y": 25.215484285101184,
+        "detail_energy": 0.6765796554484393,
+        "fine_correlation": 0.5377450674379153
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3835824728012085,
+        "dists": 0.11648529767990112,
+        "psnr_y": 25.344315539385335,
+        "detail_energy": 0.6308173792826697,
+        "fine_correlation": 0.5415649848768166
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5112276077270508,
+        "dists": 0.16560614109039307,
+        "psnr_y": 22.477558014322558,
+        "detail_energy": 0.4282222007401301,
+        "fine_correlation": 0.34417091132587996
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 4,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.3690662682056427,
+        "dists": 0.11779487133026123,
+        "psnr_y": 22.301448263351222,
+        "detail_energy": 0.5737516793501034,
+        "fine_correlation": 0.35039171111901396
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 4,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.3906981945037842,
+        "dists": 0.1269383430480957,
+        "psnr_y": 22.370569537998332,
+        "detail_energy": 0.5535548436265503,
+        "fine_correlation": 0.3588775429597527
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.44124776124954224,
+        "dists": 0.15285205841064453,
+        "psnr_y": 22.475826299388597,
+        "detail_energy": 0.5013434816926646,
+        "fine_correlation": 0.3664538214561377
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.523295521736145,
+        "dists": 0.18530726432800293,
+        "psnr_y": 21.464693427873076,
+        "detail_energy": 0.42657212733393784,
+        "fine_correlation": 0.27587846665978766
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 8,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.38338908553123474,
+        "dists": 0.13207793235778809,
+        "psnr_y": 21.268876760566787,
+        "detail_energy": 0.5743091733309493,
+        "fine_correlation": 0.2783733164118997
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 8,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.40574565529823303,
+        "dists": 0.14040780067443848,
+        "psnr_y": 21.326038978490015,
+        "detail_energy": 0.5520577448931819,
+        "fine_correlation": 0.2855603355798447
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4558390974998474,
+        "dists": 0.1699141263961792,
+        "psnr_y": 21.427850002424563,
+        "detail_energy": 0.49671629468602085,
+        "fine_correlation": 0.2913541366467707
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5321180820465088,
+        "dists": 0.19230294227600098,
+        "psnr_y": 21.99126094667076,
+        "detail_energy": 0.4218556303832236,
+        "fine_correlation": 0.27466181389795535
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 12,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.3910515308380127,
+        "dists": 0.131827712059021,
+        "psnr_y": 21.796828458034945,
+        "detail_energy": 0.5670456594938832,
+        "fine_correlation": 0.28053316725323985
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 12,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.41444289684295654,
+        "dists": 0.14087903499603271,
+        "psnr_y": 21.867601815131408,
+        "detail_energy": 0.543497181897819,
+        "fine_correlation": 0.28817688947145187
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-h264-1000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4654240906238556,
+        "dists": 0.17611318826675415,
+        "psnr_y": 21.973729695774843,
+        "detail_energy": 0.48683378457248466,
+        "fine_correlation": 0.29147318277948425
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3801550567150116,
+        "dists": 0.05671560764312744,
+        "psnr_y": 27.69870535378781,
+        "detail_energy": 0.5509375032049583,
+        "fine_correlation": 0.6453831822149538
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 0,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.25530898571014404,
+        "dists": 0.05958831310272217,
+        "psnr_y": 27.807122205710186,
+        "detail_energy": 0.7385644605980444,
+        "fine_correlation": 0.6800145134728222
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 0,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.2650552988052368,
+        "dists": 0.05824124813079834,
+        "psnr_y": 28.02157222910214,
+        "detail_energy": 0.7295641128050621,
+        "fine_correlation": 0.6893629541549512
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2918020486831665,
+        "dists": 0.06276595592498779,
+        "psnr_y": 28.293217455339356,
+        "detail_energy": 0.6908693811107988,
+        "fine_correlation": 0.6972217337952205
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5070723295211792,
+        "dists": 0.1697932481765747,
+        "psnr_y": 21.870486515032937,
+        "detail_energy": 0.3705972010736824,
+        "fine_correlation": 0.35734691691889064
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 4,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.3544391989707947,
+        "dists": 0.14223134517669678,
+        "psnr_y": 21.767150770530243,
+        "detail_energy": 0.5026574172238307,
+        "fine_correlation": 0.3609288560098429
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 4,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.3777683973312378,
+        "dists": 0.1486130952835083,
+        "psnr_y": 21.829096778529177,
+        "detail_energy": 0.4829186337901887,
+        "fine_correlation": 0.37222728523526516
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.43904364109039307,
+        "dists": 0.16443228721618652,
+        "psnr_y": 21.889355909829114,
+        "detail_energy": 0.441036828648241,
+        "fine_correlation": 0.3795326925943504
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5284464359283447,
+        "dists": 0.19759702682495117,
+        "psnr_y": 21.50893518250818,
+        "detail_energy": 0.3235339574214508,
+        "fine_correlation": 0.31229587310389245
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 8,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.37076911330223083,
+        "dists": 0.15944504737854004,
+        "psnr_y": 21.40144043994928,
+        "detail_energy": 0.45518666657880497,
+        "fine_correlation": 0.3054861535394529
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 8,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.39803075790405273,
+        "dists": 0.16777408123016357,
+        "psnr_y": 21.47437274467853,
+        "detail_energy": 0.42748513079695505,
+        "fine_correlation": 0.3207453138842747
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.46911242604255676,
+        "dists": 0.19164961576461792,
+        "psnr_y": 21.53556022254731,
+        "detail_energy": 0.38063974326184064,
+        "fine_correlation": 0.33123435213528035
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.46311044692993164,
+        "dists": 0.15153682231903076,
+        "psnr_y": 24.050842513824513,
+        "detail_energy": 0.4639181198693036,
+        "fine_correlation": 0.4449284071954672
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 12,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.3318834900856018,
+        "dists": 0.09575366973876953,
+        "psnr_y": 23.913127554697194,
+        "detail_energy": 0.6203554110026829,
+        "fine_correlation": 0.4610310534352074
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 12,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.3502224087715149,
+        "dists": 0.10278093814849854,
+        "psnr_y": 24.01078965120935,
+        "detail_energy": 0.6031620923695041,
+        "fine_correlation": 0.4703304076380509
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-350000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3918341100215912,
+        "dists": 0.13256049156188965,
+        "psnr_y": 24.12276317805102,
+        "detail_energy": 0.5582263277052205,
+        "fine_correlation": 0.47582336873430964
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.34496772289276123,
+        "dists": 0.0429500937461853,
+        "psnr_y": 28.242530834855117,
+        "detail_energy": 0.5630464511515987,
+        "fine_correlation": 0.6693285509417244
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 0,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.22978869080543518,
+        "dists": 0.057299256324768066,
+        "psnr_y": 28.408145125694908,
+        "detail_energy": 0.7490533695246949,
+        "fine_correlation": 0.7045974049503823
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 0,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.23314709961414337,
+        "dists": 0.05486297607421875,
+        "psnr_y": 28.646876779731542,
+        "detail_energy": 0.7424454240021889,
+        "fine_correlation": 0.7140245902190078
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.25103259086608887,
+        "dists": 0.04774129390716553,
+        "psnr_y": 28.965085327193417,
+        "detail_energy": 0.7080868923165868,
+        "fine_correlation": 0.7221423298701376
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.43003925681114197,
+        "dists": 0.12999361753463745,
+        "psnr_y": 23.751980738603358,
+        "detail_energy": 0.44996514496197143,
+        "fine_correlation": 0.4479041951595974
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 4,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.3110518455505371,
+        "dists": 0.1060171127319336,
+        "psnr_y": 23.672858100415333,
+        "detail_energy": 0.5956213786877912,
+        "fine_correlation": 0.4674564223915745
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 4,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.3238132894039154,
+        "dists": 0.11105364561080933,
+        "psnr_y": 23.74166751550462,
+        "detail_energy": 0.583424661347619,
+        "fine_correlation": 0.475241213692843
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3590567409992218,
+        "dists": 0.12569856643676758,
+        "psnr_y": 23.815518895375828,
+        "detail_energy": 0.5472246529748569,
+        "fine_correlation": 0.4806658503078949
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.45390623807907104,
+        "dists": 0.16525989770889282,
+        "psnr_y": 22.92437130698932,
+        "detail_energy": 0.3886619921456863,
+        "fine_correlation": 0.3735849421203195
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 8,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.3322749435901642,
+        "dists": 0.1320975422859192,
+        "psnr_y": 22.84574347685237,
+        "detail_energy": 0.5243303504672887,
+        "fine_correlation": 0.38532759460164345
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 8,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.348870187997818,
+        "dists": 0.13766640424728394,
+        "psnr_y": 22.916891490441245,
+        "detail_energy": 0.5049338354712237,
+        "fine_correlation": 0.3956355131531431
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.39027541875839233,
+        "dists": 0.16205942630767822,
+        "psnr_y": 22.97509985132997,
+        "detail_energy": 0.46142736769712106,
+        "fine_correlation": 0.4009545557176798
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.41001206636428833,
+        "dists": 0.09141433238983154,
+        "psnr_y": 25.13892189494776,
+        "detail_energy": 0.5118196869393743,
+        "fine_correlation": 0.5294697587010821
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 12,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.29046982526779175,
+        "dists": 0.06655967235565186,
+        "psnr_y": 25.027468444135042,
+        "detail_energy": 0.6751303138556284,
+        "fine_correlation": 0.5504540468758029
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 12,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.29787445068359375,
+        "dists": 0.06476277112960815,
+        "psnr_y": 25.122762113374684,
+        "detail_energy": 0.6655402731492955,
+        "fine_correlation": 0.5581608214377726
+      }
+    },
+    {
+      "source_id": "crowd_run",
+      "sequence_id": "crowd_run-vp9-1000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.32108792662620544,
+        "dists": 0.0740959644317627,
+        "psnr_y": 25.25112463299876,
+        "detail_energy": 0.6311824739654677,
+        "fine_correlation": 0.5643272883639217
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.39795953035354614,
+        "dists": 0.19266724586486816,
+        "psnr_y": 25.803699818296977,
+        "detail_energy": 0.4377550597704859,
+        "fine_correlation": 0.3873265179594482
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 0,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.317469984292984,
+        "dists": 0.14873147010803223,
+        "psnr_y": 25.74716976040523,
+        "detail_energy": 0.6331929874475418,
+        "fine_correlation": 0.3919659778712546
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 0,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.3188508152961731,
+        "dists": 0.16706371307373047,
+        "psnr_y": 25.86653013997507,
+        "detail_energy": 0.5884566843190937,
+        "fine_correlation": 0.4118808301511424
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.36384648084640503,
+        "dists": 0.18892717361450195,
+        "psnr_y": 25.8914321110969,
+        "detail_energy": 0.5116190157656072,
+        "fine_correlation": 0.4154096579002256
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.39728209376335144,
+        "dists": 0.19108450412750244,
+        "psnr_y": 25.80800126871628,
+        "detail_energy": 0.43753603938061597,
+        "fine_correlation": 0.39123919104420535
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 4,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.3144000470638275,
+        "dists": 0.14639043807983398,
+        "psnr_y": 25.758960016335145,
+        "detail_energy": 0.6339524981440107,
+        "fine_correlation": 0.3996031157392695
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 4,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.31680119037628174,
+        "dists": 0.1644817590713501,
+        "psnr_y": 25.87534272849837,
+        "detail_energy": 0.5894966264351461,
+        "fine_correlation": 0.41905878378544464
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3633306324481964,
+        "dists": 0.18806064128875732,
+        "psnr_y": 25.89966599173672,
+        "detail_energy": 0.5117075660877433,
+        "fine_correlation": 0.4230722368975829
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3975999653339386,
+        "dists": 0.19049906730651855,
+        "psnr_y": 25.553695996993607,
+        "detail_energy": 0.4378259363309181,
+        "fine_correlation": 0.38689746908697936
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 8,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.31685376167297363,
+        "dists": 0.14292693138122559,
+        "psnr_y": 25.48941825545135,
+        "detail_energy": 0.6336539881421545,
+        "fine_correlation": 0.39341078176646044
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 8,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.3182774782180786,
+        "dists": 0.1633472442626953,
+        "psnr_y": 25.59945541023442,
+        "detail_energy": 0.5896971684406974,
+        "fine_correlation": 0.4129516115154958
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3642254173755646,
+        "dists": 0.18623530864715576,
+        "psnr_y": 25.637427645209485,
+        "detail_energy": 0.5119375951855023,
+        "fine_correlation": 0.4179116752938697
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.39813798666000366,
+        "dists": 0.18729567527770996,
+        "psnr_y": 25.622334109068156,
+        "detail_energy": 0.43622252911319725,
+        "fine_correlation": 0.3898093222160022
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 12,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.3180157542228699,
+        "dists": 0.1416650414466858,
+        "psnr_y": 25.555050205840008,
+        "detail_energy": 0.6327371847776239,
+        "fine_correlation": 0.39644933564901674
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 12,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.31812021136283875,
+        "dists": 0.16103321313858032,
+        "psnr_y": 25.668606142417506,
+        "detail_energy": 0.5878199325204966,
+        "fine_correlation": 0.41636362770237945
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-350000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3638034462928772,
+        "dists": 0.1821439266204834,
+        "psnr_y": 25.704906763182663,
+        "detail_energy": 0.5093038892877698,
+        "fine_correlation": 0.42131562923400884
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.25134986639022827,
+        "dists": 0.10274124145507812,
+        "psnr_y": 30.107224308398457,
+        "detail_energy": 0.6046238995185285,
+        "fine_correlation": 0.6333717499855344
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 0,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.1790212094783783,
+        "dists": 0.07051682472229004,
+        "psnr_y": 30.0865196316594,
+        "detail_energy": 0.858582755766315,
+        "fine_correlation": 0.6751705590377495
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 0,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.17758464813232422,
+        "dists": 0.07684648036956787,
+        "psnr_y": 30.340932999175582,
+        "detail_energy": 0.8265470266582069,
+        "fine_correlation": 0.6883097719804768
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.20777775347232819,
+        "dists": 0.09843051433563232,
+        "psnr_y": 30.501164124689446,
+        "detail_energy": 0.7407487074994207,
+        "fine_correlation": 0.6902333432930271
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2515423893928528,
+        "dists": 0.10522079467773438,
+        "psnr_y": 29.96743715455747,
+        "detail_energy": 0.6046533842264884,
+        "fine_correlation": 0.630312967312248
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 4,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.17987918853759766,
+        "dists": 0.0699317455291748,
+        "psnr_y": 29.89827826583117,
+        "detail_energy": 0.8596002831021508,
+        "fine_correlation": 0.6711222219164046
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 4,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.17763572931289673,
+        "dists": 0.07634305953979492,
+        "psnr_y": 30.142941259499842,
+        "detail_energy": 0.8272990947646375,
+        "fine_correlation": 0.6842592872455419
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.20856133103370667,
+        "dists": 0.09959304332733154,
+        "psnr_y": 30.310194655690964,
+        "detail_energy": 0.7410380906978716,
+        "fine_correlation": 0.6865924594817719
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2542538046836853,
+        "dists": 0.10838699340820312,
+        "psnr_y": 29.673227834266914,
+        "detail_energy": 0.6008641695192296,
+        "fine_correlation": 0.6255759819070321
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 8,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.1820417046546936,
+        "dists": 0.0714220404624939,
+        "psnr_y": 29.61641810320732,
+        "detail_energy": 0.8552415253740703,
+        "fine_correlation": 0.6653769781235243
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 8,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.1797516793012619,
+        "dists": 0.07821989059448242,
+        "psnr_y": 29.847215747818325,
+        "detail_energy": 0.8229231305016688,
+        "fine_correlation": 0.6788063668814666
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.21036389470100403,
+        "dists": 0.1045072078704834,
+        "psnr_y": 30.00985825967603,
+        "detail_energy": 0.7363490655020278,
+        "fine_correlation": 0.6815693885371328
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.25432881712913513,
+        "dists": 0.10099160671234131,
+        "psnr_y": 29.803765788430383,
+        "detail_energy": 0.5994190684650644,
+        "fine_correlation": 0.6260437138346585
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 12,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.18256987631320953,
+        "dists": 0.0684363842010498,
+        "psnr_y": 29.7491740410766,
+        "detail_energy": 0.8540635239339249,
+        "fine_correlation": 0.6651387661293112
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 12,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.1780894696712494,
+        "dists": 0.07476484775543213,
+        "psnr_y": 29.990994588004135,
+        "detail_energy": 0.8212493180644268,
+        "fine_correlation": 0.6788306557498712
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-h264-1000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.20919430255889893,
+        "dists": 0.09788483381271362,
+        "psnr_y": 30.154579870261475,
+        "detail_energy": 0.7345336846480071,
+        "fine_correlation": 0.6817312744455561
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.20039911568164825,
+        "dists": 0.06906497478485107,
+        "psnr_y": 32.41149458876808,
+        "detail_energy": 0.6257569565115912,
+        "fine_correlation": 0.7192933106626123
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 0,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.14007534086704254,
+        "dists": 0.055613160133361816,
+        "psnr_y": 32.36701963054319,
+        "detail_energy": 0.8945178083573665,
+        "fine_correlation": 0.761956615895141
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 0,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.13868673145771027,
+        "dists": 0.059237539768218994,
+        "psnr_y": 32.76758191441324,
+        "detail_energy": 0.8668090083030164,
+        "fine_correlation": 0.7748338688496703
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.16027066111564636,
+        "dists": 0.07099449634552002,
+        "psnr_y": 33.14678785080761,
+        "detail_energy": 0.7816104234632779,
+        "fine_correlation": 0.7803675304987471
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2105395793914795,
+        "dists": 0.07583993673324585,
+        "psnr_y": 31.793495478881987,
+        "detail_energy": 0.6138682649572933,
+        "fine_correlation": 0.7060475909675622
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 4,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.1440831422805786,
+        "dists": 0.05836200714111328,
+        "psnr_y": 31.72391897381847,
+        "detail_energy": 0.8823035225836744,
+        "fine_correlation": 0.7472479419143726
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 4,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.14544853568077087,
+        "dists": 0.06288254261016846,
+        "psnr_y": 32.07776425590973,
+        "detail_energy": 0.8531349915389874,
+        "fine_correlation": 0.760543262181205
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.17353372275829315,
+        "dists": 0.07809364795684814,
+        "psnr_y": 32.35399171463488,
+        "detail_energy": 0.7686263896339008,
+        "fine_correlation": 0.7651326851370659
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2048436850309372,
+        "dists": 0.07000601291656494,
+        "psnr_y": 31.771237120797196,
+        "detail_energy": 0.6194911263812076,
+        "fine_correlation": 0.7063924207789027
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 8,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.14383172988891602,
+        "dists": 0.0552443265914917,
+        "psnr_y": 31.713264048136622,
+        "detail_energy": 0.8878406531130756,
+        "fine_correlation": 0.747867856581473
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 8,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.14258164167404175,
+        "dists": 0.05767691135406494,
+        "psnr_y": 32.06438037723896,
+        "detail_energy": 0.8594353904213654,
+        "fine_correlation": 0.7612152479463288
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.16599759459495544,
+        "dists": 0.07193338871002197,
+        "psnr_y": 32.3903445354112,
+        "detail_energy": 0.7736874244671208,
+        "fine_correlation": 0.7667217268831659
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.20139899849891663,
+        "dists": 0.06483858823776245,
+        "psnr_y": 32.13279503033921,
+        "detail_energy": 0.6226574684703489,
+        "fine_correlation": 0.7124121305855826
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 12,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.14005906879901886,
+        "dists": 0.05317169427871704,
+        "psnr_y": 32.09335895619339,
+        "detail_energy": 0.8917928315520033,
+        "fine_correlation": 0.7551851045855144
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 12,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.1378660947084427,
+        "dists": 0.05642294883728027,
+        "psnr_y": 32.47360167013763,
+        "detail_energy": 0.8637520286770577,
+        "fine_correlation": 0.7685505108060752
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-350000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.1613330841064453,
+        "dists": 0.06910407543182373,
+        "psnr_y": 32.81332338484068,
+        "detail_energy": 0.7780370372940268,
+        "fine_correlation": 0.7732433669365159
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.1622019112110138,
+        "dists": 0.04305684566497803,
+        "psnr_y": 33.51239335269252,
+        "detail_energy": 0.6410363138487285,
+        "fine_correlation": 0.7500752816820213
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 0,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.11963095515966415,
+        "dists": 0.04203993082046509,
+        "psnr_y": 33.42042540699865,
+        "detail_energy": 0.9146322495658012,
+        "fine_correlation": 0.7911252486434406
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 0,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.11546431481838226,
+        "dists": 0.04458993673324585,
+        "psnr_y": 33.895185334382795,
+        "detail_energy": 0.8903575794157013,
+        "fine_correlation": 0.8032606480678119
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.1266847401857376,
+        "dists": 0.051955580711364746,
+        "psnr_y": 34.47554292544016,
+        "detail_energy": 0.8084068942694135,
+        "fine_correlation": 0.8117417186358887
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.16549170017242432,
+        "dists": 0.044660091400146484,
+        "psnr_y": 33.24228660198287,
+        "detail_energy": 0.6401090917831074,
+        "fine_correlation": 0.7436692215858699
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 4,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.12082156538963318,
+        "dists": 0.04423367977142334,
+        "psnr_y": 33.10157655140971,
+        "detail_energy": 0.9138998536894433,
+        "fine_correlation": 0.7849056437556022
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 4,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.11730176955461502,
+        "dists": 0.04518270492553711,
+        "psnr_y": 33.54433726384539,
+        "detail_energy": 0.8890844048915953,
+        "fine_correlation": 0.7972905029108046
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.12996910512447357,
+        "dists": 0.0531768798828125,
+        "psnr_y": 34.08459143687369,
+        "detail_energy": 0.8067621181531923,
+        "fine_correlation": 0.8053269283699878
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.16542567312717438,
+        "dists": 0.047051072120666504,
+        "psnr_y": 33.211058799315865,
+        "detail_energy": 0.6402134393515068,
+        "fine_correlation": 0.7436400432603131
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 8,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.12073471397161484,
+        "dists": 0.041813552379608154,
+        "psnr_y": 33.11569389525488,
+        "detail_energy": 0.9141459558734981,
+        "fine_correlation": 0.7852766352361845
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 8,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.11653269827365875,
+        "dists": 0.04336369037628174,
+        "psnr_y": 33.560027952887864,
+        "detail_energy": 0.8892569020160053,
+        "fine_correlation": 0.7976136765866948
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.12889434397220612,
+        "dists": 0.052088260650634766,
+        "psnr_y": 34.09513806707937,
+        "detail_energy": 0.8072811953684622,
+        "fine_correlation": 0.8054832419220163
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.1638164222240448,
+        "dists": 0.04244166612625122,
+        "psnr_y": 33.36025775970954,
+        "detail_energy": 0.6418575878024956,
+        "fine_correlation": 0.7463999973784146
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 12,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.11901025474071503,
+        "dists": 0.040509700775146484,
+        "psnr_y": 33.2548145855833,
+        "detail_energy": 0.9163175020610677,
+        "fine_correlation": 0.7877064874308443
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 12,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.11435871571302414,
+        "dists": 0.04307377338409424,
+        "psnr_y": 33.71477284367648,
+        "detail_energy": 0.8916166423502712,
+        "fine_correlation": 0.8000484726217958
+      }
+    },
+    {
+      "source_id": "four_people",
+      "sequence_id": "four_people-vp9-1000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.1270350068807602,
+        "dists": 0.05354273319244385,
+        "psnr_y": 34.268896199368236,
+        "detail_energy": 0.8091340502386727,
+        "fine_correlation": 0.807924506200804
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.39530572295188904,
+        "dists": 0.1834336519241333,
+        "psnr_y": 28.25569303090099,
+        "detail_energy": 0.41115262709037115,
+        "fine_correlation": 0.29965650298334
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 0,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.31665563583374023,
+        "dists": 0.17460978031158447,
+        "psnr_y": 28.35309882162338,
+        "detail_energy": 0.5824876760065735,
+        "fine_correlation": 0.34620668881714317
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 0,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.3278120458126068,
+        "dists": 0.18180876970291138,
+        "psnr_y": 28.455472431713357,
+        "detail_energy": 0.5463608177629652,
+        "fine_correlation": 0.36214006863948545
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3607717454433441,
+        "dists": 0.183555006980896,
+        "psnr_y": 28.45867103926566,
+        "detail_energy": 0.47603032376498305,
+        "fine_correlation": 0.3656604159031844
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.39464473724365234,
+        "dists": 0.18264102935791016,
+        "psnr_y": 28.360279174205928,
+        "detail_energy": 0.4167269395172712,
+        "fine_correlation": 0.2973567607756641
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 4,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.3158804476261139,
+        "dists": 0.1717698574066162,
+        "psnr_y": 28.46499507089838,
+        "detail_energy": 0.5965442120540662,
+        "fine_correlation": 0.34611910314082217
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 4,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.3270168900489807,
+        "dists": 0.1783561110496521,
+        "psnr_y": 28.568729141258572,
+        "detail_energy": 0.557646792557232,
+        "fine_correlation": 0.3623122076262152
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.36089271306991577,
+        "dists": 0.1824292540550232,
+        "psnr_y": 28.574791435795994,
+        "detail_energy": 0.4829832485540239,
+        "fine_correlation": 0.36251755264229313
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3975330889225006,
+        "dists": 0.18439751863479614,
+        "psnr_y": 28.174735224963424,
+        "detail_energy": 0.3928356443654071,
+        "fine_correlation": 0.3031744948076724
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 8,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.3163948655128479,
+        "dists": 0.17766189575195312,
+        "psnr_y": 28.31713676151274,
+        "detail_energy": 0.5759172691514431,
+        "fine_correlation": 0.36238014240261884
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 8,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.3269416391849518,
+        "dists": 0.18418502807617188,
+        "psnr_y": 28.421765328908243,
+        "detail_energy": 0.534451706561406,
+        "fine_correlation": 0.37999203389652936
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3621082901954651,
+        "dists": 0.18461108207702637,
+        "psnr_y": 28.41455642925908,
+        "detail_energy": 0.4580509519528389,
+        "fine_correlation": 0.37746868461571575
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.39442747831344604,
+        "dists": 0.1812981367111206,
+        "psnr_y": 28.338426955995256,
+        "detail_energy": 0.3943270324817837,
+        "fine_correlation": 0.31538039848209015
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 12,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.31200146675109863,
+        "dists": 0.17154324054718018,
+        "psnr_y": 28.475200225162215,
+        "detail_energy": 0.5790288365452828,
+        "fine_correlation": 0.37768899914347953
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 12,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.32334181666374207,
+        "dists": 0.1800658106803894,
+        "psnr_y": 28.589545827097254,
+        "detail_energy": 0.5373796275391862,
+        "fine_correlation": 0.3965657818116965
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-350000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3599240183830261,
+        "dists": 0.180503249168396,
+        "psnr_y": 28.575417837879687,
+        "detail_energy": 0.46001340518355743,
+        "fine_correlation": 0.39545487316563893
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.298692524433136,
+        "dists": 0.11540400981903076,
+        "psnr_y": 32.418508787456844,
+        "detail_energy": 0.5538371998924658,
+        "fine_correlation": 0.5519402625049645
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 0,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.24469278752803802,
+        "dists": 0.11628425121307373,
+        "psnr_y": 32.196021258815364,
+        "detail_energy": 0.7789505116724347,
+        "fine_correlation": 0.6281047048417057
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 0,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.24901345372200012,
+        "dists": 0.12446433305740356,
+        "psnr_y": 32.484861312955545,
+        "detail_energy": 0.7533023710521873,
+        "fine_correlation": 0.6437551167442501
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2659565210342407,
+        "dists": 0.12416166067123413,
+        "psnr_y": 32.76351743707538,
+        "detail_energy": 0.6750701211335864,
+        "fine_correlation": 0.6511088066509566
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2982153594493866,
+        "dists": 0.1139630675315857,
+        "psnr_y": 32.369001870347695,
+        "detail_energy": 0.5574552798264576,
+        "fine_correlation": 0.5369869719438676
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 4,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.24624976515769958,
+        "dists": 0.11168152093887329,
+        "psnr_y": 32.11283424489973,
+        "detail_energy": 0.7913532617901381,
+        "fine_correlation": 0.6084325218371008
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 4,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.24973902106285095,
+        "dists": 0.11942338943481445,
+        "psnr_y": 32.40049687713467,
+        "detail_energy": 0.763185891576472,
+        "fine_correlation": 0.6246218240966172
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.26725754141807556,
+        "dists": 0.1217118501663208,
+        "psnr_y": 32.693684638851266,
+        "detail_energy": 0.6803651896199568,
+        "fine_correlation": 0.6326707141391372
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2998591959476471,
+        "dists": 0.11537623405456543,
+        "psnr_y": 32.24612407286604,
+        "detail_energy": 0.5482015200733212,
+        "fine_correlation": 0.5402813175882534
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 8,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.24587801098823547,
+        "dists": 0.11172115802764893,
+        "psnr_y": 32.06131406368223,
+        "detail_energy": 0.7801727899939367,
+        "fine_correlation": 0.614053219703116
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 8,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.24858732521533966,
+        "dists": 0.121573805809021,
+        "psnr_y": 32.34729884265994,
+        "detail_energy": 0.7516661772846865,
+        "fine_correlation": 0.6301148380174959
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2680877149105072,
+        "dists": 0.12330430746078491,
+        "psnr_y": 32.61588985787104,
+        "detail_energy": 0.669087916572197,
+        "fine_correlation": 0.637501233577283
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2892039120197296,
+        "dists": 0.1070064902305603,
+        "psnr_y": 32.648683570465515,
+        "detail_energy": 0.5573164009993604,
+        "fine_correlation": 0.5646752515193647
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 12,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.23703633248806,
+        "dists": 0.10378515720367432,
+        "psnr_y": 32.509926180211025,
+        "detail_energy": 0.7907943722546259,
+        "fine_correlation": 0.6430472519765896
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 12,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.23995937407016754,
+        "dists": 0.1106191873550415,
+        "psnr_y": 32.82945751440182,
+        "detail_energy": 0.762574367078658,
+        "fine_correlation": 0.6600322681088798
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-h264-1000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.25826939940452576,
+        "dists": 0.11447560787200928,
+        "psnr_y": 33.10018376259101,
+        "detail_energy": 0.6789965218348929,
+        "fine_correlation": 0.6659550322909616
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.24676395952701569,
+        "dists": 0.08316195011138916,
+        "psnr_y": 34.68601609453355,
+        "detail_energy": 0.590947798733521,
+        "fine_correlation": 0.6639918517522668
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 0,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.20499755442142487,
+        "dists": 0.08223992586135864,
+        "psnr_y": 34.240852451297954,
+        "detail_energy": 0.8359206243066055,
+        "fine_correlation": 0.7358132611654061
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 0,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.2089359313249588,
+        "dists": 0.08882266283035278,
+        "psnr_y": 34.70250462902792,
+        "detail_energy": 0.8142159490318871,
+        "fine_correlation": 0.7514942622425841
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2198370397090912,
+        "dists": 0.09302127361297607,
+        "psnr_y": 35.22862198156104,
+        "detail_energy": 0.730294569098451,
+        "fine_correlation": 0.7596544009654389
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.25531327724456787,
+        "dists": 0.087921142578125,
+        "psnr_y": 34.17656279518916,
+        "detail_energy": 0.5786000640119726,
+        "fine_correlation": 0.6305547513020371
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 4,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.21284428238868713,
+        "dists": 0.07994163036346436,
+        "psnr_y": 33.69672204910267,
+        "detail_energy": 0.830438074183011,
+        "fine_correlation": 0.6968171667886262
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 4,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.2162611484527588,
+        "dists": 0.08855724334716797,
+        "psnr_y": 34.10875792171281,
+        "detail_energy": 0.8055717106257951,
+        "fine_correlation": 0.7125039614334142
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.23094873130321503,
+        "dists": 0.09649145603179932,
+        "psnr_y": 34.56054655248625,
+        "detail_energy": 0.7195486971873373,
+        "fine_correlation": 0.7191485133861254
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2480112463235855,
+        "dists": 0.08530640602111816,
+        "psnr_y": 34.275588799024504,
+        "detail_energy": 0.5864169147025786,
+        "fine_correlation": 0.6446166594118041
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 8,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.2066962718963623,
+        "dists": 0.08344292640686035,
+        "psnr_y": 33.950269727863926,
+        "detail_energy": 0.8362145119321526,
+        "fine_correlation": 0.7142317022057739
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 8,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.21012961864471436,
+        "dists": 0.0897819995880127,
+        "psnr_y": 34.37661860694101,
+        "detail_energy": 0.8119276298269186,
+        "fine_correlation": 0.7304739489569381
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.22298693656921387,
+        "dists": 0.09476643800735474,
+        "psnr_y": 34.84490962650485,
+        "detail_energy": 0.7258333929240532,
+        "fine_correlation": 0.7389781928411907
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2427460253238678,
+        "dists": 0.08227318525314331,
+        "psnr_y": 34.702292133120125,
+        "detail_energy": 0.598544659640824,
+        "fine_correlation": 0.6645805669775489
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 12,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.20260745286941528,
+        "dists": 0.07958173751831055,
+        "psnr_y": 34.318126684285645,
+        "detail_energy": 0.8513534314254058,
+        "fine_correlation": 0.7362883224747614
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 12,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.20537778735160828,
+        "dists": 0.08782494068145752,
+        "psnr_y": 34.78794564956087,
+        "detail_energy": 0.827959787660703,
+        "fine_correlation": 0.7527224101934038
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-350000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.21871213614940643,
+        "dists": 0.0919266939163208,
+        "psnr_y": 35.30615503840779,
+        "detail_energy": 0.7423779200295618,
+        "fine_correlation": 0.7606417751535768
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.20310476422309875,
+        "dists": 0.0603024959564209,
+        "psnr_y": 35.862102970380455,
+        "detail_energy": 0.6079457581779324,
+        "fine_correlation": 0.7067399320503056
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 0,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.17026236653327942,
+        "dists": 0.06304174661636353,
+        "psnr_y": 35.322196101979635,
+        "detail_energy": 0.8615930682693015,
+        "fine_correlation": 0.7763325335459831
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 0,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.1692853569984436,
+        "dists": 0.0678868293762207,
+        "psnr_y": 35.91033424798243,
+        "detail_energy": 0.841908647568443,
+        "fine_correlation": 0.7926245105009764
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.18324533104896545,
+        "dists": 0.0735020637512207,
+        "psnr_y": 36.565823128000034,
+        "detail_energy": 0.7576845845877012,
+        "fine_correlation": 0.7987489494839414
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.20611712336540222,
+        "dists": 0.06171697378158569,
+        "psnr_y": 35.60102614078153,
+        "detail_energy": 0.6175099661866242,
+        "fine_correlation": 0.6894280636382786
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 4,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.1739640086889267,
+        "dists": 0.06011390686035156,
+        "psnr_y": 35.03799813788695,
+        "detail_energy": 0.8784015517199608,
+        "fine_correlation": 0.7554302870465939
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 4,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.17398367822170258,
+        "dists": 0.06653177738189697,
+        "psnr_y": 35.58138320472052,
+        "detail_energy": 0.8564315543068708,
+        "fine_correlation": 0.771658834651985
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.18863502144813538,
+        "dists": 0.0744701623916626,
+        "psnr_y": 36.207103104664206,
+        "detail_energy": 0.7701243219663411,
+        "fine_correlation": 0.7776293829929278
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.20679675042629242,
+        "dists": 0.06402087211608887,
+        "psnr_y": 35.56206085071671,
+        "detail_energy": 0.6133374005721791,
+        "fine_correlation": 0.6943084103581851
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 8,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.17251035571098328,
+        "dists": 0.06407064199447632,
+        "psnr_y": 35.14150164290248,
+        "detail_energy": 0.8710236266660546,
+        "fine_correlation": 0.7640016736779078
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 8,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.17252331972122192,
+        "dists": 0.06878006458282471,
+        "psnr_y": 35.698791592650764,
+        "detail_energy": 0.8502562265082876,
+        "fine_correlation": 0.7805096783067222
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.1883903443813324,
+        "dists": 0.07672244310379028,
+        "psnr_y": 36.304334945718246,
+        "detail_energy": 0.7655269889277379,
+        "fine_correlation": 0.7861739626292243
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.20226112008094788,
+        "dists": 0.05945026874542236,
+        "psnr_y": 35.96687148518438,
+        "detail_energy": 0.6255898776330676,
+        "fine_correlation": 0.7106527455015649
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 12,
+      "variant": "ref_noise010_raw",
+      "metrics": {
+        "lpips": 0.16875845193862915,
+        "dists": 0.060053229331970215,
+        "psnr_y": 35.39145956733169,
+        "detail_energy": 0.8897280236300149,
+        "fine_correlation": 0.7778014543929394
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 12,
+      "variant": "ref_noise010_80",
+      "metrics": {
+        "lpips": 0.16845862567424774,
+        "dists": 0.06362670660018921,
+        "psnr_y": 35.99156029380901,
+        "detail_energy": 0.868387603977242,
+        "fine_correlation": 0.794138674863605
+      }
+    },
+    {
+      "source_id": "johnny",
+      "sequence_id": "johnny-vp9-1000000",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.18308810889720917,
+        "dists": 0.07113158702850342,
+        "psnr_y": 36.71255527004342,
+        "detail_energy": 0.7813659744737625,
+        "fine_correlation": 0.8018150779349974
+      }
+    }
+  ],
+  "complete": true,
+  "summary": {
+    "lanczos": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.4957118332386017,
+          "dists": 0.17144159227609634,
+          "psnr_y": 22.931814922224575,
+          "detail_energy": 0.4056827459253679,
+          "fine_correlation": 0.3584202039433989
+        },
+        "four_people": {
+          "lpips": 0.25478572119027376,
+          "dists": 0.10224039480090141,
+          "psnr_y": 30.23590031320097,
+          "detail_energy": 0.5752431459644255,
+          "fine_correlation": 0.6186566818904616
+        },
+        "johnny": {
+          "lpips": 0.28618726786226034,
+          "dists": 0.11047958955168724,
+          "psnr_y": 32.72774837225826,
+          "detail_energy": 0.5406715677440711,
+          "fine_correlation": 0.5508953088498254
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.3455616074303786,
+        "dists": 0.12805385887622833,
+        "psnr_y": 28.63182120256127,
+        "detail_energy": 0.5071991532112882,
+        "fine_correlation": 0.509324064894562
+      }
+    },
+    "ref_noise010_raw": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.36799846962094307,
+          "dists": 0.1400541067123413,
+          "psnr_y": 22.8437718368167,
+          "detail_energy": 0.5510460598486149,
+          "fine_correlation": 0.36778329957821915
+        },
+        "four_people": {
+          "lpips": 0.18990614358335733,
+          "dists": 0.07818805798888206,
+          "psnr_y": 30.16819127048403,
+          "detail_energy": 0.8235296952177327,
+          "fine_correlation": 0.6512193293922226
+        },
+        "johnny": {
+          "lpips": 0.23421437852084637,
+          "dists": 0.10697141289710999,
+          "psnr_y": 32.474353311841,
+          "detail_energy": 0.770620115100063,
+          "fine_correlation": 0.6176718145725355
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.26403966390838224,
+        "dists": 0.10840452586611111,
+        "psnr_y": 28.495438806380577,
+        "detail_energy": 0.7150652900554703,
+        "fine_correlation": 0.5455581478476591
+      }
+    },
+    "ref_noise010_80": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.3873258186504245,
+          "dists": 0.14622033759951591,
+          "psnr_y": 22.933566224001044,
+          "detail_energy": 0.5297942234477557,
+          "fine_correlation": 0.3769064406635209
+        },
+        "four_people": {
+          "lpips": 0.1883344827219844,
+          "dists": 0.08590814098715782,
+          "psnr_y": 30.46435441425721,
+          "detail_energy": 0.7910584955823984,
+          "fine_correlation": 0.6658635703113878
+        },
+        "johnny": {
+          "lpips": 0.23858543951064348,
+          "dists": 0.11389429122209549,
+          "psnr_y": 32.82847021390842,
+          "detail_energy": 0.7427016788074337,
+          "fine_correlation": 0.6341037762556749
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.27141524696101743,
+        "dists": 0.11534092326958974,
+        "psnr_y": 28.74213028405556,
+        "detail_energy": 0.6878514659458626,
+        "fine_correlation": 0.5589579290768613
+      }
+    },
+    "shipping": {
+      "sources": {
+        "crowd_run": {
+          "lpips": 0.4320258032530546,
+          "dists": 0.1641482375562191,
+          "psnr_y": 23.042958871816058,
+          "detail_energy": 0.48219069563361283,
+          "fine_correlation": 0.38265107711601853
+        },
+        "four_people": {
+          "lpips": 0.21655134484171867,
+          "dists": 0.10291698202490807,
+          "psnr_y": 30.73361534599997,
+          "detail_energy": 0.708173946722626,
+          "fine_correlation": 0.6708610856042104
+        },
+        "johnny": {
+          "lpips": 0.25869447458535433,
+          "dists": 0.11792400851845741,
+          "psnr_y": 33.18292263037343,
+          "detail_energy": 0.6608346329881865,
+          "fine_correlation": 0.639445473023287
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.3024238742267092,
+        "dists": 0.12832974269986153,
+        "psnr_y": 28.986498949396488,
+        "detail_energy": 0.6170664251148085,
+        "fine_correlation": 0.5643192119145053
+      }
+    }
+  }
+}
