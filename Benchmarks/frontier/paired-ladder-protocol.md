@@ -143,3 +143,14 @@ At 2,000 steps the blend is nearly monotone in the raw weight and every setting 
 | 4,000 | +9.48% | +12.65% | 8 / 8 (Sunflower +6.4 / +2.6) |
 
 The 3,000-step raw checkpoint already regresses RushHour and Sunflower LPIPS (−4.9%, −9.2%), the 2,000-step raw does not: the drift onto grain starts between 2,000 and 3,000 steps. The 2,000-step blend remains the candidate; 1,000 steps is the safest on grain at a small aggregate cost.
+
+## Results, r8 (receipts `paired-ladder/pre_l1_8k*`, `pre_then_critic_2k*`, `crop128_2k*`)
+
+| Arm | 48 dev raw | 48 dev 80% | 96 bank raw | 96 bank 80% |
+|---|---|---|---|---|
+| `pre_l1_8k` critic-free reference fine-tune of the folded base | +0.06 / −4.08 | +0.02 / −2.73 | −1.04 / −2.47 | −0.77 / −1.60 |
+| `pre_then_critic_2k` (2k critic on top of it) | +14.99 / +18.25 | +10.35 / +12.86 | pending | pending |
+| `crop128_2k` (r6 recipe, crop 128) | +15.60 / +18.23 | +11.70 / +13.84 | +18.67 / +11.54 | +15.15 / +8.72 |
+| `ref_w005_s2k` (r6, comparator) | +15.67 / +18.57 | +11.66 / +13.76 | +18.92 / +11.79 | +15.62 / +9.05 |
+
+A critic-free L1/Sobel/FFT fine-tune to the reference makes the base *worse* (regression to the mean blurs it), and starting the critic from that base lands where the plain recipe already is. A larger training crop changes nothing measurable. The remaining levers are capacity (r9, ch48 direct 2x from random init) and data (a 756-sequence stream bank from the same 21 sources, three times the current bank, `stream-bank-big`).
