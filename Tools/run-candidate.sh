@@ -4,7 +4,7 @@
 #   Tools/run-candidate.sh [PACKAGES_DIR] [SHARPNESS]
 #
 # PACKAGES_DIR holds direct2x_trained_<W>x<H>.mlpackage for every ladder size
-# (default: .build/ref4k-ladder, the 4,000-step reference-target blend).
+# (default: .build/ref2k-ladder, the 2,000-step reference-target blend).
 # The Release app is copied to .build/candidate-app, the packages are added to
 # its Resources, it is re-signed with the same stable identity run-poc.sh uses,
 # and launched with LUCID_MODEL_STEM=direct2x_trained_ and a tuning file whose
@@ -13,7 +13,7 @@
 # quitting and running Tools/run-poc.sh, or flip Enhancement in the lab page.
 set -euo pipefail
 repo_dir="$(cd "$(dirname "$0")/.." && pwd)"
-packages="${1:-$repo_dir/.build/ref4k-ladder}"
+packages="${1:-$repo_dir/.build/ref2k-ladder}"
 sharpness="${2:-0.2}"
 release_app="$repo_dir/.build/paired-release/Build/Products/Release/Lucid.app"
 [[ -d "$release_app" ]] || { echo "Release app missing; build with: xcodebuild -project Lucid.xcodeproj -scheme Lucid -configuration Release -derivedDataPath .build/paired-release build CODE_SIGNING_ALLOWED=NO" >&2; exit 1; }
