@@ -13,3 +13,22 @@ Evaluate only the final raw checkpoint and the previously fixed 80% candidate / 
 No shipping weights change, no flicker tuning, no remote publication. Training and evaluation use the authorized RTX 4080 over Tailscale.
 
 The first launch stopped before candidate training because the launcher incorrectly required a first-output hash from the historical receipt, which does not contain that field. Both recorded historical hashes matched. The corrected launch retains the new control/candidate first-output comparison; this was a receipt-schema error, not evidence of a numerical mismatch. Preserve the failed launch status.
+
+## Completed result (recovered after the interrupting session)
+
+The r2 job finished all 8,000 steps in 11.87 minutes on the RTX 4080; unit, smoke, training, interpolation and both evaluations exited zero. Receipts: `paired-critic-experiment.json`, `paired-critic-development.json`, `paired-critic-bank-validation.json`, the frozen gate receipts `paired-critic-*-gate.json` and the perceptual gate receipts `paired-critic-*-perceptual-gate.json` (see `perceptual-gate-protocol.md`).
+
+| Variant | Set | LPIPS | DISTS | Frozen gate | Perceptual gate |
+|---|---|---:|---:|---|---|
+| raw | 48 development | +10.05% | +17.98% | fails FourPeople, Johnny correlation | passes |
+| 80% blend | 48 development | +7.85% | +11.81% | fails Johnny correlation (−0.0127) | passes |
+| raw | 96 bank | +8.98% | +10.89% | fails Sintel LPIPS/correlation, REDS-154 correlation | fails Sintel |
+| 80% blend | 96 bank | +11.10% | +7.60% | **passes** | **passes** |
+
+### Eight-source holdout, torch level (`paired-critic-holdout/torch-holdout8.json`)
+
+Scored on the frozen 960-pair quality holdout with the same scorer on the Mac (MPS). The 80% blend improves LPIPS and DISTS on every one of the eight sources (+6.10% / +11.92% source-balanced) but falls below the Lanczos correlation anchor on DucksTakeOff and RushHour. The raw checkpoint (+6.27% / +14.92%) regresses LPIPS on RushHour and Sunflower and exceeds the embellishment cap on RushHour (fine energy 1.104): on the grainy night scene it synthesizes speckle on flat dark surfaces, which DISTS rewards and pixel correlation punishes. Crops: `paired-critic-crops/rush_hour-*.png`, `ducks_take_off-*.png`.
+
+### Native delivery holdout, 80% blend (`paired-critic-holdout/native-blend80-*.json`)
+
+Converted with the shipping mixed-precision policy (`native-profile.json`: 5.63 ms at 640×360 and 9.89 ms at 864×480 on CPU+GPU, identical to the area-folded graph, conversion error under one RGB level). The Release app at `1d4c0aaf` ran all 32 conditions × 300 frames through preprocessing, reconstruction, detail and the real NV12 sender with the inherited candidate configuration (sharpness 0.4, radius 2). Source-balanced LPIPS 0.3288 → 0.3009 (**+8.47%**) and DISTS 0.1345 → 0.1175 (**+12.69%**), against the earlier raw-weight native candidate's +7.20% / +10.46%. Six sources improve both metrics by 6–24%; RushHour and Sunflower lose 1.9% / 2.6% LPIPS with fine energy 1.27 / 1.13, above the reference: the inherited 0.4 sharpening stacks on the model's synthesized grain. The frozen native gate fails on RushHour, Sunflower and Tractor correlation and Sunflower LPIPS; the perceptual gate fails on the same grainy sources. No promotion. A candidate-specific presentation sharpness (0 or 0.2) is the obvious next native test once the ladders choose the weights.
