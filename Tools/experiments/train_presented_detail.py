@@ -151,17 +151,22 @@ def main():
     torch.cuda.manual_seed_all(args.seed)
     manifest, data = load_bank(args.bank)
     bank_hash = digest(args.bank / 'manifest.json')
-    teacher, teacher_receipt = load_teacher_cache(args.pixrestore_cache, bank_hash, data, digest)
+    if str(args.pixrestore_cache) == 'none':
+        if args.intended != 'reference' or args.teacher_mix:
+            ap.error('a bank without a teacher cache requires --intended reference and --teacher-mix 0')
+        teacher, teacher_receipt = {}, {'note': 'no teacher cache; reference-target training'}
+    else:
+        teacher, teacher_receipt = load_teacher_cache(args.pixrestore_cache, bank_hash, data, digest)
     shipping, _, frames = load(args.init, 'cuda')
     if frames != 1:
         raise ValueError('single-frame shipping initialization required')
     already_2x = shipping.core.upsampler[1].upscale_factor == 4
     if already_2x and args.intended != 'reference':
         ap.error('a 2x starting checkpoint has no 4x shipping targets; use --intended reference')
-    if already_2x:
-        # Starting from an earlier 2x stage (e.g. a critic-free pre-fine-tune):
-        # the shipping-target cache belongs to the 4x model and is not needed.
-        target, shipping_receipt = {}, {'checkpoint_sha256': digest(args.init), 'split': 'unused: 2x initialization'}
+    if already_2x or (args.intended == 'reference' and str(args.shipping_cache) == 'none'):
+        # Starting from an earlier 2x stage, or training to the reference on a bank
+        # without cached shipping targets: the cache is not needed.
+        target, shipping_receipt = {}, {'checkpoint_sha256': digest(args.init), 'split': 'unused'}
     else:
         target, shipping_receipt = shipping_targets(shipping, data, args.shipping_cache, bank_hash, digest(args.init))
     # Form the full-frame RGB8 mixture before augmentation, including both arms.
@@ -203,8 +208,8 @@ def main():
     args.out.mkdir(parents=True)
     experiment = {'args': {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
         'bank_sha256': bank_hash, 'checkpoint_sha256': digest(args.init),
-        'teacher_manifest_sha256': digest(args.pixrestore_cache / 'manifest.json'),
-        'shipping_manifest_sha256': digest(args.shipping_cache / 'manifest.json') if (args.shipping_cache / 'manifest.json').is_file() else None,
+        'teacher_manifest_sha256': digest(args.pixrestore_cache / 'manifest.json') if str(args.pixrestore_cache) != 'none' else None,
+        'shipping_manifest_sha256': digest(args.shipping_cache / 'manifest.json') if str(args.shipping_cache) != 'none' and (args.shipping_cache / 'manifest.json').is_file() else None,
         'initialization': '2x checkpoint used directly' if already_2x else 'folded 4x shipping head',
         'source_hashes': {str(p.name): digest(p) for p in (Path(__file__),
             Path(__file__).with_name('fold_shipping_head.py'), Path(__file__).with_name('train_causal_detail.py'),
