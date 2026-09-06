@@ -57,7 +57,7 @@
   <a href="lab.html">← live lab</a>
   <span class="m" id="frameLabel" style="color:var(--muted);font-size:12px"></span>
   <span class="hint">
-    <kbd>1</kbd>–<kbd>9</kbd> variant · <kbd>Space</kbd> flip to shipping · <kbd>←</kbd><kbd>→</kbd> frame · <kbd>S</kbd> smooth/pixel · drag to pan · wheel to zoom
+    <kbd>1</kbd>–<kbd>9</kbd> variant · <kbd>Space</kbd> flip to previous SPAN · <kbd>←</kbd><kbd>→</kbd> frame · <kbd>S</kbd> smooth/pixel · drag to pan · wheel to zoom
   </span>
 </header>
 <main>
@@ -87,15 +87,15 @@ const images = new Map();
 
 const GROUPS = [
   ['Truth and source', ['reference', 'source']],
-  ['Today: shipping Lucid', ['shipping', 'shipping_app', 'lanczos']],
-  ['Candidate: Lucid 2k', ['lucid_2k', 'lucid_2k_app', 'lucid_2k_raw']],
+  ['Shipping now: Lucid 2k', ['lucid_2k', 'lucid_2k_app', 'lucid_2k_raw']],
+  ['Previous: SPAN ch32utc', ['shipping', 'shipping_app', 'lanczos']],
   ['Target: NVIDIA RTX VSR (VFX SDK ULTRA on the 4080)', ['nvidia_ultra', 'nvidia_high']],
   ['Other', null],
 ];
 const NAMES = {
   reference: 'reference (1080p master → 720p)', source: 'source (640×360 as decoded)',
-  lanczos: 'Lanczos', shipping: 'shipping weights', shipping_app: 'shipping, through the app',
-  lucid_2k: 'Lucid 2k blend (candidate)', lucid_2k_app: 'Lucid 2k blend, through the app', lucid_2k_raw: 'Lucid 2k raw checkpoint',
+  lanczos: 'Lanczos', shipping: 'previous SPAN weights', shipping_app: 'previous SPAN, through the app',
+  lucid_2k: 'Lucid 2k blend (shipping)', lucid_2k_app: 'Lucid 2k blend, through the app', lucid_2k_raw: 'Lucid 2k raw checkpoint',
   nvidia_ultra: 'NVIDIA ULTRA', nvidia_high: 'NVIDIA HIGH',
 };
 const pretty = n => NAMES[n] || n;
