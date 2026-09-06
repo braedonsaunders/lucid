@@ -102,3 +102,16 @@ Noise on the LR input costs sharpness everywhere (three to four LPIPS points on 
 | `ref_w005_s4k` (r3, comparator) | +14.79 / +19.10 | +11.49 / +13.91 | +16.22 / +12.60 | +15.93 / +9.23 pass | +10.13 / +13.10; Sunflower −13.6 / −7.6 | **+9.48 / +12.65, all eight up** |
 
 The smooth-texture negative does what it was built to do on the raw checkpoint: Sunflower goes from −13.6% to −2.7% LPIPS and RushHour fine energy from 1.20 to 1.06, and it is the first raw checkpoint to pass the bank set. It pays for that everywhere else (three to four points of aggregate holdout LPIPS/DISTS), and after the 80% blend the plain 4,000-step arm is better on seven of eight sources. Not adopted as is; a lighter weight on the smooth negative (0.05–0.1 instead of 0.125) is the obvious follow-up if grain handling is revisited. `ref_smooth_s8k` and the r6 schedule ladder (2,000 / 6,000 steps, plain negatives) are recorded when they complete.
+
+## Results, r6: the schedule is the knob (receipts `paired-ladder/ref_w005_s2k*`, `ref_w005_s6k*`, `holdout8-s2k*`)
+
+Reference target, weight 0.005, plain shift negatives; only the step count changes.
+
+| Steps | 48 dev raw | 48 dev 80% | 96 bank raw | 96 bank 80% | 960 holdout raw | 960 holdout 80% |
+|---:|---|---|---|---|---|---|
+| **2,000** | +15.67 / +18.57 | +11.66 / +13.76 | **+18.92 / +11.79 pass** | +15.62 / +9.05 pass | **+10.83 / +14.17, all eight sources up** (Sunflower +1.4 / +0.3) | **+9.41 / +13.04, all eight up; RushHour +15.8 / +25.1, Sunflower +12.9 / +8.7** |
+| 4,000 (r3) | +14.79 / +19.10 | +11.49 / +13.91 | +16.22 / +12.60 | +15.93 / +9.23 pass | +10.13 / +13.10, Sunflower −13.6 | +9.48 / +12.65, all eight up (Sunflower +6.4 / +2.6) |
+| 6,000 | +15.08 / +19.16 | +11.90 / +13.76 | +12.53 / +12.08 Sintel | +14.86 / +9.06 pass | — | pending |
+| 8,000 (r2) | +15.61 / +20.00 | +12.22 / +14.13 | +12.05 / +12.01 Sintel | +14.39 / +9.16 pass | +9.43 / +12.81, Sunflower −25.7 | +9.29 / +11.79, Sunflower −11.0 DISTS |
+
+The development set cannot see this at all: raw LPIPS is +15.1–15.7% at every schedule. The holdout can: the raw checkpoint's Sunflower LPIPS goes +1.4% → −13.6% → −25.7% from 2,000 to 8,000 steps, and RushHour fine energy 1.08 → 1.20 → 1.22. The adversarial term begins inventing texture on bokeh and grain after roughly 2,000 steps, before any aggregate number moves. The 2,000-step 80% blend is the new promotion candidate; its native delivery holdout runs with the same configuration as the 4,000-step one. Prespecified follow-ups: r7 (1,000 and 3,000 steps) and blend weights 0.6 / 0.9 of the 2,000-step raw checkpoint on the holdout.
