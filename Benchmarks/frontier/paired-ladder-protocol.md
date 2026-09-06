@@ -132,3 +132,14 @@ Ladder r7 (1,000 and 3,000 steps) passes every gate on both development sets, li
 | 1.0 (raw) | +10.83% | +14.17% | 8 / 8 | aggregate correlation 0.001 below the anchor |
 
 At 2,000 steps the blend is nearly monotone in the raw weight and every setting improves every source; the blend is no longer rescuing grain the way it had to at 4,000 and 8,000 steps. 0.8 stays the measured native candidate; 0.9 is the obvious alternative if the live A/B wants a touch more detail. The 6,000-step blend regresses Sunflower DISTS 5.3%, consistent with the schedule finding.
+
+### Ladder r7 on the 960-pair holdout (`paired-ladder/holdout8*` from r7)
+
+| Steps, 80% blend | LPIPS | DISTS | Sources up |
+|---:|---:|---:|---|
+| 1,000 | +9.10% | +12.13% | 8 / 8 (Sunflower +16.3 / +11.0, RushHour +17.1 / +23.0) |
+| **2,000** | **+9.41%** | **+13.04%** | 8 / 8 |
+| 3,000 | +8.91% | +12.49% | 8 / 8 (Sunflower +8.7 / +5.9) |
+| 4,000 | +9.48% | +12.65% | 8 / 8 (Sunflower +6.4 / +2.6) |
+
+The 3,000-step raw checkpoint already regresses RushHour and Sunflower LPIPS (−4.9%, −9.2%), the 2,000-step raw does not: the drift onto grain starts between 2,000 and 3,000 steps. The 2,000-step blend remains the candidate; 1,000 steps is the safest on grain at a small aggregate cost.
