@@ -208,6 +208,12 @@ final class AppCoordinator {
             appState.enabled = enabled
             if !enabled { stopSession(reason: "Paused") } else { evaluate() }
         }
+        if let stem = control.model, !stem.isEmpty, stem != LearnedUpscaler.currentStem,
+           LearnedUpscaler.bundledStems().contains(stem) {
+            LearnedUpscaler.stemOverride = stem
+            print("   🧠 model → \(stem)")
+            session?.reloadModel()
+        }
         if let changes = control.tuning, !changes.isEmpty {
             var t = EnhancementSession.tuning
             for (key, value) in changes {
@@ -287,6 +293,8 @@ final class AppCoordinator {
             engine: engine.rawValue,
             engines: (EngineKind.comparisonPathEnabled ? EngineKind.allCases : EngineKind.shipping).map(\.rawValue),
             engineLabels: (EngineKind.comparisonPathEnabled ? EngineKind.allCases : EngineKind.shipping).map(\.label),
+            model: LearnedUpscaler.currentStem,
+            models: LearnedUpscaler.bundledStems(),
             tuning: EnhancementSession.tuningDictionary,
             status: appState.statusLine,
             stats: appState.statsLine,
@@ -1097,6 +1105,12 @@ final class EnhancementSession {
         print(renders ? "   🖼 the page is drawing the enhanced frames" : "   🪟 falling back to the overlay window")
     }
     func setOverlayHidden(_ hidden: Bool) { controller.setForcedHidden(hidden) }
+
+    /// Rebuilds the stages with the currently selected model; the capture stream stays up.
+    func reloadModel() {
+        Task { await pipeline.reconfigure(Self.makeFactory(engine: engine, report: report)) }
+        scheduleResize()
+    }
 
     /// Switches engine without touching the capture stream.
     func setEngine(_ kind: EngineKind) {

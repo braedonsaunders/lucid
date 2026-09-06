@@ -82,6 +82,8 @@
     <div class="row"><select id="size"></select></div>
     <h2>Player</h2>
     <div class="row"><button id="fs">Fullscreen</button></div>
+    <h2>Model</h2>
+    <div class="row" id="models"></div>
     <h2>Enhancement</h2>
     <div class="row" id="presets"></div>
     <div class="row"><button id="advancedToggle">Show advanced</button><button id="reset">Reset to tuned</button></div>
@@ -210,6 +212,7 @@ async function openControl() {
     if (m.type !== 'status') return;
     appEnabled = m.enabled; enabledBox.checked = m.enabled;
     buildEngines(m);
+    buildModels(m);
     showTuning(m.tuning);
     stats.innerHTML = `<b>${m.status}</b>` + (m.enhancing ? ` · ${m.sourceFPS.toFixed(0)} → ${m.outputFPS.toFixed(0)} fps · ${m.processingMilliseconds.toFixed(1)} ms · ${m.tileCount} tile${m.tileCount === 1 ? '' : 's'} · ${m.outputWidth}×${m.outputHeight}` : '') + (m.error ? ` · <span style="color:var(--bad)">${m.error}</span>` : '');
   };
@@ -217,11 +220,39 @@ async function openControl() {
 function sendControl(obj) { if (control && control.readyState === 1) control.send(JSON.stringify({ type: 'control', ...obj })); }
 // There is one pipeline now, so this reports what it is doing rather than
 // offering a choice. Side-by-side model comparison lives in models.html.
+// Bundled model families, switchable live. The app rebuilds its stages in
+// place; the capture stream and the page keep running. Candidates were
+// measured at presentation sharpness 0.2, shipping at 0.75, so switching
+// also sets that one knob.
+const MODEL_NAMES = {
+  'SPAN_x4_ch32utc_': ['Shipping', 0.75],
+  'lucid2k_': ['Lucid 2k blend', 0.2],
+  'lucid2kraw_': ['Lucid 2k raw', 0.2],
+};
+const modelBox = document.getElementById('models');
+let modelKey = '';
+function buildModels(m) {
+  const models = m.models || [];
+  const key = models.join('|');
+  if (key !== modelKey) {
+    modelKey = key;
+    modelBox.innerHTML = '';
+    for (const stem of models) {
+      const [label, sharpness] = MODEL_NAMES[stem] || [stem.replace(/_$/, ''), 0.2];
+      const button = document.createElement('button');
+      button.textContent = label; button.dataset.stem = stem;
+      button.onclick = () => sendControl({ model: stem, tuning: { sharpness } });
+      modelBox.append(button);
+    }
+  }
+  for (const b of modelBox.children) b.classList.toggle('active', b.dataset.stem === m.model);
+}
 function buildEngines(m) {
   const box = document.getElementById('pipeline');
   const size = m.outputWidth ? ` → ${m.outputWidth}×${m.outputHeight}` : '';
   const ms = m.processingMilliseconds ? ` · ${m.processingMilliseconds.toFixed(1)} ms` : '';
-  box.textContent = m.enhancing ? `ch32u ×4 on the Neural Engine${size}${ms}` : '';
+  const name = (MODEL_NAMES[m.model] || [m.model])[0];
+  box.textContent = m.enhancing ? `${name}${size}${ms}` : '';
 }
 enabledBox.onchange = () => sendControl({ enabled: enabledBox.checked });
 addEventListener('keydown', (e) => {

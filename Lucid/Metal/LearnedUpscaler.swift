@@ -197,6 +197,37 @@ final class LearnedUpscaler: @unchecked Sendable {
             (environment["LUCID_EPHEMERAL"] == "1" && environment["LUCID_EXPERIMENTAL_TENSOR_OUTPUT"] == "1")
     }
 
+    static let shippingStem = "SPAN_x4_ch32utc_"
+    /// Set from the lab page to swap the reconstruction model without a
+    /// relaunch. nil means the launch-time choice (LUCID_MODEL_STEM or shipping).
+    nonisolated(unsafe) static var stemOverride: String?
+    static var currentStem: String {
+        stemOverride ?? ProcessInfo.processInfo.environment["LUCID_MODEL_STEM"] ?? shippingStem
+    }
+    /// Every model family bundled with the app, identified by the stem of its
+    /// 640x360 package. Tensor-output variants are internal and not listed.
+    nonisolated(unsafe) private static var stemCache: [String]?
+    static func bundledStems() -> [String] {
+        if let stemCache { return stemCache }
+        var stems: Set<String> = []
+        if let root = Bundle.main.resourceURL,
+           let names = try? FileManager.default.contentsOfDirectory(atPath: root.path) {
+            for name in names {
+                for suffix in ["640x360.mlmodelc", "640x360.mlpackage"] where name.hasSuffix(suffix) {
+                    let stem = String(name.dropLast(suffix.count))
+                    if !stem.isEmpty, !stem.contains("_tensor_") { stems.insert(stem) }
+                }
+            }
+        }
+        let sorted = stems.sorted { a, b in
+            if a == shippingStem { return true }
+            if b == shippingStem { return false }
+            return a < b
+        }
+        stemCache = sorted
+        return sorted
+    }
+
     private static func model(width: Int, height: Int) -> URL? {
         // --pipeline-ms can load an exact-size package that is not in the
         // variants table (or is over budget). isEnhanceable still reads the
@@ -208,7 +239,7 @@ final class LearnedUpscaler: @unchecked Sendable {
                       FileManager.default.fileExists(atPath: url.path) else { return nil }
                 return url
             }
-            let stem = ProcessInfo.processInfo.environment["LUCID_MODEL_STEM"] ?? "SPAN_x4_ch32utc_"
+            let stem = currentStem
             let exact = "\(stem)\(width)x\(height)"
             if let url = Bundle.main.url(forResource: exact, withExtension: "mlmodelc")
                 ?? Bundle.main.url(forResource: exact, withExtension: "mlpackage") {
@@ -220,7 +251,7 @@ final class LearnedUpscaler: @unchecked Sendable {
         // candidate can be measured through the real pipeline by the same
         // harness that measures the shipping one. Comparing two models by
         // rebuilding the app between them compares two builds.
-        let stem = ProcessInfo.processInfo.environment["LUCID_MODEL_STEM"] ?? "SPAN_x4_ch32utc_"
+        let stem = currentStem
         let name = "\(stem)\(variant.width)x\(variant.height)"
         return Bundle.main.url(forResource: name, withExtension: "mlmodelc")
             ?? Bundle.main.url(forResource: name, withExtension: "mlpackage")

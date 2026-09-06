@@ -15,6 +15,7 @@ struct ValidatedTensorOutput {
             version.minorVersion == 5 && version.patchVersion == 1 &&
             !arguments.contains("--pipeline-ms") &&
             environment["LUCID_MODEL_STEM"] == nil &&
+            LearnedUpscaler.stemOverride == nil &&
             environment["LUCID_PIPELINE_MODEL"] == nil &&
             environment["LUCID_DISABLE_TENSOR_OUTPUT"] != "1"
     }
