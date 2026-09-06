@@ -60,3 +60,17 @@ Torch level (`paired-ladder/ref_w005_s8k-holdout8*.json`): the raw checkpoint re
 Native delivery holdout (`paired-ladder/native-ref80-s02/`), same Release app and frozen inputs as the earlier blend, presentation sharpness lowered to 0.2 for this candidate: source-balanced LPIPS 0.3288 → 0.2997 (**+8.84%**), DISTS 0.1345 → 0.1171 (**+12.95%**); six sources improve 7–25% on both metrics; RushHour and Sunflower lose 4.6% / 3.8% LPIPS with fine energy 1.21 / 1.09. Lowering sharpness from 0.4 to 0.2 did not remove the grain-scene regression, so it is the weights, not the presentation, that over-texture grain; that is what ladder r4 tests. Not promoted.
 
 Ladder r3 so far: `ref_w0025_s8k` raw +13.13% / +16.16% dev, `ref_w0075_s8k` raw +15.40% / +21.02% dev, against 0.005's +15.61% / +20.00%: the adversarial weight is flat between 0.005 and 0.0075 and weaker at 0.0025.
+
+## Results, r3 (receipts in `paired-ladder/`)
+
+Reference target throughout; LPIPS / DISTS improvement over shipping.
+
+| Arm | Weight | Steps | 48 dev raw | 48 dev 80% | 96 bank raw | 96 bank 80% | 960 holdout 80% |
+|---|---:|---:|---|---|---|---|---|
+| `ref_w0025_s8k` | 0.0025 | 8,000 | +13.13 / +16.16 | +9.47 / +10.70 | +11.66 / +11.22 Sintel | +12.54 / +7.60 pass | — |
+| `ref_w005_s8k` (r2) | 0.005 | 8,000 | +15.61 / +20.00 | +12.22 / +14.13 | +12.05 / +12.01 Sintel | +14.39 / +9.16 pass | +9.29 / +11.79, Sunflower DISTS −11% |
+| `ref_w0075_s8k` | 0.0075 | 8,000 | +15.40 / +21.02 | +13.34 / +15.40 | +11.85 / +11.40 Sintel | +14.92 / +9.48 pass | +9.67 / +11.60, Sunflower −7.6 / −16.5 |
+| `ref_w010_s8k` | 0.01 | 8,000 | +15.19 / +21.70 | +14.35 / +16.74 | +10.60 / +11.57 Sintel | +15.16 / +10.23 pass | +9.64 / +11.40, RushHour −6.1 LPIPS, Sunflower −14.0 / −22.4 |
+| **`ref_w005_s4k`** | 0.005 | **4,000** | +14.79 / +19.10 | +11.49 / +13.91 | +16.22 / +12.60, no Sintel regression | **+15.93 / +9.23 pass** | **+9.48 / +12.65, passes; all eight sources improve** |
+
+The adversarial weight is flat between 0.005 and 0.01 on the development set and each step up costs the grainy holdout sources more. The schedule matters more than the weight: the 4,000-step blend is the first candidate to pass the perceptual gate on every set, with RushHour +13.0% / +24.2% and Sunflower +6.4% / +2.6% on the 960-pair holdout. Its raw checkpoint still over-textures both (RushHour fine energy 1.20), so the 80% blend toward the folded initialization is doing real work; a still-shorter schedule or an intermediate blend was not searched. `ref_w005_s4k` 80% is the native-holdout candidate (`ref4k-native-config-s02.json`, sharpness 0.2 as before).
