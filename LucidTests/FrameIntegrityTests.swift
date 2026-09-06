@@ -68,6 +68,9 @@ struct TensorImagePackerTests {
         guard ValidatedTensorOutput.eligible(deviceName: MTLCreateSystemDefaultDevice()?.name ?? "",
             version: ProcessInfo.processInfo.operatingSystemVersion,
             arguments: CommandLine.arguments, environment: ProcessInfo.processInfo.environment) else { return }
+        // Tensor alternatives exist only for the SPAN 4x family; exercise that family explicitly.
+        LearnedUpscaler.stemOverride = LearnedUpscaler.tensorFamilyStem
+        defer { LearnedUpscaler.stemOverride = nil }
         var tensorAttempts = 0, imageAttempts = 0
         let model = try LearnedUpscaler(width: 256, height: 144, prediction: { model, input in
             if model.modelDescription.outputDescriptionsByName.first?.value.multiArrayConstraint != nil {
@@ -473,7 +476,7 @@ struct MetalFrameIntegrityTests {
     @Test func everyBundledModelActuallyPredicts() throws {
         let configuration = MLModelConfiguration(); configuration.computeUnits = .cpuAndGPU
         for variant in LearnedUpscaler.variants {
-            let name = "SPAN_x4_ch32utc_\(variant.width)x\(variant.height)"
+            let name = "\(LearnedUpscaler.shippingStem)\(variant.width)x\(variant.height)"
             let url = try #require(Bundle.main.url(forResource: name, withExtension: "mlmodelc"))
             let model = try MLModel(contentsOf: url, configuration: configuration)
             let key = try #require(model.modelDescription.inputDescriptionsByName.keys.first)
@@ -484,8 +487,12 @@ struct MetalFrameIntegrityTests {
             let output = try model.prediction(from: MLDictionaryFeatureProvider(dictionary: [key: MLFeatureValue(pixelBuffer: image)]))
             let outputKey = try #require(output.featureNames.first)
             let result = try #require(output.featureValue(for: outputKey)?.imageBufferValue)
-            #expect(CVPixelBufferGetWidth(result) == variant.width * 4)
-            #expect(CVPixelBufferGetHeight(result) == variant.height * 4)
+            // The shipping family is direct 2x; the previous family was 4x. Either
+            // is a valid reconstruction scale, but it must be one of the two.
+            let scale = CVPixelBufferGetWidth(result) / variant.width
+            #expect(scale == 2 || scale == 4)
+            #expect(CVPixelBufferGetWidth(result) == variant.width * scale)
+            #expect(CVPixelBufferGetHeight(result) == variant.height * scale)
             CVPixelBufferLockBaseAddress(result, .readOnly)
             let pixel = CVPixelBufferGetBaseAddress(result)!.assumingMemoryBound(to: UInt8.self)
             #expect(pixel[0] > 32 && pixel[0] < 224)

@@ -197,7 +197,12 @@ final class LearnedUpscaler: @unchecked Sendable {
             (environment["LUCID_EPHEMERAL"] == "1" && environment["LUCID_EXPERIMENTAL_TENSOR_OUTPUT"] == "1")
     }
 
-    static let shippingStem = "SPAN_x4_ch32utc_"
+    /// The family the app starts on. Promoted 2026-09-06 from SPAN_x4_ch32utc_ (4x, folded)
+    /// to the 2,000-step reference-target paired-critic 80% blend (direct 2x): +9.5% LPIPS /
+    /// +14.7% DISTS through this pipeline on the 960-pair holdout, every source up.
+    static let shippingStem = "lucid2k_"
+    /// The only family with validated tensor-output alternatives bundled.
+    static let tensorFamilyStem = "SPAN_x4_ch32utc_"
     /// Set from the lab page to swap the reconstruction model without a
     /// relaunch. nil means the launch-time choice (LUCID_MODEL_STEM or shipping).
     nonisolated(unsafe) static var stemOverride: String?
@@ -359,11 +364,12 @@ final class LearnedUpscaler: @unchecked Sendable {
         let referenceModel = try MLModel(contentsOf: compiled, configuration: configuration)
         var optimized: ValidatedTensorOutput?
         if configuration.computeUnits == .cpuAndGPU,
+           Self.currentStem == Self.tensorFamilyStem,
            ValidatedTensorOutput.eligible(deviceName: MTLCreateSystemDefaultDevice()?.name ?? "",
                 version: ProcessInfo.processInfo.operatingSystemVersion,
                 arguments: CommandLine.arguments, environment: ProcessInfo.processInfo.environment),
            let input = referenceModel.modelDescription.inputDescriptionsByName.first?.value.imageConstraint,
-           let tensorURL = Bundle.main.url(forResource: "SPAN_x4_ch32utc_tensor_\(input.pixelsWide)x\(input.pixelsHigh)", withExtension: "mlmodelc") {
+           let tensorURL = Bundle.main.url(forResource: "\(Self.tensorFamilyStem)tensor_\(input.pixelsWide)x\(input.pixelsHigh)", withExtension: "mlmodelc") {
             do {
                 optimized = try ValidatedTensorOutput.load(reference: referenceModel, url: tensorURL, configuration: configuration)
                 print(optimized == nil ? "   Tensor compatibility check declined; using image output" :

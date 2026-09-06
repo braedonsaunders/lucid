@@ -589,7 +589,9 @@ final class EnhancementSession {
         // sharpening stage cost 0.021 of fine-band correlation on its own and
         // turned the scaler's invented foliage texture into something crunchy.
         // Strong turns it back on for anyone who wants it.
-        var sharpness: Float = 0.75
+        // 0.2 for the lucid2k_ family: the native holdout was measured at this
+        // gain (0.4 over-textured grain; 0.75 was the SPAN 4x value).
+        var sharpness: Float = 0.2
         // 0.3, measured. On the bicubic-trained model any detail gain
         // amplified invented texture and cost fine-band correlation; the model
         // trained on real codec degradation gives a clean enough base that a

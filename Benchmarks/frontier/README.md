@@ -2,6 +2,10 @@
 
 The active objective uses the regular Codex goal. These are measured development results, not a declaration of RTX parity or release readiness.
 
+## Shipping change, 2026-09-06
+
+The app now starts on `lucid2k_`, the reference-target paired-critic model at 2,000 steps blended 80% toward the folded SPAN initialization (`paired-ladder-protocol.md`). Through this pipeline on the 960-pair eight-source holdout it improves LPIPS 9.5% and DISTS 14.7% over the previous SPAN ch32utc family with every source up on both metrics, at about 40% lower graph cost. Presentation sharpness default moved from 0.75 to 0.2, the value it was measured at. SPAN ch32utc stays bundled as a lab family. Statements below about "shipping weights unchanged" predate this.
+
 ## Current decisions
 
 - **Current priority: quality/performance; flicker work deferred at the user's direction.** The [direct extension-surface capture route](surface-capture-transport.md) removes a frame serialization hop. Installed Chrome with shipping weights delivered 59.47 draw acknowledgments/s over 621 seconds at 40.60 ms p95. A same-session route comparison improved pooled draw cadence 29.6%. A second 620-second test confirms 58.38 changing-source-timestamp frames/s at 40.90 ms p95. A separate 480p30 run delivers 29.99 changing-timestamp frames/s at 39.30 ms p95 over 617 seconds. These do not establish physical scanout or Safari performance.

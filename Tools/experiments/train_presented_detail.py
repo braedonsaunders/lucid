@@ -155,7 +155,15 @@ def main():
     shipping, _, frames = load(args.init, 'cuda')
     if frames != 1:
         raise ValueError('single-frame shipping initialization required')
-    target, shipping_receipt = shipping_targets(shipping, data, args.shipping_cache, bank_hash, digest(args.init))
+    already_2x = shipping.core.upsampler[1].upscale_factor == 4
+    if already_2x and args.intended != 'reference':
+        ap.error('a 2x starting checkpoint has no 4x shipping targets; use --intended reference')
+    if already_2x:
+        # Starting from an earlier 2x stage (e.g. a critic-free pre-fine-tune):
+        # the shipping-target cache belongs to the 4x model and is not needed.
+        target, shipping_receipt = {}, {'checkpoint_sha256': digest(args.init), 'split': 'unused: 2x initialization'}
+    else:
+        target, shipping_receipt = shipping_targets(shipping, data, args.shipping_cache, bank_hash, digest(args.init))
     # Form the full-frame RGB8 mixture before augmentation, including both arms.
     mixed = {identity: np.rint(pixels.astype(np.float32) * (1-args.teacher_mix)
              + teacher[identity].astype(np.float32) * args.teacher_mix).astype(np.uint8)
@@ -166,7 +174,7 @@ def main():
         # already reaches, so that target holds the student back; regress to truth.
         mixed = {identity: hr for _, hr, identity in data['train']}
     del teacher, target
-    model = fold_head(shipping).cuda().train()
+    model = (shipping if already_2x else fold_head(shipping)).cuda().train()
     del shipping
     subspace = args.architecture in ('subspace_full', 'subspace_protected')
     model_channels = model.core.conv_1.eval_conv.out_channels
@@ -196,7 +204,8 @@ def main():
     experiment = {'args': {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
         'bank_sha256': bank_hash, 'checkpoint_sha256': digest(args.init),
         'teacher_manifest_sha256': digest(args.pixrestore_cache / 'manifest.json'),
-        'shipping_manifest_sha256': digest(args.shipping_cache / 'manifest.json'),
+        'shipping_manifest_sha256': digest(args.shipping_cache / 'manifest.json') if (args.shipping_cache / 'manifest.json').is_file() else None,
+        'initialization': '2x checkpoint used directly' if already_2x else 'folded 4x shipping head',
         'source_hashes': {str(p.name): digest(p) for p in (Path(__file__),
             Path(__file__).with_name('fold_shipping_head.py'), Path(__file__).with_name('train_causal_detail.py'),
             Path(__file__).resolve().parents[1] / 'train_span.py',

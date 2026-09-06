@@ -225,9 +225,9 @@ function sendControl(obj) { if (control && control.readyState === 1) control.sen
 // measured at presentation sharpness 0.2, shipping at 0.75, so switching
 // also sets that one knob.
 const MODEL_NAMES = {
-  'SPAN_x4_ch32utc_': ['Shipping', 0.75],
-  'lucid2k_': ['Lucid 2k blend', 0.2],
+  'lucid2k_': ['Shipping · Lucid 2k blend', 0.2],
   'lucid2kraw_': ['Lucid 2k raw', 0.2],
+  'SPAN_x4_ch32utc_': ['Previous · SPAN ch32utc', 0.75],
 };
 const modelBox = document.getElementById('models');
 let modelKey = '';

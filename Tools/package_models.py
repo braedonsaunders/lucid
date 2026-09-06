@@ -26,13 +26,13 @@ def digest(package):
 def verify():
     manifest = json.loads(MANIFEST.read_text())
     names = set()
-    references = {item['name']: item for item in manifest['models']}
+    references = {item['name']: item for item in manifest['models'] + manifest.get('lab_models', [])}
     for item in manifest.get('tensor_models', []):
         reference = references.get(item['reference'])
         if reference is None or any(item[k] != reference[k] for k in ('width', 'height', 'scale')):
             raise ValueError('Tensor alternative must match an existing shipping geometry')
     for item in manifest.get('lab_models', []):
-        if item['scale'] not in (2, 4) or item['name'].startswith(manifest['family']):
+        if item['scale'] not in (2, 4) or item['name'].startswith(manifest['family'] + '_'):
             raise ValueError('Lab model must have its own family stem and a 2x or 4x scale')
     for item in all_models(manifest):
         name = item['name']
