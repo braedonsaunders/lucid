@@ -291,3 +291,13 @@ The development set keeps rising with the weight; the holdout does not. Clean, t
 ### Native delivery holdout, 33-source checkpoint with the temporal stage off (`paired-ladder/native-v4-2k-notaa/`)
 
 +8.41% / +13.41%, Sunflower **−26.2%** LPIPS, RushHour −3.3%, Tractor −4.7%, PedestrianArea −3.1%. The temporal stage was hiding most of the damage, not causing it: without history blending the checkpoint's synthesized texture on grainy and out-of-focus material is far worse through the app than the torch-level single-frame score suggests (+4.8% on Sunflower). The shipping `lucidbig2k_` checkpoint shows no such torch-to-native gap. Working hypothesis: the 33-source checkpoints amplify chroma noise on the app's NV12 → BGRA path, which the torch evaluation (FFmpeg-decoded RGB) does not exercise. Until a checkpoint holds its torch-level Sunflower result through the app, the native holdout remains the promotion gate and `lucidbig2k_` ships.
+
+## Results, r20: light smooth-region negative at weight 0.0075 (receipts `paired-ladder/v4_w0075_smooth*`, `r20-holdout8*`)
+
+| Arm | 48 dev raw | 960 holdout raw | Sunflower | RushHour energy |
+|---|---|---|---|---|
+| `v4_w0075_smooth005` (share 0.05) | +15.19 / +16.96 | **+12.15 / +14.97**, every source up | +5.1 / +6.0 | under the cap |
+| `v4_w0075_smooth008` (share 0.08) | +14.63 / +16.27 | +10.95 / +14.40 | +6.1 / +7.3 | under the cap |
+| `v4_w0075_2k` (no smooth negative) | +17.11 / +19.08 | +13.40 / +16.43 | −1.4 / +6.7 | over the cap |
+
+A 0.05 share of the negative mass spent on smooth-region texture turns the grainy source positive and brings RushHour's fine energy under the cap while giving up about a point of aggregate. It is the first 33-source checkpoint with every source up and no energy flag at the torch level, so it goes to the native holdout, which is where the family has failed so far.
