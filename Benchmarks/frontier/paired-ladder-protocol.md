@@ -364,3 +364,35 @@ Reference target, 2,000 steps, raw checkpoints, no temporal term.
 | v4, 33 sources (r17, w 0.0075) | +17.11 / +19.08 | +18.46 / +10.61 | +13.40 / +16.43 |
 
 The 24 Commons clips add sources without adding the torch-level lift the Xiph masters gave. Whether they add native-safe quality is the 960 holdout and then the app, below. Ladder r24 (`paired-ladder-20260905-r24`) combines bank v5 with the temporal term at 1.5 for both weights.
+
+### r22c and r24 on the 960-pair holdout, and r22c through the app (receipts `paired-ladder/holdout8-v5_*`, `native-v5-*`)
+
+| Arm | 960 holdout raw | Sunflower | RushHour | Tractor |
+|---|---|---|---|---|
+| `v5_ref_2k` (w 0.005) | +9.19 / +14.53, passes | +7.3 / +19.1 | +24.4 / +32.5 | −0.6 / +7.2 |
+| `v5_w0075_2k` | +9.89 / +14.81 | +3.2 / +17.1 | +23.4 / +32.0 | +0.3 / +7.6 |
+| `v5_w005_t15` (r24, temporal 1.5) | +8.64 / +12.33, passes | +11.2 / +19.5 | +22.6 / +25.5 | +0.7 / +7.8 |
+| `v5_w0075_t15` (r24) | +9.59 / +13.47 | +8.0 / +18.7 | +22.8 / +28.0 | +0.7 / +8.2 |
+
+The Commons bank is the safest family yet on grain (RushHour +23 at energy 0.95, Sunflower up on every arm) and the weakest on Tractor, which the 21- and 33-source banks improve by 11%. Bank composition trades sources; it does not lift all of them.
+
+`v5_w0075_2k` through the app at sharpness 0.2: **+10.82 / +17.12** (best native DISTS so far; shipping +11.80 / +16.04), RushHour +17.6 / +35.2, but Sunflower −3.3 and Tractor −3.5 LPIPS. Not promoted.
+
+## The native gap is the app's, not the checkpoint's (2026-09-07 evening)
+
+Four checkpoints have now gone through the identical native harness. Per source, LPIPS gain at torch level → through the app:
+
+| Source | shipping big2k | v4_2k (33 src) | temporal 1.5 | v5 (45 src) |
+|---|---|---|---|---|
+| ducks_take_off | +10.6 → +8.3 | +10.8 → +7.2 | +10.7 → +8.5 | +9.4 → +7.3 |
+| old_town_cross | +9.1 → +18.5 | +14.9 → +21.4 | +11.9 → +20.5 | +8.0 → +18.9 |
+| park_joy | +11.5 → +10.8 | +15.3 → +12.5 | +14.7 → +14.0 | +11.3 → +11.1 |
+| in_to_tree | +10.8 → +16.3 | +16.0 → +20.1 | +15.8 → +21.1 | +10.1 → +16.8 |
+| pedestrian_area | +12.8 → +10.3 | +14.9 → +7.3 | +14.1 → +8.5 | +11.6 → +9.1 |
+| rush_hour | +19.6 → +12.6 | +13.6 → +2.8 | +16.8 → +1.8 | +23.4 → +17.6 |
+| sunflower | +8.9 → +2.4 | −1.4 → −6.4 | +3.5 → −7.3 | +3.2 → −3.3 |
+| tractor | +11.6 → +7.2 | +11.1 → +3.7 | +9.8 → +3.9 | +0.3 → −3.5 |
+
+The transfer is a property of the app, near-constant across checkpoints trained on 21, 33 or 45 sources: about −6 LPIPS on Sunflower, −6 to −15 on RushHour, −4 to −7 on Tractor and pedestrian_area, and +6 to +11 on old_town_cross and in_to_tree; fine-band energy rises by 15–20% on every source for every checkpoint. Shipping `lucidbig2k_` never had a "native gap"; it simply had enough torch margin on the grainy sources (Sunflower +8.9) to pay the same tax. The pristine-master hypothesis is dead: bank v5 has no lossless masters and pays exactly the same. The sharpness sweep on `v4_2k` (0.2 → 0.0 halves the Sunflower loss but gives back old_town_cross) says the post-stages trade structured sources against grainy ones with a single global strength.
+
+Consequences. Torch-level promotion needs a margin above the tax on every grainy source, which is why only big2k has survived. The lever with the largest expected native return is now the post-stage itself: a content-adaptive strength that keeps the lift on coherent structure and withholds it on incoherent fine energy (grain, bokeh), and the temporal stage's feedback, which is the only stage measured to help these sources (TAA off costs 26% on Sunflower). First probe running: `v4_2k` with `taaFeedback` 0.75 instead of 0.5 (`v4-2k-native-config-fb075.json`).
