@@ -410,3 +410,22 @@ The absolute view, same checkpoint, torch → app per source (LPIPS): the app im
 ### Attribution: the app reproduces torch exactly when the stages are off (receipts `paired-ladder/native-v4-2k-off-*`)
 
 `v4_2k` through the app with every post-stage off, absolute LPIPS per source, torch → app: ducks +0.7%, old_town_cross −0.4%, park_joy +2.4%, in_to_tree +1.3%, pedestrian_area −2.1%, rush_hour −8.6%, sunflower +0.6%, tractor +2.4%. DISTS within 2% on every source except Sunflower (+15.5%, the decode and packing path's own effect on that source). The delivery path is faithful; everything in the earlier table is the post-stages. With the stages at the shipping values the same checkpoint moves to old_town_cross −17.4%, in_to_tree −7.4%, ducks −4.7% (better) and Sunflower +15.0%, Tractor +8.8% (worse), with DISTS +13 to +14% worse on every source. Relative to the SPAN comparator the stages still net +4 LPIPS on the aggregate (+7.45 → +11.42), which is why they ship; the target is the same aggregate lift without the grain penalty and without the DISTS cost. Two stage-isolation runs follow: the tone grade neutral, and sharpen off with the grade neutral.
+
+### Stage isolation (receipts `paired-ladder/native-v4-2k-{off,nosharpnograde,s00,nograde,s02}-*`)
+
+Absolute LPIPS change against the torch score of the same checkpoint, per source, as stages are added back:
+
+| Source | all off | temporal+deband+grain only | + grade | + sharpen 0.2 (no grade) | shipping (all) |
+|---|---|---|---|---|---|
+| old_town_cross | −0.4% | −13.4% | −14.2% | −16.7% | −17.4% |
+| in_to_tree | +1.3% | −5.0% | −5.4% | −7.0% | −7.4% |
+| rush_hour | −8.6% | −8.4% | −4.7% | −4.6% | −0.7% |
+| sunflower | +0.6% | +13.4% | +11.7% | +16.7% | +15.0% |
+| tractor | +2.4% | +7.3% | +9.3% | +6.8% | +8.8% |
+| DISTS, every source | ≈0 | +10% | +14% | +9% | +14% |
+
+The sharpen lobe and the tone grade are each worth about three points on old_town_cross and cost about three on Sunflower; they are not the story. Nearly the whole transfer, the +13% on Sunflower, +7% on Tractor and the +10% DISTS on every source alongside the −13% on old_town_cross, comes from the stages that remain with sharpen and grade off: temporal accumulation with motion alignment, debanding, synthetic grain and chroma siting. Relative to the SPAN comparator those runs score +10.53 / +16.40 (temporal+deband+grain) and +12.08 / +16.77 (no grade). Two single-stage runs follow, temporal only and deband only, to name the stage.
+
+## Results, r26: bank v6, 57 sources (receipts `paired-ladder/v6_*`)
+
+Union of bank v4 (33) and the Commons 24. `v6_w0075_2k` dev +14.58 / +16.26, bank +16.10 / +8.77; `v6_w005_2k` dev +13.59 / +15.55, bank +15.13 / +8.31. Between v4 and v5 on every dev number, as a mixture would be. 960-pair holdouts scoring.
