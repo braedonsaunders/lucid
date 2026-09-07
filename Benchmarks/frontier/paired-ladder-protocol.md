@@ -206,3 +206,7 @@ The frozen 48-pair 1280×720 → 2560×1440 screen (CrowdRun, DucksTakeOff, Park
 | `lucidbig2k_` | **+17.55 / +5.32** | +16.16 / +7.45 | +20.31 / +14.61 | +10.55 / +13.20 |
 
 Both trained models now beat every interpolation on both metrics at 720p; `lucidbig2k_` clears the original 3% joint minimum against Lanczos, which no Lucid model had done. Fine correlation sits below the Lanczos anchor (0.414 / 0.425 vs 0.434), as it does for every synthesizing model at this resolution, so the anchor floor is advisory here. Native graph cost at 1280×720 is measured next; if it fits the 33 ms budget, 720p sources are admitted with a 1280×720 rung in the ladder and judged live.
+
+## 720p admitted in the app (2026-09-06)
+
+`LearnedUpscaler.variants` gains a 1280×720 rung at 21.0 ms (measured CPU+GPU for all three bundled 2× families, `ladder720`), inside the 33 ms budget; 1080p remains the first declined size. The 1280×720 packages of `lucid2k_` (shipping), `lucidbig2k_` and `lucid2kraw_` are bundled through the manifest. The policy test now asserts 720p enhanceable and 1080p declined; 45 native tests pass. 60 fps 720p material will not hold cadence at this cost; 30 fps does. Browser-delivery cadence at 2560×1440 has not been re-measured for the 2× families; the earlier direct-2× native stage measured 20.0 ms at this geometry.
