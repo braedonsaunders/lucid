@@ -242,7 +242,7 @@ The r10 raw checkpoint replaces the 2k blend as the shipping family: native hold
 | Arm | 48 dev raw | 96 bank raw | 960 holdout raw |
 |---|---|---|---|
 | `v4_2k` | **+15.02 / +17.42** | +17.35 / +9.95 | **+12.25 / +16.04** |
-| `v4_3k` | +15.39 / +17.61 | +16.05 / +10.22 | pending |
+| `v4_3k` | +15.39 / +17.61 | +16.05 / +10.22 | +11.81 / +15.33 (Sunflower +3.0 / +8.8) |
 | `big_2k` (shipping, 21 sources) | +13.39 / +14.60 | +17.38 / +9.37 | +11.47 / +14.34 |
 
 Source diversity is the lever: going from 21 to 33 sources adds 0.8 LPIPS and 1.7 DISTS points on the holdout, with OldTownCross +11.7 / +31.2, InToTree +13.3 / +28.0, RushHour +19.3 / +33.2 and every source up against SPAN on both metrics. Aggregate fine correlation sits a hair below the Lanczos anchor (advisory). Native delivery holdout runs next; if it holds, `v4_2k` ships.
