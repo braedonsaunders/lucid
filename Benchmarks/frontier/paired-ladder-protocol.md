@@ -165,3 +165,15 @@ Native cost of the wider graph on this Mac (CPU+GPU, random weights): 11.2 ms at
 | + 2,000-step paired critic | +7.52 / +10.32 | +9.54 / +6.33 |
 
 The base is undertrained: 40,000 steps at batch 8 is a fraction of the schedule the SPAN base had, and it sits below the old shipping model on every metric. The critic still lifts it 14 LPIPS points, so the recipe transfers, but this arm says nothing about capacity yet. r11 trains the same architecture for 200,000 steps at batch 16 on the 756-sequence bank before the critic pass; that is the capacity answer. r10 (queued first) tests the larger bank alone with the ch32 recipe.
+
+## Results, r10: three times the data (receipts `paired-ladder/big_*`)
+
+`stream-bank-big`: 756 sixteen-frame sequences from the same 21 sources (19 Netflix public scenes and Big Buck Bunny train, Sintel validation), built by `build_stream_bank.py` with six windows per source and six 128-pixel LR patches per window, full-frame H.264/VP9 encoding under recorded bitrates before patch extraction. No PixRestore or shipping caches (`--pixrestore-cache none --shipping-cache none`, reference target). Same recipe as r6 otherwise.
+
+| Arm | 48 dev raw | 48 dev 80% | 96 bank raw | 96 bank 80% | 960 holdout raw | 960 holdout 80% |
+|---|---|---|---|---|---|---|
+| `big_2k` | +13.39 / +14.60 | +10.04 / +11.31 | +17.38 / +9.37 pass | +13.51 / +7.05 pass | **+11.47 / +14.34, passes, all eight up** | +8.85 / +12.28 pass |
+| `big_4k` | +12.74 / +14.96 | +9.71 / +11.60 | +17.37 / +10.33 pass | +13.41 / +7.51 pass | pending | pending |
+| `ref_w005_s2k` (shipping recipe) | +15.67 / +18.57 | +11.66 / +13.76 | +18.92 / +11.79 pass | +15.62 / +9.05 pass | +10.83 / +14.17, aggregate correlation just below anchor | +9.41 / +13.04 pass |
+
+The development set says the larger bank is slightly worse; the 960-pair holdout says the opposite, and by a margin: the raw 2,000-step checkpoint is the best Lucid result on the holdout so far, passes every guard without blending (aggregate fine correlation above the Lanczos anchor), and lifts RushHour +19.6% / +30.4% and Sunflower +8.9% / +12.1%. Full-frame codec context in the training data generalizes to unseen sources better than the crop-then-encode bank, and the three-source development set cannot see it. This raw checkpoint goes to the native delivery holdout next; the r11 long ch48 base trains on the same bank.
