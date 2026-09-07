@@ -1,0 +1,270 @@
+{
+  "report": ".build/sm005-native-s02-rgb/evaluation.json",
+  "report_sha256": "964e9fa19616e68877829fc20081e4bba7d2921c3f7de393cb2ff6306adf2cf8",
+  "anchor_report": ".build/paired-critic-results/holdout8.json",
+  "anchor_report_sha256": "4d4170187d58d2b0721ed3decc964f8f3cc149647af1077dcd9cdb4b9f63ce1a",
+  "checkpoint_sha256": {
+    "shipping4x": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65",
+    "candidate": "4ca528383849f1da1b8069ae974e39c98dd48c3690776eb65b1461850bbfa15f"
+  },
+  "results": {
+    "candidate": {
+      "candidate": "candidate",
+      "baseline": "shipping4x",
+      "anchor": "lanczos",
+      "gate": {
+        "source_balanced_lpips_improvement_min": 0.03,
+        "source_balanced_dists_improvement_min": 0.03,
+        "per_source_perceptual_regression_max": 0.02,
+        "anchor": "lanczos",
+        "source_balanced_fine_correlation_floor": "anchor",
+        "per_source_detail_energy_max": 1.1
+      },
+      "perceptual_gate_pass": false,
+      "failure_reasons": [
+        "rush_hour: lpips regression exceeds limit",
+        "rush_hour: fine-band energy exceeds the embellishment cap",
+        "sunflower: lpips regression exceeds limit",
+        "sunflower: fine-band energy exceeds the embellishment cap",
+        "fine correlation: source-balanced value below the lanczos anchor"
+      ],
+      "frames_per_variant": 960,
+      "perceptual_improvements": {
+        "lpips": 0.11200935001471934,
+        "dists": 0.15496231493218116
+      },
+      "source_balanced": {
+        "shipping4x": {
+          "lpips": 0.3287718965516736,
+          "dists": 0.1345231769606471,
+          "fine_correlation": 0.4895045033830396,
+          "detail_energy": 0.702566360891708
+        },
+        "candidate": {
+          "lpips": 0.2919463701158141,
+          "dists": 0.11367715404679378,
+          "fine_correlation": 0.4652178007098602,
+          "detail_energy": 0.8186714413621611
+        },
+        "lanczos": {
+          "lpips": 0.3952057042391971,
+          "dists": 0.11761615003148715,
+          "fine_correlation": 0.49848987116786947,
+          "detail_energy": 0.5074524333981001
+        }
+      },
+      "per_source": {
+        "shipping4x": {
+          "ducks_take_off": {
+            "lpips": 0.4735794714341561,
+            "dists": 0.1826260228951772,
+            "fine_correlation": 0.3061806760481151,
+            "detail_energy": 0.5169680728552911
+          },
+          "old_town_cross": {
+            "lpips": 0.3623524730404218,
+            "dists": 0.1337902471423149,
+            "fine_correlation": 0.5320888628678264,
+            "detail_energy": 0.6548753242192225
+          },
+          "park_joy": {
+            "lpips": 0.5707959527770678,
+            "dists": 0.21785842776298522,
+            "fine_correlation": 0.26673351147346785,
+            "detail_energy": 0.4357888554815568
+          },
+          "in_to_tree": {
+            "lpips": 0.475366422533989,
+            "dists": 0.14543026685714722,
+            "fine_correlation": 0.43585646957854934,
+            "detail_energy": 0.5315176002800256
+          },
+          "pedestrian_area": {
+            "lpips": 0.20257694584627947,
+            "dists": 0.09828918029864629,
+            "fine_correlation": 0.5865707685274278,
+            "detail_energy": 0.7969278811421211
+          },
+          "rush_hour": {
+            "lpips": 0.18433270777265232,
+            "dists": 0.09720768282810847,
+            "fine_correlation": 0.5945723063321605,
+            "detail_energy": 0.9542087359940614
+          },
+          "sunflower": {
+            "lpips": 0.11124610441426436,
+            "dists": 0.10451053182284037,
+            "fine_correlation": 0.6821637474374693,
+            "detail_energy": 0.9561215852240399
+          },
+          "tractor": {
+            "lpips": 0.24992509459455808,
+            "dists": 0.09647305607795716,
+            "fine_correlation": 0.5118696847993004,
+            "detail_energy": 0.7741228319373454
+          }
+        },
+        "candidate": {
+          "ducks_take_off": {
+            "lpips": 0.4350302911673983,
+            "dists": 0.17566071599721908,
+            "fine_correlation": 0.2962996642286633,
+            "detail_energy": 0.5198892384085135
+          },
+          "old_town_cross": {
+            "lpips": 0.28936496066550416,
+            "dists": 0.09231403023004532,
+            "fine_correlation": 0.5265096568457536,
+            "detail_energy": 0.7313164447854875
+          },
+          "park_joy": {
+            "lpips": 0.501006290068229,
+            "dists": 0.19940677831570308,
+            "fine_correlation": 0.26694953399516075,
+            "detail_energy": 0.4559760060811598
+          },
+          "in_to_tree": {
+            "lpips": 0.3860904370745023,
+            "dists": 0.10388470739126206,
+            "fine_correlation": 0.43909581009809473,
+            "detail_energy": 0.6080512110550702
+          },
+          "pedestrian_area": {
+            "lpips": 0.18630117376645405,
+            "dists": 0.08936066577831904,
+            "fine_correlation": 0.5942991711580127,
+            "detail_energy": 0.9555968315926704
+          },
+          "rush_hour": {
+            "lpips": 0.18995825548966724,
+            "dists": 0.07352655331293742,
+            "fine_correlation": 0.5024389096249048,
+            "detail_energy": 1.2771173077348157
+          },
+          "sunflower": {
+            "lpips": 0.11361219584941865,
+            "dists": 0.08928618530432383,
+            "fine_correlation": 0.6361786926140987,
+            "detail_energy": 1.1112437636073897
+          },
+          "tractor": {
+            "lpips": 0.23420735684533914,
+            "dists": 0.0859775960445404,
+            "fine_correlation": 0.4599709671141931,
+            "detail_energy": 0.8901807276321815
+          }
+        },
+        "lanczos": {
+          "ducks_take_off": {
+            "lpips": 0.5665889829397202,
+            "dists": 0.17932420869668325,
+            "fine_correlation": 0.3409534314582346,
+            "detail_energy": 0.37375349301907185
+          },
+          "old_town_cross": {
+            "lpips": 0.4722966693341732,
+            "dists": 0.11407877455155055,
+            "fine_correlation": 0.5243208644940958,
+            "detail_energy": 0.4690763877912581
+          },
+          "park_joy": {
+            "lpips": 0.6611080961922805,
+            "dists": 0.21424002349376678,
+            "fine_correlation": 0.2681496807937274,
+            "detail_energy": 0.2975870069547121
+          },
+          "in_to_tree": {
+            "lpips": 0.5472670416037242,
+            "dists": 0.12100188086430232,
+            "fine_correlation": 0.4266140427734712,
+            "detail_energy": 0.3834840341864927
+          },
+          "pedestrian_area": {
+            "lpips": 0.2570960570126772,
+            "dists": 0.08224928726752599,
+            "fine_correlation": 0.5806053600301256,
+            "detail_energy": 0.5550942408913005
+          },
+          "rush_hour": {
+            "lpips": 0.2022941840191682,
+            "dists": 0.07705663194259008,
+            "fine_correlation": 0.6287270714992139,
+            "detail_energy": 0.6935667537867654
+          },
+          "sunflower": {
+            "lpips": 0.1224724314485987,
+            "dists": 0.05706388751665751,
+            "fine_correlation": 0.6930701315074003,
+            "detail_energy": 0.7205737198044938
+          },
+          "tractor": {
+            "lpips": 0.33252217136323453,
+            "dists": 0.0959145059188207,
+            "fine_correlation": 0.5254783867866868,
+            "detail_energy": 0.5664838307507059
+          }
+        }
+      },
+      "per_source_changes": {
+        "ducks_take_off": {
+          "lpips": 0.081399601528373,
+          "dists": 0.03813972832314283,
+          "fine_correlation_vs_shipping": -0.009881011819451835,
+          "fine_correlation_vs_anchor": -0.04465376722957132,
+          "detail_energy": 0.5198892384085135
+        },
+        "old_town_cross": {
+          "lpips": 0.20142683658950933,
+          "dists": 0.31000927046760474,
+          "fine_correlation_vs_shipping": -0.005579206022072847,
+          "fine_correlation_vs_anchor": 0.002188792351657809,
+          "detail_energy": 0.7313164447854875
+        },
+        "park_joy": {
+          "lpips": 0.12226726971222257,
+          "dists": 0.08469559629502266,
+          "fine_correlation_vs_shipping": 0.0002160225216928935,
+          "fine_correlation_vs_anchor": -0.0012001467985666703,
+          "detail_energy": 0.4559760060811598
+        },
+        "in_to_tree": {
+          "lpips": 0.18780456765034426,
+          "dists": 0.28567340460630797,
+          "fine_correlation_vs_shipping": 0.003239340519545386,
+          "fine_correlation_vs_anchor": 0.012481767324623527,
+          "detail_energy": 0.6080512110550702
+        },
+        "pedestrian_area": {
+          "lpips": 0.08034365416968958,
+          "dists": 0.09083924083198625,
+          "fine_correlation_vs_shipping": 0.00772840263058483,
+          "fine_correlation_vs_anchor": 0.013693811127887034,
+          "detail_energy": 0.9555968315926704
+        },
+        "rush_hour": {
+          "lpips": -0.030518445613858303,
+          "dists": 0.24361376412033398,
+          "fine_correlation_vs_shipping": -0.09213339670725573,
+          "fine_correlation_vs_anchor": -0.12628816187430913,
+          "detail_energy": 1.2771173077348157
+        },
+        "sunflower": {
+          "lpips": -0.021268982384707202,
+          "dists": 0.1456728451475482,
+          "fine_correlation_vs_shipping": -0.045985054823370675,
+          "fine_correlation_vs_anchor": -0.056891438893301616,
+          "detail_energy": 1.1112437636073897
+        },
+        "tractor": {
+          "lpips": 0.06288979413898832,
+          "dists": 0.10879161975480145,
+          "fine_correlation_vs_shipping": -0.05189871768510729,
+          "fine_correlation_vs_anchor": -0.06550741967249368,
+          "detail_energy": 0.8901807276321815
+        }
+      },
+      "status": "development screen; native delivery, temporal and fresh-source evidence still required"
+    }
+  },
+  "code_sha256": "2a16badc80dff5d4a17d8f824f60f3f7b58075b158799bab3e060e377d9626d1"
+}

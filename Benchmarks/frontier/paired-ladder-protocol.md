@@ -301,3 +301,13 @@ The development set keeps rising with the weight; the holdout does not. Clean, t
 | `v4_w0075_2k` (no smooth negative) | +17.11 / +19.08 | +13.40 / +16.43 | −1.4 / +6.7 | over the cap |
 
 A 0.05 share of the negative mass spent on smooth-region texture turns the grainy source positive and brings RushHour's fine energy under the cap while giving up about a point of aggregate. It is the first 33-source checkpoint with every source up and no energy flag at the torch level, so it goes to the native holdout, which is where the family has failed so far.
+
+## Results, r21 and the native run of the grain-safe checkpoint
+
+r21 (weight 0.01 with smooth shares 0.03 / 0.05; receipts `paired-ladder/v4_w010_smooth*`, `r21-holdout8*`): holdout +12.75 / +15.19 and +12.00 / +14.91, Sunflower −0.1 and +1.0, RushHour energy over the cap. The smooth negative buys back the grainy source at every weight but the higher weight gives the gain straight back to RushHour's energy; nothing here beats `v4_w0075_smooth005`.
+
+Native delivery holdout of `v4_w0075_smooth005` (`paired-ladder/native-sm005-s02/`): **+11.20% / +15.50%**, RushHour −3.1% and Sunflower −2.1% LPIPS with fine energy 1.28 / 1.11, against the shipping run's +11.80% / +16.04% with every source up. Same pattern as every 33-source checkpoint: the torch-level single-frame score on the grainy masters does not survive the app's NV12 path, while the 21-source `lucidbig2k_` checkpoint keeps its torch-level result natively. `lucidbig2k_` stays the shipping model.
+
+### Where the campaign stands, 2026-09-07 08:00
+
+Through the real pipeline on the eight-source holdout, against the original SPAN ch32utc family: shipping `lucidbig2k_` +11.8% LPIPS / +16.0% DISTS, every source up, at ~40% lower graph cost, plus 720p admitted. NVIDIA VFX ULTRA on the same frames (torch level, no Lucid post-processing) is +21.6% / +21.0%. Levers measured and closed this session: training target (reference wins), schedule (2,000 steps), adversarial weight (0.005–0.0075), blend, seeds, crop, pre-fine-tune, capacity from scratch and by widening, three data expansions, input-noise and smooth-region negatives, and native presentation sharpness/grain/temporal settings. The open levers are (1) the torch-to-native gap on grainy sources for the texture-richer checkpoints, which needs the app's NV12→RGB path reproduced in training or evaluation, (2) more *different* training content, and (3) NVIDIA's own output as a teacher, pending its SDK licence.
