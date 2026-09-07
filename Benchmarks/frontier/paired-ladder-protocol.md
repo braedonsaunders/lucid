@@ -191,3 +191,18 @@ Same app, inputs and configuration as the shipping run (sharpness 0.2, radius 2;
 ## Results, r11: long ch48 base (receipts `paired-ladder/ch48_long_*`)
 
 200,000 steps at batch 16 (105 minutes on the RTX 4080) lands exactly where the 40,000-step base did: development PSNR 28.51 versus the SPAN base's 28.99, LPIPS −6.8% / DISTS −5.3% against shipping. Training from random initialization on this bank plateaus below the pretrained SPAN base regardless of schedule; the base's advantage is its pretraining corpus, not its size. The critic pass on top is recorded below. Capacity has to be added *on top of* the pretrained weights instead: r13 widens the folded SPAN initialization from 32 to 48 channels function-preservingly (`widen_span.py`, max abs error 4e-6 on the real checkpoint) and runs the r10 recipe.
+
+## Results, r12: Tears of Steel added (receipts `paired-ladder/v2_2k*`)
+
+`stream-bank-v2` = the big bank plus Tears of Steel (792 sequences, 22 sources). Same recipe: dev raw +12.97 / +15.04, bank raw +16.85 / +9.56, 960-pair holdout raw **+11.11 / +14.69** against big_2k's +11.47 / +14.34, every source within a point of each other. One more animated film adds nothing measurable; the next data step has to be *different* content (live-action variety, faces, text, games), not more of the same families.
+
+## 720p coverage screen, current models (`paired-ladder/coverage-720-v2/`)
+
+The frozen 48-pair 1280×720 → 2560×1440 screen (CrowdRun, DucksTakeOff, ParkJoy; H.264/VP9 at 1.4 and 4.0 Mb/s), the same inputs that rejected the area-folded head on 2026-09-05 (LPIPS +9.4% but DISTS −9.0% against Lanczos).
+
+| Model | vs Lanczos | vs bicubic | vs bilinear | vs SPAN shipping (4× presented at 2×) |
+|---|---|---|---|---|
+| `lucid2k_` (shipping) | +15.35 / +2.87 | +13.93 / +5.05 | +18.19 / +12.40 | +8.17 / +10.96 |
+| `lucidbig2k_` | **+17.55 / +5.32** | +16.16 / +7.45 | +20.31 / +14.61 | +10.55 / +13.20 |
+
+Both trained models now beat every interpolation on both metrics at 720p; `lucidbig2k_` clears the original 3% joint minimum against Lanczos, which no Lucid model had done. Fine correlation sits below the Lanczos anchor (0.414 / 0.425 vs 0.434), as it does for every synthesizing model at this resolution, so the anchor floor is advisory here. Native graph cost at 1280×720 is measured next; if it fits the 33 ms budget, 720p sources are admitted with a 1280×720 rung in the ladder and judged live.
