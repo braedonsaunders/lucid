@@ -1,0 +1,140 @@
+{
+  "report": ".build/paired-ladder-r22/v5_ref_2k-bank.json",
+  "report_sha256": "d328a86ce59a4ffd40db43cd1341cd0ac3b8d7e03255cbff287ec8fbb9868ecf",
+  "anchor_report": null,
+  "anchor_report_sha256": null,
+  "checkpoint_sha256": {
+    "v5_ref_2k_raw": "469187271f2da256aa48d0fa61eab54db566fa68ae83360ef5170098fc1a75ad",
+    "v5_ref_2k_80": "26c22e1923056c985b4b6ce77b5ec5eb01e2461d03053676baf4cd7851086a0b",
+    "shipping": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65"
+  },
+  "results": {
+    "v5_ref_2k_raw": {
+      "candidate": "v5_ref_2k_raw",
+      "baseline": "shipping",
+      "anchor": "lanczos",
+      "gate": {
+        "source_balanced_lpips_improvement_min": 0.03,
+        "source_balanced_dists_improvement_min": 0.03,
+        "per_source_perceptual_regression_max": 0.02,
+        "anchor": "lanczos",
+        "source_balanced_fine_correlation_floor": "anchor",
+        "per_source_detail_energy_max": 1.1
+      },
+      "perceptual_gate_pass": true,
+      "failure_reasons": [],
+      "frames_per_variant": 96,
+      "perceptual_improvements": {
+        "lpips": 0.14412526600597264,
+        "dists": 0.08015211078028206
+      },
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.40222197367499274,
+          "dists": 0.22276637516915798,
+          "fine_correlation": 0.3040961481273848,
+          "detail_energy": 0.3538450482683739
+        },
+        "v5_ref_2k_raw": {
+          "lpips": 0.31162498984485865,
+          "dists": 0.2046414421250423,
+          "fine_correlation": 0.31486838740122525,
+          "detail_energy": 0.47309241445359335
+        },
+        "shipping": {
+          "lpips": 0.36410116745779914,
+          "dists": 0.2224731333553791,
+          "fine_correlation": 0.32143244640958385,
+          "detail_energy": 0.3979509099439154
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "sintel": {
+            "lpips": 0.2696159854531288,
+            "dists": 0.2091157976537943,
+            "fine_correlation": 0.32946662473652005,
+            "detail_energy": 0.3426499266672532
+          },
+          "reds_154": {
+            "lpips": 0.5052469009533525,
+            "dists": 0.26318140141665936,
+            "fine_correlation": 0.2450867044727926,
+            "detail_energy": 0.33108261096477265
+          },
+          "reds_073": {
+            "lpips": 0.4318030346184969,
+            "dists": 0.1960019264370203,
+            "fine_correlation": 0.3377351151728416,
+            "detail_energy": 0.38780260717309567
+          }
+        },
+        "v5_ref_2k_raw": {
+          "sintel": {
+            "lpips": 0.21177336294203997,
+            "dists": 0.1878549326211214,
+            "fine_correlation": 0.33065416083857324,
+            "detail_energy": 0.512985492919412
+          },
+          "reds_154": {
+            "lpips": 0.4072757475078106,
+            "dists": 0.25030407309532166,
+            "fine_correlation": 0.25618019781104245,
+            "detail_energy": 0.4186987132574283
+          },
+          "reds_073": {
+            "lpips": 0.3158258590847254,
+            "dists": 0.17576532065868378,
+            "fine_correlation": 0.35777080355406005,
+            "detail_energy": 0.48759303718393987
+          }
+        },
+        "shipping": {
+          "sintel": {
+            "lpips": 0.2692622817121446,
+            "dists": 0.21591424942016602,
+            "fine_correlation": 0.32653072984915327,
+            "detail_energy": 0.38082522652590833
+          },
+          "reds_154": {
+            "lpips": 0.45876778941601515,
+            "dists": 0.2634068951010704,
+            "fine_correlation": 0.2698841119849202,
+            "detail_energy": 0.37562354517263513
+          },
+          "reds_073": {
+            "lpips": 0.3642734312452376,
+            "dists": 0.1880982555449009,
+            "fine_correlation": 0.3678824973946781,
+            "detail_energy": 0.43740395813320276
+          }
+        }
+      },
+      "per_source_changes": {
+        "sintel": {
+          "lpips": 0.21350527970183097,
+          "dists": 0.12995583605249506,
+          "fine_correlation_vs_shipping": 0.004123430989419974,
+          "fine_correlation_vs_anchor": 0.0011875361020531883,
+          "detail_energy": 0.512985492919412
+        },
+        "reds_154": {
+          "lpips": 0.11223988060223444,
+          "dists": 0.04974365610558951,
+          "fine_correlation_vs_shipping": -0.01370391417387773,
+          "fine_correlation_vs_anchor": 0.011093493338249855,
+          "detail_energy": 0.4186987132574283
+        },
+        "reds_073": {
+          "lpips": 0.13299781978306335,
+          "dists": 0.06556645010071949,
+          "fine_correlation_vs_shipping": -0.010111693840618052,
+          "fine_correlation_vs_anchor": 0.02003568838121844,
+          "detail_energy": 0.48759303718393987
+        }
+      },
+      "status": "development screen; native delivery, temporal and fresh-source evidence still required"
+    }
+  },
+  "code_sha256": "2a16badc80dff5d4a17d8f824f60f3f7b58075b158799bab3e060e377d9626d1"
+}

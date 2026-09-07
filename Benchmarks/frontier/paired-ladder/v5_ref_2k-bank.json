@@ -1,0 +1,5146 @@
+{
+  "purpose": "fixed decoded-pixel spatial development-validation; no temporal or release claim",
+  "split": "development-validation",
+  "manifest_sha256": "eb8ad3792cc1999f4dc593494f959656be28b815ee21d3a9094c47b683f3a7fe",
+  "sequence_manifest_sha256": "b11ccdaba5ed388ec615da4270058b6441369fb6325a6e5e6680472e98d6d2f0",
+  "checkpoint_sha256": {
+    "v5_ref_2k_raw": "469187271f2da256aa48d0fa61eab54db566fa68ae83360ef5170098fc1a75ad",
+    "v5_ref_2k_80": "26c22e1923056c985b4b6ce77b5ec5eb01e2461d03053676baf4cd7851086a0b",
+    "shipping": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65"
+  },
+  "presentation_adapters": [
+    "shipping"
+  ],
+  "interpolation": [
+    "lanczos"
+  ],
+  "code_sha256": "bb652063f0b90905fff4a9a4dabacc32b818a98748f58822b94fd8add46ae090",
+  "scorer_sha256": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75",
+  "torch": "2.6.0+cu124",
+  "device": "cuda",
+  "rows": [
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4119076728820801,
+        "dists": 0.3202967643737793,
+        "psnr_y": 33.02500050026809,
+        "detail_energy": 0.1873438331070607,
+        "fine_correlation": 0.08412537596108847
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3264119625091553,
+        "dists": 0.28724801540374756,
+        "psnr_y": 33.142272737837715,
+        "detail_energy": 0.3219973508453814,
+        "fine_correlation": 0.0845919959654101
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3488069474697113,
+        "dists": 0.30395597219467163,
+        "psnr_y": 33.211527110953,
+        "detail_energy": 0.28393021152590675,
+        "fine_correlation": 0.09134616178597905
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4023348093032837,
+        "dists": 0.3287461996078491,
+        "psnr_y": 33.40578393042831,
+        "detail_energy": 0.21313810488839446,
+        "fine_correlation": 0.08553572488656916
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3878644108772278,
+        "dists": 0.29621368646621704,
+        "psnr_y": 33.69592538056707,
+        "detail_energy": 0.19996352988883187,
+        "fine_correlation": 0.10235621201294226
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.29989010095596313,
+        "dists": 0.2752285599708557,
+        "psnr_y": 33.95069772580703,
+        "detail_energy": 0.3509777198599629,
+        "fine_correlation": 0.09554855657241967
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3199462294578552,
+        "dists": 0.28435397148132324,
+        "psnr_y": 34.02622489746511,
+        "detail_energy": 0.30843763042578537,
+        "fine_correlation": 0.10330913685800176
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3775770366191864,
+        "dists": 0.3086618185043335,
+        "psnr_y": 34.208048838720075,
+        "detail_energy": 0.2292858955591063,
+        "fine_correlation": 0.10260734992319116
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.40256428718566895,
+        "dists": 0.29671257734298706,
+        "psnr_y": 34.118714875693456,
+        "detail_energy": 0.18701971262791386,
+        "fine_correlation": 0.09165517222653226
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3149213194847107,
+        "dists": 0.2673945426940918,
+        "psnr_y": 34.624603799790165,
+        "detail_energy": 0.341998897981007,
+        "fine_correlation": 0.07709570103468155
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.33432459831237793,
+        "dists": 0.2788339853286743,
+        "psnr_y": 34.70471039965715,
+        "detail_energy": 0.2963054023287052,
+        "fine_correlation": 0.08460758537760289
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.39875444769859314,
+        "dists": 0.30909818410873413,
+        "psnr_y": 34.849695841183376,
+        "detail_energy": 0.2150340756539293,
+        "fine_correlation": 0.08852281444515589
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.43283581733703613,
+        "dists": 0.30372345447540283,
+        "psnr_y": 34.35528728730081,
+        "detail_energy": 0.16108696838650027,
+        "fine_correlation": 0.06938018277333274
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3396815359592438,
+        "dists": 0.27648085355758667,
+        "psnr_y": 34.9925595950907,
+        "detail_energy": 0.32071977710514726,
+        "fine_correlation": 0.061893559063688076
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3638894557952881,
+        "dists": 0.2899690866470337,
+        "psnr_y": 35.074004654066854,
+        "detail_energy": 0.2731940878065062,
+        "fine_correlation": 0.0660180658392452
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-00",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.44070765376091003,
+        "dists": 0.3161793351173401,
+        "psnr_y": 35.20875041653547,
+        "detail_energy": 0.18418606985669728,
+        "fine_correlation": 0.06563372748134949
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.20389360189437866,
+        "dists": 0.20925873517990112,
+        "psnr_y": 36.862626871939,
+        "detail_energy": 0.3206018921111297,
+        "fine_correlation": 0.20888511125178946
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.1436549723148346,
+        "dists": 0.17717891931533813,
+        "psnr_y": 37.28456988790669,
+        "detail_energy": 0.4678522958262633,
+        "fine_correlation": 0.23353477738640063
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.15994316339492798,
+        "dists": 0.18717056512832642,
+        "psnr_y": 37.42667043485848,
+        "detail_energy": 0.4268627745450256,
+        "fine_correlation": 0.24717533576679848
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.17592860758304596,
+        "dists": 0.2169843316078186,
+        "psnr_y": 37.70505647490512,
+        "detail_energy": 0.340768343791714,
+        "fine_correlation": 0.24127841153624094
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.1898433119058609,
+        "dists": 0.20051449537277222,
+        "psnr_y": 36.82668059528456,
+        "detail_energy": 0.3380368585703324,
+        "fine_correlation": 0.22073742486193038
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.13851810991764069,
+        "dists": 0.1717320680618286,
+        "psnr_y": 37.88545138997846,
+        "detail_energy": 0.49325591537150126,
+        "fine_correlation": 0.2602308708038222
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.15168869495391846,
+        "dists": 0.17666572332382202,
+        "psnr_y": 37.99007387820246,
+        "detail_energy": 0.451527168954028,
+        "fine_correlation": 0.2685374174136981
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.16692203283309937,
+        "dists": 0.19944024085998535,
+        "psnr_y": 38.103318275171326,
+        "detail_energy": 0.36259915533178033,
+        "fine_correlation": 0.24904617276789506
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.18773674964904785,
+        "dists": 0.2009572982788086,
+        "psnr_y": 36.94444797895937,
+        "detail_energy": 0.32903150874069265,
+        "fine_correlation": 0.23547001979925278
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.14036428928375244,
+        "dists": 0.1836593747138977,
+        "psnr_y": 38.46101234320356,
+        "detail_energy": 0.49645918914631504,
+        "fine_correlation": 0.28530943143158266
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.14434151351451874,
+        "dists": 0.1840599775314331,
+        "psnr_y": 38.5539966637847,
+        "detail_energy": 0.4502596525261528,
+        "fine_correlation": 0.2924189819839521
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.159404918551445,
+        "dists": 0.19894874095916748,
+        "psnr_y": 38.55930337696763,
+        "detail_energy": 0.35079305695248003,
+        "fine_correlation": 0.26452235652627054
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.17893041670322418,
+        "dists": 0.2070986032485962,
+        "psnr_y": 37.38294561922986,
+        "detail_energy": 0.3282830301898156,
+        "fine_correlation": 0.207766840703664
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.13439446687698364,
+        "dists": 0.19265401363372803,
+        "psnr_y": 38.45206936119232,
+        "detail_energy": 0.5343212896099786,
+        "fine_correlation": 0.24454644415710824
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.1348153054714203,
+        "dists": 0.1891695261001587,
+        "psnr_y": 38.60320181307666,
+        "detail_energy": 0.476241039937558,
+        "fine_correlation": 0.2531841058866206
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-01",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.1517065167427063,
+        "dists": 0.20188069343566895,
+        "psnr_y": 38.799992359674164,
+        "detail_energy": 0.35668819965091514,
+        "fine_correlation": 0.22533502242264206
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.36456379294395447,
+        "dists": 0.31839632987976074,
+        "psnr_y": 33.304108938438276,
+        "detail_energy": 0.19081084593803077,
+        "fine_correlation": 0.08689942362439174
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.28331106901168823,
+        "dists": 0.2880762219429016,
+        "psnr_y": 33.52467093998225,
+        "detail_energy": 0.3366519513990331,
+        "fine_correlation": 0.09202341817520204
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3084270656108856,
+        "dists": 0.30132055282592773,
+        "psnr_y": 33.594152785521544,
+        "detail_energy": 0.29169104143395524,
+        "fine_correlation": 0.09531352506637182
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.35306718945503235,
+        "dists": 0.32560813426971436,
+        "psnr_y": 33.787601429521416,
+        "detail_energy": 0.21486543014452894,
+        "fine_correlation": 0.09190066394125371
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3275625705718994,
+        "dists": 0.29736536741256714,
+        "psnr_y": 34.022256715176255,
+        "detail_energy": 0.1966010379412376,
+        "fine_correlation": 0.10516596100360205
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.2513464093208313,
+        "dists": 0.2764357328414917,
+        "psnr_y": 34.45022310111672,
+        "detail_energy": 0.3543368589574734,
+        "fine_correlation": 0.10386799596477479
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.2648093104362488,
+        "dists": 0.28175920248031616,
+        "psnr_y": 34.52400463649613,
+        "detail_energy": 0.30661488209667526,
+        "fine_correlation": 0.10992832007259126
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.30355483293533325,
+        "dists": 0.30426347255706787,
+        "psnr_y": 34.69449217446669,
+        "detail_energy": 0.2276788470092743,
+        "fine_correlation": 0.1043307469400383
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3207396864891052,
+        "dists": 0.29418236017227173,
+        "psnr_y": 34.532934681912586,
+        "detail_energy": 0.2012091791574068,
+        "fine_correlation": 0.11040881051958851
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.24475838243961334,
+        "dists": 0.25797343254089355,
+        "psnr_y": 35.251764739721246,
+        "detail_energy": 0.3686944757128592,
+        "fine_correlation": 0.09916298920775943
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.25354641675949097,
+        "dists": 0.26757121086120605,
+        "psnr_y": 35.33432974000101,
+        "detail_energy": 0.31629601385406,
+        "fine_correlation": 0.10654259487743706
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2964780330657959,
+        "dists": 0.29800981283187866,
+        "psnr_y": 35.46112409831991,
+        "detail_energy": 0.22920441655290566,
+        "fine_correlation": 0.10659397858745484
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3558076024055481,
+        "dists": 0.29409265518188477,
+        "psnr_y": 34.86107356087888,
+        "detail_energy": 0.173407720413048,
+        "fine_correlation": 0.06888602438312733
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.27035683393478394,
+        "dists": 0.2723374366760254,
+        "psnr_y": 35.65954411002739,
+        "detail_energy": 0.3421559251601601,
+        "fine_correlation": 0.06722690935466398
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.2848929464817047,
+        "dists": 0.2840225100517273,
+        "psnr_y": 35.74932971322944,
+        "detail_energy": 0.2915206793155463,
+        "fine_correlation": 0.07257916216774798
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-02",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.33726999163627625,
+        "dists": 0.30714577436447144,
+        "psnr_y": 35.868488618180656,
+        "detail_energy": 0.20112045694619726,
+        "fine_correlation": 0.061651806168114234
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.27449095249176025,
+        "dists": 0.27264976501464844,
+        "psnr_y": 35.68452896907897,
+        "detail_energy": 0.2767969700626702,
+        "fine_correlation": 0.1745675059482943
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.20076453685760498,
+        "dists": 0.23001760244369507,
+        "psnr_y": 36.16710733841556,
+        "detail_energy": 0.4144783894001181,
+        "fine_correlation": 0.2047852923379658
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.21572493016719818,
+        "dists": 0.24658304452896118,
+        "psnr_y": 36.26754818524984,
+        "detail_energy": 0.37713442363368377,
+        "fine_correlation": 0.2105836022263328
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.24136939644813538,
+        "dists": 0.27719229459762573,
+        "psnr_y": 36.438468153148996,
+        "detail_energy": 0.29896554431660405,
+        "fine_correlation": 0.20078567549923215
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2772020697593689,
+        "dists": 0.27139729261398315,
+        "psnr_y": 35.88448705555631,
+        "detail_energy": 0.29218437089105026,
+        "fine_correlation": 0.18826934981753407
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.2064817100763321,
+        "dists": 0.23540794849395752,
+        "psnr_y": 36.62418486250306,
+        "detail_energy": 0.4299396004484935,
+        "fine_correlation": 0.22380517644619988
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.22075426578521729,
+        "dists": 0.2507057189941406,
+        "psnr_y": 36.713582321333924,
+        "detail_energy": 0.3963112809737315,
+        "fine_correlation": 0.22724242690572496
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.246547669172287,
+        "dists": 0.27733975648880005,
+        "psnr_y": 36.84236618460332,
+        "detail_energy": 0.31694538453514437,
+        "fine_correlation": 0.21432967602398548
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.28367531299591064,
+        "dists": 0.2730969786643982,
+        "psnr_y": 36.19123579070839,
+        "detail_energy": 0.28368593217908,
+        "fine_correlation": 0.20060882270539002
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.21408258378505707,
+        "dists": 0.23572111129760742,
+        "psnr_y": 37.23790442597986,
+        "detail_energy": 0.4316840117895323,
+        "fine_correlation": 0.23883533037554822
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.22407199442386627,
+        "dists": 0.24480938911437988,
+        "psnr_y": 37.3208509239352,
+        "detail_energy": 0.39161149482029733,
+        "fine_correlation": 0.24637988336169692
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2498934268951416,
+        "dists": 0.28087759017944336,
+        "psnr_y": 37.387314398257125,
+        "detail_energy": 0.3068567859446365,
+        "fine_correlation": 0.22334627802080703
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2736430764198303,
+        "dists": 0.2604891061782837,
+        "psnr_y": 36.60265085042083,
+        "detail_energy": 0.28979907714039455,
+        "fine_correlation": 0.181476149165011
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.19907382130622864,
+        "dists": 0.2289348840713501,
+        "psnr_y": 37.45816263084857,
+        "detail_energy": 0.47587697060652834,
+        "fine_correlation": 0.21247247008202472
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.2088383436203003,
+        "dists": 0.23693794012069702,
+        "psnr_y": 37.573601543011804,
+        "detail_energy": 0.425719158900806,
+        "fine_correlation": 0.22130730860026415
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-000-03",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.24205651879310608,
+        "dists": 0.26597076654434204,
+        "psnr_y": 37.79479650442267,
+        "detail_energy": 0.31680552078451757,
+        "fine_correlation": 0.19421283169454173
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.1486649364233017,
+        "dists": 0.12561064958572388,
+        "psnr_y": 34.48908360966962,
+        "detail_energy": 0.319595511968228,
+        "fine_correlation": 0.44192931281458453
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.12987582385540009,
+        "dists": 0.11161625385284424,
+        "psnr_y": 34.90015945370841,
+        "detail_energy": 0.4773463460466781,
+        "fine_correlation": 0.40545662406111815
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.13638097047805786,
+        "dists": 0.1164999008178711,
+        "psnr_y": 34.98616285630402,
+        "detail_energy": 0.4409033645480757,
+        "fine_correlation": 0.4246000274223875
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.17657119035720825,
+        "dists": 0.1351691484451294,
+        "psnr_y": 34.61800984253142,
+        "detail_energy": 0.34919773671114923,
+        "fine_correlation": 0.397676017092474
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.15404509007930756,
+        "dists": 0.11937439441680908,
+        "psnr_y": 34.26137775519935,
+        "detail_energy": 0.3308841645526334,
+        "fine_correlation": 0.44052956525144005
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.13544002175331116,
+        "dists": 0.1109994649887085,
+        "psnr_y": 34.67806238315293,
+        "detail_energy": 0.49114880490603047,
+        "fine_correlation": 0.4032619071362806
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.14239874482154846,
+        "dists": 0.11412549018859863,
+        "psnr_y": 34.76556104415994,
+        "detail_energy": 0.45524019394789333,
+        "fine_correlation": 0.4234159629795122
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.18848158419132233,
+        "dists": 0.13183820247650146,
+        "psnr_y": 34.43545075714785,
+        "detail_energy": 0.3614528163927405,
+        "fine_correlation": 0.3974287604466132
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.14080160856246948,
+        "dists": 0.10259342193603516,
+        "psnr_y": 35.871691866385746,
+        "detail_energy": 0.4983776096603054,
+        "fine_correlation": 0.5383223706485498
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.12017814815044403,
+        "dists": 0.0993947982788086,
+        "psnr_y": 36.08888110601514,
+        "detail_energy": 0.6868999646926517,
+        "fine_correlation": 0.5067266920884843
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.12447592616081238,
+        "dists": 0.10064530372619629,
+        "psnr_y": 36.251808723257184,
+        "detail_energy": 0.6595772292175839,
+        "fine_correlation": 0.5222282880047493
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.15053163468837738,
+        "dists": 0.10881322622299194,
+        "psnr_y": 36.13953695578343,
+        "detail_energy": 0.5452810668044419,
+        "fine_correlation": 0.5040933377074783
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.14826169610023499,
+        "dists": 0.11009669303894043,
+        "psnr_y": 35.5106903575884,
+        "detail_energy": 0.49350678448661894,
+        "fine_correlation": 0.536038704097357
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.1261560022830963,
+        "dists": 0.1093517541885376,
+        "psnr_y": 35.80535902624571,
+        "detail_energy": 0.6826603324292171,
+        "fine_correlation": 0.5064809090091131
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.131772980093956,
+        "dists": 0.11170691251754761,
+        "psnr_y": 35.953968550249215,
+        "detail_energy": 0.654818425206506,
+        "fine_correlation": 0.5219406505341541
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-00",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.15714657306671143,
+        "dists": 0.11792027950286865,
+        "psnr_y": 35.81752523255689,
+        "detail_energy": 0.5415635718155064,
+        "fine_correlation": 0.5007189392209332
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2587536871433258,
+        "dists": 0.170687735080719,
+        "psnr_y": 31.70910773318827,
+        "detail_energy": 0.3216343309095646,
+        "fine_correlation": 0.4379308853132211
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.22583886981010437,
+        "dists": 0.15277671813964844,
+        "psnr_y": 32.1391943668029,
+        "detail_energy": 0.48553395472688576,
+        "fine_correlation": 0.4041171912748002
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.23509390652179718,
+        "dists": 0.1576654314994812,
+        "psnr_y": 32.202181768125,
+        "detail_energy": 0.4491329640848183,
+        "fine_correlation": 0.4229695255896563
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3206895589828491,
+        "dists": 0.18395447731018066,
+        "psnr_y": 31.844597102952864,
+        "detail_energy": 0.3556211971445277,
+        "fine_correlation": 0.39799127087853997
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2676370143890381,
+        "dists": 0.17355239391326904,
+        "psnr_y": 31.698543351610663,
+        "detail_energy": 0.3465104210376556,
+        "fine_correlation": 0.43769490321017457
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.23010367155075073,
+        "dists": 0.1468220353126526,
+        "psnr_y": 32.114973888278485,
+        "detail_energy": 0.5163927983026942,
+        "fine_correlation": 0.40590632946438865
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.2416771799325943,
+        "dists": 0.15665322542190552,
+        "psnr_y": 32.185928956359824,
+        "detail_energy": 0.48066481701590247,
+        "fine_correlation": 0.424396147248794
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3297392427921295,
+        "dists": 0.18732690811157227,
+        "psnr_y": 31.88001512737792,
+        "detail_energy": 0.3837811168873781,
+        "fine_correlation": 0.40066824005099405
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.22367915511131287,
+        "dists": 0.14266109466552734,
+        "psnr_y": 33.44328149976394,
+        "detail_energy": 0.5067249370612744,
+        "fine_correlation": 0.5386363877504738
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.18750816583633423,
+        "dists": 0.12924718856811523,
+        "psnr_y": 33.67667320124792,
+        "detail_energy": 0.7060969955752069,
+        "fine_correlation": 0.5113013157692847
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.19424140453338623,
+        "dists": 0.13551616668701172,
+        "psnr_y": 33.82920231048435,
+        "detail_energy": 0.6754537107615314,
+        "fine_correlation": 0.5283691044441189
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2470778524875641,
+        "dists": 0.15029078722000122,
+        "psnr_y": 33.73527772937719,
+        "detail_energy": 0.5588405382887897,
+        "fine_correlation": 0.509637947955834
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.22677135467529297,
+        "dists": 0.13842380046844482,
+        "psnr_y": 33.29299460632791,
+        "detail_energy": 0.5080491983425246,
+        "fine_correlation": 0.5393614185952729
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.1901506781578064,
+        "dists": 0.12688946723937988,
+        "psnr_y": 33.5779428664409,
+        "detail_energy": 0.710740130117323,
+        "fine_correlation": 0.5116814612064632
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.19654794037342072,
+        "dists": 0.13325989246368408,
+        "psnr_y": 33.72472735091026,
+        "detail_energy": 0.680241613625,
+        "fine_correlation": 0.5285952220431835
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-01",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.251430869102478,
+        "dists": 0.1490640640258789,
+        "psnr_y": 33.63138779491858,
+        "detail_energy": 0.5621181884094816,
+        "fine_correlation": 0.5104893721330006
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2749553322792053,
+        "dists": 0.17354685068130493,
+        "psnr_y": 31.607247281849546,
+        "detail_energy": 0.3158234051793357,
+        "fine_correlation": 0.4291129151913456
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.2351922243833542,
+        "dists": 0.1469426155090332,
+        "psnr_y": 32.02953235655347,
+        "detail_energy": 0.48335063006468,
+        "fine_correlation": 0.3949444448894822
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.24802115559577942,
+        "dists": 0.15480005741119385,
+        "psnr_y": 32.09375938052289,
+        "detail_energy": 0.44471121973489386,
+        "fine_correlation": 0.41411734172410153
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3407830595970154,
+        "dists": 0.18261098861694336,
+        "psnr_y": 31.731366726063413,
+        "detail_energy": 0.34926310252065573,
+        "fine_correlation": 0.3862072662476762
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2770160138607025,
+        "dists": 0.171453595161438,
+        "psnr_y": 31.590760031875437,
+        "detail_energy": 0.33809424084397083,
+        "fine_correlation": 0.42483372319443213
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.23566485941410065,
+        "dists": 0.15004324913024902,
+        "psnr_y": 31.999625848646186,
+        "detail_energy": 0.512197175684137,
+        "fine_correlation": 0.3910309053175816
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.24700681865215302,
+        "dists": 0.15796709060668945,
+        "psnr_y": 32.07042060327884,
+        "detail_energy": 0.4736433226832887,
+        "fine_correlation": 0.40970344577746837
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.34334367513656616,
+        "dists": 0.18260300159454346,
+        "psnr_y": 31.761916052579217,
+        "detail_energy": 0.3734770377025898,
+        "fine_correlation": 0.3833834425936229
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.233897864818573,
+        "dists": 0.1461905837059021,
+        "psnr_y": 33.34930739592607,
+        "detail_energy": 0.5014651054350039,
+        "fine_correlation": 0.5293856265208143
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.1923050880432129,
+        "dists": 0.13324254751205444,
+        "psnr_y": 33.57104546248173,
+        "detail_energy": 0.7027289669180391,
+        "fine_correlation": 0.4996917178699836
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.19983452558517456,
+        "dists": 0.1385575532913208,
+        "psnr_y": 33.725773245287826,
+        "detail_energy": 0.6698666911659265,
+        "fine_correlation": 0.517013682607026
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2629255950450897,
+        "dists": 0.1494789719581604,
+        "psnr_y": 33.6286173223452,
+        "detail_energy": 0.5514187433096248,
+        "fine_correlation": 0.4959962385220651
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2392626702785492,
+        "dists": 0.141709566116333,
+        "psnr_y": 33.20352648986464,
+        "detail_energy": 0.5000608812158661,
+        "fine_correlation": 0.5275097842346578
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.19595372676849365,
+        "dists": 0.13461565971374512,
+        "psnr_y": 33.47839475668368,
+        "detail_energy": 0.703794085045226,
+        "fine_correlation": 0.49690170257097777
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.20320647954940796,
+        "dists": 0.13767588138580322,
+        "psnr_y": 33.62661961207046,
+        "detail_energy": 0.6709447095449802,
+        "fine_correlation": 0.5141686343269621
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-02",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2634705603122711,
+        "dists": 0.14953845739364624,
+        "psnr_y": 33.5290275423765,
+        "detail_energy": 0.55118274267383,
+        "fine_correlation": 0.4927867710717676
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.309194415807724,
+        "dists": 0.17179614305496216,
+        "psnr_y": 29.70563639826096,
+        "detail_energy": 0.4377922244375027,
+        "fine_correlation": 0.5507295726258251
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.23873558640480042,
+        "dists": 0.15209317207336426,
+        "psnr_y": 30.203371386041734,
+        "detail_energy": 0.6060548168902965,
+        "fine_correlation": 0.5915072531940563
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.24464556574821472,
+        "dists": 0.15270686149597168,
+        "psnr_y": 30.275005173109424,
+        "detail_energy": 0.5872710495801335,
+        "fine_correlation": 0.6028126997707339
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2950406074523926,
+        "dists": 0.17624402046203613,
+        "psnr_y": 30.02988054291282,
+        "detail_energy": 0.5009613126834666,
+        "fine_correlation": 0.5836330438923119
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2982335388660431,
+        "dists": 0.174973726272583,
+        "psnr_y": 30.264274262031062,
+        "detail_energy": 0.46128783621016495,
+        "fine_correlation": 0.5649631646611007
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.22741219401359558,
+        "dists": 0.1591247320175171,
+        "psnr_y": 30.791683747914313,
+        "detail_energy": 0.6354733238870133,
+        "fine_correlation": 0.6075655752222675
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.2339210957288742,
+        "dists": 0.16049110889434814,
+        "psnr_y": 30.881751194483677,
+        "detail_energy": 0.6174141360266647,
+        "fine_correlation": 0.6194726100420619
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2888202965259552,
+        "dists": 0.18008440732955933,
+        "psnr_y": 30.663870887870832,
+        "detail_energy": 0.5300132100535532,
+        "fine_correlation": 0.6047597780169875
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.2740829288959503,
+        "dists": 0.15135037899017334,
+        "psnr_y": 32.13631128424484,
+        "detail_energy": 0.5681317161192656,
+        "fine_correlation": 0.6381482908370966
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.19602933526039124,
+        "dists": 0.14279651641845703,
+        "psnr_y": 32.68220141875922,
+        "detail_energy": 0.7709432976375366,
+        "fine_correlation": 0.682134127934638
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.20078355073928833,
+        "dists": 0.1420682668685913,
+        "psnr_y": 32.853054023591156,
+        "detail_energy": 0.7549778396404836,
+        "fine_correlation": 0.6937611610563292
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2259301096200943,
+        "dists": 0.14880526065826416,
+        "psnr_y": 32.815338166695824,
+        "detail_energy": 0.6573278792116914,
+        "fine_correlation": 0.6846368944681058
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.27919289469718933,
+        "dists": 0.16123902797698975,
+        "psnr_y": 32.07792342503711,
+        "detail_energy": 0.5609968185469913,
+        "fine_correlation": 0.6311469798648248
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.20219111442565918,
+        "dists": 0.1489209532737732,
+        "psnr_y": 32.66179761978266,
+        "detail_energy": 0.7627735312778142,
+        "fine_correlation": 0.6772940714661715
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.20693768560886383,
+        "dists": 0.14937818050384521,
+        "psnr_y": 32.82472914489629,
+        "detail_energy": 0.7468277084445085,
+        "fine_correlation": 0.6881020661998366
+      }
+    },
+    {
+      "source_id": "sintel",
+      "sequence_id": "sintel-stream-001-03",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.23083752393722534,
+        "dists": 0.1591666340827942,
+        "psnr_y": 32.783085946661345,
+        "detail_energy": 0.6499717003008154,
+        "fine_correlation": 0.6792427980097592
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5582982301712036,
+        "dists": 0.2926666736602783,
+        "psnr_y": 22.219132755522555,
+        "detail_energy": 0.2726906430924739,
+        "fine_correlation": 0.15366385549941666
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.461937814950943,
+        "dists": 0.28263986110687256,
+        "psnr_y": 22.11116829298429,
+        "detail_energy": 0.3468114571501183,
+        "fine_correlation": 0.16284444935295034
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.4767601788043976,
+        "dists": 0.28580188751220703,
+        "psnr_y": 22.132544529368033,
+        "detail_energy": 0.33529413940850217,
+        "fine_correlation": 0.1662623773817702
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5142728090286255,
+        "dists": 0.29297560453414917,
+        "psnr_y": 22.211312456709326,
+        "detail_energy": 0.29795769612263345,
+        "fine_correlation": 0.1717164553891332
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5585181713104248,
+        "dists": 0.30294549465179443,
+        "psnr_y": 21.93488271119996,
+        "detail_energy": 0.268214622166717,
+        "fine_correlation": 0.13789491056591613
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.47277024388313293,
+        "dists": 0.2920985817909241,
+        "psnr_y": 21.833637348837023,
+        "detail_energy": 0.3383014430784329,
+        "fine_correlation": 0.13375404161855198
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.48603102564811707,
+        "dists": 0.2953052520751953,
+        "psnr_y": 21.85412698676211,
+        "detail_energy": 0.3279662495269956,
+        "fine_correlation": 0.13786442105639263
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5196376442909241,
+        "dists": 0.30683398246765137,
+        "psnr_y": 21.931626282661334,
+        "detail_energy": 0.2937428693596288,
+        "fine_correlation": 0.148271542430191
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5779199600219727,
+        "dists": 0.3190497159957886,
+        "psnr_y": 21.741141557578516,
+        "detail_energy": 0.2624508882752309,
+        "fine_correlation": 0.14209233049210085
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.4909262955188751,
+        "dists": 0.30540305376052856,
+        "psnr_y": 21.70475760575327,
+        "detail_energy": 0.3307014121527463,
+        "fine_correlation": 0.14594435460528654
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.5034586191177368,
+        "dists": 0.3087098002433777,
+        "psnr_y": 21.721565634152597,
+        "detail_energy": 0.32006012141758566,
+        "fine_correlation": 0.1489445667803907
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5418281555175781,
+        "dists": 0.3196423053741455,
+        "psnr_y": 21.784244573312883,
+        "detail_energy": 0.28651132307210986,
+        "fine_correlation": 0.15373131443811358
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5161113739013672,
+        "dists": 0.3133389949798584,
+        "psnr_y": 21.108107022272378,
+        "detail_energy": 0.26895917485183485,
+        "fine_correlation": 0.14613167085537285
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.4363037645816803,
+        "dists": 0.3111931085586548,
+        "psnr_y": 21.086709780202703,
+        "detail_energy": 0.33916003774176223,
+        "fine_correlation": 0.14171993709379324
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.44451600313186646,
+        "dists": 0.3118497133255005,
+        "psnr_y": 21.101748179062376,
+        "detail_energy": 0.329325565566157,
+        "fine_correlation": 0.14547431128331315
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-00",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4785726070404053,
+        "dists": 0.3143485188484192,
+        "psnr_y": 21.155559825452734,
+        "detail_energy": 0.29505213827308885,
+        "fine_correlation": 0.1566596027455979
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5337934494018555,
+        "dists": 0.27165836095809937,
+        "psnr_y": 22.415776885867494,
+        "detail_energy": 0.2915597529496149,
+        "fine_correlation": 0.174114255170628
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.440986305475235,
+        "dists": 0.25736647844314575,
+        "psnr_y": 22.31709265845367,
+        "detail_energy": 0.370966408238107,
+        "fine_correlation": 0.18844335286078034
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.455064058303833,
+        "dists": 0.2595740556716919,
+        "psnr_y": 22.338368228862485,
+        "detail_energy": 0.360641291108245,
+        "fine_correlation": 0.19189258027451492
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.49810701608657837,
+        "dists": 0.26980531215667725,
+        "psnr_y": 22.4145533606214,
+        "detail_energy": 0.32511768050213385,
+        "fine_correlation": 0.1990304175256752
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5443757176399231,
+        "dists": 0.2845727205276489,
+        "psnr_y": 22.019019188304462,
+        "detail_energy": 0.28686443868894607,
+        "fine_correlation": 0.16363883895370754
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.449166864156723,
+        "dists": 0.27382588386535645,
+        "psnr_y": 21.912412860271864,
+        "detail_energy": 0.36738631636990754,
+        "fine_correlation": 0.16506258054248252
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.4609462022781372,
+        "dists": 0.27528202533721924,
+        "psnr_y": 21.932293760101654,
+        "detail_energy": 0.3575882353721742,
+        "fine_correlation": 0.16854482270175947
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.49983829259872437,
+        "dists": 0.28241127729415894,
+        "psnr_y": 22.005695619267016,
+        "detail_energy": 0.32218352234650705,
+        "fine_correlation": 0.17859164530680424
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5597595572471619,
+        "dists": 0.3006914258003235,
+        "psnr_y": 21.691293219644244,
+        "detail_energy": 0.2737175319460199,
+        "fine_correlation": 0.16386167759757694
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.4674157202243805,
+        "dists": 0.29085326194763184,
+        "psnr_y": 21.678688249029005,
+        "detail_energy": 0.3475984601607687,
+        "fine_correlation": 0.1668801140456567
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.4771517813205719,
+        "dists": 0.2928100824356079,
+        "psnr_y": 21.693629563323917,
+        "detail_energy": 0.3375035775893273,
+        "fine_correlation": 0.17057043064127098
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5149289965629578,
+        "dists": 0.30075591802597046,
+        "psnr_y": 21.748831510594485,
+        "detail_energy": 0.30379342534183934,
+        "fine_correlation": 0.177957517004971
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5198657512664795,
+        "dists": 0.30259454250335693,
+        "psnr_y": 21.215768544128988,
+        "detail_energy": 0.2417501549965045,
+        "fine_correlation": 0.11914639005840917
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.4437059462070465,
+        "dists": 0.30043745040893555,
+        "psnr_y": 21.19926169932365,
+        "detail_energy": 0.3062984293308177,
+        "fine_correlation": 0.10584927556903848
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.4542657732963562,
+        "dists": 0.302181601524353,
+        "psnr_y": 21.21156563126494,
+        "detail_energy": 0.2966091636204725,
+        "fine_correlation": 0.11011380089337157
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-01",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4872182309627533,
+        "dists": 0.30813246965408325,
+        "psnr_y": 21.264654894954703,
+        "detail_energy": 0.2636345864836123,
+        "fine_correlation": 0.12358928246541208
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4794652760028839,
+        "dists": 0.2789837718009949,
+        "psnr_y": 22.19616779859161,
+        "detail_energy": 0.28102834466242005,
+        "fine_correlation": 0.17084540648830596
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3913348615169525,
+        "dists": 0.2688910961151123,
+        "psnr_y": 22.12333753214493,
+        "detail_energy": 0.3505619584088015,
+        "fine_correlation": 0.18250828115454348
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.40118345618247986,
+        "dists": 0.2713351249694824,
+        "psnr_y": 22.144648654680374,
+        "detail_energy": 0.34029351945513475,
+        "fine_correlation": 0.18589615607846494
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4296123683452606,
+        "dists": 0.2813607454299927,
+        "psnr_y": 22.213850128831215,
+        "detail_energy": 0.30516075614892535,
+        "fine_correlation": 0.1911733411057752
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4907916188240051,
+        "dists": 0.29326438903808594,
+        "psnr_y": 21.739526045000265,
+        "detail_energy": 0.2795243979775296,
+        "fine_correlation": 0.16142781085078056
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.4062177538871765,
+        "dists": 0.2835586667060852,
+        "psnr_y": 21.661717724752187,
+        "detail_energy": 0.3505807546859365,
+        "fine_correlation": 0.162229990681753
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.4140241742134094,
+        "dists": 0.28650999069213867,
+        "psnr_y": 21.680722920503854,
+        "detail_energy": 0.34056144156376433,
+        "fine_correlation": 0.16624105565427671
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.43808937072753906,
+        "dists": 0.2974231243133545,
+        "psnr_y": 21.75040424373195,
+        "detail_energy": 0.30675500815305184,
+        "fine_correlation": 0.17606162542521905
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5122512578964233,
+        "dists": 0.29596030712127686,
+        "psnr_y": 21.46458249084196,
+        "detail_energy": 0.27471795360452395,
+        "fine_correlation": 0.16381906752952696
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.42656952142715454,
+        "dists": 0.2832884192466736,
+        "psnr_y": 21.460605290139956,
+        "detail_energy": 0.34690576453409677,
+        "fine_correlation": 0.1713489814303382
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.4344240427017212,
+        "dists": 0.28539395332336426,
+        "psnr_y": 21.475538905749673,
+        "detail_energy": 0.33636744548923286,
+        "fine_correlation": 0.17335920327610596
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4623175263404846,
+        "dists": 0.2961018681526184,
+        "psnr_y": 21.531368750124575,
+        "detail_energy": 0.3008847532566949,
+        "fine_correlation": 0.1777045485490332
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.46191704273223877,
+        "dists": 0.3007473945617676,
+        "psnr_y": 21.43284322846398,
+        "detail_energy": 0.2703554149624655,
+        "fine_correlation": 0.1384751095361529
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3878190517425537,
+        "dists": 0.2983487844467163,
+        "psnr_y": 21.42305241570775,
+        "detail_energy": 0.3377932598287887,
+        "fine_correlation": 0.131926569077103
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3958340287208557,
+        "dists": 0.2987661361694336,
+        "psnr_y": 21.436833309934066,
+        "detail_energy": 0.3284047053692982,
+        "fine_correlation": 0.13584606461107418
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-02",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.42460834980010986,
+        "dists": 0.3005564212799072,
+        "psnr_y": 21.49102760961053,
+        "detail_energy": 0.2965332216485179,
+        "fine_correlation": 0.15033026911158356
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5978437066078186,
+        "dists": 0.29875826835632324,
+        "psnr_y": 22.216993286189247,
+        "detail_energy": 0.26392818458917655,
+        "fine_correlation": 0.15442259621966792
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.49993494153022766,
+        "dists": 0.2897729277610779,
+        "psnr_y": 22.107414787780442,
+        "detail_energy": 0.33310573075558597,
+        "fine_correlation": 0.16051590693534978
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.5173290371894836,
+        "dists": 0.29096031188964844,
+        "psnr_y": 22.128828540529458,
+        "detail_energy": 0.3229680956300929,
+        "fine_correlation": 0.1637729692764469
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5603304505348206,
+        "dists": 0.29978013038635254,
+        "psnr_y": 22.206010705193084,
+        "detail_energy": 0.28949375056050736,
+        "fine_correlation": 0.1711587324108512
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5979692935943604,
+        "dists": 0.30838263034820557,
+        "psnr_y": 21.96300997564684,
+        "detail_energy": 0.26606135035036144,
+        "fine_correlation": 0.14822434791375505
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.5020031929016113,
+        "dists": 0.29832494258880615,
+        "psnr_y": 21.86152074420606,
+        "detail_energy": 0.3377473192808084,
+        "fine_correlation": 0.14888293167564418
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.5161694288253784,
+        "dists": 0.30168503522872925,
+        "psnr_y": 21.881750487198318,
+        "detail_energy": 0.32740008063545756,
+        "fine_correlation": 0.1523008926003593
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5554436445236206,
+        "dists": 0.30905234813690186,
+        "psnr_y": 21.960997765674986,
+        "detail_energy": 0.2938693196907961,
+        "fine_correlation": 0.16288632143619114
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.600157618522644,
+        "dists": 0.3169102668762207,
+        "psnr_y": 22.061049250994046,
+        "detail_energy": 0.25712206876214505,
+        "fine_correlation": 0.15211186248410505
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.5089336633682251,
+        "dists": 0.3054651618003845,
+        "psnr_y": 22.01543717004075,
+        "detail_energy": 0.32826501352927245,
+        "fine_correlation": 0.1559781730748211
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.5207886695861816,
+        "dists": 0.3091844320297241,
+        "psnr_y": 22.03146838727056,
+        "detail_energy": 0.3177146170322813,
+        "fine_correlation": 0.15751660783948426
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.5630687475204468,
+        "dists": 0.322698712348938,
+        "psnr_y": 22.097111274870784,
+        "detail_energy": 0.2844084191562117,
+        "fine_correlation": 0.16349195285073703
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5168641209602356,
+        "dists": 0.30965638160705566,
+        "psnr_y": 21.274603915586656,
+        "detail_energy": 0.2707500979314923,
+        "fine_correlation": 0.13108747814984797
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.4352843165397644,
+        "dists": 0.3068404793739319,
+        "psnr_y": 21.257702483045126,
+        "detail_energy": 0.34108154118707784,
+        "fine_correlation": 0.12528127929965316
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.44296127557754517,
+        "dists": 0.3080826997756958,
+        "psnr_y": 21.273054416714196,
+        "detail_energy": 0.3304687444484829,
+        "fine_correlation": 0.1290289798450291
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-000-03",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4760323762893677,
+        "dists": 0.3129788041114807,
+        "psnr_y": 21.3325269341783,
+        "detail_energy": 0.2960004408156777,
+        "fine_correlation": 0.14321078018705036
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.529827892780304,
+        "dists": 0.23737269639968872,
+        "psnr_y": 23.44120927451715,
+        "detail_energy": 0.3000181621649031,
+        "fine_correlation": 0.24624107021698186
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.4274000823497772,
+        "dists": 0.21581792831420898,
+        "psnr_y": 23.388725138087445,
+        "detail_energy": 0.38527988534107804,
+        "fine_correlation": 0.2529916557841377
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.4411466419696808,
+        "dists": 0.22263336181640625,
+        "psnr_y": 23.41500378614257,
+        "detail_energy": 0.374816490436382,
+        "fine_correlation": 0.25900512435892387
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4898209571838379,
+        "dists": 0.23485970497131348,
+        "psnr_y": 23.495106287450046,
+        "detail_energy": 0.3415394093567546,
+        "fine_correlation": 0.2699863542613682
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5283315181732178,
+        "dists": 0.20972228050231934,
+        "psnr_y": 24.701685357253407,
+        "detail_energy": 0.37699892712028615,
+        "fine_correlation": 0.33160645583771253
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.4250122308731079,
+        "dists": 0.1883765459060669,
+        "psnr_y": 24.620480332921737,
+        "detail_energy": 0.46937089473438004,
+        "fine_correlation": 0.36291010099852605
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.4381752014160156,
+        "dists": 0.19227957725524902,
+        "psnr_y": 24.652562817100904,
+        "detail_energy": 0.46300152127274063,
+        "fine_correlation": 0.36854452642931124
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4807365834712982,
+        "dists": 0.2075619101524353,
+        "psnr_y": 24.73493432333152,
+        "detail_energy": 0.4387253094163265,
+        "fine_correlation": 0.3729586884228865
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5368152260780334,
+        "dists": 0.2188655138015747,
+        "psnr_y": 23.37601625321649,
+        "detail_energy": 0.3488078622691657,
+        "fine_correlation": 0.2624092804690002
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.43315285444259644,
+        "dists": 0.20988059043884277,
+        "psnr_y": 23.39733567625787,
+        "detail_energy": 0.43975786791150345,
+        "fine_correlation": 0.2717568353828285
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.4445297122001648,
+        "dists": 0.211525559425354,
+        "psnr_y": 23.417900882316477,
+        "detail_energy": 0.43157354465145364,
+        "fine_correlation": 0.2768594527653273
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4879075288772583,
+        "dists": 0.21972721815109253,
+        "psnr_y": 23.49302832598488,
+        "detail_energy": 0.4005725310785801,
+        "fine_correlation": 0.2877746762692702
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4374622404575348,
+        "dists": 0.20777302980422974,
+        "psnr_y": 25.480624651569286,
+        "detail_energy": 0.4431989273725718,
+        "fine_correlation": 0.4199585211910359
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3272528648376465,
+        "dists": 0.18991190195083618,
+        "psnr_y": 25.692132478053647,
+        "detail_energy": 0.5492670506353762,
+        "fine_correlation": 0.4559959030532885
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3381989598274231,
+        "dists": 0.1927592158317566,
+        "psnr_y": 25.730714191319038,
+        "detail_energy": 0.5440226634943076,
+        "fine_correlation": 0.4616918842577875
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-00",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3792339861392975,
+        "dists": 0.203019380569458,
+        "psnr_y": 25.799143409725794,
+        "detail_energy": 0.5148880849542075,
+        "fine_correlation": 0.46711923254360715
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4700108766555786,
+        "dists": 0.22748887538909912,
+        "psnr_y": 23.760830531243275,
+        "detail_energy": 0.41056911489653014,
+        "fine_correlation": 0.32425275359082095
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.35231414437294006,
+        "dists": 0.21348083019256592,
+        "psnr_y": 23.648259247687765,
+        "detail_energy": 0.5208176773621881,
+        "fine_correlation": 0.3270545748575743
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.37050861120224,
+        "dists": 0.21520942449569702,
+        "psnr_y": 23.677109264221006,
+        "detail_energy": 0.51088178594467,
+        "fine_correlation": 0.3324414239139242
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4155759811401367,
+        "dists": 0.22779428958892822,
+        "psnr_y": 23.77931261882415,
+        "detail_energy": 0.4760954129848751,
+        "fine_correlation": 0.34473465659391894
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.45249122381210327,
+        "dists": 0.22504031658172607,
+        "psnr_y": 25.357174748841288,
+        "detail_energy": 0.4287162540007688,
+        "fine_correlation": 0.39467898742946017
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.34271344542503357,
+        "dists": 0.20826661586761475,
+        "psnr_y": 25.265049281169844,
+        "detail_energy": 0.5436680248056602,
+        "fine_correlation": 0.4245096855771289
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3594611585140228,
+        "dists": 0.21175438165664673,
+        "psnr_y": 25.307716635325605,
+        "detail_energy": 0.5342798962189423,
+        "fine_correlation": 0.43039237981277684
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3984106779098511,
+        "dists": 0.22581124305725098,
+        "psnr_y": 25.421793702929442,
+        "detail_energy": 0.5008517850228178,
+        "fine_correlation": 0.44016932237909123
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5157055258750916,
+        "dists": 0.25320732593536377,
+        "psnr_y": 24.43301858445604,
+        "detail_energy": 0.3677128349255212,
+        "fine_correlation": 0.2765167879866919
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.41155189275741577,
+        "dists": 0.23676776885986328,
+        "psnr_y": 24.376245365719143,
+        "detail_energy": 0.4684807239929139,
+        "fine_correlation": 0.2757705475633074
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.43128371238708496,
+        "dists": 0.24008500576019287,
+        "psnr_y": 24.408908172240636,
+        "detail_energy": 0.4570726138445525,
+        "fine_correlation": 0.2821472435011305
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4731103777885437,
+        "dists": 0.2547227144241333,
+        "psnr_y": 24.51275588663375,
+        "detail_energy": 0.4206395691784145,
+        "fine_correlation": 0.2952629982369047
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4127967357635498,
+        "dists": 0.2384188175201416,
+        "psnr_y": 26.102618433654033,
+        "detail_energy": 0.42911076385376334,
+        "fine_correlation": 0.41753302575459705
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3165596127510071,
+        "dists": 0.22055387496948242,
+        "psnr_y": 26.28947814631718,
+        "detail_energy": 0.551061161556076,
+        "fine_correlation": 0.46255420373923184
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3273611068725586,
+        "dists": 0.2259509563446045,
+        "psnr_y": 26.32955838205063,
+        "detail_energy": 0.5418879823337825,
+        "fine_correlation": 0.4679580113288961
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-01",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3579123020172119,
+        "dists": 0.23524630069732666,
+        "psnr_y": 26.404938210738532,
+        "detail_energy": 0.5076969610561876,
+        "fine_correlation": 0.47384879563315535
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4850980043411255,
+        "dists": 0.2308143973350525,
+        "psnr_y": 23.526831936554842,
+        "detail_energy": 0.31338389483955753,
+        "fine_correlation": 0.2634233835530232
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.37583017349243164,
+        "dists": 0.21202492713928223,
+        "psnr_y": 23.495645805214895,
+        "detail_energy": 0.3995373538302613,
+        "fine_correlation": 0.26577839108933926
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.39240503311157227,
+        "dists": 0.21721601486206055,
+        "psnr_y": 23.520408788607448,
+        "detail_energy": 0.38960792929392996,
+        "fine_correlation": 0.2723262116081797
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.44427230954170227,
+        "dists": 0.23208576440811157,
+        "psnr_y": 23.58740512983794,
+        "detail_energy": 0.35731896693771964,
+        "fine_correlation": 0.2829131208831033
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4688548445701599,
+        "dists": 0.20511400699615479,
+        "psnr_y": 25.088433134257603,
+        "detail_energy": 0.39149470175889073,
+        "fine_correlation": 0.3523386826221936
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.35324379801750183,
+        "dists": 0.1861248016357422,
+        "psnr_y": 25.030352417166736,
+        "detail_energy": 0.4930861995916604,
+        "fine_correlation": 0.3898036023858774
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3693469166755676,
+        "dists": 0.19115519523620605,
+        "psnr_y": 25.064409967093937,
+        "detail_energy": 0.48701696830112373,
+        "fine_correlation": 0.3959332770250213
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.41983774304389954,
+        "dists": 0.2036224603652954,
+        "psnr_y": 25.152122901334742,
+        "detail_energy": 0.45715670341977505,
+        "fine_correlation": 0.40178131636411035
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4816754460334778,
+        "dists": 0.22684431076049805,
+        "psnr_y": 23.54617834938509,
+        "detail_energy": 0.3649778936437862,
+        "fine_correlation": 0.28363893092883097
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3724179267883301,
+        "dists": 0.2099628448486328,
+        "psnr_y": 23.621229382772743,
+        "detail_energy": 0.4600215290506324,
+        "fine_correlation": 0.29444971599988057
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.38635510206222534,
+        "dists": 0.21505188941955566,
+        "psnr_y": 23.641664722110637,
+        "detail_energy": 0.45135799762294415,
+        "fine_correlation": 0.29927254592623176
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.43394461274147034,
+        "dists": 0.22605741024017334,
+        "psnr_y": 23.714204517946737,
+        "detail_energy": 0.41835568593828676,
+        "fine_correlation": 0.30983292761345255
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.42571771144866943,
+        "dists": 0.21872413158416748,
+        "psnr_y": 25.540650288175627,
+        "detail_energy": 0.4449407486780398,
+        "fine_correlation": 0.4173574515251808
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3073863983154297,
+        "dists": 0.19765913486480713,
+        "psnr_y": 25.784083191509204,
+        "detail_energy": 0.5519612174062871,
+        "fine_correlation": 0.4564204213333095
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3205402195453644,
+        "dists": 0.2012956738471985,
+        "psnr_y": 25.823451193572996,
+        "detail_energy": 0.5456997108183095,
+        "fine_correlation": 0.4621330376048361
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-02",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3623317778110504,
+        "dists": 0.2142014503479004,
+        "psnr_y": 25.8835892557631,
+        "detail_energy": 0.5129798610323614,
+        "fine_correlation": 0.4682293806781934
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4495629072189331,
+        "dists": 0.22504431009292603,
+        "psnr_y": 23.66875030667962,
+        "detail_energy": 0.4123827092611401,
+        "fine_correlation": 0.3286415311058658
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.33547794818878174,
+        "dists": 0.2094186544418335,
+        "psnr_y": 23.558837766307008,
+        "detail_energy": 0.5215625544720873,
+        "fine_correlation": 0.3298076362889981
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.350272536277771,
+        "dists": 0.2114672064781189,
+        "psnr_y": 23.588656848054764,
+        "detail_energy": 0.5115854212062496,
+        "fine_correlation": 0.33612955970806907
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3908684253692627,
+        "dists": 0.22433418035507202,
+        "psnr_y": 23.69128433620052,
+        "detail_energy": 0.477040163484438,
+        "fine_correlation": 0.3494308580896865
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4460020065307617,
+        "dists": 0.22424209117889404,
+        "psnr_y": 25.229364634062993,
+        "detail_energy": 0.4275582471407649,
+        "fine_correlation": 0.3991359783870884
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.33469605445861816,
+        "dists": 0.2125195860862732,
+        "psnr_y": 25.14537664819134,
+        "detail_energy": 0.5404393825947722,
+        "fine_correlation": 0.4269402913333084
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.34959280490875244,
+        "dists": 0.21492350101470947,
+        "psnr_y": 25.190399055109282,
+        "detail_energy": 0.5309310822398366,
+        "fine_correlation": 0.43333301014680176
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.38580843806266785,
+        "dists": 0.22370636463165283,
+        "psnr_y": 25.303870925496696,
+        "detail_energy": 0.497672007606091,
+        "fine_correlation": 0.4445580906477405
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5010766386985779,
+        "dists": 0.2534443140029907,
+        "psnr_y": 24.209017547818302,
+        "detail_energy": 0.37109466678228636,
+        "fine_correlation": 0.2805413262440066
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.393199622631073,
+        "dists": 0.23640429973602295,
+        "psnr_y": 24.15599872763761,
+        "detail_energy": 0.4744987760726945,
+        "fine_correlation": 0.2796399472702369
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.4123147428035736,
+        "dists": 0.23932456970214844,
+        "psnr_y": 24.187848455963508,
+        "detail_energy": 0.46234373606520035,
+        "fine_correlation": 0.2852973964458308
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4539731740951538,
+        "dists": 0.2544861435890198,
+        "psnr_y": 24.292208959938122,
+        "detail_energy": 0.42448493492691225,
+        "fine_correlation": 0.29945253486845264
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.400569885969162,
+        "dists": 0.22950708866119385,
+        "psnr_y": 26.08026826367572,
+        "detail_energy": 0.4339828223572926,
+        "fine_correlation": 0.42354276792160284
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.30330461263656616,
+        "dists": 0.21425187587738037,
+        "psnr_y": 26.290089139427092,
+        "detail_energy": 0.5562832184471063,
+        "fine_correlation": 0.4722125982786387
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3127935528755188,
+        "dists": 0.21757888793945312,
+        "psnr_y": 26.32936689106224,
+        "detail_energy": 0.5472119747056261,
+        "fine_correlation": 0.4773531756736818
+      }
+    },
+    {
+      "source_id": "reds_154",
+      "sequence_id": "reds_154-stream-001-03",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.342917799949646,
+        "dists": 0.22692656517028809,
+        "psnr_y": 26.402628596041954,
+        "detail_energy": 0.5128371481986398,
+        "fine_correlation": 0.48267328165016465
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4652894139289856,
+        "dists": 0.22068274021148682,
+        "psnr_y": 21.58511633260423,
+        "detail_energy": 0.33204961650274356,
+        "fine_correlation": 0.2323376696127035
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.35340046882629395,
+        "dists": 0.1999504566192627,
+        "psnr_y": 21.569895171610543,
+        "detail_energy": 0.41165638337857974,
+        "fine_correlation": 0.2421115340053614
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3632127642631531,
+        "dists": 0.2016146183013916,
+        "psnr_y": 21.588703042104388,
+        "detail_energy": 0.40063747108299047,
+        "fine_correlation": 0.2455432213778899
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.39700746536254883,
+        "dists": 0.20919698476791382,
+        "psnr_y": 21.6447027479366,
+        "detail_energy": 0.3594627548287218,
+        "fine_correlation": 0.24883877575882835
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4725315272808075,
+        "dists": 0.2310103178024292,
+        "psnr_y": 21.812749504974658,
+        "detail_energy": 0.3290660947517151,
+        "fine_correlation": 0.21245401758040602
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.36687588691711426,
+        "dists": 0.21514958143234253,
+        "psnr_y": 21.801752255055735,
+        "detail_energy": 0.4058216752595335,
+        "fine_correlation": 0.21335639807791415
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3772563338279724,
+        "dists": 0.21719443798065186,
+        "psnr_y": 21.820214771950237,
+        "detail_energy": 0.3952002551323731,
+        "fine_correlation": 0.21740090668956194
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4116678833961487,
+        "dists": 0.22330129146575928,
+        "psnr_y": 21.877709171055365,
+        "detail_energy": 0.35660269374535963,
+        "fine_correlation": 0.22543687047278882
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.474990576505661,
+        "dists": 0.23917341232299805,
+        "psnr_y": 21.659078615520336,
+        "detail_energy": 0.30398251138094484,
+        "fine_correlation": 0.1865234310890098
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.36838066577911377,
+        "dists": 0.22803771495819092,
+        "psnr_y": 21.578501244152832,
+        "detail_energy": 0.3770563422434223,
+        "fine_correlation": 0.18435470222236947
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3785650432109833,
+        "dists": 0.2283439040184021,
+        "psnr_y": 21.60392768077815,
+        "detail_energy": 0.3650543665271735,
+        "fine_correlation": 0.18830751666106355
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.41212448477745056,
+        "dists": 0.23246902227401733,
+        "psnr_y": 21.68954831829098,
+        "detail_energy": 0.32423391721792755,
+        "fine_correlation": 0.19922688272129901
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4691409468650818,
+        "dists": 0.24030721187591553,
+        "psnr_y": 21.78495798874951,
+        "detail_energy": 0.3025495522862836,
+        "fine_correlation": 0.18902515544866672
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.37114080786705017,
+        "dists": 0.2286449670791626,
+        "psnr_y": 21.716895813893462,
+        "detail_energy": 0.37946493648204244,
+        "fine_correlation": 0.18811006123894417
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3808596134185791,
+        "dists": 0.23038065433502197,
+        "psnr_y": 21.741465622499923,
+        "detail_energy": 0.36763350634777725,
+        "fine_correlation": 0.1929550845784802
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-00",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.41155752539634705,
+        "dists": 0.23714303970336914,
+        "psnr_y": 21.817376392047105,
+        "detail_energy": 0.3254890693715983,
+        "fine_correlation": 0.20366761599552313
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5076391100883484,
+        "dists": 0.22753536701202393,
+        "psnr_y": 21.192275845432928,
+        "detail_energy": 0.34641733004665837,
+        "fine_correlation": 0.25986853479869043
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3777683675289154,
+        "dists": 0.2035210132598877,
+        "psnr_y": 21.203071559619836,
+        "detail_energy": 0.43380794594555006,
+        "fine_correlation": 0.2711123743857413
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.39014309644699097,
+        "dists": 0.20704561471939087,
+        "psnr_y": 21.224574706306022,
+        "detail_energy": 0.42156648802334074,
+        "fine_correlation": 0.27386673461288513
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4385904371738434,
+        "dists": 0.2208072543144226,
+        "psnr_y": 21.289088889880333,
+        "detail_energy": 0.37733637486124905,
+        "fine_correlation": 0.27906265511513373
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5153870582580566,
+        "dists": 0.2263326644897461,
+        "psnr_y": 21.482628892565412,
+        "detail_energy": 0.3522854184015774,
+        "fine_correlation": 0.257540214939385
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3803044259548187,
+        "dists": 0.20302581787109375,
+        "psnr_y": 21.5060667087365,
+        "detail_energy": 0.4415082704692291,
+        "fine_correlation": 0.26756526743431913
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3943762183189392,
+        "dists": 0.20740282535552979,
+        "psnr_y": 21.526614597319146,
+        "detail_energy": 0.42934703548371134,
+        "fine_correlation": 0.27137529450782805
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.44811373949050903,
+        "dists": 0.21646356582641602,
+        "psnr_y": 21.590638138695084,
+        "detail_energy": 0.3851941538690109,
+        "fine_correlation": 0.27845422831616534
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5156941413879395,
+        "dists": 0.2281951904296875,
+        "psnr_y": 21.09349375547557,
+        "detail_energy": 0.3271872657224468,
+        "fine_correlation": 0.2331191722961882
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3845826983451843,
+        "dists": 0.21019220352172852,
+        "psnr_y": 21.053626788877395,
+        "detail_energy": 0.4094425345579086,
+        "fine_correlation": 0.23510200077618207
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3977806866168976,
+        "dists": 0.21281874179840088,
+        "psnr_y": 21.07656784612503,
+        "detail_energy": 0.39702712442572086,
+        "fine_correlation": 0.23859933778224338
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.44822072982788086,
+        "dists": 0.22007906436920166,
+        "psnr_y": 21.149607884889598,
+        "detail_energy": 0.35447120235499535,
+        "fine_correlation": 0.24642140323383668
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5213053226470947,
+        "dists": 0.24641644954681396,
+        "psnr_y": 21.27104045390911,
+        "detail_energy": 0.32817898751897556,
+        "fine_correlation": 0.2176923017667399
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3901037573814392,
+        "dists": 0.22893166542053223,
+        "psnr_y": 21.239768424197713,
+        "detail_energy": 0.412472628807103,
+        "fine_correlation": 0.2237776567250249
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.4036918580532074,
+        "dists": 0.2305874228477478,
+        "psnr_y": 21.26286753875206,
+        "detail_energy": 0.3984807885735873,
+        "fine_correlation": 0.22711750636411482
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-01",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.45670512318611145,
+        "dists": 0.23952484130859375,
+        "psnr_y": 21.336825354774298,
+        "detail_energy": 0.35227727126068015,
+        "fine_correlation": 0.23307188195924836
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.41275402903556824,
+        "dists": 0.21885085105895996,
+        "psnr_y": 22.06696592725944,
+        "detail_energy": 0.32150804837053226,
+        "fine_correlation": 0.21826372395545351
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.31277793645858765,
+        "dists": 0.20631414651870728,
+        "psnr_y": 22.04216577147722,
+        "detail_energy": 0.3950804142047084,
+        "fine_correlation": 0.2247252406590419
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3228999972343445,
+        "dists": 0.20713472366333008,
+        "psnr_y": 22.06072894080808,
+        "detail_energy": 0.38445069598057574,
+        "fine_correlation": 0.22806660099089016
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3561560809612274,
+        "dists": 0.21134138107299805,
+        "psnr_y": 22.114481127690112,
+        "detail_energy": 0.3454588966948006,
+        "fine_correlation": 0.23154682029560977
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4252701997756958,
+        "dists": 0.22883391380310059,
+        "psnr_y": 22.186954069379393,
+        "detail_energy": 0.31729211230635346,
+        "fine_correlation": 0.1989550600900384
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3348243534564972,
+        "dists": 0.21153968572616577,
+        "psnr_y": 22.187113042579444,
+        "detail_energy": 0.3932451329343608,
+        "fine_correlation": 0.1961507011405064
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3452492952346802,
+        "dists": 0.21313750743865967,
+        "psnr_y": 22.204090566673912,
+        "detail_energy": 0.38278644655288385,
+        "fine_correlation": 0.20076334867964818
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.375849187374115,
+        "dists": 0.2193586826324463,
+        "psnr_y": 22.262794800057478,
+        "detail_energy": 0.343857455331638,
+        "fine_correlation": 0.21133457549075363
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.41934818029403687,
+        "dists": 0.22770309448242188,
+        "psnr_y": 22.204734469224125,
+        "detail_energy": 0.29695446536748976,
+        "fine_correlation": 0.18180494136486008
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3297552764415741,
+        "dists": 0.21562659740447998,
+        "psnr_y": 22.119211946712444,
+        "detail_energy": 0.3680074041578414,
+        "fine_correlation": 0.18084556891771586
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3386003375053406,
+        "dists": 0.21727073192596436,
+        "psnr_y": 22.14372793102736,
+        "detail_energy": 0.356838717248886,
+        "fine_correlation": 0.18467274250847243
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3642423748970032,
+        "dists": 0.22391557693481445,
+        "psnr_y": 22.226005809133945,
+        "detail_energy": 0.31769068932736777,
+        "fine_correlation": 0.1949189754922499
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.41851887106895447,
+        "dists": 0.24160444736480713,
+        "psnr_y": 22.257733437549025,
+        "detail_energy": 0.29904363764871955,
+        "fine_correlation": 0.19304534376335175
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.33361318707466125,
+        "dists": 0.22562569379806519,
+        "psnr_y": 22.198233504981836,
+        "detail_energy": 0.3742142856201637,
+        "fine_correlation": 0.1923455543991191
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3416261672973633,
+        "dists": 0.2277483344078064,
+        "psnr_y": 22.22237332650508,
+        "detail_energy": 0.36281247328099064,
+        "fine_correlation": 0.19707328639070903
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-02",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3685886859893799,
+        "dists": 0.23586571216583252,
+        "psnr_y": 22.29604707483366,
+        "detail_energy": 0.32291019283415046,
+        "fine_correlation": 0.20772658569445754
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5085081458091736,
+        "dists": 0.2076399326324463,
+        "psnr_y": 21.741989777740557,
+        "detail_energy": 0.344710531036708,
+        "fine_correlation": 0.2683521752634666
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.37538427114486694,
+        "dists": 0.18836581707000732,
+        "psnr_y": 21.74447980831737,
+        "detail_energy": 0.43061078330610153,
+        "fine_correlation": 0.28153221666128814
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.389455646276474,
+        "dists": 0.19182300567626953,
+        "psnr_y": 21.764406828094195,
+        "detail_energy": 0.4187320421647272,
+        "fine_correlation": 0.2844644623249803
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4426485300064087,
+        "dists": 0.20264601707458496,
+        "psnr_y": 21.82123691434825,
+        "detail_energy": 0.37525491000571576,
+        "fine_correlation": 0.28871900081634566
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5160313248634338,
+        "dists": 0.23197096586227417,
+        "psnr_y": 21.971189972533516,
+        "detail_energy": 0.35559626123870575,
+        "fine_correlation": 0.2595798756006151
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3900066912174225,
+        "dists": 0.20869696140289307,
+        "psnr_y": 21.980842646561992,
+        "detail_energy": 0.44476772367686657,
+        "fine_correlation": 0.2707220033225399
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.40232402086257935,
+        "dists": 0.21190237998962402,
+        "psnr_y": 21.998098479613862,
+        "detail_energy": 0.4334278951170879,
+        "fine_correlation": 0.27322248739855937
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.45660600066185,
+        "dists": 0.22517156600952148,
+        "psnr_y": 22.055870674786036,
+        "detail_energy": 0.3910136774777485,
+        "fine_correlation": 0.27946682821477264
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5210309028625488,
+        "dists": 0.23504722118377686,
+        "psnr_y": 21.464368818501832,
+        "detail_energy": 0.32829132189467614,
+        "fine_correlation": 0.23120759413989897
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3965572416782379,
+        "dists": 0.21234643459320068,
+        "psnr_y": 21.41418945888754,
+        "detail_energy": 0.40869975331265324,
+        "fine_correlation": 0.2341864879843781
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.40967416763305664,
+        "dists": 0.21487677097320557,
+        "psnr_y": 21.436614117845462,
+        "detail_energy": 0.3970855898850034,
+        "fine_correlation": 0.23796970091337666
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.45862042903900146,
+        "dists": 0.2279214859008789,
+        "psnr_y": 21.50387941426378,
+        "detail_energy": 0.35581898163267517,
+        "fine_correlation": 0.24456223569808327
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.5124523639678955,
+        "dists": 0.25002360343933105,
+        "psnr_y": 21.607948363873962,
+        "detail_energy": 0.3309966504629867,
+        "fine_correlation": 0.21939610609614604
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3963276743888855,
+        "dists": 0.23316556215286255,
+        "psnr_y": 21.56910378025792,
+        "detail_energy": 0.41427216388412985,
+        "fine_correlation": 0.2282359193786551
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.4070979058742523,
+        "dists": 0.23571151494979858,
+        "psnr_y": 21.592186954643957,
+        "detail_energy": 0.40156916765263173,
+        "fine_correlation": 0.23142871733597611
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-000-03",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.4539428949356079,
+        "dists": 0.24442458152770996,
+        "psnr_y": 21.663111734041138,
+        "detail_energy": 0.3575877293210764,
+        "fine_correlation": 0.23746786243603094
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.35373008251190186,
+        "dists": 0.16334718465805054,
+        "psnr_y": 25.06536328881173,
+        "detail_energy": 0.43036440208538645,
+        "fine_correlation": 0.42718996673174875
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.2465563863515854,
+        "dists": 0.13631868362426758,
+        "psnr_y": 25.131334665093824,
+        "detail_energy": 0.5383055593826707,
+        "fine_correlation": 0.4524298859577143
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.254543274641037,
+        "dists": 0.13961899280548096,
+        "psnr_y": 25.164389089495565,
+        "detail_energy": 0.5304519682259241,
+        "fine_correlation": 0.45754219505755
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.28559181094169617,
+        "dists": 0.15434908866882324,
+        "psnr_y": 25.216163993738657,
+        "detail_energy": 0.49673434474566147,
+        "fine_correlation": 0.4619167134393581
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.29663360118865967,
+        "dists": 0.11085814237594604,
+        "psnr_y": 27.524495140652995,
+        "detail_energy": 0.5299181747074645,
+        "fine_correlation": 0.5802364976014949
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.1882651150226593,
+        "dists": 0.08415353298187256,
+        "psnr_y": 27.897075361398223,
+        "detail_energy": 0.6866991973530393,
+        "fine_correlation": 0.6210392716172105
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.19181175529956818,
+        "dists": 0.08485645055770874,
+        "psnr_y": 27.978672611354195,
+        "detail_energy": 0.680319298539945,
+        "fine_correlation": 0.6266905566489621
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.21681135892868042,
+        "dists": 0.09236419200897217,
+        "psnr_y": 28.07425488596857,
+        "detail_energy": 0.6419357612800122,
+        "fine_correlation": 0.63193734565602
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3440031111240387,
+        "dists": 0.16401714086532593,
+        "psnr_y": 25.288529454859074,
+        "detail_energy": 0.43331531764776327,
+        "fine_correlation": 0.4275782059355755
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.24655964970588684,
+        "dists": 0.14489126205444336,
+        "psnr_y": 25.38952615274875,
+        "detail_energy": 0.5561523560333609,
+        "fine_correlation": 0.4619415189696258
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.2537907063961029,
+        "dists": 0.14714092016220093,
+        "psnr_y": 25.426718777957255,
+        "detail_energy": 0.5463182695142323,
+        "fine_correlation": 0.46690445162262434
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.2848082184791565,
+        "dists": 0.15802466869354248,
+        "psnr_y": 25.489055258498144,
+        "detail_energy": 0.5037498323202174,
+        "fine_correlation": 0.4702632404793995
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4175965189933777,
+        "dists": 0.1942163109779358,
+        "psnr_y": 24.574143248806966,
+        "detail_energy": 0.3760542696732233,
+        "fine_correlation": 0.36247408373493206
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3142611086368561,
+        "dists": 0.18154382705688477,
+        "psnr_y": 24.680559347092004,
+        "detail_energy": 0.4766807574141892,
+        "fine_correlation": 0.3930919973772481
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.32426130771636963,
+        "dists": 0.18492650985717773,
+        "psnr_y": 24.709394107418934,
+        "detail_energy": 0.4661949695130764,
+        "fine_correlation": 0.3982352103373642
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-00",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.36092036962509155,
+        "dists": 0.19699108600616455,
+        "psnr_y": 24.749408385580388,
+        "detail_energy": 0.4280793995605249,
+        "fine_correlation": 0.4005807888026481
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.42198342084884644,
+        "dists": 0.1616649627685547,
+        "psnr_y": 22.746860893691384,
+        "detail_energy": 0.42459417168034685,
+        "fine_correlation": 0.4079477060928781
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.2901356816291809,
+        "dists": 0.1390182375907898,
+        "psnr_y": 22.843212130940746,
+        "detail_energy": 0.5288663890093765,
+        "fine_correlation": 0.44211053236025
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3014892637729645,
+        "dists": 0.1432855725288391,
+        "psnr_y": 22.87330045752405,
+        "detail_energy": 0.51906762200597,
+        "fine_correlation": 0.44740843345695325
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3404254615306854,
+        "dists": 0.15690600872039795,
+        "psnr_y": 22.924462467824675,
+        "detail_energy": 0.4844283545309629,
+        "fine_correlation": 0.4513857145144746
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.32922637462615967,
+        "dists": 0.11522305011749268,
+        "psnr_y": 26.39612677741394,
+        "detail_energy": 0.5618112603423899,
+        "fine_correlation": 0.6220413545860622
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.19022327661514282,
+        "dists": 0.08566462993621826,
+        "psnr_y": 26.96540349353726,
+        "detail_energy": 0.7233106010252076,
+        "fine_correlation": 0.6753578148985472
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.19622597098350525,
+        "dists": 0.08780604600906372,
+        "psnr_y": 27.05380814150594,
+        "detail_energy": 0.7159228347453012,
+        "fine_correlation": 0.6808585156126505
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.22334377467632294,
+        "dists": 0.0943526029586792,
+        "psnr_y": 27.140322844449404,
+        "detail_energy": 0.6742143636849844,
+        "fine_correlation": 0.6851888084084122
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3956593871116638,
+        "dists": 0.16321754455566406,
+        "psnr_y": 24.283648399823864,
+        "detail_energy": 0.45219426722740796,
+        "fine_correlation": 0.4358255342690304
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.2654530107975006,
+        "dists": 0.13457369804382324,
+        "psnr_y": 24.3552769387745,
+        "detail_energy": 0.5585156153954333,
+        "fine_correlation": 0.46371134182166296
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.27533671259880066,
+        "dists": 0.13844811916351318,
+        "psnr_y": 24.392034680109184,
+        "detail_energy": 0.5483433789941734,
+        "fine_correlation": 0.46933623090063703
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.31423884630203247,
+        "dists": 0.15307629108428955,
+        "psnr_y": 24.45939210045954,
+        "detail_energy": 0.5104750296988019,
+        "fine_correlation": 0.475468042179299
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4141228199005127,
+        "dists": 0.18432855606079102,
+        "psnr_y": 24.060550248497464,
+        "detail_energy": 0.4137131685462341,
+        "fine_correlation": 0.39473120288567226
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.28582891821861267,
+        "dists": 0.16366052627563477,
+        "psnr_y": 24.194832093619564,
+        "detail_energy": 0.5145239452343362,
+        "fine_correlation": 0.43148724487765205
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.29636290669441223,
+        "dists": 0.16599321365356445,
+        "psnr_y": 24.22346326946391,
+        "detail_energy": 0.5025195902607262,
+        "fine_correlation": 0.43673503204641084
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-01",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.34160077571868896,
+        "dists": 0.17612814903259277,
+        "psnr_y": 24.261942058704538,
+        "detail_energy": 0.4618093961671844,
+        "fine_correlation": 0.43864380186394525
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4444648325443268,
+        "dists": 0.1733914613723755,
+        "psnr_y": 22.783862701634348,
+        "detail_energy": 0.42707202266959876,
+        "fine_correlation": 0.40363189525874577
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.3016846477985382,
+        "dists": 0.14963161945343018,
+        "psnr_y": 22.89046501773454,
+        "detail_energy": 0.534369661413175,
+        "fine_correlation": 0.44079433293852893
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.3133082985877991,
+        "dists": 0.15446174144744873,
+        "psnr_y": 22.91855129412272,
+        "detail_energy": 0.5248138060953975,
+        "fine_correlation": 0.44524507307869454
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3569270372390747,
+        "dists": 0.17125213146209717,
+        "psnr_y": 22.970349914622076,
+        "detail_energy": 0.4897506666048648,
+        "fine_correlation": 0.44949230729579304
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3210773468017578,
+        "dists": 0.11784303188323975,
+        "psnr_y": 26.41304443253544,
+        "detail_energy": 0.568852880238238,
+        "fine_correlation": 0.6315566428446443
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.18922840058803558,
+        "dists": 0.09199559688568115,
+        "psnr_y": 26.9928265708467,
+        "detail_energy": 0.7336231114716543,
+        "fine_correlation": 0.6836795718257265
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.19536155462265015,
+        "dists": 0.09438908100128174,
+        "psnr_y": 27.08397846971105,
+        "detail_energy": 0.7263439275571828,
+        "fine_correlation": 0.6892826689409379
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.22245606780052185,
+        "dists": 0.10083127021789551,
+        "psnr_y": 27.17835459752407,
+        "detail_energy": 0.6851093823790063,
+        "fine_correlation": 0.6935776682730326
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.40054094791412354,
+        "dists": 0.15933215618133545,
+        "psnr_y": 23.951095175775446,
+        "detail_energy": 0.4551720481878041,
+        "fine_correlation": 0.43451713805635145
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.2765558362007141,
+        "dists": 0.1388775110244751,
+        "psnr_y": 24.033090443006646,
+        "detail_energy": 0.5665019321392497,
+        "fine_correlation": 0.46564305134815287
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.2861121892929077,
+        "dists": 0.142447829246521,
+        "psnr_y": 24.068709776010536,
+        "detail_energy": 0.5557383041074087,
+        "fine_correlation": 0.4709536955301514
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3215475082397461,
+        "dists": 0.1525106430053711,
+        "psnr_y": 24.132931668269055,
+        "detail_energy": 0.5163106864702102,
+        "fine_correlation": 0.4761040353117613
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.426649808883667,
+        "dists": 0.19037997722625732,
+        "psnr_y": 23.811255687217677,
+        "detail_energy": 0.4152891798052923,
+        "fine_correlation": 0.3947896982528771
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.29787009954452515,
+        "dists": 0.16835957765579224,
+        "psnr_y": 23.96144172603251,
+        "detail_energy": 0.5167890518700791,
+        "fine_correlation": 0.4366439345139562
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.30960333347320557,
+        "dists": 0.17126846313476562,
+        "psnr_y": 23.988312830292642,
+        "detail_energy": 0.504393850586025,
+        "fine_correlation": 0.4411801684938786
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-02",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3547932207584381,
+        "dists": 0.18264281749725342,
+        "psnr_y": 24.02645520968107,
+        "detail_energy": 0.4632760455598204,
+        "fine_correlation": 0.44252975507000664
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 0,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4091576337814331,
+        "dists": 0.17537760734558105,
+        "psnr_y": 24.79671249851123,
+        "detail_energy": 0.4171587577400525,
+        "fine_correlation": 0.4077584507183263
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 0,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.29465359449386597,
+        "dists": 0.15287458896636963,
+        "psnr_y": 24.8668371417137,
+        "detail_energy": 0.5247918847505402,
+        "fine_correlation": 0.43155003619344495
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 0,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.30381107330322266,
+        "dists": 0.1545478105545044,
+        "psnr_y": 24.900105361587975,
+        "detail_energy": 0.51611438038343,
+        "fine_correlation": 0.4369918301551579
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 0,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3409530520439148,
+        "dists": 0.16762703657150269,
+        "psnr_y": 24.954823065197004,
+        "detail_energy": 0.4811331078757604,
+        "fine_correlation": 0.4413609091925666
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 4,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.3296968936920166,
+        "dists": 0.12097251415252686,
+        "psnr_y": 27.642392090734273,
+        "detail_energy": 0.5197110690892774,
+        "fine_correlation": 0.568471596406193
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 4,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.21659326553344727,
+        "dists": 0.09265810251235962,
+        "psnr_y": 28.009701679718177,
+        "detail_energy": 0.6709154041053693,
+        "fine_correlation": 0.608188599135336
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 4,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.22192755341529846,
+        "dists": 0.0934746265411377,
+        "psnr_y": 28.087973389688333,
+        "detail_energy": 0.6653936794392228,
+        "fine_correlation": 0.6140484621938431
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 4,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.25269150733947754,
+        "dists": 0.10224533081054688,
+        "psnr_y": 28.178261907414356,
+        "detail_energy": 0.6312721534489106,
+        "fine_correlation": 0.6193441799732472
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 8,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.40030938386917114,
+        "dists": 0.17334353923797607,
+        "psnr_y": 25.27882172421904,
+        "detail_energy": 0.41069231700792647,
+        "fine_correlation": 0.40390508966443983
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 8,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.30132797360420227,
+        "dists": 0.15586376190185547,
+        "psnr_y": 25.351014179536474,
+        "detail_energy": 0.5229553693071376,
+        "fine_correlation": 0.43286420645095847
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 8,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.31014811992645264,
+        "dists": 0.15862804651260376,
+        "psnr_y": 25.38787114950441,
+        "detail_energy": 0.5138834775879223,
+        "fine_correlation": 0.4378955087083868
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 8,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3468286693096161,
+        "dists": 0.17117559909820557,
+        "psnr_y": 25.452194274275975,
+        "detail_energy": 0.4769179562443368,
+        "fine_correlation": 0.4410854163749523
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 12,
+      "variant": "lanczos",
+      "metrics": {
+        "lpips": 0.4369528293609619,
+        "dists": 0.20322108268737793,
+        "psnr_y": 25.19295758853454,
+        "detail_energy": 0.3576603179531386,
+        "fine_correlation": 0.3457033046863395
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 12,
+      "variant": "v5_ref_2k_raw",
+      "metrics": {
+        "lpips": 0.33942681550979614,
+        "dists": 0.1852707862854004,
+        "psnr_y": 25.275429155701666,
+        "detail_energy": 0.44984797574106294,
+        "fine_correlation": 0.3738986861148062
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 12,
+      "variant": "v5_ref_2k_80",
+      "metrics": {
+        "lpips": 0.35037675499916077,
+        "dists": 0.18860220909118652,
+        "psnr_y": 25.305952460949367,
+        "detail_energy": 0.4400479854483608,
+        "fine_correlation": 0.3796549420654071
+      }
+    },
+    {
+      "source_id": "reds_073",
+      "sequence_id": "reds_073-stream-001-03",
+      "frame": 12,
+      "variant": "shipping",
+      "metrics": {
+        "lpips": 0.3921705484390259,
+        "dists": 0.19903719425201416,
+        "psnr_y": 25.358417239506934,
+        "detail_energy": 0.4070702095565135,
+        "fine_correlation": 0.3834379920836562
+      }
+    }
+  ],
+  "complete": true,
+  "summary": {
+    "lanczos": {
+      "sources": {
+        "sintel": {
+          "lpips": 0.2696159854531288,
+          "dists": 0.2091157976537943,
+          "psnr_y": 34.01583321938238,
+          "detail_energy": 0.34264992666725314,
+          "fine_correlation": 0.32946662473652005
+        },
+        "reds_154": {
+          "lpips": 0.5052469009533525,
+          "dists": 0.26318140141665936,
+          "psnr_y": 23.19489281784981,
+          "detail_energy": 0.33108261096477265,
+          "fine_correlation": 0.2450867044727926
+        },
+        "reds_073": {
+          "lpips": 0.4318030346184969,
+          "dists": 0.1960019264370203,
+          "psnr_y": 23.349783924281656,
+          "detail_energy": 0.38780260717309567,
+          "fine_correlation": 0.3377351151728416
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.40222197367499274,
+        "dists": 0.22276637516915798,
+        "psnr_y": 26.853503320504615,
+        "detail_energy": 0.35384504826837376,
+        "fine_correlation": 0.3040961481273848
+      }
+    },
+    "v5_ref_2k_raw": {
+      "sources": {
+        "sintel": {
+          "lpips": 0.21177336294203997,
+          "dists": 0.1878549326211214,
+          "psnr_y": 34.5489280586924,
+          "detail_energy": 0.512985492919412,
+          "fine_correlation": 0.33065416083857324
+        },
+        "reds_154": {
+          "lpips": 0.4072757475078106,
+          "dists": 0.25030407309532166,
+          "psnr_y": 23.17230735584731,
+          "detail_energy": 0.41869871325742836,
+          "fine_correlation": 0.2561801978110424
+        },
+        "reds_073": {
+          "lpips": 0.3158258590847254,
+          "dists": 0.17576532065868378,
+          "psnr_y": 23.430092000731722,
+          "detail_energy": 0.48759303718393987,
+          "fine_correlation": 0.3577708035540601
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.31162498984485865,
+        "dists": 0.2046414421250423,
+        "psnr_y": 27.05044247175714,
+        "detail_energy": 0.47309241445359335,
+        "fine_correlation": 0.31486838740122525
+      }
+    },
+    "v5_ref_2k_80": {
+      "sources": {
+        "sintel": {
+          "lpips": 0.2226802222430706,
+          "dists": 0.19461267814040184,
+          "psnr_y": 34.65370198868543,
+          "detail_energy": 0.4757920605720817,
+          "fine_correlation": 0.34225438074878567
+        },
+        "reds_154": {
+          "lpips": 0.42016230523586273,
+          "dists": 0.2532388288527727,
+          "psnr_y": 23.19763650586782,
+          "detail_energy": 0.40913932224010174,
+          "fine_correlation": 0.26076398439689863
+        },
+        "reds_073": {
+          "lpips": 0.325852622743696,
+          "dists": 0.17827777564525604,
+          "psnr_y": 23.463449963054465,
+          "detail_energy": 0.4771411689526175,
+          "fine_correlation": 0.3622434351239465
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.3228983834075431,
+        "dists": 0.20870976087947687,
+        "psnr_y": 27.104929485869235,
+        "detail_energy": 0.4540241839216003,
+        "fine_correlation": 0.3217539334232103
+      }
+    },
+    "shipping": {
+      "sources": {
+        "sintel": {
+          "lpips": 0.2692622817121446,
+          "dists": 0.21591424942016602,
+          "psnr_y": 34.629984525145545,
+          "detail_energy": 0.38082522652590833,
+          "fine_correlation": 0.32653072984915327
+        },
+        "reds_154": {
+          "lpips": 0.45876778941601515,
+          "dists": 0.2634068951010704,
+          "psnr_y": 23.27400322887398,
+          "detail_energy": 0.37562354517263513,
+          "fine_correlation": 0.2698841119849201
+        },
+        "reds_073": {
+          "lpips": 0.3642734312452376,
+          "dists": 0.1880982555449009,
+          "psnr_y": 23.528303572451193,
+          "detail_energy": 0.4374039581332027,
+          "fine_correlation": 0.3678824973946781
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.36410116745779914,
+        "dists": 0.2224731333553791,
+        "psnr_y": 27.144097108823573,
+        "detail_energy": 0.3979509099439154,
+        "fine_correlation": 0.32143244640958385
+      }
+    }
+  }
+}

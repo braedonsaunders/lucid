@@ -345,3 +345,22 @@ Reference target, weight 0.0075, 33-source bank, `--temporal` at 1.5 and 4 (two 
 | no temporal term (r17) | +17.11 / +19.08 | +18.46 / +10.61 | +13.40 / +16.43 | −1.4 / +6.7 | over the cap |
 
 At 1.5 the term gives up under two DISTS points at torch level and buys back the grainy source, the energy cap and the bank's aggregate correlation guard. Its native delivery holdout is the decisive test, since the loss it targets only shows through the app's temporal stage.
+
+### r23b through the app (receipts `paired-ladder/native-t15-*`, `holdout8-t4*`)
+
+The temporal term does not close the native gap. Through the Release app at the shipping sharpness (0.2), `temporal 1.5` scores **+12.05 / +15.52** against the SPAN comparator, against shipping `lucidbig2k_`'s +11.80 / +16.04 on the same harness, and it loses Sunflower by 7.3% LPIPS (energy 1.12) with RushHour over the energy cap (1.26). That is a larger Sunflower loss than the plain 33-source checkpoint at the same sharpness (−6.4), while the same checkpoint gains Sunflower +3.5 at torch level. `temporal 4` on the 960 holdout: +12.18 / +10.77, below 1.5 on every axis, not sent through the app. Not promoted; shipping stays `lucidbig2k_`.
+
+Reading: the flicker measured on the 33-source family was real but it is not what the app's temporal stage punishes, so the 33-source loss must sit in what those checkpoints synthesize on grain and bokeh, not in how stably they synthesize it. The pristine-master hypothesis (Xiph excerpts teach texture that survives torch scoring but not the delivery path) is the one still standing, and the Commons bank tests it from the other side: 45 sources, all compressed masters.
+
+## Results, r22c: bank v5, 21 original + 24 Wikimedia Commons sources (receipts `paired-ladder/v5_*`)
+
+Reference target, 2,000 steps, raw checkpoints, no temporal term.
+
+| Arm | 48 dev raw | 96 bank raw | 960 holdout raw |
+|---|---|---|---|
+| `v5_ref_2k` (w 0.005) | +11.71 / +13.09 | +14.41 / +8.02, passes | pending |
+| `v5_w0075_2k` (w 0.0075) | +12.61 / +13.67 | +15.47 / +8.23, passes | pending |
+| big bank, 21 sources (shipping r10) | +12.9 / +14.6 | +15.8 / +9.5 | +11.5 / +14.1 |
+| v4, 33 sources (r17, w 0.0075) | +17.11 / +19.08 | +18.46 / +10.61 | +13.40 / +16.43 |
+
+The 24 Commons clips add sources without adding the torch-level lift the Xiph masters gave. Whether they add native-safe quality is the 960 holdout and then the app, below. Ladder r24 (`paired-ladder-20260905-r24`) combines bank v5 with the temporal term at 1.5 for both weights.
