@@ -154,3 +154,14 @@ The 3,000-step raw checkpoint already regresses RushHour and Sunflower LPIPS (�
 | `ref_w005_s2k` (r6, comparator) | +15.67 / +18.57 | +11.66 / +13.76 | +18.92 / +11.79 | +15.62 / +9.05 |
 
 A critic-free L1/Sobel/FFT fine-tune to the reference makes the base *worse* (regression to the mean blurs it), and starting the critic from that base lands where the plain recipe already is. A larger training crop changes nothing measurable. The remaining levers are capacity (r9, ch48 direct 2x from random init) and data (a 756-sequence stream bank from the same 21 sources, three times the current bank, `stream-bank-big`).
+
+## Results, r9: ch48 direct-2x from random init, short base (receipts `paired-ladder/ch48_*`)
+
+Native cost of the wider graph on this Mac (CPU+GPU, random weights): 11.2 ms at 640×360 and 20.3 ms at 864×480, against 5.6 / 9.9 for the shipping ch32 graph; ch64 is 14.8 / 26.2. ch48 fits 30 fps at 480p, ch64 does not comfortably.
+
+| Stage | 48 dev raw | 96 bank raw |
+|---|---|---|
+| 40,000-step base, batch 8, lr 5e-4, no critic | −6.26 / −3.92 (PSNR 28.54 vs shipping 28.99) | −6.31 / −1.95 |
+| + 2,000-step paired critic | +7.52 / +10.32 | +9.54 / +6.33 |
+
+The base is undertrained: 40,000 steps at batch 8 is a fraction of the schedule the SPAN base had, and it sits below the old shipping model on every metric. The critic still lifts it 14 LPIPS points, so the recipe transfers, but this arm says nothing about capacity yet. r11 trains the same architecture for 200,000 steps at batch 16 on the 756-sequence bank before the critic pass; that is the capacity answer. r10 (queued first) tests the larger bank alone with the ch32 recipe.
