@@ -34,8 +34,12 @@ class Y4MLayoutTests(unittest.TestCase):
         for chroma in (b'420jpeg', b'420mpeg2', b'420paldv'):
             self.assertEqual(y4m_layout(header[:-1] + b' C' + chroma + b'\n'), (1920, 1080, 3110400))
 
+    def test_eight_bit_422_is_sized_for_conversion(self):
+        # derf 1080p live-action masters are 4:2:2; the excerpt is preserved as 4:2:0.
+        self.assertEqual(y4m_layout(b'YUV4MPEG2 W1920 H1080 F30000:1001 Ip A1:1 C422\n'), (1920, 1080, 4147200))
+
     def test_high_bit_depth_and_other_byte_layouts_are_rejected(self):
-        for chroma in (b'420p10', b'422', b'444', b'mono'):
+        for chroma in (b'420p10', b'444', b'mono'):
             with self.assertRaisesRegex(ValueError, 'unsupported'):
                 y4m_layout(b'YUV4MPEG2 W1920 H1080 C' + chroma + b'\n')
         with self.assertRaisesRegex(ValueError, 'unsupported'):

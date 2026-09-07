@@ -43,9 +43,15 @@ def y4m_layout(header):
     alternative = re.search(r' XYSCSS=([^\s]+)', text)
     # YUV4MPEG2 defines absent C as 8-bit 420jpeg, also used by the raw SVT files.
     layout = chroma.group(1) if chroma else (alternative.group(1).lower() if alternative else '420jpeg')
-    if layout not in ('420', '420jpeg', '420mpeg2', '420paldv') or min(w, h) < 2 or w % 2 or h % 2:
+    if min(w, h) < 2 or w % 2 or h % 2:
         raise ValueError(f'unsupported source sample layout: {text}')
-    return w, h, w * h * 3 // 2
+    if layout in ('420', '420jpeg', '420mpeg2', '420paldv'):
+        return w, h, w * h * 3 // 2
+    if layout == '422':
+        # 4:2:2 masters (most derf 1080p live action); the excerpt is converted
+        # to 4:2:0 by FFmpeg when it is preserved, recorded in the receipt.
+        return w, h, w * h * 2
+    raise ValueError(f'unsupported source sample layout: {text}')
 
 
 def download_ranges(url, destination, size, workers):
@@ -91,7 +97,7 @@ def fetch(entry, out, frames, download_workers=1):
     raw = out / f'{name}.partial.y4m'
     download = ['curl', '-f', '-sS', '--max-time', '480', '--range', f'0-{byte_count-1}', '-o', str(raw), url]
     cmd = ['ffmpeg', '-nostdin', '-y', '-v', 'error', '-f', 'yuv4mpegpipe',
-           '-i', str(raw), '-map', '0:v:0', '-frames:v', str(frames), '-an',
+           '-i', str(raw), '-map', '0:v:0', '-frames:v', str(frames), '-an', '-pix_fmt', 'yuv420p',
            '-c:v', 'ffv1', '-level', '3', '-threads', '2', str(temporary)]
     try:
         if download_workers > 1:
