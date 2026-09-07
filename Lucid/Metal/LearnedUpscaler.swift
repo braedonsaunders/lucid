@@ -207,7 +207,10 @@ final class LearnedUpscaler: @unchecked Sendable {
     /// The family the app starts on. Promoted 2026-09-06 from SPAN_x4_ch32utc_ (4x, folded)
     /// to the 2,000-step reference-target paired-critic 80% blend (direct 2x): +9.5% LPIPS /
     /// +14.7% DISTS through this pipeline on the 960-pair holdout, every source up.
-    static let shippingStem = "lucid2k_"
+    /// 2026-09-07: promoted again to lucidbig2k_, the same recipe trained on the
+    /// 756-sequence full-frame stream bank (raw checkpoint, no blend): native holdout
+    /// +11.80% LPIPS / +16.04% DISTS vs SPAN, every source up, same cost.
+    static let shippingStem = "lucidbig2k_"
     /// The only family with validated tensor-output alternatives bundled.
     static let tensorFamilyStem = "SPAN_x4_ch32utc_"
     /// Set from the lab page to swap the reconstruction model without a
