@@ -287,3 +287,7 @@ The weight ladder has flattened: 0.01 matches 0.0075 on aggregate and loses four
 | `v4_w010_2500` | +17.61 / +20.62 | +12.79 / +15.17 | −17.7 / −1.8 | +0.1 / +18.2 |
 
 The development set keeps rising with the weight; the holdout does not. Clean, textured sources (OldTownCross +18 / +37, InToTree +18 / +33, ParkJoy +18 / +12) keep improving while the grainy masters collapse, and the aggregate is flat at about +13.4 / +16. The weight ladder is closed at 0.0075; the grain axis is the whole remaining problem, and r20 attacks it directly with a light smooth-region negative.
+
+### Native delivery holdout, 33-source checkpoint with the temporal stage off (`paired-ladder/native-v4-2k-notaa/`)
+
++8.41% / +13.41%, Sunflower **−26.2%** LPIPS, RushHour −3.3%, Tractor −4.7%, PedestrianArea −3.1%. The temporal stage was hiding most of the damage, not causing it: without history blending the checkpoint's synthesized texture on grainy and out-of-focus material is far worse through the app than the torch-level single-frame score suggests (+4.8% on Sunflower). The shipping `lucidbig2k_` checkpoint shows no such torch-to-native gap. Working hypothesis: the 33-source checkpoints amplify chroma noise on the app's NV12 → BGRA path, which the torch evaluation (FFmpeg-decoded RGB) does not exercise. Until a checkpoint holds its torch-level Sunflower result through the app, the native holdout remains the promotion gate and `lucidbig2k_` ships.
