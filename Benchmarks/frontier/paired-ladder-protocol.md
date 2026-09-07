@@ -260,3 +260,7 @@ Source diversity is the lever: going from 21 to 33 sources adds 0.8 LPIPS and 1.
 | `v4_2k` (0.005, 2,000) | +15.02 / +17.42 | +17.35 / +9.95 | +12.25 / +16.04 |
 
 With thirty-three sources the model tolerates more adversarial pressure than it did with twenty-one: 0.0075 is now the best aggregate holdout result recorded for Lucid, a point above `v4_2k`, and OldTownCross (+14.9 / +34.2) and InToTree (+16.0 / +30.7) keep climbing. The cost is the same one every texture gain has paid all session: Sunflower goes slightly negative on LPIPS and RushHour's fine energy passes 1.10. The native runs decide; both this and `v4_2k` are evaluated through the app at sharpness 0.0 as well as 0.2.
+
+### Native delivery holdout, 33-source checkpoint at sharpness 0.0 (`paired-ladder/native-v4-2k-s00/`)
+
++9.87% / +15.52%: turning presentation sharpening off costs LPIPS everywhere and does not repair Sunflower (−3.35%) or RushHour's fine energy (1.15). The over-texturing on the grainy masters is therefore not the sharpening stage. The remaining native-only stage that adds fine energy is the synthetic grain in the deband stage (grain 0.01 in the shipping tuning); a run with grain off and sharpness back at 0.2 follows. Until a native configuration beats the shipping run on aggregate with no source regressing, `lucidbig2k_` stays.
