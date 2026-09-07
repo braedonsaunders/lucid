@@ -88,6 +88,7 @@ const images = new Map();
 const GROUPS = [
   ['Truth and source', ['reference', 'source']],
   ['Shipping now: Lucid 2k', ['lucid_2k', 'lucid_2k_app', 'lucid_2k_raw']],
+  ['Candidate: Lucid big-bank 2k', ['lucid_big2k', 'lucid_big2k_app']],
   ['Previous: SPAN ch32utc', ['shipping', 'shipping_app', 'lanczos']],
   ['Target: NVIDIA RTX VSR (VFX SDK ULTRA on the 4080)', ['nvidia_ultra', 'nvidia_high']],
   ['Other', null],
@@ -96,6 +97,7 @@ const NAMES = {
   reference: 'reference (1080p master → 720p)', source: 'source (640×360 as decoded)',
   lanczos: 'Lanczos', shipping: 'previous SPAN weights', shipping_app: 'previous SPAN, through the app',
   lucid_2k: 'Lucid 2k blend (shipping)', lucid_2k_app: 'Lucid 2k blend, through the app', lucid_2k_raw: 'Lucid 2k raw checkpoint',
+  lucid_big2k: 'Lucid big-bank 2k raw (candidate)', lucid_big2k_app: 'Lucid big-bank 2k, through the app',
   nvidia_ultra: 'NVIDIA ULTRA', nvidia_high: 'NVIDIA HIGH',
 };
 const pretty = n => NAMES[n] || n;
