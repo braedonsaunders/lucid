@@ -222,3 +222,11 @@ Both trained models now beat every interpolation on both metrics at 720p; `lucid
 | `big_2k` (ch32, same recipe) | +13.39 / +14.60 | +17.38 / +9.37 | **+11.47 / +14.34** |
 
 Fifty percent more channels, twice the native cost (11.2 vs 5.6 ms at 640×360), and no gain anywhere. Together with r11 this closes the capacity question for now: at this data scale the ch32 student is not capacity-limited. The levers that moved the holdout this session were the training target (reference instead of mixture), the schedule (2,000 steps) and the data (full-frame codec context). What remains is data that is *different*: new live-action masters from the Xiph collection are being fetched (`derf-train`), and the NVIDIA teacher remains the largest untried lever pending its SDK licence.
+
+## Results, r14: seed soup (receipts `paired-ladder/big_2k_seed*`, `soup3-*`)
+
+Two more seeds of the r10 recipe (dev raw +12.80 / +14.80 and +12.63 / +14.46; bank +16.39 / +9.18 and +16.17 / +9.16) and their uniform three-way weight average with the original: holdout **+10.83 / +14.21** for the soup against +11.47 / +14.34 for the original seed alone. Seeds agree to within a point on every source; averaging buys nothing. Recipe variance is not where the remaining gap lives.
+
+## Shipping change, 2026-09-07: `lucidbig2k_`
+
+The r10 raw checkpoint replaces the 2k blend as the shipping family: native holdout +11.80% / +16.04% against SPAN (the blend: +9.54% / +14.66%), every source up on both metrics, identical graph cost, and the first Lucid model to clear the 3% joint minimum against Lanczos at 720p. The blend stays bundled as a lab family. Presentation sharpness stays 0.2.
