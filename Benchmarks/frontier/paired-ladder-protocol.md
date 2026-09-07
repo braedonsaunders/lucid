@@ -230,3 +230,7 @@ Two more seeds of the r10 recipe (dev raw +12.80 / +14.80 and +12.63 / +14.46; b
 ## Shipping change, 2026-09-07: `lucidbig2k_`
 
 The r10 raw checkpoint replaces the 2k blend as the shipping family: native holdout +11.80% / +16.04% against SPAN (the blend: +9.54% / +14.66%), every source up on both metrics, identical graph cost, and the first Lucid model to clear the 3% joint minimum against Lanczos at 720p. The blend stays bundled as a lab family. Presentation sharpness stays 0.2.
+
+## Results, r15: six new Xiph live-action masters (receipts `paired-ladder/v3_2k*`)
+
+`stream-bank-v3`: the big bank plus 300-frame excerpts of aspen, speed_bag, touchdown_pass, west_wind_easy, station2 and controlled_burn (Xiph derf, 4:2:2 masters preserved as 4:2:0 lossless; 972 sequences, 27 sources). Same recipe. Dev raw +14.11 / +16.13 (the best development score of the family), bank +17.63 / +10.25, 960-pair holdout **+11.35 / +15.30** against the shipping checkpoint's +11.47 / +14.34: DISTS up a point, LPIPS level, sources trading places (ParkJoy, InToTree, OldTownCross up; DucksTakeOff, Sunflower, Tractor down). A second batch of thirteen masters (HEVC test-set clips and more 1080p live action) is being fetched for a bank with all nineteen new sources.
