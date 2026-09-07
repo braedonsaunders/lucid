@@ -187,3 +187,7 @@ Same app, inputs and configuration as the shipping run (sharpness 0.2, radius 2;
 ## Queued: r11 and r12
 
 **r11** (`C:\lucid\paired-ladder-20260905-r11`): ch48 direct-2x from random init on `stream-bank-big`, 200,000 steps at batch 16, learning rate 5e-4 cosine, reference target, no critic; then the 2,000-step paired critic pass. Evaluated raw on both development sets; the 960-pair holdout and native cost follow on the Mac. **r12** (`-r12`, behind r11): the r10 recipe on `stream-bank-v2`, the same bank plus Tears of Steel (Blender, CC-BY; 22 sources, 792 sequences), 2,000 steps. Both prespecified; the r10 raw checkpoint (`lucidbig2k_`) is the comparator on the holdout.
+
+## Results, r11: long ch48 base (receipts `paired-ladder/ch48_long_*`)
+
+200,000 steps at batch 16 (105 minutes on the RTX 4080) lands exactly where the 40,000-step base did: development PSNR 28.51 versus the SPAN base's 28.99, LPIPS −6.8% / DISTS −5.3% against shipping. Training from random initialization on this bank plateaus below the pretrained SPAN base regardless of schedule; the base's advantage is its pretraining corpus, not its size. The critic pass on top is recorded below. Capacity has to be added *on top of* the pretrained weights instead: r13 widens the folded SPAN initialization from 32 to 48 channels function-preservingly (`widen_span.py`, max abs error 4e-6 on the real checkpoint) and runs the r10 recipe.
