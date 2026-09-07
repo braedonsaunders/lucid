@@ -274,3 +274,7 @@ With thirty-three sources the model tolerates more adversarial pressure than it 
 | `v4_w0075_2k` (r17) | +17.11 / +19.08 | +13.40 / +16.43 | −1.4 / +6.7 |
 
 The weight ladder has flattened: 0.01 matches 0.0075 on aggregate and loses four more LPIPS points on Sunflower; 2,500 steps at 0.0075 loses eight. 0.0075 at 2,000 steps stays the best point on this bank. Every gain past it is paid on the grainy, out-of-focus master, the same failure the smooth-region negative repaired in r5 at too high a price; a lighter share of that negative on this bank is the next arm.
+
+### Native delivery holdout, 33-source checkpoint with synthetic grain off (`paired-ladder/native-v4-2k-g0/`)
+
++10.48% / +15.93%, Sunflower −5.93%, RushHour energy 1.22: the deband stage's grain is not the cause either. Torch level this checkpoint gains 4.8% on Sunflower; through the app it loses 6%, while the shipping `lucidbig2k_` checkpoint keeps its torch-level Sunflower gain natively. The remaining native-only difference is the temporal stage (TAA with history); a run with `stageTaa` off isolates it.
