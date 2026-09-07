@@ -116,8 +116,8 @@ def main():
     ap.add_argument('--dino-gan-weight', type=float, default=0)
     ap.add_argument('--input-noise', type=float, default=0,
                     help='Max Gaussian noise sigma (0-1 scale) added to LR inputs during training; targets unchanged')
-    ap.add_argument('--intended', choices=['mixture', 'reference'], default='mixture',
-                    help='Regression target: the fixed shipping/teacher mixture (control) or the HR reference itself')
+    ap.add_argument('--intended', choices=['mixture', 'reference', 'teacher'], default='mixture',
+                    help='Regression target: the fixed shipping/teacher mixture (control), the HR reference itself, or the teacher cache alone')
     ap.add_argument('--paired-negatives', choices=['shift', 'shift+smooth'], default='shift',
                     help='Paired-critic negative recipe; shift+smooth adds noise texture on smooth reference regions as a fake')
     ap.add_argument('--smooth-negative-share', type=float, default=.125,
@@ -153,6 +153,8 @@ def main():
     torch.cuda.manual_seed_all(args.seed)
     manifest, data = load_bank(args.bank)
     bank_hash = digest(args.bank / 'manifest.json')
+    if args.intended == 'teacher' and str(args.pixrestore_cache) == 'none':
+        ap.error('--intended teacher requires a teacher cache')
     if str(args.pixrestore_cache) == 'none':
         if args.intended != 'reference' or args.teacher_mix:
             ap.error('a bank without a teacher cache requires --intended reference and --teacher-mix 0')
@@ -165,7 +167,7 @@ def main():
     already_2x = shipping.core.upsampler[1].upscale_factor == 4
     if already_2x and args.intended != 'reference':
         ap.error('a 2x starting checkpoint has no 4x shipping targets; use --intended reference')
-    if already_2x or (args.intended == 'reference' and str(args.shipping_cache) == 'none'):
+    if already_2x or (args.intended in ('reference', 'teacher') and str(args.shipping_cache) == 'none'):
         # Starting from an earlier 2x stage, or training to the reference on a bank
         # without cached shipping targets: the cache is not needed.
         target, shipping_receipt = {}, {'checkpoint_sha256': digest(args.init), 'split': 'unused'}
@@ -175,6 +177,10 @@ def main():
     mixed = {identity: np.rint(pixels.astype(np.float32) * (1-args.teacher_mix)
              + teacher[identity].astype(np.float32) * args.teacher_mix).astype(np.uint8)
              for identity, pixels in target.items()}
+    if args.intended == 'teacher':
+        # Distillation: regress to the teacher's full-frame outputs; the reference
+        # terms (0.1 L1 and, with --detail-target reference, Sobel/FFT) stay.
+        mixed = {identity: teacher[identity] for _, _, identity in data['train']}
     if args.intended == 'reference':
         # The fixed 50% shipping/PixRestore mixture scores only +2.9% LPIPS / +6.6% DISTS
         # over shipping on the development set, below what the paired-critic student
@@ -217,7 +223,8 @@ def main():
             Path(__file__).with_name('fold_shipping_head.py'), Path(__file__).with_name('train_causal_detail.py'),
             Path(__file__).resolve().parents[1] / 'train_span.py',
             Path(__file__).resolve().parents[1] / 'architectures/span_arch.py')},
-        'loss': f'L1 to {"HR reference" if args.intended == "reference" else "fixed mixture"} + 0.2 signed Sobel to {args.detail_target} + 0.05 FFT to {args.detail_target} + 0.1 L1 to reference; 8 output-pixel border excluded',
+        'loss': 'L1 to ' + {'reference': 'HR reference', 'teacher': 'teacher cache', 'mixture': 'fixed mixture'}[args.intended]
+                + f' + 0.2 signed Sobel to {args.detail_target} + 0.05 FFT to {args.detail_target} + 0.1 L1 to reference; 8 output-pixel border excluded',
         'precision': 'CUDA BF16 autocast; AdamW FP32; no compilation',
         'input_noise': args.input_noise,
         'torch': str(torch.__version__), 'gpu': torch.cuda.get_device_name(),

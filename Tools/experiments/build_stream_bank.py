@@ -27,6 +27,9 @@ def aligned_patch(lr, hr, start, frames, x, y, side):
     return a, b
 
 
+dumped_windows = []
+
+
 def build_source(source, index, args):
     sw, sh, duration, rate = source['stream']
     rng = np.random.default_rng(args.seed+index)
@@ -70,11 +73,23 @@ def build_source(source, index, args):
         if len(decoded) != count*(width//2)*(height//2)*3:
             raise ValueError('incomplete full-frame degraded sequence')
         lr = np.frombuffer(decoded, np.uint8).reshape(count, height//2, width//2, 3)
+        window_id = f"{source['id']}-stream-{window:03d}"
+        window_record = None
+        if args.dump_full_frames:
+            from PIL import Image
+            folder = args.dump_full_frames/window_id
+            folder.mkdir(parents=True, exist_ok=True)
+            for i in range(args.frames):
+                Image.fromarray(lr[warmup+i]).save(folder/f'{i:03d}.png')
+            window_record = {'window': window_id, 'source_id': source['id'], 'split': source['split'],
+                             'frames': args.frames, 'lr_size': [width//2, height//2], 'patches': []}
         for patch in range(args.patches_per_window):
             x = int(rng.integers(0, width//2-args.patch+1))
             y = int(rng.integers(0, height//2-args.patch+1))
             a, b = aligned_patch(lr, hr, warmup, args.frames, x, y, args.patch)
-            identity = f"{source['id']}-stream-{window:03d}-{patch:02d}"
+            identity = f"{window_id}-{patch:02d}"
+            if window_record is not None:
+                window_record['patches'].append({'id': identity, 'lr_patch_xy': [x, y], 'patch': args.patch})
             target = args.out/source['split']/(identity+'.npz')
             target.parent.mkdir(parents=True, exist_ok=True)
             partial = target.with_suffix('.partial.npz')
@@ -91,6 +106,8 @@ def build_source(source, index, args):
                 'encoded_container_bytes': encoded_size, 'hr_command': hr_command,
                 'encode_command': encode_command, 'reference_std': float(b.std()),
                 'reference_temporal_change': float(np.abs(np.diff(b.astype(np.float32), axis=0)).mean())})
+        if window_record is not None:
+            dumped_windows.append(window_record)
         print(source['id'], window, codec, f'{width//2}x{height//2}', bitrate, f'warmup={warmup}', flush=True)
     return records
 
@@ -105,6 +122,8 @@ def main():
     parser.add_argument('--windows-per-source', type=int, default=2)
     parser.add_argument('--patches-per-window', type=int, default=4)
     parser.add_argument('--seed', type=int, default=20260907)
+    parser.add_argument('--dump-full-frames', type=Path,
+                        help='Also write each window\'s post-warmup full-frame LR sequence as PNGs (teacher generation on another machine)')
     args = parser.parse_args()
     if args.patch < 32 or args.patch % 4 or args.frames < 8 or args.windows_per_source < 2 or args.patches_per_window < 1:
         parser.error('patch >=32 divisible by 4, frames >=8, windows >=2, patches >=1 required')
@@ -127,6 +146,9 @@ def main():
         'ffmpeg_version': command(['ffmpeg', '-version']).decode().splitlines()[0],
         'limitation': 'compressed source masters; short stream warmup; validation remains development data'}
     (args.out/'manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
+    if args.dump_full_frames:
+        (args.dump_full_frames/'windows.json').write_text(json.dumps({'bank': str(args.out), 'frames': args.frames, 'patch': args.patch,
+            'windows': sorted(dumped_windows, key=lambda w: w['window'])}, indent=2)+'\n')
     print(f'complete: {len(records)} sequences', flush=True)
 
 
