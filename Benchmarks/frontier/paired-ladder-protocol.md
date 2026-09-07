@@ -278,3 +278,12 @@ The weight ladder has flattened: 0.01 matches 0.0075 on aggregate and loses four
 ### Native delivery holdout, 33-source checkpoint with synthetic grain off (`paired-ladder/native-v4-2k-g0/`)
 
 +10.48% / +15.93%, Sunflower −5.93%, RushHour energy 1.22: the deband stage's grain is not the cause either. Torch level this checkpoint gains 4.8% on Sunflower; through the app it loses 6%, while the shipping `lucidbig2k_` checkpoint keeps its torch-level Sunflower gain natively. The remaining native-only difference is the temporal stage (TAA with history); a run with `stageTaa` off isolates it.
+
+## Results, r19: weight 0.015 and 0.01 at 2,500 steps (receipts `paired-ladder/v4_w015_2k*`, `v4_w010_2500*`, `r19-holdout8*`)
+
+| Arm | 48 dev raw | 960 holdout raw | Sunflower | RushHour |
+|---|---|---|---|---|
+| `v4_w015_2k` | +18.62 / +20.55 | +13.41 / +15.67 | −13.7 / −1.1 | +1.3 / +19.8 |
+| `v4_w010_2500` | +17.61 / +20.62 | +12.79 / +15.17 | −17.7 / −1.8 | +0.1 / +18.2 |
+
+The development set keeps rising with the weight; the holdout does not. Clean, textured sources (OldTownCross +18 / +37, InToTree +18 / +33, ParkJoy +18 / +12) keep improving while the grainy masters collapse, and the aggregate is flat at about +13.4 / +16. The weight ladder is closed at 0.0075; the grain axis is the whole remaining problem, and r20 attacks it directly with a light smooth-region negative.

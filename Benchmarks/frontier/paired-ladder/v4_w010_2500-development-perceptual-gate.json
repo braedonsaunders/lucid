@@ -1,0 +1,266 @@
+{
+  "report": ".build/paired-ladder-r19/v4_w010_2500-development.json",
+  "report_sha256": "a05466c7d641950f6f217cb383a92777f3129cea8cac351e333a2021f37ff971",
+  "anchor_report": null,
+  "anchor_report_sha256": null,
+  "checkpoint_sha256": {
+    "v4_w010_2500_raw": "f02b2222cf4964d0af0c55c5015caa8e167f5133fcb8168f903889f842724bf5",
+    "v4_w010_2500_80": "6d7e0878dfe9c5818c1ca35fe1607615f4d95f36524dd900624c5d5f66c86570",
+    "shipping": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65"
+  },
+  "results": {
+    "v4_w010_2500_raw": {
+      "candidate": "v4_w010_2500_raw",
+      "baseline": "shipping",
+      "anchor": "lanczos",
+      "gate": {
+        "source_balanced_lpips_improvement_min": 0.03,
+        "source_balanced_dists_improvement_min": 0.03,
+        "per_source_perceptual_regression_max": 0.02,
+        "anchor": "lanczos",
+        "source_balanced_fine_correlation_floor": "anchor",
+        "per_source_detail_energy_max": 1.1
+      },
+      "perceptual_gate_pass": true,
+      "failure_reasons": [],
+      "frames_per_variant": 48,
+      "perceptual_improvements": {
+        "lpips": 0.17609895217985494,
+        "dists": 0.2062324321642668
+      },
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.3455616074303786,
+          "dists": 0.12805385887622833,
+          "fine_correlation": 0.5093240648945621,
+          "detail_energy": 0.5071991532112882
+        },
+        "v4_w010_2500_raw": {
+          "lpips": 0.24916734686121345,
+          "dists": 0.10186398774385452,
+          "fine_correlation": 0.541421768589472,
+          "detail_energy": 0.7504175265376801
+        },
+        "shipping": {
+          "lpips": 0.3024238742267092,
+          "dists": 0.12832974269986153,
+          "fine_correlation": 0.5643192119145054,
+          "detail_energy": 0.6170664251148085
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "crowd_run": {
+            "lpips": 0.4957118332386017,
+            "dists": 0.17144159227609634,
+            "fine_correlation": 0.3584202039433989,
+            "detail_energy": 0.4056827459253679
+          },
+          "four_people": {
+            "lpips": 0.25478572119027376,
+            "dists": 0.10224039480090141,
+            "fine_correlation": 0.6186566818904616,
+            "detail_energy": 0.5752431459644255
+          },
+          "johnny": {
+            "lpips": 0.28618726786226034,
+            "dists": 0.11047958955168724,
+            "fine_correlation": 0.5508953088498255,
+            "detail_energy": 0.5406715677440711
+          }
+        },
+        "v4_w010_2500_raw": {
+          "crowd_run": {
+            "lpips": 0.34593525994569063,
+            "dists": 0.13572662696242332,
+            "fine_correlation": 0.36249630605092764,
+            "detail_energy": 0.5793106237575483
+          },
+          "four_people": {
+            "lpips": 0.17613798892125487,
+            "dists": 0.07536274939775467,
+            "fine_correlation": 0.6481871614596679,
+            "detail_energy": 0.8429051439746653
+          },
+          "johnny": {
+            "lpips": 0.22542879171669483,
+            "dists": 0.09450258687138557,
+            "fine_correlation": 0.6135818382578204,
+            "detail_energy": 0.8290368118808265
+          }
+        },
+        "shipping": {
+          "crowd_run": {
+            "lpips": 0.4320258032530546,
+            "dists": 0.1641482375562191,
+            "fine_correlation": 0.3826510771160185,
+            "detail_energy": 0.48219069563361283
+          },
+          "four_people": {
+            "lpips": 0.21655134484171867,
+            "dists": 0.10291698202490807,
+            "fine_correlation": 0.6708610856042104,
+            "detail_energy": 0.708173946722626
+          },
+          "johnny": {
+            "lpips": 0.25869447458535433,
+            "dists": 0.11792400851845741,
+            "fine_correlation": 0.6394454730232871,
+            "detail_energy": 0.6608346329881865
+          }
+        }
+      },
+      "per_source_changes": {
+        "crowd_run": {
+          "lpips": 0.19927176261029333,
+          "dists": 0.1731459991098696,
+          "fine_correlation_vs_shipping": -0.020154771065090837,
+          "fine_correlation_vs_anchor": 0.004076102107528734,
+          "detail_energy": 0.5793106237575483
+        },
+        "four_people": {
+          "lpips": 0.18662251185741963,
+          "dists": 0.26773261404502413,
+          "fine_correlation_vs_shipping": -0.0226739241445425,
+          "fine_correlation_vs_anchor": 0.02953047956920629,
+          "detail_energy": 0.8429051439746653
+        },
+        "johnny": {
+          "lpips": 0.12859061996580734,
+          "dists": 0.19861453101304583,
+          "fine_correlation_vs_shipping": -0.025863634765466714,
+          "fine_correlation_vs_anchor": 0.0626865294079949,
+          "detail_energy": 0.8290368118808265
+        }
+      },
+      "status": "development screen; native delivery, temporal and fresh-source evidence still required"
+    },
+    "v4_w010_2500_80": {
+      "candidate": "v4_w010_2500_80",
+      "baseline": "shipping",
+      "anchor": "lanczos",
+      "gate": {
+        "source_balanced_lpips_improvement_min": 0.03,
+        "source_balanced_dists_improvement_min": 0.03,
+        "per_source_perceptual_regression_max": 0.02,
+        "anchor": "lanczos",
+        "source_balanced_fine_correlation_floor": "anchor",
+        "per_source_detail_energy_max": 1.1
+      },
+      "perceptual_gate_pass": true,
+      "failure_reasons": [],
+      "frames_per_variant": 48,
+      "perceptual_improvements": {
+        "lpips": 0.13694386101915945,
+        "dists": 0.15479580343305077
+      },
+      "source_balanced": {
+        "lanczos": {
+          "lpips": 0.3455616074303786,
+          "dists": 0.12805385887622833,
+          "fine_correlation": 0.5093240648945621,
+          "detail_energy": 0.5071991532112882
+        },
+        "v4_w010_2500_80": {
+          "lpips": 0.26100878122573096,
+          "dists": 0.10846483707427979,
+          "fine_correlation": 0.5549971411431308,
+          "detail_energy": 0.7170230823280658
+        },
+        "shipping": {
+          "lpips": 0.3024238742267092,
+          "dists": 0.12832974269986153,
+          "fine_correlation": 0.5643192119145054,
+          "detail_energy": 0.6170664251148085
+        }
+      },
+      "per_source": {
+        "lanczos": {
+          "crowd_run": {
+            "lpips": 0.4957118332386017,
+            "dists": 0.17144159227609634,
+            "fine_correlation": 0.3584202039433989,
+            "detail_energy": 0.4056827459253679
+          },
+          "four_people": {
+            "lpips": 0.25478572119027376,
+            "dists": 0.10224039480090141,
+            "fine_correlation": 0.6186566818904616,
+            "detail_energy": 0.5752431459644255
+          },
+          "johnny": {
+            "lpips": 0.28618726786226034,
+            "dists": 0.11047958955168724,
+            "fine_correlation": 0.5508953088498255,
+            "detail_energy": 0.5406715677440711
+          }
+        },
+        "v4_w010_2500_80": {
+          "crowd_run": {
+            "lpips": 0.36959783360362053,
+            "dists": 0.14247898012399673,
+            "fine_correlation": 0.37189579366870557,
+            "detail_energy": 0.5539108182492736
+          },
+          "four_people": {
+            "lpips": 0.1808754405938089,
+            "dists": 0.08194862306118011,
+            "fine_correlation": 0.6615858870417952,
+            "detail_energy": 0.8104016790716013
+          },
+          "johnny": {
+            "lpips": 0.2325530694797635,
+            "dists": 0.1009669080376625,
+            "fine_correlation": 0.6315097427188915,
+            "detail_energy": 0.7867567496633223
+          }
+        },
+        "shipping": {
+          "crowd_run": {
+            "lpips": 0.4320258032530546,
+            "dists": 0.1641482375562191,
+            "fine_correlation": 0.3826510771160185,
+            "detail_energy": 0.48219069563361283
+          },
+          "four_people": {
+            "lpips": 0.21655134484171867,
+            "dists": 0.10291698202490807,
+            "fine_correlation": 0.6708610856042104,
+            "detail_energy": 0.708173946722626
+          },
+          "johnny": {
+            "lpips": 0.25869447458535433,
+            "dists": 0.11792400851845741,
+            "fine_correlation": 0.6394454730232871,
+            "detail_energy": 0.6608346329881865
+          }
+        }
+      },
+      "per_source_changes": {
+        "crowd_run": {
+          "lpips": 0.14450055802076145,
+          "dists": 0.13201029602770398,
+          "fine_correlation_vs_shipping": -0.010755283447312913,
+          "fine_correlation_vs_anchor": 0.013475589725306658,
+          "detail_energy": 0.5539108182492736
+        },
+        "four_people": {
+          "lpips": 0.16474570626188423,
+          "dists": 0.2037405154248807,
+          "fine_correlation_vs_shipping": -0.00927519856241521,
+          "fine_correlation_vs_anchor": 0.04292920515133358,
+          "detail_energy": 0.8104016790716013
+        },
+        "johnny": {
+          "lpips": 0.10105126963956723,
+          "dists": 0.14379684589962682,
+          "fine_correlation_vs_shipping": -0.00793573030439565,
+          "fine_correlation_vs_anchor": 0.08061443386906597,
+          "detail_energy": 0.7867567496633223
+        }
+      },
+      "status": "development screen; native delivery, temporal and fresh-source evidence still required"
+    }
+  },
+  "code_sha256": "2a16badc80dff5d4a17d8f824f60f3f7b58075b158799bab3e060e377d9626d1"
+}
