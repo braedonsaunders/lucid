@@ -120,6 +120,8 @@ def main():
                     help='Regression target: the fixed shipping/teacher mixture (control) or the HR reference itself')
     ap.add_argument('--paired-negatives', choices=['shift', 'shift+smooth'], default='shift',
                     help='Paired-critic negative recipe; shift+smooth adds noise texture on smooth reference regions as a fake')
+    ap.add_argument('--smooth-negative-share', type=float, default=.125,
+                    help='Share of the 0.25 negative mass given to the smooth-texture fake when shift+smooth is used')
     ap.add_argument('--paired-dino', action='store_true',
                     help='Training-only input-conditioned critic with wrong-detail negatives')
     ap.add_argument('--gan-head-ratio-cap', type=float, default=0,
@@ -202,7 +204,7 @@ def main():
         if args.paired_dino:
             from paired_dino_adversary import PairedDinoAdversary
             adversary = PairedDinoAdversary(args.pixrestore_repository, args.dino_repository, args.dino_checkpoint,
-                                            negatives=args.paired_negatives)
+                                            negatives=args.paired_negatives, smooth_share=args.smooth_negative_share)
         else:
             adversary = DinoAdversary(args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)
     args.out.mkdir(parents=True)

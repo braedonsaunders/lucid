@@ -41,11 +41,14 @@ def paired_features(output, condition):
 
 
 class PairedDinoAdversary(DinoAdversary):
-    def __init__(self, repository, dino_repository, dino_checkpoint, negatives='shift'):
+    def __init__(self, repository, dino_repository, dino_checkpoint, negatives='shift', smooth_share=.125):
         super().__init__(repository, dino_repository, dino_checkpoint)
         if negatives not in ('shift', 'shift+smooth'):
             raise ValueError('unknown negative recipe')
+        if not 0 < smooth_share < .25:
+            raise ValueError('smooth negative share must lie strictly between 0 and the 0.25 negative mass')
         self.negatives = negatives
+        self.smooth_share = smooth_share
         # Use the already hash-verified upstream class; retain 96 hidden units.
         cls = type(self.discriminator)
         self.discriminator = cls(768, 6, hidden_ratio=.125).cuda().train()
@@ -53,9 +56,9 @@ class PairedDinoAdversary(DinoAdversary):
         self.metadata.update(condition='detached DINO tokens of bicubic LR at matching output coordinates',
             features='concatenate output and condition tokens; 768 inputs, 96 hidden units',
             negatives=('half generated output, half HR with signed 3x3 highpass displaced two pixels right' if negatives == 'shift'
-                       else 'half generated output, quarter displaced-detail HR, quarter HR with sigma-0.03 noise texture on locally smooth regions'),
+                       else f'half generated output, {.25 - smooth_share:.3f} displaced-detail HR, {smooth_share:.3f} HR with sigma-0.03 noise texture on locally smooth regions'),
             discriminator_loss=('0.5 real BCE + 0.25 generated BCE + 0.25 wrong-detail BCE; clip 1' if negatives == 'shift'
-                                else '0.5 real BCE + 0.25 generated BCE + 0.125 wrong-detail BCE + 0.125 smooth-texture BCE; clip 1'),
+                                else f'0.5 real BCE + 0.25 generated BCE + {.25 - smooth_share:.3f} wrong-detail BCE + {smooth_share:.3f} smooth-texture BCE; clip 1'),
             limitation='combined conditioning/negative recipe; not isolated component attribution')
 
     def generator_loss(self, image, condition):
@@ -79,8 +82,8 @@ class PairedDinoAdversary(DinoAdversary):
         if textured is None:
             loss = loss + .25 * self.discriminator(paired_features(negative, low), real=False)
         else:
-            loss = loss + (.125 * self.discriminator(paired_features(negative, low), real=False)
-                           + .125 * self.discriminator(paired_features(textured, low), real=False))
+            loss = loss + ((.25 - self.smooth_share) * self.discriminator(paired_features(negative, low), real=False)
+                           + self.smooth_share * self.discriminator(paired_features(textured, low), real=False))
         if not torch.isfinite(loss):
             raise ValueError('nonfinite paired discriminator objective')
         loss.backward()
