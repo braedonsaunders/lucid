@@ -311,3 +311,17 @@ Native delivery holdout of `v4_w0075_smooth005` (`paired-ladder/native-sm005-s02
 ### Where the campaign stands, 2026-09-07 08:00
 
 Through the real pipeline on the eight-source holdout, against the original SPAN ch32utc family: shipping `lucidbig2k_` +11.8% LPIPS / +16.0% DISTS, every source up, at ~40% lower graph cost, plus 720p admitted. NVIDIA VFX ULTRA on the same frames (torch level, no Lucid post-processing) is +21.6% / +21.0%. Levers measured and closed this session: training target (reference wins), schedule (2,000 steps), adversarial weight (0.005–0.0075), blend, seeds, crop, pre-fine-tune, capacity from scratch and by widening, three data expansions, input-noise and smooth-region negatives, and native presentation sharpness/grain/temporal settings. The open levers are (1) the torch-to-native gap on grainy sources for the texture-richer checkpoints, which needs the app's NV12→RGB path reproduced in training or evaluation, (2) more *different* training content, and (3) NVIDIA's own output as a teacher, pending its SDK licence.
+
+## Native-gap investigation, 2026-09-07 (receipts `paired-ladder/native-v4-2k-s0{0,1,2}`, `native-v4-2k-{g0,notaa}`; probes in `Tools/frontier_eval/`)
+
+The 33-source checkpoints gain on the grainy holdout masters at torch level and lose them through the app. Measured, in order:
+
+| Native configuration for `v4_2k` | aggregate | Sunflower LPIPS |
+|---|---|---|
+| sharpness 0.2 (shipping value) | +11.42 / +15.89 | −6.4 |
+| sharpness 0.1 | +10.53 / +15.62 | −3.8 |
+| sharpness 0.0 | +9.87 / +15.52 | −3.4 |
+| sharpness 0.2, synthetic grain off | +10.48 / +15.93 | −5.9 |
+| sharpness 0.2, temporal stage off | +8.41 / +13.41 | −26.2 |
+
+Single-frame probes on the same frames: Core ML output equals torch within one RGB level (`coreml_parity_probe.py`, CPU+GPU); explicit NV12 chroma upsamplers move both models by thousandths (`chroma_path_probe2.py`); the RGB → NV12 → RGB packing of the sender improves both models' LPIPS by removing chroma noise, big2k more than v4 (`nv12_roundtrip_probe.py`). So the model, its conversion, its input colour path and its output packing all reproduce the torch result; the loss appears only when 300 consecutive frames flow through the temporal stage, and grows to −26% with that stage off. The remaining hypothesis is temporal: the 33-source checkpoints synthesize grain that is less coherent frame to frame, which the history blend then averages into a softer, wrong texture. That is measured next with the sequence evaluator's reference-static flicker on the holdout streams.
