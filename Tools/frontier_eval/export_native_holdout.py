@@ -87,6 +87,9 @@ def main():
             raise ValueError('Core ML input geometry differs from frozen arm')
     args.out.mkdir(parents=True)
     tuning=args.out/'candidate-tuning.json';tuning.write_text(json.dumps(config['tuning'],indent=2)+'\n')
+    # The shipping arm is the frozen SPAN 4x comparator at its own measured gain (0.75); pin it
+    # explicitly so the app's current defaults (now the lucid2k_ family at 0.2) cannot change it.
+    shipping_tuning=args.out/'shipping-tuning.json';shipping_tuning.write_text(json.dumps(dict(config['tuning'],sharpness=.75),indent=2)+'\n')
     report={'purpose':'frozen native spatial holdout; no browser cadence or release claim',
         'split':'development-presentation' if development else 'quality-holdout','complete':False,'rows':[],'input_streams':[],
         'source_manifest_sha256':digest(args.manifest),'frozen_frames_manifest_sha256':digest(args.frozen_frames/'manifest.json'),
@@ -137,7 +140,7 @@ def main():
             # Inherited tuning overrides must not alter either frozen arm.
             env={k:v for k,v in os.environ.items() if not k.startswith('LUCID_')}
             env.update(LUCID_COMPUTE_UNITS='gpu',LUCID_PIPELINE_MODEL=str(package.resolve()),LUCID_PIPELINE_PACKETS=str(target.resolve()))
-            if label=='candidate':env['LUCID_TUNING']=str(tuning.resolve())
+            env['LUCID_TUNING']=str((tuning if label=='candidate' else shipping_tuning).resolve())
             if label=='candidate' and args.preserve_display_gain:env['LUCID_PIPELINE_PRESERVE_GAIN']='1'
             result=subprocess.run([str(args.executable.resolve()),'--pipeline-ms',str(descriptor_path.resolve()),str(sequence['frames']-8)],
                 env=env,capture_output=True,text=True,timeout=180)
