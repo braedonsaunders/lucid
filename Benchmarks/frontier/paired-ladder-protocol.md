@@ -333,3 +333,15 @@ Temporal probe (`paired-ladder/temporal-probe-holdout-subset.json`; 12 holdout s
 The wheel ships two agreements (`nvidia_vfx-0.1.0.1.dist-info/licenses/packaging/`). The NVIDIA Open Model License covering the weights is permissive about outputs (outputs are not Derivative Models; NVIDIA claims no ownership of them). The NVIDIA Software License Agreement covering the SDK is not: §8.12 forbids using the Software "for the purpose of developing competing products or technologies", which is exactly what distilling Lucid from its outputs would be, and §8.9 forbids distributing or disclosing benchmarking or competitive-analysis results relating to the Software without written permission. Teacher-frame generation was stopped after 52 frames and those frames deleted; no Lucid weights were ever trained on SDK output. The distillation tooling (`nvidia_teacher_frames.py`, `build_teacher_cache.py`, `--intended teacher`) stays in the tree unused. §8.9 also bears on this evidence folder's NVIDIA comparison numbers and the gallery's NVIDIA frames; that disclosure question is the owner's decision.
 
 Ladder r22b (`C:\lucid\paired-ladder-20260905-r22`) is now the pure data lever on bank v5 (21 original + 24 Wikimedia Commons CC0/CC-BY sources, 1,620 sequences; `training-sources-v5.json`, `commons-sources/sources.json`): reference target at weights 0.005 and 0.0075, 2,000 steps. Ladder r23 runs the new temporal consistency term at weights 1.5 and 4 on the 33-source bank at adversarial weight 0.0075.
+
+## Results, r23b: temporal consistency term (receipts `paired-ladder/v4_w0075_temporal*`, `holdout8-t15*`)
+
+Reference target, weight 0.0075, 33-source bank, `--temporal` at 1.5 and 4 (two consecutive frames per crop; the term penalizes output change where the reference is still).
+
+| Arm | 48 dev raw | 96 bank raw | 960 holdout raw | Sunflower | RushHour energy |
+|---|---|---|---|---|---|
+| `temporal 1.5` | +15.58 / +16.40 | +18.49 / +10.22, passes | **+13.00 / +14.65**, every source up | +3.5 / +5.9 | under the cap |
+| `temporal 4` | +13.49 / +12.09 | +16.07 / +8.09 | pending | | |
+| no temporal term (r17) | +17.11 / +19.08 | +18.46 / +10.61 | +13.40 / +16.43 | −1.4 / +6.7 | over the cap |
+
+At 1.5 the term gives up under two DISTS points at torch level and buys back the grainy source, the energy cap and the bank's aggregate correlation guard. Its native delivery holdout is the decisive test, since the loss it targets only shows through the app's temporal stage.
