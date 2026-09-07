@@ -246,3 +246,7 @@ The r10 raw checkpoint replaces the 2k blend as the shipping family: native hold
 | `big_2k` (shipping, 21 sources) | +13.39 / +14.60 | +17.38 / +9.37 | +11.47 / +14.34 |
 
 Source diversity is the lever: going from 21 to 33 sources adds 0.8 LPIPS and 1.7 DISTS points on the holdout, with OldTownCross +11.7 / +31.2, InToTree +13.3 / +28.0, RushHour +19.3 / +33.2 and every source up against SPAN on both metrics. Aggregate fine correlation sits a hair below the Lanczos anchor (advisory). Native delivery holdout runs next; if it holds, `v4_2k` ships.
+
+### Native delivery holdout, 33-source checkpoint at sharpness 0.2 (`paired-ladder/native-v4-2k-s02/`)
+
++11.42% / +15.89% source-balanced, against the shipping `lucidbig2k_` run's +11.80% / +16.04%: level, not ahead. OldTownCross +21.4 / +31.4 and InToTree +20.1 / +29.8 are the largest native gains recorded, but Sunflower loses 6.4% LPIPS (torch level: +4.8%) and RushHour/Sunflower fine energy reaches 1.23 / 1.10. The checkpoint carries more intrinsic texture, and the native detail stage at 0.2 stacks on it. A second native run at sharpness 0.0 follows; the promotion decision waits for it.
