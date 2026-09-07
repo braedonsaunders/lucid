@@ -250,3 +250,13 @@ Source diversity is the lever: going from 21 to 33 sources adds 0.8 LPIPS and 1.
 ### Native delivery holdout, 33-source checkpoint at sharpness 0.2 (`paired-ladder/native-v4-2k-s02/`)
 
 +11.42% / +15.89% source-balanced, against the shipping `lucidbig2k_` run's +11.80% / +16.04%: level, not ahead. OldTownCross +21.4 / +31.4 and InToTree +20.1 / +29.8 are the largest native gains recorded, but Sunflower loses 6.4% LPIPS (torch level: +4.8%) and RushHour/Sunflower fine energy reaches 1.23 / 1.10. The checkpoint carries more intrinsic texture, and the native detail stage at 0.2 stacks on it. A second native run at sharpness 0.0 follows; the promotion decision waits for it.
+
+## Results, r17: weight and schedule on the 33-source bank (receipts `paired-ladder/v4_w0075_2k*`, `v4_2500*`, `r17-holdout8*`)
+
+| Arm | 48 dev raw | 96 bank raw | 960 holdout raw |
+|---|---|---|---|
+| `v4_w0075_2k` (weight 0.0075) | **+17.11 / +19.08** | +18.46 / +10.61 | **+13.40 / +16.43**, Sunflower −1.4 LPIPS, RushHour energy over cap |
+| `v4_2500` (0.005, 2,500 steps) | +15.90 / +18.52 | +17.07 / +10.40 | +12.46 / +15.79, Sunflower −1.2 LPIPS |
+| `v4_2k` (0.005, 2,000) | +15.02 / +17.42 | +17.35 / +9.95 | +12.25 / +16.04 |
+
+With thirty-three sources the model tolerates more adversarial pressure than it did with twenty-one: 0.0075 is now the best aggregate holdout result recorded for Lucid, a point above `v4_2k`, and OldTownCross (+14.9 / +34.2) and InToTree (+16.0 / +30.7) keep climbing. The cost is the same one every texture gain has paid all session: Sunflower goes slightly negative on LPIPS and RushHour's fine energy passes 1.10. The native runs decide; both this and `v4_2k` are evaluated through the app at sharpness 0.0 as well as 0.2.
