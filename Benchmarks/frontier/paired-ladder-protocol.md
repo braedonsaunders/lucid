@@ -264,3 +264,13 @@ With thirty-three sources the model tolerates more adversarial pressure than it 
 ### Native delivery holdout, 33-source checkpoint at sharpness 0.0 (`paired-ladder/native-v4-2k-s00/`)
 
 +9.87% / +15.52%: turning presentation sharpening off costs LPIPS everywhere and does not repair Sunflower (−3.35%) or RushHour's fine energy (1.15). The over-texturing on the grainy masters is therefore not the sharpening stage. The remaining native-only stage that adds fine energy is the synthetic grain in the deband stage (grain 0.01 in the shipping tuning); a run with grain off and sharpness back at 0.2 follows. Until a native configuration beats the shipping run on aggregate with no source regressing, `lucidbig2k_` stays.
+
+## Results, r18: weight 0.01 and 0.0075 at 2,500 steps (receipts `paired-ladder/v4_w010_2k*`, `v4_w0075_2500*`, `r18-holdout8*`)
+
+| Arm | 48 dev raw | 960 holdout raw | Sunflower |
+|---|---|---|---|
+| `v4_w010_2k` | +17.48 / +19.78 | +13.59 / +16.23 | −5.4 / +3.6 |
+| `v4_w0075_2500` | +17.24 / +19.89 | +13.16 / +15.53 | −9.8 / +2.5 |
+| `v4_w0075_2k` (r17) | +17.11 / +19.08 | +13.40 / +16.43 | −1.4 / +6.7 |
+
+The weight ladder has flattened: 0.01 matches 0.0075 on aggregate and loses four more LPIPS points on Sunflower; 2,500 steps at 0.0075 loses eight. 0.0075 at 2,000 steps stays the best point on this bank. Every gain past it is paid on the grainy, out-of-focus master, the same failure the smooth-region negative repaired in r5 at too high a price; a lighter share of that negative on this bank is the next arm.
