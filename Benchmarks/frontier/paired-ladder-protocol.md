@@ -183,3 +183,7 @@ The development set says the larger bank is slightly worse; the 960-pair holdout
 ### Native delivery holdout, big-bank 2k raw (`paired-ladder/native-big2k-s02/`)
 
 Same app, inputs and configuration as the shipping run (sharpness 0.2, radius 2; the harness now pins the SPAN comparator at its own 0.75). Source-balanced LPIPS 0.3288 → 0.2900 (**+11.80%**), DISTS 0.1345 → 0.1129 (**+16.04%**), every source up on both metrics; OldTownCross +18.5% / +28.9%, InToTree +16.3% / +25.1%, RushHour +12.6% / +32.0%. Against the shipping `lucid2k_` run (+9.54% / +14.66%) this is the strongest native result recorded. Advisory flags unchanged (RushHour/Sunflower energy from the native detail stage; torch-anchored correlation floor). Bundled as lab family `lucidbig2k_` for Braedon's eyes; not promoted yet.
+
+## Queued: r11 and r12
+
+**r11** (`C:\lucid\paired-ladder-20260905-r11`): ch48 direct-2x from random init on `stream-bank-big`, 200,000 steps at batch 16, learning rate 5e-4 cosine, reference target, no critic; then the 2,000-step paired critic pass. Evaluated raw on both development sets; the 960-pair holdout and native cost follow on the Mac. **r12** (`-r12`, behind r11): the r10 recipe on `stream-bank-v2`, the same bank plus Tears of Steel (Blender, CC-BY; 22 sources, 792 sequences), 2,000 steps. Both prespecified; the r10 raw checkpoint (`lucidbig2k_`) is the comparator on the holdout.
