@@ -55,7 +55,9 @@ struct TensorImagePackerTests {
         for variant in LearnedUpscaler.variants {
             try autoreleasepool {
                 let size = "\(variant.width)x\(variant.height)"
-                let imageURL = try #require(Bundle.main.url(forResource: "SPAN_x4_ch32utc_" + size, withExtension: "mlmodelc"))
+                // Tensor alternatives exist for the SPAN 4x ladder only; the 720p rung
+                // belongs to the direct-2x family and has no SPAN package.
+                guard let imageURL = Bundle.main.url(forResource: "SPAN_x4_ch32utc_" + size, withExtension: "mlmodelc") else { return }
                 let tensorURL = try #require(Bundle.main.url(forResource: "SPAN_x4_ch32utc_tensor_" + size, withExtension: "mlmodelc"))
                 let reference = try MLModel(contentsOf: imageURL, configuration: config)
                 #expect(try ValidatedTensorOutput.load(reference: reference, url: tensorURL, configuration: config) != nil)

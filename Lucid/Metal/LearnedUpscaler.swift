@@ -96,6 +96,13 @@ final class LearnedUpscaler: @unchecked Sendable {
         Variant(width: 480, height: 270, milliseconds: 6.8),
         Variant(width: 640, height: 360, milliseconds: 10.7),
         Variant(width: 864, height: 480, milliseconds: 17.8),   // covers 854x480
+        // 720p, admitted 2026-09-06 with the direct-2x lucid2k_ family: 21.0 ms
+        // measured at 1280x720 -> 2560x1440 on this M4 Pro (CPU+GPU), and the
+        // frozen 720p screen has the trained 2x models beating Lanczos, bicubic
+        // and bilinear on both perceptual metrics (Benchmarks/frontier/
+        // paired-ladder-protocol.md, "720p coverage screen"). 60 fps 720p
+        // material will not keep cadence at this cost; 30 fps does.
+        Variant(width: 1280, height: 720, milliseconds: 21.0),
     ]
 
     /// 720p remains outside the supported ladder. The 2026-09-05 full-4x

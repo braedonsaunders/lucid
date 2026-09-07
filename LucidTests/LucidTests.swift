@@ -67,13 +67,16 @@ struct SessionPolicyTests {
         #expect(LearnedUpscaler.variant(width: 854, height: 480)?.width == 864)
         let dvd = report(dpr: 2, iw: 854, ih: 480, rectX: 0, rectY: 0, rectW: 1040, rectH: 585)
         #expect(AppCoordinator.isEnhanceable(dvd) == true)
-        // 720p is the first size past the top of the ladder, and it is the
-        // product boundary too: the target window is Edge's, enabled below 720p.
-        // Nothing covers it, so Lucid declines rather than reaching for a weaker
-        // upscaler that measured worse than leaving the frame alone.
-        #expect(LearnedUpscaler.variant(width: 1280, height: 720) == nil)
+        // 720p joined the ladder on 2026-09-06 with the direct-2x family: 21 ms at
+        // 1280x720 -> 2560x1440, and the trained models beat every interpolation
+        // on the frozen 720p screen. 1080p is now the first size past the top,
+        // and Lucid declines it rather than reaching for a weaker upscaler.
+        #expect(LearnedUpscaler.variant(width: 1280, height: 720)?.milliseconds == 21.0)
         let hd = report(dpr: 2, iw: 1280, ih: 720, rectX: 0, rectY: 0, rectW: 1600, rectH: 900)
-        #expect(AppCoordinator.isEnhanceable(hd) == false)
+        #expect(AppCoordinator.isEnhanceable(hd) == true)
+        #expect(LearnedUpscaler.variant(width: 1920, height: 1080) == nil)
+        let fhd = report(dpr: 2, iw: 1920, ih: 1080, rectX: 0, rectY: 0, rectW: 2400, rectH: 1350)
+        #expect(AppCoordinator.isEnhanceable(fhd) == false)
         // 144p is the case that needs the most help, so it has to be inside the
         // window rather than rejected for being small.
         let tiny = report(dpr: 2, iw: 256, ih: 144, rectX: 0, rectY: 0, rectW: 1040, rectH: 585)
