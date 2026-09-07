@@ -210,3 +210,15 @@ Both trained models now beat every interpolation on both metrics at 720p; `lucid
 ## 720p admitted in the app (2026-09-06)
 
 `LearnedUpscaler.variants` gains a 1280×720 rung at 21.0 ms (measured CPU+GPU for all three bundled 2× families, `ladder720`), inside the 33 ms budget; 1080p remains the first declined size. The 1280×720 packages of `lucid2k_` (shipping), `lucidbig2k_` and `lucid2kraw_` are bundled through the manifest. The policy test now asserts 720p enhanceable and 1080p declined; 45 native tests pass. 60 fps 720p material will not hold cadence at this cost; 30 fps does. Browser-delivery cadence at 2560×1440 has not been re-measured for the 2× families; the earlier direct-2× native stage measured 20.0 ms at this geometry.
+
+## Results, r13: widening the pretrained model (receipts `paired-ladder/w48_*`)
+
+`widen_span.py` grows the folded SPAN initialization from 32 to 48 channels with the function preserved (max abs error 4e-6 on the real checkpoint), then the r10 recipe runs on `stream-bank-big`.
+
+| Arm | 48 dev raw | 96 bank raw | 960 holdout raw |
+|---|---|---|---|
+| `w48_2k` | +12.90 / +14.84 | +17.31 / +9.83 | +10.38 / +14.30 |
+| `w48_4k` | +12.15 / +15.54 | +16.38 / +10.36 | — |
+| `big_2k` (ch32, same recipe) | +13.39 / +14.60 | +17.38 / +9.37 | **+11.47 / +14.34** |
+
+Fifty percent more channels, twice the native cost (11.2 vs 5.6 ms at 640×360), and no gain anywhere. Together with r11 this closes the capacity question for now: at this data scale the ch32 student is not capacity-limited. The levers that moved the holdout this session were the training target (reference instead of mixture), the schedule (2,000 steps) and the data (full-frame codec context). What remains is data that is *different*: new live-action masters from the Xiph collection are being fetched (`derf-train`), and the NVIDIA teacher remains the largest untried lever pending its SDK licence.
