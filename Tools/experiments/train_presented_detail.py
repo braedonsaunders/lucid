@@ -34,6 +34,20 @@ def reconstruction_objective(output, reference, intended, detail_target='mixture
             + .05 * fft_loss(output, detail) + .1 * F.l1_loss(output, reference))
 
 
+def temporal_consistency(previous_output, output, previous_reference, reference, threshold=2 / 255):
+    """Penalize output change where the reference barely moved (masked L1).
+
+    Two consecutive frames of the same scene under two draws of codec noise are the
+    same signal; forbidding the output to follow that difference removes invented
+    grain that flickers and, measured 2026-09-04, improves per-frame perception too.
+    No inference cost: the shipping model stays single-frame.
+    """
+    motion = F.avg_pool2d((reference - previous_reference).abs().mean(1, keepdim=True), 3, 1, 1)
+    still = (motion < threshold).float()
+    coverage = still.mean().clamp_min(1e-3)
+    return ((output - previous_output).abs() * still).mean() / coverage, float(still.mean())
+
+
 def bounded_adversarial_scale(base_norm, weighted_adversarial_norm, ratio_cap):
     """Only attenuate the GAN term; the detached scale adds no second derivatives."""
     if not math.isfinite(ratio_cap) or ratio_cap <= 0:
@@ -114,6 +128,8 @@ def main():
     ap.add_argument('--detail-target', choices=['mixture', 'reference'], default='mixture',
                     help='Controlled supervision ablation; inference architecture and weights format are unchanged')
     ap.add_argument('--dino-gan-weight', type=float, default=0)
+    ap.add_argument('--temporal', type=float, default=0,
+                    help='Weight of the reference-static temporal consistency term (two consecutive frames per crop; 0 = off)')
     ap.add_argument('--input-noise', type=float, default=0,
                     help='Max Gaussian noise sigma (0-1 scale) added to LR inputs during training; targets unchanged')
     ap.add_argument('--intended', choices=['mixture', 'reference', 'teacher'], default='mixture',
@@ -227,6 +243,7 @@ def main():
                 + f' + 0.2 signed Sobel to {args.detail_target} + 0.05 FFT to {args.detail_target} + 0.1 L1 to reference; 8 output-pixel border excluded',
         'precision': 'CUDA BF16 autocast; AdamW FP32; no compilation',
         'input_noise': args.input_noise,
+        'temporal': args.temporal,
         'torch': str(torch.__version__), 'gpu': torch.cuda.get_device_name(),
         'purpose': 'controlled quality/performance experiment; not shipping promotion'}
     if args.architecture in ('anchored_detail', 'anchored_lowpass'):
@@ -258,9 +275,13 @@ def main():
     anchor_hash = None
     max_applied_head_ratio = torch.zeros((), device='cuda')
     min_adversarial_scale = torch.ones((), device='cuda')
+    temporal_coverage = []
     for step in range(1, args.steps + 1):
-        x, reference, intended = batch(data['train'], rng, args.batch, 1, args.crop, mixed)
-        x, reference, intended = (v[:, 0].cuda() for v in (x, reference, intended))
+        frames = 2 if args.temporal else 1
+        x, reference, intended = batch(data['train'], rng, args.batch, frames, args.crop, mixed)
+        if args.temporal:
+            previous = tuple(v[:, 0].cuda() for v in (x, reference))
+        x, reference, intended = (v[:, -1].cuda() for v in (x, reference, intended))
         if step == 1:
             experiment['first_batch_sha256'] = state_digest({'source': x, 'reference': reference, 'intended': intended})
         x = augment_input_noise(x, args.input_noise)
@@ -276,6 +297,13 @@ def main():
             (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
         output, reference, intended = (v.float()[:, :, 8:-8, 8:-8] for v in (output, reference, intended))
         loss = reconstruction_objective(output, reference, intended, args.detail_target)
+        if args.temporal:
+            with torch.autocast('cuda', dtype=torch.bfloat16):
+                previous_output = model(augment_input_noise(previous[0], args.input_noise))
+            previous_output = previous_output.float()[:, :, 8:-8, 8:-8]
+            consistency, covered = temporal_consistency(previous_output, output, previous[1].float()[:, :, 8:-8, 8:-8], reference)
+            temporal_coverage.append(covered)
+            loss = loss + args.temporal * consistency
         gan_loss, discriminator_loss = None, None
         if adversary:
             adversarial_scale = 1
@@ -349,6 +377,7 @@ def main():
                     'optimizer': adversary.optimizer.state_dict(), 'step': step}, args.out / f'discriminator{step:06d}.pth')
     (args.out / 'complete.json').write_text(json.dumps({'steps': args.steps,
         'minutes': (time.monotonic()-started)/60,
+        'temporal_static_coverage_mean': float(np.mean(temporal_coverage)) if temporal_coverage else None,
         'max_applied_head_gradient_ratio': float(max_applied_head_ratio) if args.gan_head_ratio_cap else None,
         'min_adversarial_scale': float(min_adversarial_scale) if args.gan_head_ratio_cap else None}) + '\n')
 

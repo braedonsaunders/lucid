@@ -3,7 +3,7 @@ import unittest
 import torch
 from torch.nn import functional as F
 
-from train_presented_detail import reconstruction_objective, sobel_loss, fft_loss, bounded_adversarial_scale, augment_input_noise
+from train_presented_detail import reconstruction_objective, sobel_loss, fft_loss, bounded_adversarial_scale, augment_input_noise, temporal_consistency
 
 
 class PresentedObjectiveTest(unittest.TestCase):
@@ -74,6 +74,15 @@ class PresentedObjectiveTest(unittest.TestCase):
         self.assertTrue(float(y.min()) >= 0 and float(y.max()) <= 1)
         self.assertGreater(float((y - x).abs().mean()), 0)
         self.assertLess(float((y - x).abs().max()), .2)
+
+    def test_temporal_consistency_only_counts_still_pixels(self):
+        ref0 = torch.zeros(1, 3, 16, 16); ref1 = ref0.clone(); ref1[..., :, 8:] = .5   # right half moved
+        out0 = torch.zeros(1, 3, 16, 16); out1 = out0.clone(); out1[..., :, :8] = .1; out1[..., :, 8:] = .9
+        loss, covered = temporal_consistency(out0, out1, ref0, ref1)
+        self.assertTrue(.4 <= covered <= .5)   # 3x3 pooling widens the moving edge by a pixel
+        self.assertAlmostEqual(float(loss), .1, places=2)   # only the still half counts
+        zero, _ = temporal_consistency(out0, out0, ref0, ref1)
+        self.assertEqual(float(zero), 0)
 
 
 if __name__ == '__main__':
