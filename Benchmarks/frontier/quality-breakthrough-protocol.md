@@ -889,3 +889,30 @@ small texture/edge changes rather than a dramatic recovery; this limited visual
 review neither invalidates the earlier source-level gains nor proves native
 quality. `archived-learned-history-visual-revisit.json` retains the patch metrics,
 selection and hashes. The numerical threshold alone is not used to discard it.
+
+r48 completes all three training/Sintel runs and both REDS evaluations with
+exit code zero. Every arm matches initialization, source, data, first output and
+discriminator hashes. Relative to r46, argument differences are limited to the
+explicit corrected motion policy (and output location if present); modified
+motion-related source hashes are recorded. The fresh control differs from r46
+by LPIPS -0.165%/DISTS -0.021% across all three validation sources, showing that
+tiny cross-run differences should not be overinterpreted.
+
+Across 72 full 16-frame sequences and 216 scored frames per variant, generated
+SR history changes LPIPS/DISTS by +0.039%/+0.415% versus its fresh no-history
+control, and +0.456%/+0.170% versus its own current-frame branch. Decoded history
+changes them by +0.633%/+1.142% versus control and +0.883%/+0.551% versus its own
+current-frame branch. Decoded history modestly improves fine correlation versus
+its own branch, but the paired visual review shows only small texture/edge
+differences and no clear new detail recovery. Corrected SR training also fails
+to improve over r46 weights replayed with corrected motion (+0.043%/+0.167%);
+decoded training changes those distances by +1.229%/+0.190%.
+
+`corrected-motion-training-comparison.json` retains source-balanced metrics,
+temporal results, fresh/archived comparisons and exact provenance. The geometric
+fix remains valid, but these short jointly trained RGB-history models do not
+establish a deployable quality benefit. No native integration or promotion follows.
+The next untested interaction earlier in the ranked list is joint training of
+the clean-LR supervised pre-cleaner and SR backbone: r30 demonstrated modest
+clean-LR improvement with SR frozen, without an SR-quality gain. Joint training
+has not yet been implemented or launched; it is a hypothesis, not a result.

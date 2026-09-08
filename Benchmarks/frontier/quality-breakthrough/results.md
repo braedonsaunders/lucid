@@ -59,3 +59,9 @@ improves LPIPS by only about 0.018%, with subtle visual changes and no promotion
 diagnostic confirms substantially better alignment on the fixed low-contrast
 Sintel patch, but this oracle result is not a deployable quality gain.
 [Alignment comparison](recurrent-motion-information-comparison.json).
+
+Training both temporal models from the start with corrected motion also fails
+to establish a quality advantage. Across the same 72 sequences, history worsens
+LPIPS/DISTS versus each model's own current-frame branch: SR +0.456%/+0.170%,
+decoded +0.883%/+0.551%. Fixed visual comparisons show small changes without a
+clear detail breakthrough. [Corrected training](corrected-motion-training-comparison.json).
