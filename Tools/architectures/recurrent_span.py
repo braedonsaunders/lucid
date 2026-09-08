@@ -1,7 +1,8 @@
 """FRVSR-inspired previous-output input for an existing 2x SPAN graph.
 
 The first experiment freezes the current-frame graph and learns only a new
-history convolution. Motion, rejection and state lifetime belong to the caller.
+history convolution. Joint training and a decoded-observation history ablation
+are optional. Motion, rejection and state lifetime belong to the caller.
 This is a prototype interface, not an installed native playback model.
 """
 import torch
@@ -11,8 +12,11 @@ from .subspace_adapter import fuse_convolutions
 
 
 class RecurrentSPAN(nn.Module):
-    def __init__(self, sr, *, train_backbone=False):
+    def __init__(self, sr, *, train_backbone=False, history_source='sr'):
         super().__init__()
+        if history_source not in ('sr', 'decoded'):
+            raise ValueError('history source must be sr or decoded')
+        self.history_source = history_source
         if sr.frames != 1 or sr.core.upsampler[1].upscale_factor != 4:
             raise ValueError('single-frame 2x source model required')
         if sr.core.img_range != 1 or torch.count_nonzero(sr.core.mean):

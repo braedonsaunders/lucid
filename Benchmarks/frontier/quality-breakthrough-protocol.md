@@ -757,3 +757,28 @@ ParkJoy/InToTree gains but larger regressions elsewhere. The artifact-loss
 combination reduces r44's penalty without providing a broad delivered-quality
 breakthrough. Both complete native reports and the fixed smooth/textured scene
 crops are retained; neither checkpoint is promoted.
+
+## Decoded-observation temporal input
+
+r46 tests whether retaining observed previous-frame information helps more than
+feeding back generated RGB. `--history-source decoded` lifts the previous raw
+RGB8 frame to the existing 2x history interface with clamped FP32 bicubic
+interpolation, then applies the same decoded-input motion/confidence and the
+same 13,824-parameter history convolution. It uses no HR reference. Interpolation
+does not create new evidence; the history branch retains one observed previous
+frame and does not recursively accumulate generated SR. The unchanged native
+TAA proxy can still carry earlier observations into the current model input. Existing `sr` behavior remains default,
+and checkpoint metadata binds the history representation.
+
+Three fresh matched 2k runs use r41's original bank, shipping initialization,
+seed, three-frame sampler, native input proxies, joint backbone/history learning
+rates and paired critic: no history, generated SR history, and decoded history.
+This isolates history representation before combining it with a data or loss
+change. Each receives full 16-frame Sintel validation plus the same held-out
+REDS073/154 window selection. Initial hashes must match. Any useful result still
+requires native integration, delivered-quality testing and the existing 60fps
+performance target; this prototype makes no runtime claim.
+
+Twelve recurrent tests cover observed-versus-generated input selection, absence
+of gradients through generated history in decoded mode, backbone/history
+gradients, reset/disabled behavior, checkpoint semantics and legacy compatibility.

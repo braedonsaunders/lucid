@@ -11,7 +11,12 @@ def load_recurrent_checkpoint(path, device):
     state = torch.load(path, map_location='cpu', weights_only=False)
     if state.get('architecture') != 'recurrent_span2x' or state.get('scale') != 2:
         raise ValueError('explicit recurrent 2x checkpoint required')
-    model = RecurrentSPAN(Unshuffled(state['channels'], scale=2, version=state['version']))
+    history_source = state.get('history_source', 'sr')
+    declared = state.get('experiment', {}).get('args', {}).get('history_source', history_source)
+    if declared != history_source:
+        raise ValueError('checkpoint history source differs from training declaration')
+    model = RecurrentSPAN(Unshuffled(state['channels'], scale=2, version=state['version']),
+                          history_source=history_source)
     model.load_state_dict(state['model'])
     return model.eval().to(device), state
 
@@ -102,8 +107,11 @@ def recurrent_step(model, current, raw_current, state, *, stream, index, reset=F
                    detach_history=False, use_history=True):
     """Reset on first frame, seek/gap, stream switch, geometry/device or explicit reset.
 
-State stores the quantized pre-detail SR output, never final sharpened/graded
-pixels. Pass raw decoded RGB separately when the SR input has been preprocessed.
+State stores decoded observations and quantized pre-detail SR output. The
+decoded ablation consumes only the previous observed frame, not generated SR;
+the history branch therefore retains one observed previous frame rather than
+recursively accumulated SR. Upstream native TAA can still carry earlier frames.
+Pass raw decoded RGB separately when the SR input has been preprocessed.
 """
     if current.shape != raw_current.shape or current.ndim != 4 or current.shape[1] != 3 or any(s % 2 for s in current.shape[-2:]):
         raise ValueError('matched even BCHW RGB inputs required')
@@ -115,7 +123,13 @@ pixels. Pass raw decoded RGB separately when the SR input has been preprocessed.
         confidence = aligned[:, :1]
         cut = torch.ones(current.shape[0], dtype=torch.bool, device=current.device)
     else:
-        previous = state.output.detach() if detach_history else state.output
+        if model.history_source == 'decoded':
+            # Lift observed LR into the same 2x history interface before warping.
+            # Interpolation preserves the observation input, not new HR evidence.
+            previous = F.interpolate(state.source.detach(), scale_factor=2,
+                                     mode='bicubic', align_corners=False).clamp(0, 1)
+        else:
+            previous = state.output.detach() if detach_history else state.output
         aligned, confidence, cut = warp_previous(raw_current, state.source, previous)
     output = model(current, aligned, confidence).clamp(0, 1)
     stored = quantize8(output)

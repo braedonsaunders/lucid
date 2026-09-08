@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train previous-output inputs, optionally jointly with a matched SR backbone."""
+"""Train previous SR or decoded-observation inputs with a matched SR backbone."""
 import argparse
 import copy
 import json
@@ -67,6 +67,7 @@ def validate(model, data, source_ids, native_inputs, *, use_history=True, baseli
                 'last_rgb_mse': float(error[:, -1].square().mean())})
     return {'complete': True, 'scope': 'source-disjoint full-bank-sequence patch diagnostic; not native playback',
             'use_history': use_history, 'base_definition': 'current checkpoint without history; initial is the unchanged starting model when present',
+            'history_source': model.history_source,
             'rows': rows, 'summary': summarize(rows), 'temporal': temporal}
 
 
@@ -82,6 +83,8 @@ def main():
     ap.add_argument('--native-input-stages', action='store_true')
     ap.add_argument('--joint', action='store_true', help='Optimize the fused SR backbone along with the history convolution')
     ap.add_argument('--no-history', action='store_true', help='Matched joint-training control; history remains zero and disabled')
+    ap.add_argument('--history-source', choices=('sr', 'decoded'), default='sr',
+                    help='Previous generated SR or bicubic-lifted decoded observation; decoded branch retains one observed frame')
     ap.add_argument('--dino-gan-weight', type=float, default=0)
     ap.add_argument('--pixrestore-repository', type=Path)
     ap.add_argument('--dino-repository', type=Path)
@@ -106,7 +109,8 @@ def main():
     base, _, frames = load(args.init, 'cuda')
     if type(base) is not Unshuffled or frames != 1:
         ap.error('ordinary single-frame 2x SPAN initialization required')
-    model = RecurrentSPAN(base, train_backbone=args.joint).cuda().train()
+    model = RecurrentSPAN(base, train_backbone=args.joint,
+                          history_source=args.history_source).cuda().train()
     initial = copy.deepcopy(model.sr).eval().requires_grad_(False) if args.joint else None
     if args.no_history:
         model.history.requires_grad_(False)
@@ -131,11 +135,15 @@ def main():
         'bank_sha256': digest(args.bank / 'manifest.json'), 'checkpoint_sha256': digest(args.init),
         'frozen_backbone_sha256': frozen_hash, 'source_hashes': {p: digest(source_root / p) for p in files},
         'history_parameters': sum(p.numel() for p in model.history.parameters()),
-        'recipe': 'final-frame HR reconstruction; FP32 fused SR; backpropagation through quantized recurrent outputs',
+        'recipe': 'final-frame HR reconstruction; FP32 fused SR; ' + (
+            'backpropagation through quantized recurrent outputs' if args.history_source == 'sr'
+            else 'previous decoded observation only; no generated-history backpropagation'),
         'backbone_trainable': args.joint, 'use_history': not args.no_history,
         'optimizer': 'AdamW/cosine; history 2e-4, joint backbone 2e-5; no weight decay',
         'motion': 'decoded-LR native integer search plus half-pixel refinement around integer and zero seeds; detached correspondence',
         'history_storage': 'RGB8 straight-through quantization before output detail stages',
+        'history_input': 'previous RGB8 SR output' if args.history_source == 'sr' else
+                         'previous decoded RGB8 lifted to 2x by FP32 bicubic, align_corners=False, clamped; same motion and history convolution',
         'limitations': 'crop-local history; no native SR warp/cost parity; no browser timing or release admission',
         'torch': str(torch.__version__), 'gpu': torch.cuda.get_device_name()}
     if adversary:
@@ -182,6 +190,7 @@ def main():
     if not args.joint and not backbone_unchanged:
         raise ValueError('frozen backbone changed')
     torch.save({'model': model.state_dict(), 'architecture': 'recurrent_span2x', 'scale': 2,
+                'history_source': args.history_source,
                 'channels': model.sr.core.conv_1.out_channels, 'version': model.sr.version,
                 'step': args.steps, 'experiment': experiment}, args.out / f'step{args.steps:06d}.pth')
     result = validate(model, data['validation'], {r['id']: r['source_id'] for r in manifest['sequences']}, args.native_input_stages,

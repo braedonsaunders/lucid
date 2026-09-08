@@ -1,4 +1,5 @@
 import copy
+from dataclasses import replace
 from pathlib import Path
 import tempfile
 import unittest
@@ -100,6 +101,7 @@ class RecurrentFrameTest(unittest.TestCase):
             torch.save({'architecture': 'recurrent_span2x', 'scale': 2, 'channels': 4,
                         'version': 1, 'model': model.state_dict()}, path)
             restored, _ = load_recurrent_checkpoint(path, 'cpu')
+            self.assertEqual(restored.history_source, 'sr')
             actual, _ = run_sequence(restored, source)
             torch.testing.assert_close(actual, output, atol=0, rtol=0)
             with self.assertRaises(ValueError):
@@ -138,6 +140,64 @@ class RecurrentFrameTest(unittest.TestCase):
         other, _ = run_sequence(model, changed, use_history=False)
         torch.testing.assert_close(actual[:, -1], other[:, -1], rtol=0, atol=0)
         torch.testing.assert_close(actual[:, -1], model.sr(source[:, -1]).clamp(0, 1), rtol=0, atol=0)
+
+    def test_decoded_history_uses_observations_not_generated_or_preprocessed_pixels(self):
+        model = RecurrentSPAN(Unshuffled(4, scale=2), train_backbone=True,
+                              history_source='decoded').train()
+        raw = torch.rand(1, 3, 16, 24) * .5 + .2
+        processed = raw * .8
+        _, state, _ = recurrent_step(model, processed, raw, None, stream='a', index=0)
+        bogus_output = torch.rand_like(state.output).requires_grad_()
+        state = replace(state, output=bogus_output)
+        seen = []
+        handle = model.register_forward_pre_hook(lambda _, args: seen.append(args))
+        output, _, _ = recurrent_step(model, processed, raw, state, stream='a', index=1)
+        handle.remove()
+        expected = torch.nn.functional.interpolate(raw, scale_factor=2, mode='bicubic',
+                                                   align_corners=False).clamp(0, 1)
+        torch.testing.assert_close(seen[0][1], expected, rtol=0, atol=4e-6)
+        self.assertTrue((seen[0][2] == 1).all())
+        output.square().mean().backward()
+        self.assertIsNone(bogus_output.grad)
+        for parameter in (model.history.weight, model.sr.core.conv_1.weight):
+            self.assertTrue(torch.isfinite(parameter.grad).all())
+            self.assertGreater(float(parameter.grad.abs().sum()), 0)
+
+    def test_decoded_history_resets_and_disabled_control_ignore_observations(self):
+        model = RecurrentSPAN(Unshuffled(4, scale=2), history_source='decoded').eval()
+        with torch.no_grad():
+            model.history.weight.fill_(.01)
+        source = torch.rand(1, 3, 16, 24)
+        _, state, _ = recurrent_step(model, source, source, None, stream='a', index=0)
+        for options in ({'reset': True}, {'use_history': False}, {'index': 3}):
+            kwargs = {'stream': 'a', 'index': 1}
+            kwargs.update(options)
+            output, _, reset = recurrent_step(model, source, source, state, **kwargs)
+            torch.testing.assert_close(output, model.sr(source).clamp(0, 1), rtol=0, atol=0)
+            self.assertTrue(reset.all())
+
+    def test_decoded_checkpoint_retains_history_semantics_and_rejects_conflicting_metadata(self):
+        model = RecurrentSPAN(Unshuffled(4, scale=2), history_source='decoded').eval()
+        with torch.no_grad():
+            model.history.weight.normal_(std=.001)
+        source = torch.rand(1, 1, 3, 16, 24).repeat(1, 3, 1, 1, 1)
+        expected, _ = run_sequence(model, source)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'decoded.pth'
+            state = {'architecture': 'recurrent_span2x', 'scale': 2, 'channels': 4,
+                     'version': 1, 'model': model.state_dict(), 'history_source': 'decoded',
+                     'experiment': {'args': {'history_source': 'decoded'}}}
+            torch.save(state, path)
+            restored, _ = load_recurrent_checkpoint(path, 'cpu')
+            self.assertEqual(restored.history_source, 'decoded')
+            actual, _ = run_sequence(restored, source)
+            torch.testing.assert_close(actual, expected, atol=0, rtol=0)
+            del state['history_source']
+            torch.save(state, path)
+            with self.assertRaisesRegex(ValueError, 'differs from training declaration'):
+                load_recurrent_checkpoint(path, 'cpu')
+        with self.assertRaises(ValueError):
+            RecurrentSPAN(Unshuffled(4, scale=2), history_source='reference')
 
 
 if __name__ == '__main__':
