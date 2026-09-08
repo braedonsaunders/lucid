@@ -40,8 +40,9 @@ one. The feature remains disabled by default.
 5. **Degradation conditioning:** implemented; constant, estimated, and oracle
    arms are fixed in r31. Compare reference-assisted damage maps with local
    input-only estimates; never deploy oracle information.
-6. **Recurrent frame feeding:** pending. Warp previous predictions using
-   input-derived motion and verify cut/resize/history-reset behavior.
+6. **Recurrent frame feeding:** prototype and state-lifetime tests implemented;
+   r32 fixes the first 2k training probe. Training results and native integration
+   remain pending. Warp previous predictions using decoded-input motion.
 7. **Confidence head:** pending. Test per-pixel stage strength and calibration,
    including the actual pre/post model placement of each controlled stage.
 8. **Clean-LR consistency and AESOP:** pending. Exact resize provenance matters;
@@ -183,6 +184,10 @@ DISTS 1.52%, with LPIPS regressions of 20.11% on Rush Hour and 24.56% on Sunflow
 Even the control has large regressions on those sources. Reject this candidate
 for promotion. `source-stage-native-comparison.json` retains all source deltas;
 `source-stage-matched-training.json` proves matched sampling and initialization.
+The r29 FP16-field source arm reaches the same conclusion: LPIPS worsens 1.49%
+and DISTS improves 1.28% against the matched control (1.35% worse / 1.54% better
+against shipping). `source-fp16-native-comparison.json` records that native run;
+960 identical comparator scores were reused after full pixel/provenance checks.
 
 `score_native_holdout.py --reuse-scores RGB_DIRECTORY REPORT` reuses measurements
 only when current output/reference pixel hashes match a complete prior report
@@ -236,3 +241,44 @@ reject oracle use. Estimated inference accepts only current RGB. Identity in
 FP32/BF16, frozen-backbone preservation, crop locality and checkpoint round trips
 are tested. Fold the backbone in FP32 once before training to prevent autocast
 from refreshing its supposedly frozen fused convolution caches.
+
+All three r31 arms completed with unchanged backbones and identical first
+decoded batches, initialization and target-cache hashes. Constant, estimated
+and oracle conditions worsen validation LPIPS by 0.681%, 0.900% and 1.128%, and
+DISTS by 0.350%, 0.224% and 0.190%. The estimate lowers condition MAE from 0.233
+to 0.163, but that calibration gain does not improve SR. Reject this modulation
+recipe for promotion; this does not rule out every degradation-conditioned
+architecture. `degradation-conditioning-screen.json` preserves all three runs.
+
+## Recurrent frame-feeding prototype
+
+[FRVSR](https://openaccess.thecvf.com/content_cvpr_2018/html/Sajjadi_Frame-Recurrent_Video_Super-Resolution_CVPR_2018_paper.html)
+motivates feeding the previous reconstructed frame into the current network.
+The first Lucid probe freezes shipping `big2k` and adds a zero-initialized,
+bias-free history convolution at the first feature map. A direct 4x space-to-depth
+pack converts the previous 2x RGB image to 48 channels at SPAN trunk resolution.
+This has the same information as a two-step pack, but its channel order is the
+direct 4x order and must be preserved in a future native port.
+
+Correspondence uses decoded LR, never the target or generated detail. Native
+integer block motion seeds a half-pixel refinement around both the integer and
+zero offsets. The zero seed matters: integer matching can choose an unrelated
+location when the true match falls between pixels. Unlike TAA, this prototype
+does not discard all small motion as stationary. This is experimental motion
+code, not a claim of production-kernel parity or a universal flow solution.
+
+The runner rejects occlusions and low-confidence cuts and explicitly resets on
+first frame, seek/gap, stream change, resize, device/dtype change or caller reset.
+History is the RGB8 reconstruction before sharpening/grading. Quantization uses
+a straight-through gradient during unrolled training. The generic still-image
+loader rejects recurrent checkpoints; a dedicated loader and sequence runner
+preserve the state contract. Seven tests cover identity, frozen gradients,
+integer/half-pixel correspondence, cuts, lifetime resets, storage, unrolled
+backpropagation and checkpoint round trips.
+
+r32 fixes a 2,000-step, three-frame FP32 training probe with the native input
+proxy, current-frame backbone frozen and final-frame reconstruction supervision.
+Validation uses full bank sequences to expose longer-history drift and compares
+spatial metrics and temporal residual error with the same frozen backbone.
+Native SR warping, model-interface integration, latency and delivered quality
+are not implemented or established by these prototype tests.

@@ -1,0 +1,214 @@
+{
+  "complete": true,
+  "scope": "matched three-arm source-disjoint patch validation, native input proxy but no native output stages; oracle reference assisted",
+  "models": {
+    "constant": {
+      "experiment": {
+        "args": {
+          "bank": "C:\\lucid\\stream-bank-v4",
+          "clean_cache": "C:\\lucid\\clean-lr-bank-v4-r30",
+          "init": "C:\\lucid\\paired-ladder-20260905-r10\\big_2k\\step002000.pth",
+          "out": "constant",
+          "mode": "constant",
+          "steps": 2000,
+          "batch": 4,
+          "crop": 96,
+          "seed": 20260914,
+          "native_input_stages": true
+        },
+        "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+        "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+        "clean_target_manifest_sha256": "d5823c422e39e01e46cdef368472b9c6eb2c5a0e230cc2ddc2cde1094d19a7ec",
+        "frozen_backbone_sha256": "2de8c2017b3856bb4f84933b6d8315412e997f5aa7e0c611f866d8973a90f341",
+        "estimator_initial_sha256": "91ed9c7fb68d4b6de928ce5f8513ecfa412a6baf4aea8f605df1c453d862c124",
+        "modulation_initial_sha256": "110283f36b467ca5df1cf4495e03b563248b71e9f59c88284bff2c245e0a8399",
+        "source_hashes": {
+          "experiments\\train_degradation_conditioning.py": "f69279ce55e498078fd69908bf2f6ec9d5e3eaad944d852c95e53b2e695f02d6",
+          "architectures\\degradation_conditioning.py": "7f455fea39efae8016df175ee9044afa0e2a59cf10bd2ea73d07bc34f0bfad3a",
+          "architectures\\subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+          "experiments\\native_stages.py": "f8765f3206cd7ec5a977806e6706b92006cd84a335d67542b8a0fbc3765f69af",
+          "experiments\\clean_lr_targets.py": "23f7fe50a173959881c6a05279554974e615b4d87556e3faa9c0f69df70e3fae",
+          "experiments\\train_presented_detail.py": "46776c4a1d2529cc32215392d1f971f40c3010c8be343eaa561f936434664288"
+        },
+        "recipe": "3 aligned frames; final-frame reconstruction + 0.5 estimator L1; detached SR condition; frozen backbone; no GAN",
+        "limitation": "Curvature also responds to real texture. Oracle clean-LR error is supervised damage, not an input-only blockiness measure.",
+        "torch": "2.6.0+cu124",
+        "gpu": "NVIDIA GeForce RTX 4080",
+        "purpose": "mechanism ablation; no release or native quality claim",
+        "first_decoded_sequence_sha256": "28a067ac3632e9fc41e8356621cfa3d95bbacaf2d966b8061a94e1beb8e38a06"
+      },
+      "completion": {
+        "complete": true,
+        "steps": 2000,
+        "backbone_unchanged": true,
+        "minutes": 2.196883333333729
+      },
+      "checkpoint_sha256": "27bc55fbe5bf15551b83593c756f7e7a6f3fd137cca5504fbce4b5806b32ad0f",
+      "validation_report_sha256": "1d80b1a4cdfad2ce2e9c89ffc79bd80ca546eab01a5e46c72b75a32667e79e16",
+      "source_balanced": {
+        "lpips": 0.2174685429102586,
+        "dists": 0.19742484887441,
+        "psnr_y": 28.716183127576315,
+        "detail_energy": 0.5856324558314631,
+        "fine_correlation": 0.5132614135770843
+      },
+      "base_source_balanced": {
+        "lpips": 0.21599817021827525,
+        "dists": 0.19673583077059853,
+        "psnr_y": 28.649567293414293,
+        "detail_energy": 0.6049927015062245,
+        "fine_correlation": 0.5130940935468267
+      },
+      "distance_change_percent": {
+        "lpips": 0.6807338647811134,
+        "dists": 0.3502250205835056
+      },
+      "condition_mae": 0.23260586543215644,
+      "per_source_distance_change_percent": {
+        "sintel": {
+          "lpips": 0.6807338647811134,
+          "dists": 0.3502250205835056
+        }
+      }
+    },
+    "estimated": {
+      "experiment": {
+        "args": {
+          "bank": "C:\\lucid\\stream-bank-v4",
+          "clean_cache": "C:\\lucid\\clean-lr-bank-v4-r30",
+          "init": "C:\\lucid\\paired-ladder-20260905-r10\\big_2k\\step002000.pth",
+          "out": "estimated",
+          "mode": "estimated",
+          "steps": 2000,
+          "batch": 4,
+          "crop": 96,
+          "seed": 20260914,
+          "native_input_stages": true
+        },
+        "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+        "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+        "clean_target_manifest_sha256": "d5823c422e39e01e46cdef368472b9c6eb2c5a0e230cc2ddc2cde1094d19a7ec",
+        "frozen_backbone_sha256": "2de8c2017b3856bb4f84933b6d8315412e997f5aa7e0c611f866d8973a90f341",
+        "estimator_initial_sha256": "91ed9c7fb68d4b6de928ce5f8513ecfa412a6baf4aea8f605df1c453d862c124",
+        "modulation_initial_sha256": "110283f36b467ca5df1cf4495e03b563248b71e9f59c88284bff2c245e0a8399",
+        "source_hashes": {
+          "experiments\\train_degradation_conditioning.py": "f69279ce55e498078fd69908bf2f6ec9d5e3eaad944d852c95e53b2e695f02d6",
+          "architectures\\degradation_conditioning.py": "7f455fea39efae8016df175ee9044afa0e2a59cf10bd2ea73d07bc34f0bfad3a",
+          "architectures\\subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+          "experiments\\native_stages.py": "f8765f3206cd7ec5a977806e6706b92006cd84a335d67542b8a0fbc3765f69af",
+          "experiments\\clean_lr_targets.py": "23f7fe50a173959881c6a05279554974e615b4d87556e3faa9c0f69df70e3fae",
+          "experiments\\train_presented_detail.py": "46776c4a1d2529cc32215392d1f971f40c3010c8be343eaa561f936434664288"
+        },
+        "recipe": "3 aligned frames; final-frame reconstruction + 0.5 estimator L1; detached SR condition; frozen backbone; no GAN",
+        "limitation": "Curvature also responds to real texture. Oracle clean-LR error is supervised damage, not an input-only blockiness measure.",
+        "torch": "2.6.0+cu124",
+        "gpu": "NVIDIA GeForce RTX 4080",
+        "purpose": "mechanism ablation; no release or native quality claim",
+        "first_decoded_sequence_sha256": "28a067ac3632e9fc41e8356621cfa3d95bbacaf2d966b8061a94e1beb8e38a06"
+      },
+      "completion": {
+        "complete": true,
+        "steps": 2000,
+        "backbone_unchanged": true,
+        "minutes": 2.2020833333333334
+      },
+      "checkpoint_sha256": "951af6056ec2761e91221117c5ee107f3b981055a4dd25a88b6660c7b6f11c7a",
+      "validation_report_sha256": "a1a0cb081d0f897840750cca838b7de16b97ced12e9d857f288b6a27dcc20c23",
+      "source_balanced": {
+        "lpips": 0.2179427718219813,
+        "dists": 0.1971756319204966,
+        "psnr_y": 28.729141227542193,
+        "detail_energy": 0.5826243243334065,
+        "fine_correlation": 0.5132741616718585
+      },
+      "base_source_balanced": {
+        "lpips": 0.21599817021827525,
+        "dists": 0.19673583077059853,
+        "psnr_y": 28.649567293414293,
+        "detail_energy": 0.6049927015062245,
+        "fine_correlation": 0.5130940935468267
+      },
+      "distance_change_percent": {
+        "lpips": 0.9002861467488188,
+        "dists": 0.22354908517447925
+      },
+      "condition_mae": 0.16297753320799935,
+      "per_source_distance_change_percent": {
+        "sintel": {
+          "lpips": 0.9002861467488188,
+          "dists": 0.22354908517447925
+        }
+      }
+    },
+    "oracle": {
+      "experiment": {
+        "args": {
+          "bank": "C:\\lucid\\stream-bank-v4",
+          "clean_cache": "C:\\lucid\\clean-lr-bank-v4-r30",
+          "init": "C:\\lucid\\paired-ladder-20260905-r10\\big_2k\\step002000.pth",
+          "out": "oracle",
+          "mode": "oracle",
+          "steps": 2000,
+          "batch": 4,
+          "crop": 96,
+          "seed": 20260914,
+          "native_input_stages": true
+        },
+        "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+        "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+        "clean_target_manifest_sha256": "d5823c422e39e01e46cdef368472b9c6eb2c5a0e230cc2ddc2cde1094d19a7ec",
+        "frozen_backbone_sha256": "2de8c2017b3856bb4f84933b6d8315412e997f5aa7e0c611f866d8973a90f341",
+        "estimator_initial_sha256": "91ed9c7fb68d4b6de928ce5f8513ecfa412a6baf4aea8f605df1c453d862c124",
+        "modulation_initial_sha256": "110283f36b467ca5df1cf4495e03b563248b71e9f59c88284bff2c245e0a8399",
+        "source_hashes": {
+          "experiments\\train_degradation_conditioning.py": "f69279ce55e498078fd69908bf2f6ec9d5e3eaad944d852c95e53b2e695f02d6",
+          "architectures\\degradation_conditioning.py": "7f455fea39efae8016df175ee9044afa0e2a59cf10bd2ea73d07bc34f0bfad3a",
+          "architectures\\subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+          "experiments\\native_stages.py": "f8765f3206cd7ec5a977806e6706b92006cd84a335d67542b8a0fbc3765f69af",
+          "experiments\\clean_lr_targets.py": "23f7fe50a173959881c6a05279554974e615b4d87556e3faa9c0f69df70e3fae",
+          "experiments\\train_presented_detail.py": "46776c4a1d2529cc32215392d1f971f40c3010c8be343eaa561f936434664288"
+        },
+        "recipe": "3 aligned frames; final-frame reconstruction + 0.5 estimator L1; detached SR condition; frozen backbone; no GAN",
+        "limitation": "Curvature also responds to real texture. Oracle clean-LR error is supervised damage, not an input-only blockiness measure.",
+        "torch": "2.6.0+cu124",
+        "gpu": "NVIDIA GeForce RTX 4080",
+        "purpose": "mechanism ablation; no release or native quality claim",
+        "first_decoded_sequence_sha256": "28a067ac3632e9fc41e8356621cfa3d95bbacaf2d966b8061a94e1beb8e38a06"
+      },
+      "completion": {
+        "complete": true,
+        "steps": 2000,
+        "backbone_unchanged": true,
+        "minutes": 2.176833333334071
+      },
+      "checkpoint_sha256": "6808a7eefb5ae5e1b4c947f9851d3983d1e284fb8209b63d15b5e65a996d7694",
+      "validation_report_sha256": "c8974e0a09a25a821f48b3d6ba9f8b5954d2ec80df418b11126c8a2aef8bd41c",
+      "source_balanced": {
+        "lpips": 0.21843390245016459,
+        "dists": 0.19711052378018698,
+        "psnr_y": 28.740854872661746,
+        "detail_energy": 0.5834357755092324,
+        "fine_correlation": 0.5130094443930118
+      },
+      "base_source_balanced": {
+        "lpips": 0.21599817021827525,
+        "dists": 0.19673583077059853,
+        "psnr_y": 28.649567293414293,
+        "detail_energy": 0.6049927015062245,
+        "fine_correlation": 0.5130940935468267
+      },
+      "distance_change_percent": {
+        "lpips": 1.1276633637349542,
+        "dists": 0.1904548897477376
+      },
+      "condition_mae": 0.0,
+      "per_source_distance_change_percent": {
+        "sintel": {
+          "lpips": 1.1276633637349542,
+          "dists": 0.1904548897477376
+        }
+      }
+    }
+  },
+  "decision": "No promotion. Estimated damage calibration improves over constant input but all three SR arms worsen LPIPS/DISTS. This rejects this modulation recipe, not every possible degradation-conditioned architecture."
+}
