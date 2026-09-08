@@ -717,3 +717,36 @@ less bee/car speckling while retaining some foliage separation. EMA native
 evaluation is underway. REDS scoring is rerun to a fresh report after a Windows
 sharing violation during concurrent report transfer; trained weights are intact
 and no training is repeated. The partial failed report is not quality evidence.
+
+The fresh REDS retry completes successfully. Student LPIPS/DISTS improve
+4.431%/3.696% against shipping; EMA improves 4.018%/2.835%. Both REDS sources
+improve on both distances. Local student/EMA checkpoint hashes match independent
+GPU-host hashes. These raw improvements are smaller than the unregularized
+model's, consistent with reduced false texture and some reduced foliage gain.
+
+r45 EMA native evaluation is complete: LPIPS/DISTS worsen 2.822%/2.669% against
+shipping. Ducks, OldTown, ParkJoy and InToTree improve on both distances;
+Pedestrian, RushHour, Sunflower and Tractor regress. Fixed crops confirm much
+less speckling than the unregularized r44 model but only modest improvements
+over shipping, alongside remaining rough outlines. LDL/EMA reduces the broader
+data's artifact penalty without resolving the overall distribution tradeoff.
+The final student's native evaluation remains active.
+
+## Recurrent information diagnostic
+
+While r45 student runs natively, a fixed diagnostic revisits the three previously
+selected r41 validation patches for all 15 transitions. Motion and confidence
+use only decoded LR. Compare fixed .25/.5/1 confidence-weighted blends into
+current shipping SR using either previous shipping SR or previous clean HR.
+Clean HR history is an oracle diagnostic and is never an inference input.
+No blend coefficient is fitted or selected for deployment.
+
+At the predefined .25 blend, oracle previous-HR MSE improves 9.160% on REDS073,
+10.635% on REDS154 and 12.275% on Sintel. Previous-SR MSE instead changes
++0.250%, -0.538% and +5.770%. Mean confidence is .734/.675/.997. These three
+patches show some usable correspondence, but not a useful simple blend of
+predicted SR history. They motivate investigating temporal state that retains
+observed information instead of assuming generated previous output is sufficient.
+This is a limited MSE mechanism probe, not a perceptual result, exact alignment
+proof, optimal oracle bound, or native runtime claim.
+`history-information-diagnostic.json` retains every transition and all fixed blends.

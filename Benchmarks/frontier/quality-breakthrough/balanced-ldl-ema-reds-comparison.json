@@ -1,0 +1,79 @@
+{
+  "complete": true,
+  "scope": "r45 balanced LDL100 EMA, raw REDS720 versus shipping; complete retry after report sharing violation",
+  "frames": 720,
+  "report_sha256": "8ad685de69f3b204689c5cf192b0ac3a9b6555f3ea1ac97a81e4e4e5ddb49b12",
+  "baseline_report_sha256": "8ad685de69f3b204689c5cf192b0ac3a9b6555f3ea1ac97a81e4e4e5ddb49b12",
+  "checkpoint_sha256": {
+    "student": "3388fb4365baa41056d159d7f586e723643f47b92eb3d444923ef2e56e1832b3",
+    "ema": "c54d174df411312c1cf15a82e2b0e187a54595455adbd9364ecd29ddbc5719eb",
+    "big2k": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c"
+  },
+  "candidate": {
+    "sources": {
+      "reds_154": {
+        "lpips": 0.2829694231765138,
+        "dists": 0.2501309037208557,
+        "psnr_y": 26.368153636047968,
+        "detail_energy": 0.5483429923522233,
+        "fine_correlation": 0.37577504984965476
+      },
+      "reds_073": {
+        "lpips": 0.3449453227221966,
+        "dists": 0.24849916464752622,
+        "psnr_y": 22.87123022938859,
+        "detail_energy": 0.4669553090274343,
+        "fine_correlation": 0.2640801366411309
+      }
+    },
+    "source_balanced": {
+      "lpips": 0.3139573729493552,
+      "dists": 0.249315034184191,
+      "psnr_y": 24.61969193271828,
+      "detail_energy": 0.5076491506898289,
+      "fine_correlation": 0.3199275932453928
+    }
+  },
+  "baseline": {
+    "sources": {
+      "reds_154": {
+        "lpips": 0.3003982782984773,
+        "dists": 0.25876827604240843,
+        "psnr_y": 26.42307851189929,
+        "detail_energy": 0.5211994265990255,
+        "fine_correlation": 0.3850784161612187
+      },
+      "reds_073": {
+        "lpips": 0.3537989249245988,
+        "dists": 0.2544108046425713,
+        "psnr_y": 22.864455298966412,
+        "detail_energy": 0.4566856822268707,
+        "fine_correlation": 0.26709763488501487
+      }
+    },
+    "source_balanced": {
+      "lpips": 0.32709860161153803,
+      "dists": 0.2565895403424899,
+      "psnr_y": 24.64376690543285,
+      "detail_energy": 0.4889425544129481,
+      "fine_correlation": 0.3260880255231168
+    }
+  },
+  "percent_change": {
+    "source_balanced": {
+      "lpips": -4.017512944854873,
+      "dists": -2.8350750964318494
+    },
+    "sources": {
+      "reds_154": {
+        "lpips": -5.8019157835006325,
+        "dists": -3.337879145640388
+      },
+      "reds_073": {
+        "lpips": -2.502438978379906,
+        "dists": -2.3236591713746257
+      }
+    }
+  },
+  "interpretation": "Negative LPIPS/DISTS change is better; these measurements supplement visual review and do not establish release admission."
+}
