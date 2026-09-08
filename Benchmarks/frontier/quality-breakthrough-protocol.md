@@ -26,7 +26,8 @@ one. The feature remains disabled by default.
    reference formulation and test r28 at the already chosen weight 100, with
    2,000 and 4,000 steps. Score both student and EMA checkpoints.
 2. **Flip cycle:** the prior two native runs are complete. The tested mechanism
-   is closed as a breakthrough candidate; do not enable by default.
+   and a subsequent actual four-pass static ensemble are closed as breakthrough
+   candidates on the measured sources; do not enable by default.
 3. **Stage-aware training:** first isolate source-stage adaptation, with three
    consecutive LR frames through the deband/TAA proxy. Compare matched 1,000-step
    fine-tunes from `v4_w0075_2k`, using the same three-frame sampler for both arms.
@@ -89,6 +90,23 @@ ensemble mechanism, a material gain, temporal stability, or zero latency cost.
 `quality-breakthrough/flip-cycle-comparison.json` preserves the complete
 per-source comparison and hashes of the full reports. No promotion.
 
+An actual four-pass static ensemble was then tested on 48 development frames,
+using shipping `big2k` and `v4_w0075_2k` on the same MPS scorer. Each prediction is
+unflipped and quantized to RGB8 before averaging. Unlike frame cycling in the
+current app, this actually averages all four orientations of identical content.
+It costs four model evaluations and is not a native temporal experiment.
+
+| Model | LPIPS change | DISTS change |
+|---|---:|---:|
+| Shipping `big2k` | +3.596% | +1.901% |
+| 33-source `v4_2k` | +5.111% | +3.243% |
+
+Positive is worse. Every development source worsens on both metrics. This
+rejects the proposed averaging mechanism on this screen; it does not establish
+a universal result for every scene or model. The full 240-row report and
+per-source comparison are `static-flip-ensemble-evaluation.json` and
+`static-flip-ensemble-comparison.json` in `quality-breakthrough/`.
+
 ## Stage proxy verification and limits
 
 `native_stages.py` follows the production deband, block motion, and TAA kernels.
@@ -134,3 +152,9 @@ native evaluation; they do not constitute release admission. A repeated holdout
 is regression evidence, not fresh independent validation. Keep the current
 shipping assets until a candidate delivers a material native improvement with
 the existing detail and per-source safeguards and acceptable runtime cost.
+
+For stage-aware candidates, raw checkpoint scores are diagnostic only: these
+models are explicitly optimized for transformed inputs and/or presented outputs.
+Their raw scores cannot substitute for native evaluation. The r29 script fixes
+source-only (FP16 field), output-only, and combined 1,000-step arms; it is prepared
+separately from the immutable running r28 snapshot.
