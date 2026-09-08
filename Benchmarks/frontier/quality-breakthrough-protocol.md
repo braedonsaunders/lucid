@@ -43,17 +43,18 @@ one. The feature remains disabled by default.
 5. **Degradation conditioning:** implemented; constant, estimated, and oracle
    arms are fixed in r31. Compare reference-assisted damage maps with local
    input-only estimates; never deploy oracle information.
-6. **Recurrent frame feeding:** prototype and state-lifetime tests implemented;
-   r32's first 2k probe is complete. It modestly improves fidelity/temporal error
-   but worsens LPIPS. Native integration and joint/perceptual training remain
-   untested. Warp previous predictions using decoded-input motion.
+6. **Recurrent frame feeding:** frozen and joint/perceptual probes are complete,
+   including held-out Sintel and REDS. History does not improve over the trained
+   current-frame branch; native integration remains untested. Warp previous
+   predictions using decoded-input motion.
 7. **Confidence head:** implemented and first 2k proxy probe complete; learned
    policies worsen perceptual quality. Native integration is not justified yet.
 8. **Clean-LR consistency and AESOP:** implemented and unit-tested; r36 fixes
    matched loss ablations. Explicit full-chroma resize differs from pre-encode YUV.
-9. **Larger base pretraining bank:** implemented and assembled. r38b's matched
-   original-bank control is complete; r39's expanded-bank training is underway.
-   Preserve source-disjoint evaluation and licence provenance.
+9. **Larger base pretraining bank:** assembled and evaluated against a matched
+   original-bank control, including native output. Expanded-critic and equal-source
+   follow-ups investigate the observed distribution tradeoff. Preserve
+   source-disjoint evaluation and licence provenance.
 
 ## LDL implementation and verification
 
@@ -641,3 +642,13 @@ data balance and whether the longer pixel-base stage was needed. Model geometry
 and inference operations remain unchanged. The pending optional 60-versus-30fps
 preference does not affect these same-architecture experiments; the current
 performance target remains in force.
+
+The r43 native measurement is complete: source-balanced LPIPS worsens 15.373%
+and DISTS 26.809% against shipping. ParkJoy improves 19.901%/18.775% and InToTree
+17.962%/15.619%; unscaled crops show more separated foliage structure. The same
+model adds conspicuous speckling around the bee and small cars, with Sunflower
+worsening 241.050%/142.664% and RushHour 113.732%/109.334%. Both the original
+three-crop gallery and additional natural-scene crops were reviewed, so the
+decision reflects visible gains and defects rather than aggregate scores alone.
+No promotion. `expanded-critic-native-comparison.json` retains all eight sources.
+All 68 relevant unit tests pass after the source-sampling addition.
