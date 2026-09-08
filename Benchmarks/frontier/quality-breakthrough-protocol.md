@@ -860,3 +860,18 @@ not deployable oracle inputs or a broad perceptual gain. The fixed-weight models
 were trained with legacy motion; corrected-motion training remains the next
 controlled question. `recurrent-motion-information-comparison.json` retains all
 45 transitions under both policies. No native model is promoted.
+
+## Train with corrected recurrent correspondence
+
+r48 starts three fresh 2k arms from the unchanged shipping checkpoint: no-history
+control, generated-SR history and decoded-observation history. The r46 recipe,
+bank, seed, three-frame crops, joint learning rates, source-stage proxies and
+paired critic are preserved; `motion_seed=search` is explicit from initialization.
+This tests learning with corrected alignment rather than applying new motion
+only after training. A fresh control checks repeat behavior and all three arms
+must match initialization, bank, first-batch and discriminator hashes. Each is
+evaluated on full 16-frame Sintel sequences plus the same held-out REDS windows,
+including its own current-frame branch. The code snapshot is copied from the
+verified r47 replay and includes the REDS evaluator before any job starts.
+Useful proxy results would still require native integration and quality/runtime
+validation against the single-model 60fps target.
