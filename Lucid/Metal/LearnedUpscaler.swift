@@ -36,6 +36,7 @@
 //  previous ch28 took 14.7 ms and ch48 took 21.8 ms.
 //
 
+import Accelerate
 import CoreML
 import Metal
 import CoreVideo
@@ -216,6 +217,15 @@ final class LearnedUpscaler: @unchecked Sendable {
     typealias Prediction = (MLModel, MLFeatureProvider) throws -> MLFeatureProvider
     private let predict: Prediction
     private let inputFormat: OSType
+    /// Experiment: cycle the model input through the four flip orientations,
+    /// one per frame, and flip the output back. Static content then reaches
+    /// the temporal accumulator as a free geometric self-ensemble, which
+    /// decorrelates orientation-specific synthesized speckle while leaving
+    /// real structure, which is orientation-invariant, untouched.
+    nonisolated(unsafe) static var flipCycle = false
+    private var frameCounter = 0
+    private var flipInPool: CVPixelBufferPool?
+    private var flipOutPool: CVPixelBufferPool?
     private var transfer: VTPixelTransferSession?
     private var rgbPool: CVPixelBufferPool?
     private var outputPool: CVPixelBufferPool?
@@ -374,9 +384,12 @@ final class LearnedUpscaler: @unchecked Sendable {
             rgb = try convert(source, to: inputFormat, width: inputWidth, height: inputHeight, pool: &rgbPool)
         }
 
+        let orientation = Self.flipCycle ? frameCounter % 4 : 0
+        frameCounter &+= 1
+        let modelInput = orientation == 0 ? rgb : try flipped(rgb, orientation: orientation, pool: &flipInPool)
         let provider = try MLDictionaryFeatureProvider(
-            dictionary: [inputName: MLFeatureValue(pixelBuffer: rgb)])
-        let value: CVPixelBuffer
+            dictionary: [inputName: MLFeatureValue(pixelBuffer: modelInput)])
+        var value: CVPixelBuffer
         do {
             let result = try predict(model, provider)
             if let tensorPacker {
@@ -398,6 +411,7 @@ final class LearnedUpscaler: @unchecked Sendable {
         }
         guard CVPixelBufferGetWidth(value) == outputWidth,
               CVPixelBufferGetHeight(value) == outputHeight else { throw Failure.prediction }
+        if orientation != 0 { value = try flipped(value, orientation: orientation, pool: &flipOutPool) }
 
         // The image model predicts RGB samples in its input encoding. Core ML
         // returns an untagged image; defaulting it to 709 would lose sRGB here.
@@ -409,6 +423,57 @@ final class LearnedUpscaler: @unchecked Sendable {
         // unchanged by the choice of upscaler.
         return try convert(value, to: sourceFormat,
                            width: outputWidth, height: outputHeight, pool: &outputPool)
+    }
+
+    /// Mirrors a 4-channel 8-bit buffer: 1 = horizontal, 2 = vertical, 3 = both.
+    /// The operation is its own inverse, so the same call un-flips the output.
+    private func flipped(_ source: CVPixelBuffer, orientation: Int, pool: inout CVPixelBufferPool?) throws -> CVPixelBuffer {
+        let width = CVPixelBufferGetWidth(source), height = CVPixelBufferGetHeight(source)
+        let format = CVPixelBufferGetPixelFormatType(source)
+        if pool == nil {
+            let attributes: [String: Any] = [
+                kCVPixelBufferWidthKey as String: width,
+                kCVPixelBufferHeightKey as String: height,
+                kCVPixelBufferPixelFormatTypeKey as String: format,
+                kCVPixelBufferIOSurfacePropertiesKey as String: [:] as [String: Any],
+                kCVPixelBufferMetalCompatibilityKey as String: true,
+            ]
+            var created: CVPixelBufferPool?
+            guard CVPixelBufferPoolCreate(kCFAllocatorDefault,
+                                          [kCVPixelBufferPoolMinimumBufferCountKey as String: 4] as CFDictionary,
+                                          attributes as CFDictionary, &created) == kCVReturnSuccess
+            else { throw Failure.pixelBuffer }
+            pool = created
+        }
+        var destination: CVPixelBuffer?
+        guard let pool, CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pool, &destination) == kCVReturnSuccess,
+              let destination else { throw Failure.pixelBuffer }
+        CVPixelBufferLockBaseAddress(source, .readOnly)
+        CVPixelBufferLockBaseAddress(destination, [])
+        defer {
+            CVPixelBufferUnlockBaseAddress(source, .readOnly)
+            CVPixelBufferUnlockBaseAddress(destination, [])
+        }
+        guard let sourceBase = CVPixelBufferGetBaseAddress(source), let destinationBase = CVPixelBufferGetBaseAddress(destination)
+        else { throw Failure.pixelBuffer }
+        var src = vImage_Buffer(data: sourceBase, height: vImagePixelCount(height), width: vImagePixelCount(width),
+                                rowBytes: CVPixelBufferGetBytesPerRow(source))
+        var dst = vImage_Buffer(data: destinationBase, height: vImagePixelCount(height), width: vImagePixelCount(width),
+                                rowBytes: CVPixelBufferGetBytesPerRow(destination))
+        if orientation & 1 != 0 {
+            guard vImageHorizontalReflect_ARGB8888(&src, &dst, 0) == kvImageNoError else { throw Failure.pixelBuffer }
+        }
+        if orientation & 2 != 0 {
+            if orientation & 1 != 0 {
+                guard vImageVerticalReflect_ARGB8888(&dst, &dst, 0) == kvImageNoError else { throw Failure.pixelBuffer }
+            } else {
+                guard vImageVerticalReflect_ARGB8888(&src, &dst, 0) == kvImageNoError else { throw Failure.pixelBuffer }
+            }
+        }
+        if let attachments = CVBufferCopyAttachments(source, .shouldPropagate) {
+            CVBufferSetAttachments(destination, attachments, .shouldPropagate)
+        }
+        return destination
     }
 
     private func convert(_ source: CVPixelBuffer, to format: OSType,

@@ -422,6 +422,7 @@ enum PipelineTiming {
         let compositor = try MetalTileCompositor()
         let t = EnhancementSession.Tuning.load()
         TiledVideoToolboxUpscaler.chromaSitingLeft = t.stageSiting > 0.5
+        LearnedUpscaler.flipCycle = t.flipCycle > 0.5
         let detail = try DetailEnhancer(device: compositor.device, settings: t.detailSettings(radius: 4))
 
         var learned: LearnedUpscaler?

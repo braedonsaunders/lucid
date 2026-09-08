@@ -48,6 +48,32 @@ def temporal_consistency(previous_output, output, previous_reference, reference,
     return ((output - previous_output).abs() * still).mean() / coverage, float(still.mean())
 
 
+def local_variance(x, size=7):
+    """Per-pixel variance of a residual over a size x size window, per channel."""
+    mean = F.avg_pool2d(x, size, 1, size // 2, count_include_pad=False)
+    square = F.avg_pool2d(x * x, size, 1, size // 2, count_include_pad=False)
+    return (square - mean * mean).clamp_min(0)
+
+
+def ldl_artifact_map(output, reference, ema_output, size=7, exponent=.2):
+    """Details or Artifacts (Liang, Zeng, Zhang, CVPR 2022), as in the reference
+    implementation: the channel-summed absolute residual, its local variance
+    over a size x size window, scaled by a patch-level factor var(R)^(1/5), and
+    zeroed wherever the EMA twin's residual is larger than the current one.
+    Real detail leaves a residual the EMA model shares; invented texture does
+    not, so the map is zero on detail and positive on artifacts."""
+    residual = (reference - output).abs().sum(1, keepdim=True).detach()
+    residual_ema = (reference - ema_output).abs().sum(1, keepdim=True).detach()
+    patch = residual.flatten(1).var(1).clamp_min(1e-12).pow(exponent).view(-1, 1, 1, 1)
+    weight = patch * local_variance(residual, size)
+    return torch.where(residual < residual_ema, torch.zeros_like(weight), weight)
+
+
+def ldl_loss(output, reference, ema_output):
+    weight = ldl_artifact_map(output, reference, ema_output)
+    return (weight * (output - reference).abs()).mean()
+
+
 def bounded_adversarial_scale(base_norm, weighted_adversarial_norm, ratio_cap):
     """Only attenuate the GAN term; the detached scale adds no second derivatives."""
     if not math.isfinite(ratio_cap) or ratio_cap <= 0:
@@ -128,6 +154,8 @@ def main():
     ap.add_argument('--detail-target', choices=['mixture', 'reference'], default='mixture',
                     help='Controlled supervision ablation; inference architecture and weights format are unchanged')
     ap.add_argument('--dino-gan-weight', type=float, default=0)
+    ap.add_argument('--ldl-weight', type=float, default=0,
+        help='weight of the Details-or-Artifacts residual-variance penalty against an EMA twin (alpha 0.999)')
     ap.add_argument('--temporal', type=float, default=0,
                     help='Weight of the reference-static temporal consistency term (two consecutive frames per crop; 0 = off)')
     ap.add_argument('--input-noise', type=float, default=0,
@@ -276,6 +304,7 @@ def main():
     max_applied_head_ratio = torch.zeros((), device='cuda')
     min_adversarial_scale = torch.ones((), device='cuda')
     temporal_coverage = []
+    ema_model = None
     for step in range(1, args.steps + 1):
         frames = 2 if args.temporal else 1
         x, reference, intended = batch(data['train'], rng, args.batch, frames, args.crop, mixed)
@@ -297,6 +326,18 @@ def main():
             (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
         output, reference, intended = (v.float()[:, :, 8:-8, 8:-8] for v in (output, reference, intended))
         loss = reconstruction_objective(output, reference, intended, args.detail_target)
+        if args.ldl_weight:
+            if ema_model is None:
+                import copy
+                ema_model = copy.deepcopy(model).eval()
+                for parameter in ema_model.parameters(): parameter.requires_grad_(False)
+            with torch.no_grad(), torch.autocast('cuda', dtype=torch.bfloat16):
+                ema_output = ema_model(x).float()[:, :, 8:-8, 8:-8]
+            artifact = ldl_loss(output, reference, ema_output)
+            if step in (1, 200, 1000):
+                print(json.dumps({'step': step, 'reconstruction': float(loss), 'ldl_raw': float(artifact),
+                    'ldl_weighted': float(args.ldl_weight * artifact)}), flush=True)
+            loss = loss + args.ldl_weight * artifact
         if args.temporal:
             with torch.autocast('cuda', dtype=torch.bfloat16):
                 previous_output = model(augment_input_noise(previous[0], args.input_noise))
@@ -336,6 +377,10 @@ def main():
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1)
         optimizer.step()
+        if args.ldl_weight and ema_model is not None:
+            with torch.no_grad():
+                for ema_parameter, parameter in zip(ema_model.parameters(), model.parameters()):
+                    ema_parameter.lerp_(parameter.detach().float().to(ema_parameter.dtype), 1 - .999)
         if adversary:
             with torch.autocast('cuda', dtype=torch.bfloat16):
                 discriminator_loss = adversary.update(reference, fake_features)
