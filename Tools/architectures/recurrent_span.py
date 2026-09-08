@@ -11,14 +11,14 @@ from .subspace_adapter import fuse_convolutions
 
 
 class RecurrentSPAN(nn.Module):
-    def __init__(self, sr):
+    def __init__(self, sr, *, train_backbone=False):
         super().__init__()
         if sr.frames != 1 or sr.core.upsampler[1].upscale_factor != 4:
             raise ValueError('single-frame 2x source model required')
         if sr.core.img_range != 1 or torch.count_nonzero(sr.core.mean):
             raise ValueError('unit-range zero-mean source model required')
         fuse_convolutions(sr)
-        self.sr = sr.eval().requires_grad_(False)
+        self.sr = sr.eval().requires_grad_(train_backbone)
         # Previous 2x RGB -> 12 LR channels -> 48 channels at the SPAN trunk.
         self.history = nn.Conv2d(48, sr.core.conv_1.out_channels, 3, padding=1, bias=False)
         nn.init.zeros_(self.history.weight)

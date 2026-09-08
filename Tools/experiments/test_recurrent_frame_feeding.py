@@ -105,6 +105,32 @@ class RecurrentFrameTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 load(path, 'cpu')
 
+    def test_joint_backbone_and_history_receive_finite_gradients(self):
+        model = RecurrentSPAN(Unshuffled(4, scale=2), train_backbone=True).train()
+        source = torch.rand(1, 1, 3, 16, 24).repeat(1, 3, 1, 1, 1)
+        before = model.sr.core.conv_1.weight.detach().clone()
+        output, _ = run_sequence(model, source)
+        loss = (output[:, -1] - .4).square().mean()
+        loss.backward()
+        for parameter in (model.sr.core.conv_1.weight, model.history.weight):
+            self.assertTrue(torch.isfinite(parameter.grad).all())
+            self.assertGreater(float(parameter.grad.abs().sum()), 0)
+        torch.optim.SGD(model.parameters(), lr=.1).step()
+        self.assertFalse(torch.equal(before, model.sr.core.conv_1.weight))
+        self.assertGreater(float(model.history.weight.detach().abs().sum()), 0)
+
+    def test_joint_no_history_control_is_independent_of_prior_frames(self):
+        model = RecurrentSPAN(Unshuffled(4, scale=2), train_backbone=True).train()
+        with torch.no_grad():
+            model.history.weight.fill_(.02)
+        source = torch.rand(1, 3, 3, 16, 24)
+        actual, _ = run_sequence(model, source, use_history=False)
+        changed = source.clone()
+        changed[:, :2] = 1 - changed[:, :2]
+        other, _ = run_sequence(model, changed, use_history=False)
+        torch.testing.assert_close(actual[:, -1], other[:, -1], rtol=0, atol=0)
+        torch.testing.assert_close(actual[:, -1], model.sr(source[:, -1]).clamp(0, 1), rtol=0, atol=0)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -488,3 +488,40 @@ BF16 in both arms. `--sr-precision fp32` changes only SR, EMA and temporal model
 forwards; the default preserves existing arithmetic. The r38b/r39 larger-bank
 comparison keeps its original immutable trainer snapshot. Numerical agreement
 alone cannot establish native quality; this probe must be evaluated normally.
+
+The completed FP32 arm worsens development LPIPS 0.411% and DISTS 0.064% against
+its new BF16 control. Initialization, bank, first sampled tensors and initial
+critic hashes match; only the intended first SR output differs. There is no
+measured advantage supporting further native work on this precision setting.
+The new BF16 control also differs from r33 despite matching those initial
+hashes. Its first critic gradient differs in the last floating-point bit and
+later optimization diverges. The default reconstruction formula is unit-tested
+bit-exact, but code snapshots differ; this is not a clean same-binary variance
+estimate. Small single-run effects should not be treated as reliable gains.
+Both comparisons are retained as `sr-precision-development-comparison.json`
+and `bf16-control-repeat-comparison.json`.
+
+The 4k LDL student now has a complete native result: aggregate LPIPS worsens
+1.240% and DISTS 0.152% against shipping. RushHour worsens 30.25% / 21.91%;
+Sunflower worsens 23.81% / 7.78%. Direct crop review shows rougher small-car
+boundaries and texture changes, without an obvious detail breakthrough.
+`ldlref100-4k-student-native-comparison.json` records all eight sources. The EMA
+native comparison remains in progress.
+
+## Joint recurrence follow-up
+
+r41 removes the frozen-backbone limitation of the first recurrent probe.
+Two 2,000-step arms optimize the same fused SR graph with identical source-stage
+inputs, final-frame reconstruction and paired critic weight 0.0075. The control
+disables history; the recurrent arm also learns the zero-initialized history
+convolution. Backbone learning rate is 2e-5 and history rate 2e-4 with cosine
+decay. SR and warps remain FP32; the training-only critic uses BF16. This is a
+matched test of recurrence under joint perceptual training, not an isolated
+comparison of fused and reparameterized optimization.
+
+Validation includes the unchanged starting model, the trained current-frame
+branch and the full 16-frame recurrent sequence. In the control, the latter
+explicitly has history disabled. Nine tests now cover the original frozen
+behavior, joint gradients, and independence from earlier frames in the control.
+Positive patch evidence would still require native state, warp-cost and visual
+validation before any deployment.
