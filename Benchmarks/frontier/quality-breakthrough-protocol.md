@@ -1,8 +1,10 @@
 # Ranked quality experiments
 
 Continue the ranked research/innovation list from thread `thr_jbe5uyie3u` under
-the native Codex goal. Optimize native delivered quality, keep one shipping
-model, and retain the existing comparison gates. No commercial SDK outputs,
+the native Codex goal. Optimize native delivered quality and keep one shipping
+model. Retain the existing comparison measurements as diagnostics, alongside
+visual review: a threshold alone must not discard a visibly better result.
+No commercial SDK outputs,
 weights, or benchmark numbers are included in these experiments or receipts.
 
 ## Pipeline correction that changes the experiment
@@ -470,3 +472,19 @@ v4 pairs on the `I:` SSD, checks that the manifest hash is identical, and restar
 the full unchanged seed/schedule from the original pretrained initialization.
 The expanded mapped bank will also use that SSD; sequential source preparation
 remains on `D:`. The available SSD space was about 122 GiB before these copies.
+
+## Training arithmetic follow-up
+
+A fixed 48-crop diagnostic compared the same `big2k` weights with unfused
+training and fused evaluation graphs. Against fused FP32 evaluation, BF16
+training arithmetic differs by 0.328 RGB levels on average; FP16 differs by
+0.039 and FP32 by 0.017. These are forward differences, not quality improvements.
+The receipt defines its aggregation explicitly: `max_rgb` is the mean of each
+crop's maximum, not the maximum over the dataset.
+
+r40 fixes a matched 1,000-step BF16/FP32 SR-forward ablation from `big2k`, using
+the r33 sampler, original v4 data, seed and objectives. The paired critic remains
+BF16 in both arms. `--sr-precision fp32` changes only SR, EMA and temporal model
+forwards; the default preserves existing arithmetic. The r38b/r39 larger-bank
+comparison keeps its original immutable trainer snapshot. Numerical agreement
+alone cannot establish native quality; this probe must be evaluated normally.

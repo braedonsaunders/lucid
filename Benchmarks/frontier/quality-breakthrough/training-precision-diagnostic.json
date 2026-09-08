@@ -1,0 +1,53 @@
+{
+  "complete": true,
+  "scope": "128px center crops from fixed development inputs; forward arithmetic only, not native quality or training ablation",
+  "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+  "manifest_sha256": "aac663ad088fede87e1ede68cb46501603fc0f0b066b5ae6c07726b6555d923f",
+  "code_sha256": "955145d6d2db8467bca0e5176f9c6f0d00ea70a88f421700e261b6595c49b150",
+  "torch": "2.6.0+cu124",
+  "gpu": "NVIDIA GeForce RTX 4080",
+  "reference": "fused evaluation graph FP32, 16 output-pixel border excluded",
+  "summary": {
+    "train_float32": {
+      "mean_rgb": 0.017012098144429427,
+      "max_rgb": 0.16998569946736097,
+      "rounded_rgb_rmse": 0.12940471029529968
+    },
+    "train_bfloat16": {
+      "mean_rgb": 0.32841377581159276,
+      "max_rgb": 3.0788845469554267,
+      "rounded_rgb_rmse": 0.5685342413683733
+    },
+    "train_float16": {
+      "mean_rgb": 0.03891470873107513,
+      "max_rgb": 0.3734138794243336,
+      "rounded_rgb_rmse": 0.1984778999661406
+    },
+    "eval_float32": {
+      "mean_rgb": 0.0,
+      "max_rgb": 0.0,
+      "rounded_rgb_rmse": 0.0
+    },
+    "eval_bfloat16": {
+      "mean_rgb": 0.30174523560951155,
+      "max_rgb": 3.058913141489029,
+      "rounded_rgb_rmse": 0.5459136608988047
+    },
+    "eval_float16": {
+      "mean_rgb": 0.0382405681690822,
+      "max_rgb": 0.39878812556465465,
+      "rounded_rgb_rmse": 0.19639810329924026
+    },
+    "train_vs_eval_bfloat16": {
+      "mean_rgb": 0.27232273016124964,
+      "max_rgb": 3.44482421875
+    },
+    "train_vs_eval_float16": {
+      "mean_rgb": 0.03523626566554109,
+      "max_rgb": 0.4604339599609375
+    }
+  },
+  "receipt_sha256": "adab2fb57ff3d35b5da60a03c312bcb5f624cb4a6c4fcedfd78c73943472aa0a",
+  "aggregation": "Each summary field is the arithmetic mean over 48 crops; max_rgb is the mean of crop maxima, not the global maximum.",
+  "interpretation": "BF16 forward differences justify a matched precision ablation; this diagnostic does not measure image quality or establish the cause of existing regressions."
+}

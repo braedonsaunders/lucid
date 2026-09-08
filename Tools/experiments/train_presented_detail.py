@@ -180,6 +180,8 @@ def main():
     ap.add_argument('--crop', type=int, default=96)
     ap.add_argument('--lr', type=float, default=0.00002)
     ap.add_argument('--seed', type=int, default=20260914)
+    ap.add_argument('--sr-precision', choices=['bf16', 'fp32'], default='bf16',
+        help='SR forward arithmetic only; the critic remains BF16 and optimizer states FP32')
     ap.add_argument('--architecture', choices=['coupled', 'anchored_detail', 'anchored_lowpass',
                     'subspace_full', 'subspace_protected'], default='coupled')
     ap.add_argument('--detail-channels', type=int, default=32)
@@ -331,7 +333,8 @@ def main():
             Path(__file__).resolve().parents[1] / 'architectures/span_arch.py')},
         'loss': 'L1 to ' + {'reference': 'HR reference', 'teacher': 'teacher cache', 'mixture': 'fixed mixture'}[args.intended]
                 + f' + 0.2 signed Sobel to {args.detail_target} + 0.05 FFT to {args.detail_target} + 0.1 L1 to reference; 8 output-pixel border excluded',
-        'precision': 'CUDA BF16 autocast; AdamW FP32; no compilation',
+        'precision': ('CUDA BF16 autocast; AdamW FP32; no compilation' if args.sr_precision == 'bf16'
+                      else 'CUDA SR FP32 without autocast; critic BF16; AdamW FP32; no compilation'),
         'input_noise': args.input_noise,
         'temporal': args.temporal,
         'torch': str(torch.__version__), 'gpu': torch.cuda.get_device_name(),
@@ -421,7 +424,7 @@ def main():
             experiment['first_batch_sha256'] = state_digest({'source': x, 'reference': reference, 'intended': intended})
         x = augment_input_noise(x, args.input_noise)
         optimizer.zero_grad(set_to_none=True)
-        with torch.autocast('cuda', dtype=torch.bfloat16):
+        with torch.autocast('cuda', dtype=torch.bfloat16, enabled=args.sr_precision == 'bf16'):
             output = model(x)
         if step == 1:
             experiment['first_output_sha256'] = state_digest({'output': output})
@@ -445,7 +448,7 @@ def main():
                 import copy
                 ema_model = copy.deepcopy(model).eval()
                 for parameter in ema_model.parameters(): parameter.requires_grad_(False)
-            with torch.no_grad(), torch.autocast('cuda', dtype=torch.bfloat16):
+            with torch.no_grad(), torch.autocast('cuda', dtype=torch.bfloat16, enabled=args.sr_precision == 'bf16'):
                 ema_output = ema_model(x).float()
             if args.native_output_stages:
                 with torch.no_grad():
@@ -457,7 +460,7 @@ def main():
                     'ldl_weighted': float(args.ldl_weight * artifact)}), flush=True)
             loss = loss + args.ldl_weight * artifact
         if args.temporal:
-            with torch.autocast('cuda', dtype=torch.bfloat16):
+            with torch.autocast('cuda', dtype=torch.bfloat16, enabled=args.sr_precision == 'bf16'):
                 previous_output = model(augment_input_noise(previous[0], args.input_noise))
             if args.native_output_stages:
                 previous_output = postprocess_rgb(previous_output.float(), decoded_previous)
@@ -522,9 +525,9 @@ def main():
                 (args.out / f'subspace{step:06d}.json').write_text(json.dumps(layers, indent=2) + '\n')
                 with torch.random.fork_rng(devices=[torch.cuda.current_device()]):
                     merged = merge_adapters(model)
-                with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16):
+                with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16, enabled=args.sr_precision == 'bf16'):
                     if not torch.equal(model(x), merged(x)):
-                        raise ValueError('merged training graph changes BF16 output')
+                        raise ValueError('merged training graph changes SR output')
                 state = merged.state_dict()
             checkpoint = {'model': state, 'channels': model_channels,
                 'scale': 2, 'frames': 1, 'version': anchor.version, 'step': step,
