@@ -1198,3 +1198,44 @@ the common current-pipeline proxy comparison. Fixed three-patch visual review
 will accompany aggregate/source-level metrics and full-sequence residual
 diagnostics. Native quality and60fps cost remain separate requirements for any
 promotion. No outcome is asserted by this setup.
+
+The r54 raw-input control's initial development result warrants native follow-up:
+relative to the unchanged full-search initial model, LPIPS/DISTS improve
+1.523%/2.007%, with both distances better on all three development sources.
+Fine correlation remains1.670% lower. Fixed pictures show small changes without
+substantial recovery of missing detail. The disabled zero history branch is
+removed to export a single-frame fused checkpoint; exact forward parity holds
+on two random geometries and the three fixed real patches. Core ML conversion
+and a20-sample model-only GPU profile complete successfully.
+
+r55 compares unchanged big2k and the trained raw-input control with native
+`stageDeband=0,stageTaa=0`, using the same executable,960 frame selection and
+remaining tuning. The existing app also gates output grain on `stageDeband`,
+so this native configuration removes grain contribution as well. This is an
+explicit combined pipeline proposal, not a claim to isolate TAA or source-only
+processing. Both raw configurations are compared with each other and with the
+frozen full-search default. No installed application or default is changed.
+
+Before capture, exact PNG duplicates in completed native archives were verified
+and made to share storage.16,528 paths now use hardlinks to byte-identical
+canonical images; all28 manifest contents remain unchanged. Free space rose
+from about1.6GiB to17GiB. Complete archives remain immutable, with all paths and
+pixels retained. See `quality-breakthrough/native-rgb-storage-deduplication.json`.
+
+All r54 arms finish with exit0. Shared initialization/data/discriminator hashes
+match across all four arms; input/output hashes and all216 initial metric rows
+match within each input-mode pair. Full-search initial rows also reproduce r53
+exactly. Each history model's72 first-frame rows equal its own current-frame
+branch, checking reset behavior in the actual evaluation. Remote checkpoint
+hashes match downloaded files and score receipts; no remote Python remains.
+
+Against its matched input control, filtered history changes LPIPS/DISTS by
+−0.598%/+0.869%, raw history by−0.142%/+0.515%. Against each model's own
+current-frame branch, history worsens both distances: filtered+0.383%/+0.528%,
+raw+0.155%/+0.095%. Mean RGB MSE also rises relative to the separately trained
+controls: filtered+0.965%, raw+0.741%. Bypassing the complete source proxy does
+not rescue this decoded-history interface under the tested recipe. The fixed
+three-patch gallery shows small differences, with missing reference structure
+remaining in dark texture, palms and chair edges. No recurrent weights are
+promoted. The raw SR-only control continues to the separately declared native
+comparison. See `quality-breakthrough/raw-filtered-recurrence-comparison.json`.

@@ -123,3 +123,13 @@ be deployed; none of these four arms has native quality or runtime admission.
 Twenty-seven focused tests pass locally and on the GPU host, followed by a
 real CUDA forward/backward smoke check. All training processes have exited.
 [Joint conditioning evidence](joint-conditioning-comparison.json).
+
+Crossing raw versus full-search-filtered inputs with decoded history also fails
+to establish a recurrence gain. History worsens LPIPS/DISTS versus its own
+current-frame branch in both cases: filtered+0.383%/+0.528%, raw+0.155%/+0.095%.
+Fixed images remain close to the controls. The raw SR-only control is more
+promising: versus unchanged big2k with current preprocessing, development
+LPIPS/DISTS improve1.523%/2.007%, with both better on all three sources, although
+fine correlation falls1.670%. It proceeds to native comparison alongside an
+unchanged-weight raw-pipeline control; no new weights or settings are promoted
+from these proxy results. [Matched four-arm evidence](raw-filtered-recurrence-comparison.json).

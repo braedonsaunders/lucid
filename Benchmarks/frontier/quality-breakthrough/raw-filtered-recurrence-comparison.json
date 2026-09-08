@@ -1,0 +1,1252 @@
+{
+  "scope": "r54 raw versus full-search source preprocessing crossed with decoded observation history; four matched2000step arms;72source-disjoint16-frame validation sequences;216scored frames/variant; source-proxy/decoded evaluation, not native playback",
+  "percent_convention": "100*(candidate/baseline-1). Negative is better for perceptual distances, residual-change L1 and MSE. Positive is better for fine correlation and PSNR. Detail energy has no monotone quality interpretation.",
+  "shared_hashes": {
+    "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+    "reds_bank_sha256": "bf641e3c99628e4ce6a1a75f59ffe9f70ab8f4bd790cd8f5946de83e461db7fb",
+    "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+    "frozen_backbone_sha256": "2de8c2017b3856bb4f84933b6d8315412e997f5aa7e0c611f866d8973a90f341",
+    "discriminator_initial_sha256": "431e95e23356df074e7fade8013457f10c52958b03e3043fe1b3b89a127304ab",
+    "first_decoded_sequence_sha256": "1cb6fc7da87f8c2653639c18098591a079458b2502ab315555ead5a33731db6d",
+    "source_hashes": {
+      "architectures/recurrent_span.py": "2036955646f6319c9c624ce4620fa01700aa25397d1d7d4c25f336354e33d9d5",
+      "architectures/subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+      "experiments/recurrent_frame_feeding.py": "17f4a457132ed1d2f249c38ad7c6b0162e0a9a16f1883417a24d0d177ec8eac9",
+      "experiments/native_stages.py": "8ed2e8c6ea5270c855d880bf20e5b14fa6f5948e2a921b389d8115c464938b86",
+      "experiments/train_presented_detail.py": "76aa0cf85a567fbfe0db3f2fa5ff23a9a190ca42ede35fa576b9604d881cc743",
+      "experiments/train_recurrent_span.py": "79c92920ece070417d899e63a6e7b4cacecee6a5fc2f0cdd701201f003056c12",
+      "experiments/train_causal_detail.py": "51b3b776485caa5ccaec4a7c58eec5d3b6060d22ad1c311c0561d2abb994ee7a",
+      "experiments/replay_recurrent_motion.py": "c2b1bbaded47c5e453a12b92bf862e0726241dcaf56c4df90d21b428996ebe3d",
+      "frontier_eval/evaluate_sequences.py": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75",
+      "eval_checkpoint.py": "6dbf8dc5aa43c1c489c57bd9d5bd7df16e69e877c2c032d1f084aa13397bbdf9",
+      "dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+      "dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a",
+      "paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb"
+    }
+  },
+  "initial_metric_rows_match_within_each_input_pair": 216,
+  "search_initial_metric_rows_exact_to_r53": 216,
+  "control_recurrent_base_rows_exact_per_arm": 216,
+  "history_first_frame_base_rows_exact_per_arm": 72,
+  "remote_completion": {
+    "hashes": [
+      {
+        "checkpoint_sha256": "a88f01ea9d8d50d2019ff9564861327da1ccc8ba73668f203fd2844017304f3e",
+        "mode": "search_control"
+      },
+      {
+        "checkpoint_sha256": "ecfa716068356e97588d72ed229e0725906f42194b4c2edada718b4b467144cb",
+        "mode": "raw_control"
+      },
+      {
+        "checkpoint_sha256": "ba75a83ae5f065152eb73812a3043f228b49699701c406ba58a37e050a7ec92e",
+        "mode": "search_history"
+      },
+      {
+        "checkpoint_sha256": "ea1e817e711f38dc7dafa6308f6c26f855574ed303637eb316b6b4ed4bf69f12",
+        "mode": "raw_history"
+      }
+    ],
+    "owned_python_processes": [],
+    "run_exit": {
+      "complete": true,
+      "utc": "2026-09-08T17:22:04.1036915Z",
+      "exit_code": 0
+    }
+  },
+  "arms": {
+    "search_control": {
+      "checkpoint_sha256": "a88f01ea9d8d50d2019ff9564861327da1ccc8ba73668f203fd2844017304f3e",
+      "experiment_sha256": "9b6b88b1f9d0df8431c3c67b480f6da3033b7f6802284fae374ad580489953cf",
+      "validation_sha256": "45e1a2529151cec5644767db33167d94673b2389796ce8fe988e2fc3ef3cd565",
+      "complete": {
+        "complete": true,
+        "backbone_unchanged": false,
+        "steps": 2000,
+        "minutes": 4.466666666666667
+      },
+      "exit": {
+        "step": "search_control",
+        "utc": "2026-09-08T17:07:46.2114719Z",
+        "exit_code": 0
+      },
+      "input_output_hashes": {
+        "first_input_sha256": "afb9498dbe746d8472a704eda245e506e9ffed45e4145564df45ab828a1fc1c3",
+        "first_output_sha256": "dfb98b2f51f2e096dfaab76b94fb74c16714b6d000586d10f5bdd51ada45a4aa"
+      },
+      "summary": {
+        "base": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21875331312831905,
+              "dists": 0.19433437122239006,
+              "psnr_y": 29.922904799160527,
+              "detail_energy": 0.6868469820869458,
+              "fine_correlation": 0.4933082416010394
+            },
+            "reds_154": {
+              "lpips": 0.2830984593817481,
+              "dists": 0.24301322080470897,
+              "psnr_y": 25.07144733203779,
+              "detail_energy": 0.5405942736959314,
+              "fine_correlation": 0.37205396363530263
+            },
+            "reds_073": {
+              "lpips": 0.3515150257282787,
+              "dists": 0.2563043137391408,
+              "psnr_y": 22.6738535194328,
+              "detail_energy": 0.47750486085585164,
+              "fine_correlation": 0.260613271148634
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.284455599412782,
+            "dists": 0.23121730192207993,
+            "psnr_y": 25.8894018835437,
+            "detail_energy": 0.5683153722129096,
+            "fine_correlation": 0.375325158794992
+          }
+        },
+        "recurrent": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21875331312831905,
+              "dists": 0.19433437122239006,
+              "psnr_y": 29.922904799160527,
+              "detail_energy": 0.6868469820869458,
+              "fine_correlation": 0.4933082416010394
+            },
+            "reds_154": {
+              "lpips": 0.2830984593817481,
+              "dists": 0.24301322080470897,
+              "psnr_y": 25.07144733203779,
+              "detail_energy": 0.5405942736959314,
+              "fine_correlation": 0.37205396363530263
+            },
+            "reds_073": {
+              "lpips": 0.3515150257282787,
+              "dists": 0.2563043137391408,
+              "psnr_y": 22.6738535194328,
+              "detail_energy": 0.47750486085585164,
+              "fine_correlation": 0.260613271148634
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.284455599412782,
+            "dists": 0.23121730192207993,
+            "psnr_y": 25.8894018835437,
+            "detail_energy": 0.5683153722129096,
+            "fine_correlation": 0.375325158794992
+          }
+        },
+        "initial": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2137711979976976,
+              "dists": 0.19477422645798437,
+              "psnr_y": 28.677276227811983,
+              "detail_energy": 0.6415185516656143,
+              "fine_correlation": 0.5036951956226896
+            },
+            "reds_154": {
+              "lpips": 0.29054888765569087,
+              "dists": 0.24941719461370399,
+              "psnr_y": 25.163160260919515,
+              "detail_energy": 0.5087248457153069,
+              "fine_correlation": 0.37924668110685517
+            },
+            "reds_073": {
+              "lpips": 0.35617565474024526,
+              "dists": 0.2615368167559306,
+              "psnr_y": 22.7398870833138,
+              "detail_energy": 0.450108753680454,
+              "fine_correlation": 0.2662052878712313
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28683191346454456,
+            "dists": 0.23524274594253966,
+            "psnr_y": 25.5267745240151,
+            "detail_energy": 0.5334507170204584,
+            "fine_correlation": 0.38304905486692536
+          }
+        }
+      },
+      "vs_matched_input_control_percent": {
+        "lpips": 0.0,
+        "dists": 0.0,
+        "psnr_y": 0.0,
+        "detail_energy": 0.0,
+        "fine_correlation": 0.0
+      },
+      "vs_search_control_percent": {
+        "lpips": 0.0,
+        "dists": 0.0,
+        "psnr_y": 0.0,
+        "detail_energy": 0.0,
+        "fine_correlation": 0.0
+      },
+      "vs_search_initial_percent": {
+        "lpips": -0.8284691975379954,
+        "dists": -1.7111873117834575,
+        "psnr_y": 1.420576497776671,
+        "detail_energy": 6.535684380964857,
+        "fine_correlation": -2.0164247826213066
+      },
+      "vs_own_base_percent": {
+        "lpips": 0.0,
+        "dists": 0.0,
+        "psnr_y": 0.0,
+        "detail_energy": 0.0,
+        "fine_correlation": 0.0
+      },
+      "vs_matched_input_control_sources_percent": {
+        "sintel": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        },
+        "reds_154": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        },
+        "reds_073": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        }
+      },
+      "temporal": {
+        "recurrent": {
+          "residual_change_l1": 0.0554390925956688,
+          "mean_rgb_mse": 0.0052971446280909934,
+          "last_rgb_mse": 0.005298623477566859
+        },
+        "base": {
+          "residual_change_l1": 0.0554390925956688,
+          "mean_rgb_mse": 0.0052971446280909934,
+          "last_rgb_mse": 0.005298623477566859
+        },
+        "initial": {
+          "residual_change_l1": 0.054908704285945,
+          "mean_rgb_mse": 0.005164905433225108,
+          "last_rgb_mse": 0.005168550302844071
+        }
+      },
+      "temporal_vs_matched_input_control_percent": {
+        "residual_change_l1": 0.0,
+        "mean_rgb_mse": 0.0,
+        "last_rgb_mse": 0.0
+      }
+    },
+    "raw_control": {
+      "checkpoint_sha256": "ecfa716068356e97588d72ed229e0725906f42194b4c2edada718b4b467144cb",
+      "experiment_sha256": "00530ec6d88e49e2c8fc91bde727e3d3b982c8c4202859a9d408956e7c74692e",
+      "validation_sha256": "d6b19872667c37b4954ab5347c9486952decc0d1c08266fdcce7c9fc7b6ed45b",
+      "complete": {
+        "complete": true,
+        "backbone_unchanged": false,
+        "steps": 2000,
+        "minutes": 2.150783333333675
+      },
+      "exit": {
+        "step": "raw_control",
+        "utc": "2026-09-08T17:10:14.7325784Z",
+        "exit_code": 0
+      },
+      "input_output_hashes": {
+        "first_input_sha256": "dfe5a55274ebba33245c6e8ed752a8f4d67ac87e6fa1241fedd3f77bf99ff3e6",
+        "first_output_sha256": "1474ece44df8c45a3f4a22fd73c7ec108bca4dfe57b3edf9c1fe562eec5d91a3"
+      },
+      "summary": {
+        "base": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21338155849500456,
+              "dists": 0.19164208515926642,
+              "psnr_y": 29.31758878179344,
+              "detail_energy": 0.6980076222656303,
+              "fine_correlation": 0.49764941472915564
+            },
+            "reds_154": {
+              "lpips": 0.28441870157365445,
+              "dists": 0.2448829390384533,
+              "psnr_y": 25.075378522568208,
+              "detail_energy": 0.542395718490796,
+              "fine_correlation": 0.37117468757249455
+            },
+            "reds_073": {
+              "lpips": 0.34958857353086825,
+              "dists": 0.25503613661836694,
+              "psnr_y": 22.679066248432335,
+              "detail_energy": 0.47664458118354824,
+              "fine_correlation": 0.26113093981847607
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.2824629445331757,
+            "dists": 0.23052038693869556,
+            "psnr_y": 25.690677850931326,
+            "detail_energy": 0.5723493073133249,
+            "fine_correlation": 0.3766516807067088
+          }
+        },
+        "recurrent": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21338155849500456,
+              "dists": 0.19164208515926642,
+              "psnr_y": 29.31758878179344,
+              "detail_energy": 0.6980076222656303,
+              "fine_correlation": 0.49764941472915564
+            },
+            "reds_154": {
+              "lpips": 0.28441870157365445,
+              "dists": 0.2448829390384533,
+              "psnr_y": 25.075378522568208,
+              "detail_energy": 0.542395718490796,
+              "fine_correlation": 0.37117468757249455
+            },
+            "reds_073": {
+              "lpips": 0.34958857353086825,
+              "dists": 0.25503613661836694,
+              "psnr_y": 22.679066248432335,
+              "detail_energy": 0.47664458118354824,
+              "fine_correlation": 0.26113093981847607
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.2824629445331757,
+            "dists": 0.23052038693869556,
+            "psnr_y": 25.690677850931326,
+            "detail_energy": 0.5723493073133249,
+            "fine_correlation": 0.3766516807067088
+          }
+        },
+        "initial": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2111937522174601,
+              "dists": 0.19213305082586077,
+              "psnr_y": 28.85276335876215,
+              "detail_energy": 0.6544681586938526,
+              "fine_correlation": 0.5115553920405832
+            },
+            "reds_154": {
+              "lpips": 0.2943323384280558,
+              "dists": 0.24986867551450376,
+              "psnr_y": 25.162434789642152,
+              "detail_energy": 0.5098580955932973,
+              "fine_correlation": 0.3787241306267788
+            },
+            "reds_073": {
+              "lpips": 0.3566113423418116,
+              "dists": 0.2588607370853424,
+              "psnr_y": 22.728738614803234,
+              "detail_energy": 0.4512703184668316,
+              "fine_correlation": 0.2660598961857389
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28737914432910916,
+            "dists": 0.2336208211419023,
+            "psnr_y": 25.58131225440251,
+            "detail_energy": 0.5385321909179939,
+            "fine_correlation": 0.3854464729510336
+          }
+        }
+      },
+      "vs_matched_input_control_percent": {
+        "lpips": 0.0,
+        "dists": 0.0,
+        "psnr_y": 0.0,
+        "detail_energy": 0.0,
+        "fine_correlation": 0.0
+      },
+      "vs_search_control_percent": {
+        "lpips": -0.7005152592249209,
+        "dists": -0.30141126013970565,
+        "psnr_y": -0.7675883494963731,
+        "detail_energy": 0.7098057342189934,
+        "fine_correlation": 0.35343271843957247
+      },
+      "vs_search_initial_percent": {
+        "lpips": -1.5231809036161836,
+        "dists": -2.0074408606833627,
+        "psnr_y": 0.6420839685876922,
+        "detail_energy": 7.291880777690407,
+        "fine_correlation": -1.6701187691062436
+      },
+      "vs_own_base_percent": {
+        "lpips": 0.0,
+        "dists": 0.0,
+        "psnr_y": 0.0,
+        "detail_energy": 0.0,
+        "fine_correlation": 0.0
+      },
+      "vs_matched_input_control_sources_percent": {
+        "sintel": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        },
+        "reds_154": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        },
+        "reds_073": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        }
+      },
+      "temporal": {
+        "recurrent": {
+          "residual_change_l1": 0.05532145808204644,
+          "mean_rgb_mse": 0.00527296547458415,
+          "last_rgb_mse": 0.005291189271702024
+        },
+        "base": {
+          "residual_change_l1": 0.05532145808204644,
+          "mean_rgb_mse": 0.00527296547458415,
+          "last_rgb_mse": 0.005291189271702024
+        },
+        "initial": {
+          "residual_change_l1": 0.05481464360335685,
+          "mean_rgb_mse": 0.005136088570882041,
+          "last_rgb_mse": 0.00515465194484932
+        }
+      },
+      "temporal_vs_matched_input_control_percent": {
+        "residual_change_l1": 0.0,
+        "mean_rgb_mse": 0.0,
+        "last_rgb_mse": 0.0
+      }
+    },
+    "search_history": {
+      "checkpoint_sha256": "ba75a83ae5f065152eb73812a3043f228b49699701c406ba58a37e050a7ec92e",
+      "experiment_sha256": "4b697c6710c17b8ef6090a415969d6c9407b824e7707b3ee0600e3c0c6ef70f5",
+      "validation_sha256": "8e19e1e2e20278c010f7e1bdb3306604d8ebf2f0bc3bb87a2dfb0ad361e9f58e",
+      "complete": {
+        "complete": true,
+        "backbone_unchanged": false,
+        "steps": 2000,
+        "minutes": 6.856766666665984
+      },
+      "exit": {
+        "step": "search_history",
+        "utc": "2026-09-08T17:17:25.6274758Z",
+        "exit_code": 0
+      },
+      "input_output_hashes": {
+        "first_input_sha256": "afb9498dbe746d8472a704eda245e506e9ffed45e4145564df45ab828a1fc1c3",
+        "first_output_sha256": "dfb98b2f51f2e096dfaab76b94fb74c16714b6d000586d10f5bdd51ada45a4aa"
+      },
+      "summary": {
+        "base": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21674458123096782,
+              "dists": 0.19549051368678058,
+              "psnr_y": 29.866342232680864,
+              "detail_energy": 0.6897201401126762,
+              "fine_correlation": 0.48734641764534614
+            },
+            "reds_154": {
+              "lpips": 0.28023713509793635,
+              "dists": 0.2441575946631255,
+              "psnr_y": 25.049788306641865,
+              "detail_energy": 0.5474742848093235,
+              "fine_correlation": 0.3679785108549097
+            },
+            "reds_073": {
+              "lpips": 0.3480430496511636,
+              "dists": 0.2563596158115952,
+              "psnr_y": 22.67076424695643,
+              "detail_energy": 0.4814620672156281,
+              "fine_correlation": 0.25828464488118535
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.2816749219933559,
+            "dists": 0.23200257472050043,
+            "psnr_y": 25.862298262093052,
+            "detail_energy": 0.5728854973792092,
+            "fine_correlation": 0.371203191127147
+          }
+        },
+        "recurrent": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21724780917348754,
+              "dists": 0.19687878754403856,
+              "psnr_y": 29.85272883758614,
+              "detail_energy": 0.6939543791008774,
+              "fine_correlation": 0.48544525251086246
+            },
+            "reds_154": {
+              "lpips": 0.2819781508986597,
+              "dists": 0.2460361741207264,
+              "psnr_y": 25.036868254844574,
+              "detail_energy": 0.5522758815628966,
+              "fine_correlation": 0.3657328959981863
+            },
+            "reds_073": {
+              "lpips": 0.34903384952081573,
+              "dists": 0.2567642264895969,
+              "psnr_y": 22.664523934805615,
+              "detail_energy": 0.4862421624138129,
+              "fine_correlation": 0.25688470113042705
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.282753269864321,
+            "dists": 0.23322639605145393,
+            "psnr_y": 25.851373675745446,
+            "detail_energy": 0.577490807692529,
+            "fine_correlation": 0.36935428321315866
+          }
+        },
+        "initial": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2137711979976976,
+              "dists": 0.19477422645798437,
+              "psnr_y": 28.677276227811983,
+              "detail_energy": 0.6415185516656143,
+              "fine_correlation": 0.5036951956226896
+            },
+            "reds_154": {
+              "lpips": 0.29054888765569087,
+              "dists": 0.24941719461370399,
+              "psnr_y": 25.163160260919515,
+              "detail_energy": 0.5087248457153069,
+              "fine_correlation": 0.37924668110685517
+            },
+            "reds_073": {
+              "lpips": 0.35617565474024526,
+              "dists": 0.2615368167559306,
+              "psnr_y": 22.7398870833138,
+              "detail_energy": 0.450108753680454,
+              "fine_correlation": 0.2662052878712313
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28683191346454456,
+            "dists": 0.23524274594253966,
+            "psnr_y": 25.5267745240151,
+            "detail_energy": 0.5334507170204584,
+            "fine_correlation": 0.38304905486692536
+          }
+        }
+      },
+      "vs_matched_input_control_percent": {
+        "lpips": -0.5984517625862273,
+        "dists": 0.8689203241594168,
+        "psnr_y": -0.14688716243548283,
+        "detail_energy": 1.6144971486328208,
+        "fine_correlation": -1.590854074638448
+      },
+      "vs_search_control_percent": {
+        "lpips": -0.5984517625862273,
+        "dists": 0.8689203241594168,
+        "psnr_y": -0.14688716243548283,
+        "detail_energy": 1.6144971486328208,
+        "fine_correlation": -1.590854074638448
+      },
+      "vs_search_initial_percent": {
+        "lpips": -1.4219629716090698,
+        "dists": -0.8571358419605657,
+        "psnr_y": 1.2716026908333733,
+        "detail_energy": 8.255699967572006,
+        "fine_correlation": -3.575200481443397
+      },
+      "vs_own_base_percent": {
+        "lpips": 0.3828341775454547,
+        "dists": 0.5275033401796803,
+        "psnr_y": -0.042241359359851405,
+        "detail_energy": 0.8038797166951772,
+        "fine_correlation": -0.4980851345523729
+      },
+      "vs_matched_input_control_sources_percent": {
+        "sintel": {
+          "lpips": -0.6882199557582847,
+          "dists": 1.309298147128457,
+          "psnr_y": -0.23452255737000938,
+          "detail_energy": 1.0347860876284587,
+          "fine_correlation": -1.5939302097725982
+        },
+        "reds_154": {
+          "lpips": -0.3957310419615223,
+          "dists": 1.243946031416443,
+          "psnr_y": -0.13792214200983866,
+          "detail_energy": 2.1608826499586398,
+          "fine_correlation": -1.6989652724980542
+        },
+        "reds_073": {
+          "lpips": -0.7058521047065947,
+          "dists": 0.1794401131009371,
+          "psnr_y": -0.04114688585771242,
+          "detail_energy": 1.8297827465674432,
+          "fine_correlation": -1.4306907709548011
+        }
+      },
+      "temporal": {
+        "recurrent": {
+          "residual_change_l1": 0.05576697693167097,
+          "mean_rgb_mse": 0.005348287078289913,
+          "last_rgb_mse": 0.005352186599578899
+        },
+        "base": {
+          "residual_change_l1": 0.055750681192531855,
+          "mean_rgb_mse": 0.005340021108812228,
+          "last_rgb_mse": 0.005342246043596788
+        },
+        "initial": {
+          "residual_change_l1": 0.054908704285945,
+          "mean_rgb_mse": 0.005164905433225108,
+          "last_rgb_mse": 0.005168550302844071
+        }
+      },
+      "temporal_vs_matched_input_control_percent": {
+        "residual_change_l1": 0.5914316426380184,
+        "mean_rgb_mse": 0.9654720380430692,
+        "last_rgb_mse": 1.0108874925499611
+      }
+    },
+    "raw_history": {
+      "checkpoint_sha256": "ea1e817e711f38dc7dafa6308f6c26f855574ed303637eb316b6b4ed4bf69f12",
+      "experiment_sha256": "91e4ab0df023878edde22ad07ff53b5670bd080559e035a7d7cb0f3c0d2aa7fd",
+      "validation_sha256": "6f3cd747bc83c1c975a5b6e19106a57fcd1eb08808983d493736aa66e0e554c5",
+      "complete": {
+        "complete": true,
+        "backbone_unchanged": false,
+        "steps": 2000,
+        "minutes": 4.316666666666666
+      },
+      "exit": {
+        "step": "raw_history",
+        "utc": "2026-09-08T17:22:04.1016888Z",
+        "exit_code": 0
+      },
+      "input_output_hashes": {
+        "first_input_sha256": "dfe5a55274ebba33245c6e8ed752a8f4d67ac87e6fa1241fedd3f77bf99ff3e6",
+        "first_output_sha256": "1474ece44df8c45a3f4a22fd73c7ec108bca4dfe57b3edf9c1fe562eec5d91a3"
+      },
+      "summary": {
+        "base": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2128366261658138,
+              "dists": 0.19344946300541913,
+              "psnr_y": 29.188464131343448,
+              "detail_energy": 0.6909162282930364,
+              "fine_correlation": 0.49418312177805496
+            },
+            "reds_154": {
+              "lpips": 0.2837281650691121,
+              "dists": 0.2455440174650263,
+              "psnr_y": 25.078388709014938,
+              "detail_energy": 0.5387982619438085,
+              "fine_correlation": 0.36889418817690334
+            },
+            "reds_073": {
+              "lpips": 0.3483057521559574,
+              "dists": 0.2554656223014549,
+              "psnr_y": 22.690316067505638,
+              "detail_energy": 0.4709256064241866,
+              "fine_correlation": 0.260407138801803
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28162351446362777,
+            "dists": 0.23148636759063343,
+            "psnr_y": 25.652389635954673,
+            "detail_energy": 0.5668800322203439,
+            "fine_correlation": 0.3744948162522537
+          }
+        },
+        "recurrent": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21376209058346124,
+              "dists": 0.19404201871818966,
+              "psnr_y": 29.178323167941077,
+              "detail_energy": 0.6934130675758531,
+              "fine_correlation": 0.49375017362789353
+            },
+            "reds_154": {
+              "lpips": 0.2843817872581659,
+              "dists": 0.24562614493899876,
+              "psnr_y": 25.06467968804864,
+              "detail_energy": 0.5395891042090439,
+              "fine_correlation": 0.3687881720509142
+            },
+            "reds_073": {
+              "lpips": 0.3480402457493323,
+              "dists": 0.2554524960341277,
+              "psnr_y": 22.676986743619338,
+              "detail_energy": 0.47466079987708976,
+              "fine_correlation": 0.25958928103994794
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.2820613745303198,
+            "dists": 0.23170688656377203,
+            "psnr_y": 25.639996533203018,
+            "detail_energy": 0.5692209905539956,
+            "fine_correlation": 0.3740425422395852
+          }
+        },
+        "initial": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2111937522174601,
+              "dists": 0.19213305082586077,
+              "psnr_y": 28.85276335876215,
+              "detail_energy": 0.6544681586938526,
+              "fine_correlation": 0.5115553920405832
+            },
+            "reds_154": {
+              "lpips": 0.2943323384280558,
+              "dists": 0.24986867551450376,
+              "psnr_y": 25.162434789642152,
+              "detail_energy": 0.5098580955932973,
+              "fine_correlation": 0.3787241306267788
+            },
+            "reds_073": {
+              "lpips": 0.3566113423418116,
+              "dists": 0.2588607370853424,
+              "psnr_y": 22.728738614803234,
+              "detail_energy": 0.4512703184668316,
+              "fine_correlation": 0.2660598961857389
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28737914432910916,
+            "dists": 0.2336208211419023,
+            "psnr_y": 25.58131225440251,
+            "detail_energy": 0.5385321909179939,
+            "fine_correlation": 0.3854464729510336
+          }
+        }
+      },
+      "vs_matched_input_control_percent": {
+        "lpips": -0.1421673216356112,
+        "dists": 0.5147048557540446,
+        "psnr_y": -0.19727512844301964,
+        "detail_energy": -0.5465747436672941,
+        "fine_correlation": -0.6927191887815431
+      },
+      "vs_search_control_percent": {
+        "lpips": -0.8416866770788456,
+        "dists": 0.21174221722259912,
+        "psnr_y": -0.9633492170370128,
+        "detail_energy": 0.15935137167935043,
+        "fine_correlation": -0.34173476660204205
+      },
+      "vs_search_initial_percent": {
+        "lpips": -1.6631827597574644,
+        "dists": -1.5030684005156503,
+        "psnr_y": 0.4435421681709295,
+        "detail_energy": 6.705450455353934,
+        "fine_correlation": -2.3512687246987407
+      },
+      "vs_own_base_percent": {
+        "lpips": 0.15547709768695128,
+        "dists": 0.09526218560247379,
+        "psnr_y": -0.04831168919360307,
+        "detail_energy": 0.4129548053549703,
+        "fine_correlation": -0.12076909827340998
+      },
+      "vs_matched_input_control_sources_percent": {
+        "sintel": {
+          "lpips": 0.1783341030689778,
+          "dists": 1.252299857272332,
+          "psnr_y": -0.4750241054573001,
+          "detail_energy": -0.6582384694975074,
+          "fine_correlation": -0.7835317365708638
+        },
+        "reds_154": {
+          "lpips": -0.012978863655710438,
+          "dists": 0.3034943567174153,
+          "psnr_y": -0.042666691990078665,
+          "detail_energy": -0.5174477205611927,
+          "fine_correlation": -0.6429628963085632
+        },
+        "reds_073": {
+          "lpips": -0.44289999695863447,
+          "dists": 0.16325506701968528,
+          "psnr_y": -0.009169269978837047,
+          "detail_energy": -0.41619718019926255,
+          "fine_correlation": -0.5903776778040215
+        }
+      },
+      "temporal": {
+        "recurrent": {
+          "residual_change_l1": 0.05550769368716462,
+          "mean_rgb_mse": 0.00531203126422497,
+          "last_rgb_mse": 0.005329016236297927
+        },
+        "base": {
+          "residual_change_l1": 0.05547167755468902,
+          "mean_rgb_mse": 0.005299410703742069,
+          "last_rgb_mse": 0.005317002482292487
+        },
+        "initial": {
+          "residual_change_l1": 0.05481464360335685,
+          "mean_rgb_mse": 0.005136088570882041,
+          "last_rgb_mse": 0.00515465194484932
+        }
+      },
+      "temporal_vs_matched_input_control_percent": {
+        "residual_change_l1": 0.3366426185694049,
+        "mean_rgb_mse": 0.7408694373046476,
+        "last_rgb_mse": 0.7149047719424262
+      }
+    }
+  },
+  "raw_initial_vs_search_initial_percent": {
+    "lpips": 0.19078451137279906,
+    "dists": -0.6894685717677929,
+    "psnr_y": 0.2136491249064898,
+    "detail_energy": 0.9525667011786032,
+    "fine_correlation": 0.6258775615413326
+  },
+  "visual_review": {
+    "artifact": ".build/quality-breakthrough-r54/factorial-gallery.png",
+    "selection_receipt": {
+      "scope": "Previously fixed three validation patches, frame15 after all16 frames; original256px pixels; raw or full-search source-proxy as labelled; not native output",
+      "checkpoint_sha256": {
+        "search_control": "a88f01ea9d8d50d2019ff9564861327da1ccc8ba73668f203fd2844017304f3e",
+        "raw_control": "ecfa716068356e97588d72ed229e0725906f42194b4c2edada718b4b467144cb",
+        "search_history": "ba75a83ae5f065152eb73812a3043f228b49699701c406ba58a37e050a7ec92e",
+        "raw_history": "ea1e817e711f38dc7dafa6308f6c26f855574ed303637eb316b6b4ed4bf69f12"
+      },
+      "rows": [
+        {
+          "id": "sintel-stream-000-00",
+          "file": "validation/sintel-stream-000-00.npz",
+          "sha256": "efb2d3e031f034340d2764338cdf31a35213a343df0171ce18eb8e62d01970d7",
+          "source_id": "sintel",
+          "family": "blender_sintel",
+          "source_sha256": "648178454637253705ea56bd8a02db0bf17134703fe82ec3d6a9a880a343bc08",
+          "split": "validation",
+          "scale": 2,
+          "frames": 16,
+          "frame_rate": "24/1",
+          "start_seconds": 517.2646243716367,
+          "codec_warmup_frames": 8,
+          "full_reference_size": [
+            1920,
+            816
+          ],
+          "lr_patch_xy": [
+            720,
+            169
+          ],
+          "reference_size": [
+            256,
+            256
+          ],
+          "codec": "h264",
+          "rate_control": "constrained bitrate",
+          "target_bitrate": 940032,
+          "target_bits_per_pixel_frame": 0.1,
+          "gop": 60,
+          "encoded_sha256": "9dc6cf2839dc267819dfc3738974e28925021a7d2f0c084882d4bf30b030fcb6",
+          "encoded_container_bytes": 101512,
+          "hr_command": [
+            "ffmpeg",
+            "-nostdin",
+            "-v",
+            "error",
+            "-ss",
+            "517.2646243716367",
+            "-i",
+            "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/Sintel.2010.4k.mkv",
+            "-an",
+            "-frames:v",
+            "24",
+            "-vf",
+            "scale=1920:816:flags=lanczos",
+            "-threads",
+            "2",
+            "-pix_fmt",
+            "rgb24",
+            "-f",
+            "rawvideo",
+            "-"
+          ],
+          "encode_command": [
+            "ffmpeg",
+            "-nostdin",
+            "-v",
+            "error",
+            "-f",
+            "rawvideo",
+            "-pix_fmt",
+            "rgb24",
+            "-s",
+            "1920x816",
+            "-r",
+            "24/1",
+            "-i",
+            "-",
+            "-vf",
+            "scale=960:408:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "medium",
+            "-b:v",
+            "940032",
+            "-maxrate",
+            "940032",
+            "-bufsize",
+            "1880064",
+            "-threads",
+            "2",
+            "-g",
+            "60",
+            "-pix_fmt",
+            "yuv420p",
+            "-colorspace",
+            "bt709",
+            "-color_primaries",
+            "bt709",
+            "-color_trc",
+            "bt709",
+            "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-017oig5c/stream.mkv"
+          ],
+          "reference_std": 12.77340098621862,
+          "reference_temporal_change": 7.34506368637085
+        },
+        {
+          "id": "reds_154-stream-000-00",
+          "file": "validation\\reds_154-stream-000-00.npz",
+          "sha256": "4bb6c237cc0e507470fbfc18af15594275f5c5507816b406dcc9c57b8478ea7b",
+          "source_id": "reds_154",
+          "family": "reds_sequence_154",
+          "source_sha256": "fe5b5fd7d18b8726773fc1a62fba0afb9a26578ebe17350765635472ca5ebd1a",
+          "split": "validation",
+          "scale": 2,
+          "frames": 16,
+          "frame_rate": "24/1",
+          "start_seconds": 0.21195283079911212,
+          "codec_warmup_frames": 24,
+          "full_reference_size": [
+            1280,
+            720
+          ],
+          "lr_patch_xy": [
+            459,
+            28
+          ],
+          "reference_size": [
+            256,
+            256
+          ],
+          "codec": "h264",
+          "rate_control": "constrained bitrate",
+          "target_bitrate": 552960,
+          "target_bits_per_pixel_frame": 0.1,
+          "gop": 60,
+          "encoded_sha256": "b15aa025b97a9f1bca385b7c87a0181176d85436c33a25f878b350034bf5674e",
+          "encoded_container_bytes": 120796,
+          "hr_command": [
+            "ffmpeg",
+            "-nostdin",
+            "-v",
+            "error",
+            "-ss",
+            "0.21195283079911212",
+            "-i",
+            "D:\\lucid-quality-breakthrough-r37\\reds-masters\\reds_154.mkv",
+            "-an",
+            "-frames:v",
+            "40",
+            "-vf",
+            "scale=1280:720:flags=lanczos",
+            "-threads",
+            "2",
+            "-pix_fmt",
+            "rgb24",
+            "-f",
+            "rawvideo",
+            "-"
+          ],
+          "encode_command": [
+            "ffmpeg",
+            "-nostdin",
+            "-v",
+            "error",
+            "-f",
+            "rawvideo",
+            "-pix_fmt",
+            "rgb24",
+            "-s",
+            "1280x720",
+            "-r",
+            "24/1",
+            "-i",
+            "-",
+            "-vf",
+            "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "medium",
+            "-b:v",
+            "552960",
+            "-maxrate",
+            "552960",
+            "-bufsize",
+            "1105920",
+            "-threads",
+            "2",
+            "-g",
+            "60",
+            "-pix_fmt",
+            "yuv420p",
+            "-colorspace",
+            "bt709",
+            "-color_primaries",
+            "bt709",
+            "-color_trc",
+            "bt709",
+            "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-2w3n9f2f\\stream.mkv"
+          ],
+          "reference_std": 70.01338804664341,
+          "reference_temporal_change": 33.258033752441406,
+          "bank": "REDS"
+        },
+        {
+          "id": "reds_073-stream-000-00",
+          "file": "validation\\reds_073-stream-000-00.npz",
+          "sha256": "8c6d38cb8e167ad5ce2b3744313ef8a6501dc5ecdf6395afb6c6a0869b341a65",
+          "source_id": "reds_073",
+          "family": "reds_sequence_073",
+          "source_sha256": "66ac1fda6844c388683c5f38f9e8795e85896df4cded04bd76a44eedc11dc176",
+          "split": "validation",
+          "scale": 2,
+          "frames": 16,
+          "frame_rate": "24/1",
+          "start_seconds": 2.696626445378337,
+          "codec_warmup_frames": 8,
+          "full_reference_size": [
+            1280,
+            720
+          ],
+          "lr_patch_xy": [
+            387,
+            150
+          ],
+          "reference_size": [
+            256,
+            256
+          ],
+          "codec": "h264",
+          "rate_control": "constrained bitrate",
+          "target_bitrate": 110592,
+          "target_bits_per_pixel_frame": 0.02,
+          "gop": 60,
+          "encoded_sha256": "5c2e251869ed02da06271bf45b220e083134b20ec1b64b242e5cf048a97164ca",
+          "encoded_container_bytes": 20518,
+          "hr_command": [
+            "ffmpeg",
+            "-nostdin",
+            "-v",
+            "error",
+            "-ss",
+            "2.696626445378337",
+            "-i",
+            "D:\\lucid-quality-breakthrough-r37\\reds-masters\\reds_073.mkv",
+            "-an",
+            "-frames:v",
+            "24",
+            "-vf",
+            "scale=1280:720:flags=lanczos",
+            "-threads",
+            "2",
+            "-pix_fmt",
+            "rgb24",
+            "-f",
+            "rawvideo",
+            "-"
+          ],
+          "encode_command": [
+            "ffmpeg",
+            "-nostdin",
+            "-v",
+            "error",
+            "-f",
+            "rawvideo",
+            "-pix_fmt",
+            "rgb24",
+            "-s",
+            "1280x720",
+            "-r",
+            "24/1",
+            "-i",
+            "-",
+            "-vf",
+            "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "medium",
+            "-b:v",
+            "110592",
+            "-maxrate",
+            "110592",
+            "-bufsize",
+            "221184",
+            "-threads",
+            "2",
+            "-g",
+            "60",
+            "-pix_fmt",
+            "yuv420p",
+            "-colorspace",
+            "bt709",
+            "-color_primaries",
+            "bt709",
+            "-color_trc",
+            "bt709",
+            "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-3_x6pcr9\\stream.mkv"
+          ],
+          "reference_std": 58.69145498617113,
+          "reference_temporal_change": 44.47105026245117,
+          "bank": "REDS"
+        }
+      ]
+    },
+    "observations": "Viewed all four trained arms with raw and full-search initialization on the fixed three frame15 patches at original pixels. Dark texture changes modestly; palm branches and chair edges still lack reference detail. History columns do not show a clear reconstruction advantage over their corresponding SR-only controls."
+  },
+  "input_diagnostic": {
+    "scope": "Fixed three previously selected validation patches,16frames each; full-chroma RGB8 Lanczos3 cleanLR target; decoded raw vs complete source-stage proxy; combined deband/TAA/RGB420 effects,not TAA-only or native playback",
+    "rows": [
+      {
+        "id": "sintel-stream-000-00",
+        "source_sha256": "efb2d3e031f034340d2764338cdf31a35213a343df0171ce18eb8e62d01970d7",
+        "metrics": {
+          "raw": {
+            "rgb_mse": 0.00013264197332318872,
+            "last_rgb_mse": 0.00014473566261585802,
+            "residual_change_l1": 0.010946768335998058
+          },
+          "search": {
+            "rgb_mse": 0.00017602567095309496,
+            "last_rgb_mse": 0.00020307647355366498,
+            "residual_change_l1": 0.013129538856446743
+          }
+        },
+        "search_vs_raw_percent": {
+          "rgb_mse": 32.70736746670657,
+          "last_rgb_mse": 40.308525130153264,
+          "residual_change_l1": 19.939862189927982
+        }
+      },
+      {
+        "id": "reds_154-stream-000-00",
+        "source_sha256": "4bb6c237cc0e507470fbfc18af15594275f5c5507816b406dcc9c57b8478ea7b",
+        "metrics": {
+          "raw": {
+            "rgb_mse": 0.0022371886298060417,
+            "last_rgb_mse": 0.002002155175432563,
+            "residual_change_l1": 0.04569876194000244
+          },
+          "search": {
+            "rgb_mse": 0.0022191808093339205,
+            "last_rgb_mse": 0.0020032101310789585,
+            "residual_change_l1": 0.04530731588602066
+          }
+        },
+        "search_vs_raw_percent": {
+          "rgb_mse": -0.8049308061109928,
+          "last_rgb_mse": 0.05269100314204689,
+          "residual_change_l1": -0.8565791224184771
+        }
+      },
+      {
+        "id": "reds_073-stream-000-00",
+        "source_sha256": "8c6d38cb8e167ad5ce2b3744313ef8a6501dc5ecdf6395afb6c6a0869b341a65",
+        "metrics": {
+          "raw": {
+            "rgb_mse": 0.013493594713509083,
+            "last_rgb_mse": 0.013881123624742031,
+            "residual_change_l1": 0.1167958527803421
+          },
+          "search": {
+            "rgb_mse": 0.013270780444145203,
+            "last_rgb_mse": 0.013647251762449741,
+            "residual_change_l1": 0.1157618910074234
+          }
+        },
+        "search_vs_raw_percent": {
+          "rgb_mse": -1.6512595353172288,
+          "last_rgb_mse": -1.6848193893715613,
+          "residual_change_l1": -0.8852726773297959
+        }
+      }
+    ]
+  },
+  "control_extraction": {
+    "complete": true,
+    "checkpoint_sha256": "09a80b4dd60af12f8fa97a9d3fe275c41cbf679184541ca7b8dfbca8368819b2",
+    "source_checkpoint_sha256": "ecfa716068356e97588d72ed229e0725906f42194b4c2edada718b4b467144cb",
+    "zero_disabled_history_verified": true,
+    "exact_parity_random_shapes": [
+      [
+        1,
+        3,
+        32,
+        48
+      ],
+      [
+        1,
+        3,
+        128,
+        128
+      ]
+    ],
+    "exact_parity_fixed_real_patches": [
+      "sintel-stream-000-00",
+      "reds_154-stream-000-00",
+      "reds_073-stream-000-00"
+    ]
+  },
+  "tests": {
+    "local": "22 focused tests passed",
+    "remote": {
+      "step": "tests",
+      "utc": "2026-09-08T17:02:56.3505880Z",
+      "exit_code": 0
+    },
+    "remote_log_sha256": "2f4557fe0356d5a2b9ce483430655b84bb1617f1e0f233992e3f24b549842b1a",
+    "cuda_smoke": {
+      "complete": true,
+      "device": "cuda:0",
+      "gpu": "NVIDIA GeForce RTX 4080",
+      "identity_exact": true,
+      "finite_nonzero_backbone_and_history_gradients": true,
+      "source_motion_policy": "search"
+    }
+  },
+  "decision": "Neither decoded-history arm is promoted: both worsen LPIPS/DISTS versus their own current-frame branches, and fixed visuals do not show substantial recovered detail. Bypassing preprocessing does not rescue this history mechanism. Raw SR-only control has modest gains on all three development sources and proceeds to r55 native evaluation with an unchanged-weight raw-pipeline control. No native quality conclusion from this proxy."
+}
