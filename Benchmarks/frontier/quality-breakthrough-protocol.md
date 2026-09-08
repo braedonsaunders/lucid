@@ -442,3 +442,31 @@ at once. The larger arm must use the identical architecture, initialization,
 schedule and objectives. This is continuation of pretrained features, not
 training a new model from random initialization. The initial mapped v4 bank
 contains exactly the original pairs; materialization completed successfully.
+
+r35's combined-stage follow-up from `big2k` is complete: native mean LPIPS worsens
+0.100% and DISTS improves 3.935% against shipping. It worsens Sunflower LPIPS
+19.45%, PedestrianArea 7.41% and RushHour 6.88%. Relative to the matched control,
+LPIPS worsens 0.577% and DISTS improves 3.720%. No promotion;
+`shipping-init-full-stage-native-comparison.json` contains the source results.
+
+AESOP's completed native run improves aggregate LPIPS only 0.496% and DISTS
+0.019% against shipping. It worsens RushHour LPIPS 24.74% / DISTS 17.99%, Sunflower
+26.02% / 8.02%, and PedestrianArea 5.72% / 9.84%. Against the matched control,
+LPIPS improves 0.023% while DISTS worsens 0.204%. The development advantage does
+not establish native quality. No promotion; `aesop-native-comparison.json`
+records the complete comparison. This first fixed-weight probe does not rule out
+joint stage training, domain-specific AE pretraining or other fidelity weights.
+
+All 6,000 r37 sharp frames and all 60 lossless masters have passed their checks.
+The first eight source IDs retain the earlier order and REDS 154/073 remain the
+two validation sources. `reds-expansion-sources.json` records their provenance
+and frame/master receipt hashes. Expanded codec construction is now separate
+from acquisition, and remains incomplete until its final manifest is published.
+
+The roomy `D:` volume is a rotational disk. Concurrent corpus writes exposed a
+random-read bottleneck in the first mapped-bank control. r38 was stopped early
+without selecting or interpreting its partial weights. r38b rebuilds the same
+v4 pairs on the `I:` SSD, checks that the manifest hash is identical, and restarts
+the full unchanged seed/schedule from the original pretrained initialization.
+The expanded mapped bank will also use that SSD; sequential source preparation
+remains on `D:`. The available SSD space was about 122 GiB before these copies.

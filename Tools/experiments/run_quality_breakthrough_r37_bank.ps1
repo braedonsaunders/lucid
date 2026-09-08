@@ -12,5 +12,6 @@ try {
  if(!(Test-Path reds-masters\master-receipts.json)){throw 'verified lossless masters required'}
  $env:PATH='C:\ffmpeg\bin;'+$env:PATH
  Run-Python 'reds-bank' @('-u','Tools/experiments/build_large_stream_bank.py','--sources','reds-masters/sources.json','--out','reds-bank','--windows-per-source','18','--patches-per-window','10','--seed','20260918')
- Run-Python 'expanded-mapped' @('-u','Tools/experiments/mmap_training_bank.py','--bank','C:\lucid\stream-bank-v4','--bank','reds-bank','--out','expanded-mapped')
+ if((Get-PSDrive I).Free -lt 60GB){throw '60 GiB SSD headroom required'}
+ Run-Python 'expanded-mapped' @('-u','Tools/experiments/mmap_training_bank.py','--bank','C:\lucid\stream-bank-v4','--bank','reds-bank','--out','I:\lucid-quality-breakthrough-r37\expanded-mapped')
 } finally {$lock.Dispose()}
