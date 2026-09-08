@@ -29,6 +29,9 @@ def digest(path):
 
 def load_bank(directory):
     manifest = json.loads((directory/'manifest.json').read_text())
+    if manifest.get('storage') == 'mmap-pairs-v1':
+        from mmap_training_bank import load_mapped_bank
+        return load_mapped_bank(directory, manifest)
     validate_sources(manifest['sources'])
     if manifest['scale'] != 2:
         raise ValueError('training requires a genuine 2x bank')

@@ -117,6 +117,49 @@ def fetch(row,out):
         'zip_crc32':row['crc'],'zip_offset':row['offset']}
 
 
+def group_ranges(rows, maximum=8*1024*1024):
+    """Bound each fetch, allowing the maximum ZIP local-header extra field."""
+    groups, current, start = [], [], 0
+    for row in sorted(rows, key=lambda r:r['offset']):
+        end = row['offset'] + 30 + len(row['name'].encode('utf-8')) + 65535 + row['compressed_size']
+        end = min(end, ARCHIVE_SIZE)
+        if end-row['offset'] > maximum:
+            raise ValueError('individual entry exceeds bounded grouped range')
+        if current and end-start > maximum:
+            groups.append((start, stop, current))
+            current = []
+        if not current:
+            start = row['offset']
+        current.append(row)
+        stop = end
+    if current:
+        groups.append((start, stop, current))
+    return groups
+
+
+def fetch_group(group, out):
+    start, stop, rows = group
+    missing = [r for r in rows if not (out/Path(r['name']).parent.name/Path(r['name']).name).exists()]
+    data = read_range(start, stop-start) if missing else None
+    for row in missing:
+        source = Path(row['name']).parent.name
+        if source in EXCLUDED:
+            raise ValueError('evaluation source is excluded from training')
+        offset = row['offset']-start
+        header = data[offset:offset+30]
+        if len(header) != 30:
+            raise ValueError('incomplete grouped ZIP header')
+        nlen, xlen = struct.unpack('<HH', header[26:30])
+        pixels = unpack_entry(row, header, data[offset+30:offset+30+nlen+xlen+row['compressed_size']])
+        target = out/source/Path(row['name']).name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        partial = target.with_suffix('.partial.png')
+        partial.write_bytes(pixels)
+        partial.replace(target)
+    # Reuse the same CRC/size checks and receipts for both cached and new frames.
+    return [fetch(row, out) for row in rows]
+
+
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--index',type=Path,required=True)
@@ -124,6 +167,8 @@ def main():
     ap.add_argument('--sequences',type=int,default=8)
     ap.add_argument('--frames',type=int,default=64)
     ap.add_argument('--workers',type=int,default=4)
+    ap.add_argument('--grouped-ranges',action='store_true',
+                    help='Fetch adjacent entries in bounded 8 MiB ranges; preserve all frame checks')
     args=ap.parse_args()
     if not 1<=args.sequences<=60 or not 40<=args.frames<=100 or not 1<=args.workers<=4:
         ap.error('1..60 sequences, 40..100 frames, 1..4 workers required')
@@ -147,9 +192,15 @@ def main():
     spec_path.write_text(json.dumps(spec,indent=2)+'\n')
     receipts=[]
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        for receipt in pool.map(lambda row:fetch(row,args.out),rows):
-            receipts.append(receipt)
-            if len(receipts)%16==0:print('verified',len(receipts),'of',len(rows),flush=True)
+        if args.grouped_ranges:
+            for group in pool.map(lambda group:fetch_group(group,args.out),group_ranges(rows)):
+                receipts.extend(group)
+                print('verified',len(receipts),'of',len(rows),flush=True)
+            receipts.sort(key=lambda row:row['file'])
+        else:
+            for receipt in pool.map(lambda row:fetch(row,args.out),rows):
+                receipts.append(receipt)
+                if len(receipts)%16==0:print('verified',len(receipts),'of',len(rows),flush=True)
     manifest={'spec':spec,'code_sha256':digest(__file__),'frames':receipts,'complete':True}
     (args.out/'frame-receipts.json').write_text(json.dumps(manifest,indent=2)+'\n')
     print('complete',len(receipts),'frames',flush=True)

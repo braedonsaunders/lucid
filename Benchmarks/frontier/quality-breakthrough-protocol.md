@@ -382,3 +382,34 @@ r36 fixes three independent 1,000-step arms from `big2k`: clean-LR weight 1,
 AESOP alone, and both. The reference control is r33's matched `big_control_1k`.
 The teachers add no SR inference cost. Training and native quality remain to be
 measured; implementing the losses is not a quality claim.
+
+## Larger-bank base pretraining: data and memory implementation
+
+r37 expands the existing pinned REDS selection from eight to 60 sequences and
+uses all 100 sharp frames per sequence. The same seeded ordering preserves the
+first two validation IDs; REDS4 remains excluded. The public archive is fetched
+by bounded ranges with each frame's exact ZIP identity, size and CRC checked,
+then SHA256 receipts. Grouped ranges reduce request overhead while preserving
+these checks and resuming completed frames. Lossless FFV1 masters must pass an
+RGB comparison for every input PNG. This acquisition uses `D:` on the authorized
+worker, which had about 1.3 TiB free, rather than its nearly full system drive.
+The official dataset is CC BY 4.0; the original provenance remains in
+`reds-archive-receipt.json` and `reds-training-subset.md`.
+
+`build_large_stream_bank.py` freezes a source/recipe specification and retains
+checked per-source receipts for interruption recovery. Planned expansion is
+18 full-frame codec windows × 10 spatial patches × 58 training REDS sequences
+= 10,440 new 16-frame examples. Composing with v4's 1,152 training examples gives
+11,592, or 10.06× v4. This is 10× patch-sequence count, not 10× independent footage;
+windows can overlap within a clip. It also changes source distribution and
+master quality. Those effects cannot be attributed to count alone. The first
+two REDS sequences and all original v4 validation sources stay out of training.
+
+The uncompressed pairs exceed the worker's 32 GiB RAM. `mmap_training_bank.py`
+materializes checked `.npy` pairs, preserves source splits and publishes the
+manifest only when complete. The loader validates bytes, maps read-only arrays
+and copies only sampled crops. Reference-only supervision reuses the sampled HR
+target rather than eagerly duplicating every sequence. Four tests verify exact
+sampler/RNG equivalence, read-only memory maps, source/sequence conflicts,
+changed arrays and incomplete-bank rejection. No completed larger bank or
+pretraining quality result is claimed yet.

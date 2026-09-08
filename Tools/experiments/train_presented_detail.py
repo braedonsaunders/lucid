@@ -247,6 +247,9 @@ def main():
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
     manifest, data = load_bank(args.bank)
+    mapped = manifest.get('storage') == 'mmap-pairs-v1'
+    if mapped and (args.intended != 'reference' or str(args.pixrestore_cache) != 'none' or str(args.shipping_cache) != 'none'):
+        ap.error('mapped banks currently require reference supervision and no teacher caches')
     bank_hash = digest(args.bank / 'manifest.json')
     if args.intended == 'teacher' and str(args.pixrestore_cache) == 'none':
         ap.error('--intended teacher requires a teacher cache')
@@ -282,7 +285,7 @@ def main():
         # The fixed 50% shipping/PixRestore mixture scores only +2.9% LPIPS / +6.6% DISTS
         # over shipping on the development set, below what the paired-critic student
         # already reaches, so that target holds the student back; regress to truth.
-        mixed = {identity: hr for _, hr, identity in data['train']}
+        mixed = None if mapped else {identity: hr for _, hr, identity in data['train']}
     del teacher, target
     model = (shipping if already_2x else fold_head(shipping)).cuda().train()
     del shipping
@@ -333,6 +336,9 @@ def main():
         'temporal': args.temporal,
         'torch': str(torch.__version__), 'gpu': torch.cuda.get_device_name(),
         'purpose': 'controlled quality/performance experiment; not shipping promotion'}
+    if mapped:
+        experiment['source_hashes']['mmap_training_bank.py'] = digest(Path(__file__).with_name('mmap_training_bank.py'))
+        experiment['bank_storage'] = 'checked read-only memory maps; only sampled crops copied; HR target aliases sampled reference'
     if fidelity is not None:
         experiment['aesop'] = fidelity.metadata
         experiment['source_hashes']['aesop_fidelity.py'] = digest(Path(__file__).with_name('aesop_fidelity.py'))
@@ -395,7 +401,8 @@ def main():
     ema_model = None
     for step in range(1, args.steps + 1):
         frames = max(args.training_frames, 3 if args.native_input_stages else 2 if args.temporal else 1)
-        x, reference, intended = batch(data['train'], rng, args.batch, frames, args.crop, mixed)
+        sampled = batch(data['train'], rng, args.batch, frames, args.crop, mixed)
+        x, reference, intended = (*sampled, sampled[1]) if mapped else sampled
         if step == 1:
             experiment['first_decoded_sequence_sha256'] = state_digest({'source': x, 'reference': reference})
         if args.native_output_stages:
