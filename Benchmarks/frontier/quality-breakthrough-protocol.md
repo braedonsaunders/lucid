@@ -875,3 +875,17 @@ including its own current-frame branch. The code snapshot is copied from the
 verified r47 replay and includes the REDS evaluator before any job starts.
 Useful proxy results would still require native integration and quality/runtime
 validation against the single-model 60fps target.
+
+During r48, revisit the earlier learned-past readout rather than treating its
+narrow threshold miss as evidence that it lacked useful detail. That archived
+probe reduced MSE 0.9755% and improved fine correlation 0.004185 versus its
+current-only control, with both metrics improving on 11/13 check identities.
+It uses twelve packed full-4x prediction channels and two previous frames,
+which differs from r48's 2x RGB history. Its frozen model/readout hashes are
+verified before applying it to the three previously fixed r41 patches at frame15,
+with the archived FP32/RGB8/PIL-bicubic baseline convention and decoded-only DIS
+alignment. No weights or coefficients are refitted. Original-pixel images show
+small texture/edge changes rather than a dramatic recovery; this limited visual
+review neither invalidates the earlier source-level gains nor proves native
+quality. `archived-learned-history-visual-revisit.json` retains the patch metrics,
+selection and hashes. The numerical threshold alone is not used to discard it.

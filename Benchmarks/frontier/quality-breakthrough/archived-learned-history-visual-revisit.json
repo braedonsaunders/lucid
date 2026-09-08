@@ -1,0 +1,373 @@
+{
+  "complete": true,
+  "scope": "Frozen archived linear readout on three previously fixed r41 patches at frame15; raw pipeline and CPU FP32, not matched native playback or independent broad quality validation; no fitting or parameter changes",
+  "checkpoint_sha256": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65",
+  "readout_sha256": "c9b92c954064a7497d06ecc7c6d7c7ed2904058cbd7af259866ae3d349a4f7b4",
+  "rows": [
+    {
+      "selection": {
+        "id": "sintel-stream-000-00",
+        "file": "validation/sintel-stream-000-00.npz",
+        "sha256": "efb2d3e031f034340d2764338cdf31a35213a343df0171ce18eb8e62d01970d7",
+        "source_id": "sintel",
+        "family": "blender_sintel",
+        "source_sha256": "648178454637253705ea56bd8a02db0bf17134703fe82ec3d6a9a880a343bc08",
+        "split": "validation",
+        "scale": 2,
+        "frames": 16,
+        "frame_rate": "24/1",
+        "start_seconds": 517.2646243716367,
+        "codec_warmup_frames": 8,
+        "full_reference_size": [
+          1920,
+          816
+        ],
+        "lr_patch_xy": [
+          720,
+          169
+        ],
+        "reference_size": [
+          256,
+          256
+        ],
+        "codec": "h264",
+        "rate_control": "constrained bitrate",
+        "target_bitrate": 940032,
+        "target_bits_per_pixel_frame": 0.1,
+        "gop": 60,
+        "encoded_sha256": "9dc6cf2839dc267819dfc3738974e28925021a7d2f0c084882d4bf30b030fcb6",
+        "encoded_container_bytes": 101512,
+        "hr_command": [
+          "ffmpeg",
+          "-nostdin",
+          "-v",
+          "error",
+          "-ss",
+          "517.2646243716367",
+          "-i",
+          "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/Sintel.2010.4k.mkv",
+          "-an",
+          "-frames:v",
+          "24",
+          "-vf",
+          "scale=1920:816:flags=lanczos",
+          "-threads",
+          "2",
+          "-pix_fmt",
+          "rgb24",
+          "-f",
+          "rawvideo",
+          "-"
+        ],
+        "encode_command": [
+          "ffmpeg",
+          "-nostdin",
+          "-v",
+          "error",
+          "-f",
+          "rawvideo",
+          "-pix_fmt",
+          "rgb24",
+          "-s",
+          "1920x816",
+          "-r",
+          "24/1",
+          "-i",
+          "-",
+          "-vf",
+          "scale=960:408:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+          "-c:v",
+          "libx264",
+          "-preset",
+          "medium",
+          "-b:v",
+          "940032",
+          "-maxrate",
+          "940032",
+          "-bufsize",
+          "1880064",
+          "-threads",
+          "2",
+          "-g",
+          "60",
+          "-pix_fmt",
+          "yuv420p",
+          "-colorspace",
+          "bt709",
+          "-color_primaries",
+          "bt709",
+          "-color_trc",
+          "bt709",
+          "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-017oig5c/stream.mkv"
+        ],
+        "reference_std": 12.77340098621862,
+        "reference_temporal_change": 7.34506368637085
+      },
+      "metrics": {
+        "original": {
+          "mse_rgb": 17.105382387329932,
+          "fine_correlation": 0.5972758373792674
+        },
+        "spatial": {
+          "mse_rgb": 19.118881536989797,
+          "fine_correlation": 0.5843355293136089
+        },
+        "aligned": {
+          "mse_rgb": 18.328570099914966,
+          "fine_correlation": 0.5958451723434824
+        },
+        "big2k": {
+          "mse_rgb": 18.566911139455783,
+          "fine_correlation": 0.6169784467616881
+        }
+      },
+      "visible_fraction": 0.961334228515625
+    },
+    {
+      "selection": {
+        "id": "reds_154-stream-000-00",
+        "file": "validation\\reds_154-stream-000-00.npz",
+        "sha256": "4bb6c237cc0e507470fbfc18af15594275f5c5507816b406dcc9c57b8478ea7b",
+        "source_id": "reds_154",
+        "family": "reds_sequence_154",
+        "source_sha256": "fe5b5fd7d18b8726773fc1a62fba0afb9a26578ebe17350765635472ca5ebd1a",
+        "split": "validation",
+        "scale": 2,
+        "frames": 16,
+        "frame_rate": "24/1",
+        "start_seconds": 0.21195283079911212,
+        "codec_warmup_frames": 24,
+        "full_reference_size": [
+          1280,
+          720
+        ],
+        "lr_patch_xy": [
+          459,
+          28
+        ],
+        "reference_size": [
+          256,
+          256
+        ],
+        "codec": "h264",
+        "rate_control": "constrained bitrate",
+        "target_bitrate": 552960,
+        "target_bits_per_pixel_frame": 0.1,
+        "gop": 60,
+        "encoded_sha256": "b15aa025b97a9f1bca385b7c87a0181176d85436c33a25f878b350034bf5674e",
+        "encoded_container_bytes": 120796,
+        "hr_command": [
+          "ffmpeg",
+          "-nostdin",
+          "-v",
+          "error",
+          "-ss",
+          "0.21195283079911212",
+          "-i",
+          "D:\\lucid-quality-breakthrough-r37\\reds-masters\\reds_154.mkv",
+          "-an",
+          "-frames:v",
+          "40",
+          "-vf",
+          "scale=1280:720:flags=lanczos",
+          "-threads",
+          "2",
+          "-pix_fmt",
+          "rgb24",
+          "-f",
+          "rawvideo",
+          "-"
+        ],
+        "encode_command": [
+          "ffmpeg",
+          "-nostdin",
+          "-v",
+          "error",
+          "-f",
+          "rawvideo",
+          "-pix_fmt",
+          "rgb24",
+          "-s",
+          "1280x720",
+          "-r",
+          "24/1",
+          "-i",
+          "-",
+          "-vf",
+          "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+          "-c:v",
+          "libx264",
+          "-preset",
+          "medium",
+          "-b:v",
+          "552960",
+          "-maxrate",
+          "552960",
+          "-bufsize",
+          "1105920",
+          "-threads",
+          "2",
+          "-g",
+          "60",
+          "-pix_fmt",
+          "yuv420p",
+          "-colorspace",
+          "bt709",
+          "-color_primaries",
+          "bt709",
+          "-color_trc",
+          "bt709",
+          "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-2w3n9f2f\\stream.mkv"
+        ],
+        "reference_std": 70.01338804664341,
+        "reference_temporal_change": 33.258033752441406,
+        "bank": "REDS"
+      },
+      "metrics": {
+        "original": {
+          "mse_rgb": 186.6683341305272,
+          "fine_correlation": 0.5097577882278473
+        },
+        "spatial": {
+          "mse_rgb": 184.7409053465136,
+          "fine_correlation": 0.516299026773759
+        },
+        "aligned": {
+          "mse_rgb": 184.90107488307822,
+          "fine_correlation": 0.5172187411981894
+        },
+        "big2k": {
+          "mse_rgb": 195.0817788052721,
+          "fine_correlation": 0.4984181735561058
+        }
+      },
+      "visible_fraction": 0.677734375
+    },
+    {
+      "selection": {
+        "id": "reds_073-stream-000-00",
+        "file": "validation\\reds_073-stream-000-00.npz",
+        "sha256": "8c6d38cb8e167ad5ce2b3744313ef8a6501dc5ecdf6395afb6c6a0869b341a65",
+        "source_id": "reds_073",
+        "family": "reds_sequence_073",
+        "source_sha256": "66ac1fda6844c388683c5f38f9e8795e85896df4cded04bd76a44eedc11dc176",
+        "split": "validation",
+        "scale": 2,
+        "frames": 16,
+        "frame_rate": "24/1",
+        "start_seconds": 2.696626445378337,
+        "codec_warmup_frames": 8,
+        "full_reference_size": [
+          1280,
+          720
+        ],
+        "lr_patch_xy": [
+          387,
+          150
+        ],
+        "reference_size": [
+          256,
+          256
+        ],
+        "codec": "h264",
+        "rate_control": "constrained bitrate",
+        "target_bitrate": 110592,
+        "target_bits_per_pixel_frame": 0.02,
+        "gop": 60,
+        "encoded_sha256": "5c2e251869ed02da06271bf45b220e083134b20ec1b64b242e5cf048a97164ca",
+        "encoded_container_bytes": 20518,
+        "hr_command": [
+          "ffmpeg",
+          "-nostdin",
+          "-v",
+          "error",
+          "-ss",
+          "2.696626445378337",
+          "-i",
+          "D:\\lucid-quality-breakthrough-r37\\reds-masters\\reds_073.mkv",
+          "-an",
+          "-frames:v",
+          "24",
+          "-vf",
+          "scale=1280:720:flags=lanczos",
+          "-threads",
+          "2",
+          "-pix_fmt",
+          "rgb24",
+          "-f",
+          "rawvideo",
+          "-"
+        ],
+        "encode_command": [
+          "ffmpeg",
+          "-nostdin",
+          "-v",
+          "error",
+          "-f",
+          "rawvideo",
+          "-pix_fmt",
+          "rgb24",
+          "-s",
+          "1280x720",
+          "-r",
+          "24/1",
+          "-i",
+          "-",
+          "-vf",
+          "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+          "-c:v",
+          "libx264",
+          "-preset",
+          "medium",
+          "-b:v",
+          "110592",
+          "-maxrate",
+          "110592",
+          "-bufsize",
+          "221184",
+          "-threads",
+          "2",
+          "-g",
+          "60",
+          "-pix_fmt",
+          "yuv420p",
+          "-colorspace",
+          "bt709",
+          "-color_primaries",
+          "bt709",
+          "-color_trc",
+          "bt709",
+          "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-3_x6pcr9\\stream.mkv"
+        ],
+        "reference_std": 58.69145498617113,
+        "reference_temporal_change": 44.47105026245117,
+        "bank": "REDS"
+      },
+      "metrics": {
+        "original": {
+          "mse_rgb": 945.7038424744898,
+          "fine_correlation": 0.11126623871471297
+        },
+        "spatial": {
+          "mse_rgb": 942.2890757865646,
+          "fine_correlation": 0.12186837472139488
+        },
+        "aligned": {
+          "mse_rgb": 935.9772600446429,
+          "fine_correlation": 0.1240164061648878
+        },
+        "big2k": {
+          "mse_rgb": 965.7455024978741,
+          "fine_correlation": 0.09772056357564356
+        }
+      },
+      "visible_fraction": 0.9413375854492188
+    }
+  ],
+  "visual_review": "At original pixel size the archived readouts make small texture/edge changes relative to their original 4x-to-2x baseline; no dramatic recovered detail on the three fixed patches. This narrow review does not invalidate the earlier 11/13-source detail-correlation result or establish native quality.",
+  "source_sha256": {
+    ".build/quality-breakthrough-r48/revisit-learned-history.py": "566a5c60ad33275551a16534f495a0ad08c969d4f8d6b69d10f9f8dacc79caa8",
+    "Tools/experiments/probe_learned_past_information.py": "fb7050d53daa3095d9d8e0bdc57af262bae8dde40bd86758d6b0cce7331476e4",
+    "Tools/eval_checkpoint.py": "3786cc8f5aeb5c116dfeebe5e170d9f44fb93dd12e42b66fbd8e54be4fe358e0"
+  }
+}
