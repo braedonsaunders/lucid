@@ -110,7 +110,8 @@ def main():
         report['direct_model_sources'] = {name: digest(source_root/name) for name in (
             'eval_checkpoint.py', 'train_span.py', 'architectures/span_arch.py',
             'architectures/subspace_adapter.py', 'architectures/activation_control.py',
-            'architectures/spatial_activation_control.py') if (source_root/name).is_file()}
+            'architectures/spatial_activation_control.py', 'architectures/precleaner.py',
+            'architectures/degradation_conditioning.py') if (source_root/name).is_file()}
     if args.anchored_probe:
         report['anchored_probe'] = {
             'code_sha256': digest(Path(__file__).resolve().parents[1] / 'architectures/anchored_detail.py'),

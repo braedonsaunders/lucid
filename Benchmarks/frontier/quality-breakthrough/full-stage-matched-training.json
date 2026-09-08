@@ -1,0 +1,391 @@
+{
+  "complete": true,
+  "scope": "matched training and Core ML conversion correctness; native quality pending; concurrent conversion timings not admission evidence",
+  "models": {
+    "source_fp16_1k": {
+      "experiment": {
+        "args": {
+          "bank": "C:\\lucid\\stream-bank-v4",
+          "pixrestore_cache": "none",
+          "shipping_cache": "none",
+          "init": "C:\\lucid\\paired-ladder-20260905-r17\\v4_w0075_2k\\step002000.pth",
+          "out": "source_fp16_1k",
+          "teacher_mix": 0.0,
+          "steps": 1000,
+          "batch": 4,
+          "crop": 96,
+          "lr": 2e-05,
+          "seed": 20260914,
+          "architecture": "coupled",
+          "detail_channels": 32,
+          "detail_blocks": 4,
+          "detail_target": "reference",
+          "dino_gan_weight": 0.0075,
+          "ldl_weight": 0,
+          "ldl_formulation": "reference",
+          "native_input_stages": true,
+          "native_output_stages": false,
+          "training_frames": 3,
+          "temporal": 0,
+          "input_noise": 0,
+          "intended": "reference",
+          "paired_negatives": "shift",
+          "smooth_negative_share": 0.125,
+          "paired_dino": true,
+          "gan_head_ratio_cap": 0,
+          "pixrestore_repository": "C:\\lucid\\pixrestore-baseline-20260904",
+          "dino_repository": "C:\\lucid\\causal-frontier-20260904-dino\\third_party\\dinov2",
+          "dino_checkpoint": "C:\\lucid\\frontier-teachers-20260904\\dinov2_vits14_pretrain.pth"
+        },
+        "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+        "checkpoint_sha256": "97893aee351a847f9a203977aa6546dc9cef2f25388e33b0b9a65fb4dd695c50",
+        "teacher_manifest_sha256": null,
+        "shipping_manifest_sha256": null,
+        "initialization": "2x checkpoint used directly",
+        "source_hashes": {
+          "train_presented_detail.py": "46776c4a1d2529cc32215392d1f971f40c3010c8be343eaa561f936434664288",
+          "fold_shipping_head.py": "750795d69cce54883e601440b64344e25cd137b90c05e0e0d990d3bcf205d01e",
+          "train_causal_detail.py": "29484d4cf228a0ff04c17c509c68dfe62adf30eafea67f0903f4ebb52dfd662e",
+          "train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+          "span_arch.py": "0fd7c3c6bddcf6fd9c547793a58e9ded66a99e75c106fa20aa3e1cd059f6a806",
+          "dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+          "dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a",
+          "paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb",
+          "native_stages.py": "f8765f3206cd7ec5a977806e6706b92006cd84a335d67542b8a0fbc3765f69af"
+        },
+        "loss": "L1 to HR reference + 0.2 signed Sobel to reference + 0.05 FFT to reference + 0.1 L1 to reference; 8 output-pixel border excluded",
+        "precision": "CUDA BF16 autocast; AdamW FP32; no compilation",
+        "input_noise": 0,
+        "temporal": 0,
+        "torch": "2.6.0+cu124",
+        "gpu": "NVIDIA GeForce RTX 4080",
+        "purpose": "controlled quality/performance experiment; not shipping promotion",
+        "adversary": {
+          "upstream": "https://github.com/csslc/PixRestore",
+          "gan_sha256": "21be7412da65dc94eb7048e3510ce8ec8e6b47ae241ff4679df0eba728f99b59",
+          "feature_encoder": {
+            "inspiration": "https://github.com/csslc/PixRestore",
+            "reviewed_pixrestore_commit": "909ca06e614cf72e218d52b4fa41077c603d872b",
+            "encoder_repository": "https://github.com/facebookresearch/dinov2",
+            "encoder_commit": "7764ea0f912e53c92e82eb78a2a1631e92725fc8",
+            "encoder_weight_sha256": "b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9",
+            "layers": [
+              1,
+              2,
+              4,
+              6,
+              8,
+              10
+            ],
+            "size": 224,
+            "temperature": 1.0,
+            "normalization": "ImageNet RGB; raw intermediate patch tokens; cosine distance",
+            "weighting": "softmax((1-mean_LQ_HQ_cosine)/temperature), detached",
+            "resize": "PyTorch bicubic antialias",
+            "inference_cost": "none; used only for training"
+          },
+          "real_target": "known training HQ reference",
+          "real_label": 0.8,
+          "discriminator_optimizer": "AdamW, lr 1e-4, weight_decay 0",
+          "discriminator_loss": "0.5 real BCE + 0.25 generated BCE + 0.25 wrong-detail BCE; clip 1",
+          "inference_cost": "none; feature encoder and discriminator discarded",
+          "condition": "detached DINO tokens of bicubic LR at matching output coordinates",
+          "features": "concatenate output and condition tokens; 768 inputs, 96 hidden units",
+          "negatives": "half generated output, half HR with signed 3x3 highpass displaced two pixels right",
+          "limitation": "combined conditioning/negative recipe; not isolated component attribution"
+        },
+        "discriminator_initial_sha256": "8fd80818539e329acfaeb34453193fae76ba9d7d70b78092f33df73fe9ff7f81",
+        "native_input_stages": {
+          "order": "decoded RGB -> quantized 420 deband -> source-resolution TAA -> RGB -> model",
+          "frames": 3,
+          "feedback": 0.5,
+          "guard": 0.005,
+          "limitations": "crop boundaries; short reset history; approximate RGB/420 conversion; output sharpen/grade not emulated"
+        },
+        "first_decoded_sequence_sha256": "1cb6fc7da87f8c2653639c18098591a079458b2502ab315555ead5a33731db6d",
+        "first_batch_sha256": "b4664d660d6d2c43baea895e97a969e9014fd527d7b9022d2ee8e86bb845a0c1",
+        "first_output_sha256": "98ec7da775a7b6811fbed9f2036893987bca2284a11735f02c99057bf5ddbdb0"
+      },
+      "completion": {
+        "steps": 1000,
+        "minutes": 2.0135333333329375,
+        "temporal_static_coverage_mean": null,
+        "max_applied_head_gradient_ratio": null,
+        "min_adversarial_scale": null
+      },
+      "conversion": {
+        "complete": true,
+        "checkpoint_sha256": "e479408808a29c00549b8b7e4b15aed2065a801290f8b1d30ffe01180329af8c",
+        "profile_sha256": "83f697cf4b7b44d951f2ae88e08a2af49df0211f8a0901de65149bb195ad84d1",
+        "correctness": {
+          "max_rgb": 0.870147705078125,
+          "mean_rgb": 0.2529370188713074,
+          "output_shape": [
+            720,
+            1280,
+            3
+          ]
+        }
+      }
+    },
+    "output_stages_1k": {
+      "experiment": {
+        "args": {
+          "bank": "C:\\lucid\\stream-bank-v4",
+          "pixrestore_cache": "none",
+          "shipping_cache": "none",
+          "init": "C:\\lucid\\paired-ladder-20260905-r17\\v4_w0075_2k\\step002000.pth",
+          "out": "output_stages_1k",
+          "teacher_mix": 0.0,
+          "steps": 1000,
+          "batch": 4,
+          "crop": 96,
+          "lr": 2e-05,
+          "seed": 20260914,
+          "architecture": "coupled",
+          "detail_channels": 32,
+          "detail_blocks": 4,
+          "detail_target": "reference",
+          "dino_gan_weight": 0.0075,
+          "ldl_weight": 0,
+          "ldl_formulation": "reference",
+          "native_input_stages": false,
+          "native_output_stages": true,
+          "training_frames": 3,
+          "temporal": 0,
+          "input_noise": 0,
+          "intended": "reference",
+          "paired_negatives": "shift",
+          "smooth_negative_share": 0.125,
+          "paired_dino": true,
+          "gan_head_ratio_cap": 0,
+          "pixrestore_repository": "C:\\lucid\\pixrestore-baseline-20260904",
+          "dino_repository": "C:\\lucid\\causal-frontier-20260904-dino\\third_party\\dinov2",
+          "dino_checkpoint": "C:\\lucid\\frontier-teachers-20260904\\dinov2_vits14_pretrain.pth"
+        },
+        "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+        "checkpoint_sha256": "97893aee351a847f9a203977aa6546dc9cef2f25388e33b0b9a65fb4dd695c50",
+        "teacher_manifest_sha256": null,
+        "shipping_manifest_sha256": null,
+        "initialization": "2x checkpoint used directly",
+        "source_hashes": {
+          "train_presented_detail.py": "46776c4a1d2529cc32215392d1f971f40c3010c8be343eaa561f936434664288",
+          "fold_shipping_head.py": "750795d69cce54883e601440b64344e25cd137b90c05e0e0d990d3bcf205d01e",
+          "train_causal_detail.py": "29484d4cf228a0ff04c17c509c68dfe62adf30eafea67f0903f4ebb52dfd662e",
+          "train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+          "span_arch.py": "0fd7c3c6bddcf6fd9c547793a58e9ded66a99e75c106fa20aa3e1cd059f6a806",
+          "dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+          "dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a",
+          "paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb",
+          "native_stages.py": "f8765f3206cd7ec5a977806e6706b92006cd84a335d67542b8a0fbc3765f69af",
+          "native_output_stages.py": "d43f70078ecf1edf69492ba6f7aebe98c624a7a22cbe155e20a8f57b7aaced1e"
+        },
+        "loss": "L1 to HR reference + 0.2 signed Sobel to reference + 0.05 FFT to reference + 0.1 L1 to reference; 8 output-pixel border excluded",
+        "precision": "CUDA BF16 autocast; AdamW FP32; no compilation",
+        "input_noise": 0,
+        "temporal": 0,
+        "torch": "2.6.0+cu124",
+        "gpu": "NVIDIA GeForce RTX 4080",
+        "purpose": "controlled quality/performance experiment; not shipping promotion",
+        "adversary": {
+          "upstream": "https://github.com/csslc/PixRestore",
+          "gan_sha256": "21be7412da65dc94eb7048e3510ce8ec8e6b47ae241ff4679df0eba728f99b59",
+          "feature_encoder": {
+            "inspiration": "https://github.com/csslc/PixRestore",
+            "reviewed_pixrestore_commit": "909ca06e614cf72e218d52b4fa41077c603d872b",
+            "encoder_repository": "https://github.com/facebookresearch/dinov2",
+            "encoder_commit": "7764ea0f912e53c92e82eb78a2a1631e92725fc8",
+            "encoder_weight_sha256": "b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9",
+            "layers": [
+              1,
+              2,
+              4,
+              6,
+              8,
+              10
+            ],
+            "size": 224,
+            "temperature": 1.0,
+            "normalization": "ImageNet RGB; raw intermediate patch tokens; cosine distance",
+            "weighting": "softmax((1-mean_LQ_HQ_cosine)/temperature), detached",
+            "resize": "PyTorch bicubic antialias",
+            "inference_cost": "none; used only for training"
+          },
+          "real_target": "known training HQ reference",
+          "real_label": 0.8,
+          "discriminator_optimizer": "AdamW, lr 1e-4, weight_decay 0",
+          "discriminator_loss": "0.5 real BCE + 0.25 generated BCE + 0.25 wrong-detail BCE; clip 1",
+          "inference_cost": "none; feature encoder and discriminator discarded",
+          "condition": "detached DINO tokens of bicubic LR at matching output coordinates",
+          "features": "concatenate output and condition tokens; 768 inputs, 96 hidden units",
+          "negatives": "half generated output, half HR with signed 3x3 highpass displaced two pixels right",
+          "limitation": "combined conditioning/negative recipe; not isolated component attribution"
+        },
+        "discriminator_initial_sha256": "8fd80818539e329acfaeb34453193fae76ba9d7d70b78092f33df73fe9ff7f81",
+        "native_output_stages": {
+          "order": "model -> RGB8/420 proxy -> sharpen .2 -> tone/contrast .2/adaptive grain .01 -> RGB8 proxy -> losses",
+          "radius": 2,
+          "reference_radius": 2,
+          "limitations": "crop-local grain phase/statistics; approximate RGB/420 conversion and chroma siting; straight-through quantization"
+        },
+        "first_decoded_sequence_sha256": "1cb6fc7da87f8c2653639c18098591a079458b2502ab315555ead5a33731db6d",
+        "first_batch_sha256": "41cda4bb4af06791bf06147e37c6787f3c40004f16d76fe545ac2d8ffb843219",
+        "first_output_sha256": "1e29b63533e7d14e19d936d719cc1c8e70e4cb5767ab6e01c6ccc5fa5b2de669"
+      },
+      "completion": {
+        "steps": 1000,
+        "minutes": 1.209116666666038,
+        "temporal_static_coverage_mean": null,
+        "max_applied_head_gradient_ratio": null,
+        "min_adversarial_scale": null
+      },
+      "conversion": {
+        "complete": true,
+        "checkpoint_sha256": "d90b9112fe3b36c2baa535272b15b478de382ef05b115e9bc2ef4c2f0bb7bf47",
+        "profile_sha256": "c854f46be5933f8ac95d74640fb235282240d52a89243b4aa1db63d12f17018a",
+        "correctness": {
+          "max_rgb": 0.8193206787109375,
+          "mean_rgb": 0.25359201431274414,
+          "output_shape": [
+            720,
+            1280,
+            3
+          ]
+        }
+      }
+    },
+    "full_stages_1k": {
+      "experiment": {
+        "args": {
+          "bank": "C:\\lucid\\stream-bank-v4",
+          "pixrestore_cache": "none",
+          "shipping_cache": "none",
+          "init": "C:\\lucid\\paired-ladder-20260905-r17\\v4_w0075_2k\\step002000.pth",
+          "out": "full_stages_1k",
+          "teacher_mix": 0.0,
+          "steps": 1000,
+          "batch": 4,
+          "crop": 96,
+          "lr": 2e-05,
+          "seed": 20260914,
+          "architecture": "coupled",
+          "detail_channels": 32,
+          "detail_blocks": 4,
+          "detail_target": "reference",
+          "dino_gan_weight": 0.0075,
+          "ldl_weight": 0,
+          "ldl_formulation": "reference",
+          "native_input_stages": true,
+          "native_output_stages": true,
+          "training_frames": 3,
+          "temporal": 0,
+          "input_noise": 0,
+          "intended": "reference",
+          "paired_negatives": "shift",
+          "smooth_negative_share": 0.125,
+          "paired_dino": true,
+          "gan_head_ratio_cap": 0,
+          "pixrestore_repository": "C:\\lucid\\pixrestore-baseline-20260904",
+          "dino_repository": "C:\\lucid\\causal-frontier-20260904-dino\\third_party\\dinov2",
+          "dino_checkpoint": "C:\\lucid\\frontier-teachers-20260904\\dinov2_vits14_pretrain.pth"
+        },
+        "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+        "checkpoint_sha256": "97893aee351a847f9a203977aa6546dc9cef2f25388e33b0b9a65fb4dd695c50",
+        "teacher_manifest_sha256": null,
+        "shipping_manifest_sha256": null,
+        "initialization": "2x checkpoint used directly",
+        "source_hashes": {
+          "train_presented_detail.py": "46776c4a1d2529cc32215392d1f971f40c3010c8be343eaa561f936434664288",
+          "fold_shipping_head.py": "750795d69cce54883e601440b64344e25cd137b90c05e0e0d990d3bcf205d01e",
+          "train_causal_detail.py": "29484d4cf228a0ff04c17c509c68dfe62adf30eafea67f0903f4ebb52dfd662e",
+          "train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+          "span_arch.py": "0fd7c3c6bddcf6fd9c547793a58e9ded66a99e75c106fa20aa3e1cd059f6a806",
+          "dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+          "dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a",
+          "paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb",
+          "native_stages.py": "f8765f3206cd7ec5a977806e6706b92006cd84a335d67542b8a0fbc3765f69af",
+          "native_output_stages.py": "d43f70078ecf1edf69492ba6f7aebe98c624a7a22cbe155e20a8f57b7aaced1e"
+        },
+        "loss": "L1 to HR reference + 0.2 signed Sobel to reference + 0.05 FFT to reference + 0.1 L1 to reference; 8 output-pixel border excluded",
+        "precision": "CUDA BF16 autocast; AdamW FP32; no compilation",
+        "input_noise": 0,
+        "temporal": 0,
+        "torch": "2.6.0+cu124",
+        "gpu": "NVIDIA GeForce RTX 4080",
+        "purpose": "controlled quality/performance experiment; not shipping promotion",
+        "adversary": {
+          "upstream": "https://github.com/csslc/PixRestore",
+          "gan_sha256": "21be7412da65dc94eb7048e3510ce8ec8e6b47ae241ff4679df0eba728f99b59",
+          "feature_encoder": {
+            "inspiration": "https://github.com/csslc/PixRestore",
+            "reviewed_pixrestore_commit": "909ca06e614cf72e218d52b4fa41077c603d872b",
+            "encoder_repository": "https://github.com/facebookresearch/dinov2",
+            "encoder_commit": "7764ea0f912e53c92e82eb78a2a1631e92725fc8",
+            "encoder_weight_sha256": "b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9",
+            "layers": [
+              1,
+              2,
+              4,
+              6,
+              8,
+              10
+            ],
+            "size": 224,
+            "temperature": 1.0,
+            "normalization": "ImageNet RGB; raw intermediate patch tokens; cosine distance",
+            "weighting": "softmax((1-mean_LQ_HQ_cosine)/temperature), detached",
+            "resize": "PyTorch bicubic antialias",
+            "inference_cost": "none; used only for training"
+          },
+          "real_target": "known training HQ reference",
+          "real_label": 0.8,
+          "discriminator_optimizer": "AdamW, lr 1e-4, weight_decay 0",
+          "discriminator_loss": "0.5 real BCE + 0.25 generated BCE + 0.25 wrong-detail BCE; clip 1",
+          "inference_cost": "none; feature encoder and discriminator discarded",
+          "condition": "detached DINO tokens of bicubic LR at matching output coordinates",
+          "features": "concatenate output and condition tokens; 768 inputs, 96 hidden units",
+          "negatives": "half generated output, half HR with signed 3x3 highpass displaced two pixels right",
+          "limitation": "combined conditioning/negative recipe; not isolated component attribution"
+        },
+        "discriminator_initial_sha256": "8fd80818539e329acfaeb34453193fae76ba9d7d70b78092f33df73fe9ff7f81",
+        "native_input_stages": {
+          "order": "decoded RGB -> quantized 420 deband -> source-resolution TAA -> RGB -> model",
+          "frames": 3,
+          "feedback": 0.5,
+          "guard": 0.005,
+          "limitations": "crop boundaries; short reset history; approximate RGB/420 conversion; output sharpen/grade not emulated"
+        },
+        "native_output_stages": {
+          "order": "model -> RGB8/420 proxy -> sharpen .2 -> tone/contrast .2/adaptive grain .01 -> RGB8 proxy -> losses",
+          "radius": 2,
+          "reference_radius": 2,
+          "limitations": "crop-local grain phase/statistics; approximate RGB/420 conversion and chroma siting; straight-through quantization"
+        },
+        "first_decoded_sequence_sha256": "1cb6fc7da87f8c2653639c18098591a079458b2502ab315555ead5a33731db6d",
+        "first_batch_sha256": "b4664d660d6d2c43baea895e97a969e9014fd527d7b9022d2ee8e86bb845a0c1",
+        "first_output_sha256": "98ec7da775a7b6811fbed9f2036893987bca2284a11735f02c99057bf5ddbdb0"
+      },
+      "completion": {
+        "steps": 1000,
+        "minutes": 2.1802166666670626,
+        "temporal_static_coverage_mean": null,
+        "max_applied_head_gradient_ratio": null,
+        "min_adversarial_scale": null
+      },
+      "conversion": {
+        "complete": true,
+        "checkpoint_sha256": "fca7e7930b1b73aaf4b364d6f1a8e2d8cf3de9963c297db12bf065d223de664c",
+        "profile_sha256": "9264df398b5c4d7ea2aad60c7b744379f04562c9eeb2d4542c3fc931d97a0ac9",
+        "correctness": {
+          "max_rgb": 0.8566131591796875,
+          "mean_rgb": 0.25337889790534973,
+          "output_shape": [
+            720,
+            1280,
+            3
+          ]
+        }
+      }
+    }
+  }
+}

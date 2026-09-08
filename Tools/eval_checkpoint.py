@@ -115,6 +115,16 @@ def load(path, device):
         from architectures.anchored_detail import AnchoredDetail
         model = AnchoredDetail(model, state['detail_channels'], state['detail_blocks'],
                                residual_lowpass=state['architecture'] == 'anchored_lowpass2x')
+    if state.get('architecture') == 'precleaned_span2x':
+        if scale != 2 or frames != 1:
+            raise ValueError('pre-cleaner requires single-frame 2x geometry')
+        from architectures.precleaner import PrecleanedSPAN
+        model = PrecleanedSPAN(model, state['cleaner_channels'])
+    if state.get('architecture') == 'degradation_conditioned_span2x':
+        if scale != 2 or frames != 1 or state['conditioning_mode'] == 'oracle':
+            raise ValueError('deployable single-frame 2x degradation condition required; oracle is diagnostic only')
+        from architectures.degradation_conditioning import DegradationConditionedSPAN
+        model = DegradationConditionedSPAN(model, state['conditioning_mode'], state['estimator_channels'])
     model = model.eval().to(device)
     model.load_state_dict(state["model"] if "model" in state else state)
     return model, state.get("step", "?"), frames

@@ -242,6 +242,8 @@ def main():
     else:
         teacher, teacher_receipt = load_teacher_cache(args.pixrestore_cache, bank_hash, data, digest)
     shipping, _, frames = load(args.init, 'cuda')
+    if hasattr(shipping, 'cleaner') or hasattr(shipping, 'estimator'):
+        ap.error('cleaner/conditioning checkpoints require their dedicated trainer')
     if frames != 1:
         raise ValueError('single-frame shipping initialization required')
     already_2x = shipping.core.upsampler[1].upscale_factor == 4

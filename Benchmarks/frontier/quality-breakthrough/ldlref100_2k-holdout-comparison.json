@@ -1,0 +1,93 @@
+{
+  "complete": true,
+  "scope": "960 repeated regression frames, raw Torch checkpoints; not native promotion",
+  "report_sha256": "d34e70f1f7c61019391d41b684d8e0a58be7bc8ade8a0dae8532adc1bb78191c",
+  "manifest_sha256": "307d6670ef1c4918798172a16292dd55ade37db61d953efeddb5d60e21154b3b",
+  "checkpoint_sha256": {
+    "big2k": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+    "ldlref100_2k_raw": "91a788a238acf6834334486c63d1390f3526edcbdccc052db05a91d7d69bad0f",
+    "ldlref100_2k_ema": "58dcf270684e0c284d2995ccc122cefc00727899feab99b6ce6a8930a59fa3f3"
+  },
+  "models": {
+    "ldlref100_2k_raw": {
+      "balanced_change_percent": {
+        "lpips": -0.3406279161750736,
+        "dists": -2.201701627152519
+      },
+      "per_source_change_percent": {
+        "ducks_take_off": {
+          "lpips": 3.4283136015598403,
+          "dists": 0.3252479294651778
+        },
+        "old_town_cross": {
+          "lpips": -2.872097018994091,
+          "dists": -10.436778458145902
+        },
+        "park_joy": {
+          "lpips": -1.186323645349907,
+          "dists": -1.4002524423465168
+        },
+        "in_to_tree": {
+          "lpips": -3.6514470985739678,
+          "dists": -9.234011501794082
+        },
+        "pedestrian_area": {
+          "lpips": -2.3462333733195284,
+          "dists": 1.4551615728445544
+        },
+        "rush_hour": {
+          "lpips": 0.2468250043723197,
+          "dists": -2.8376067737513555
+        },
+        "sunflower": {
+          "lpips": 9.922603826015731,
+          "dists": 3.145479311802135
+        },
+        "tractor": {
+          "lpips": 1.6269124875829322,
+          "dists": 1.5755880904110509
+        }
+      }
+    },
+    "ldlref100_2k_ema": {
+      "balanced_change_percent": {
+        "lpips": 1.3953444548687743,
+        "dists": -0.4101547659423166
+      },
+      "per_source_change_percent": {
+        "ducks_take_off": {
+          "lpips": 5.073171375158858,
+          "dists": 0.3816934469623501
+        },
+        "old_town_cross": {
+          "lpips": 2.1234717247170076,
+          "dists": 1.0154048001344007
+        },
+        "park_joy": {
+          "lpips": 2.6367350596173678,
+          "dists": 0.7757550954498038
+        },
+        "in_to_tree": {
+          "lpips": 1.646633005937792,
+          "dists": -0.41716797882267453
+        },
+        "pedestrian_area": {
+          "lpips": -2.4630581738992907,
+          "dists": -1.9560451241624977
+        },
+        "rush_hour": {
+          "lpips": -6.0899390064787395,
+          "dists": -1.692686738456517
+        },
+        "sunflower": {
+          "lpips": -6.2521486338145476,
+          "dists": -5.923518338827593
+        },
+        "tractor": {
+          "lpips": 1.2985736674877568,
+          "dists": -0.11444960026306683
+        }
+      }
+    }
+  }
+}

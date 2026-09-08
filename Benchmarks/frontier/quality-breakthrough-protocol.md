@@ -34,10 +34,12 @@ one. The feature remains disabled by default.
    Then test native outputs. The output-stage proxy is implemented separately
    behind `--native-output-stages`; its training/evaluation follow the input
    ablation. The input-only arm must not be described as the full pipeline.
-4. **Learned pre-cleaner:** pending. Derive clean pre-encode LR supervision from
-   the declared resize/encode process; preserve raw input as a residual path.
-5. **Degradation conditioning:** pending. Begin with an oracle versus an
-   input-only blockiness estimator; do not deploy oracle information.
+4. **Learned pre-cleaner:** implemented; matched 2k raw/native-input arms complete.
+   Clean-LR error improves about 5%, but raw SR development distances worsen.
+   Native-input arm still needs native evaluation. Preserve the raw residual path.
+5. **Degradation conditioning:** implemented; constant, estimated, and oracle
+   arms are fixed in r31. Compare reference-assisted damage maps with local
+   input-only estimates; never deploy oracle information.
 6. **Recurrent frame feeding:** pending. Warp previous predictions using
    input-derived motion and verify cut/resize/history-reset behavior.
 7. **Confidence head:** pending. Test per-pixel stage strength and calibration,
@@ -72,6 +74,18 @@ At 4k, the raw legacy LDL candidate still fails the bank-validation fine
 correlation floor. The fixed 80% mixtures pass the development and bank gates
 but yield smaller perceptual improvements. All six gate receipts are retained
 under `quality-breakthrough/ldl*-gate.json`. These are not native release results.
+
+Corrected reference-LDL weight-100 student / EMA checkpoints complete at 2k and
+4k. All four pass the development and source-disjoint bank guards. Their raw
+development LPIPS/DISTS gains against the original SPAN comparator are
+14.83%/18.00%, 11.34%/13.76%, 15.03%/18.44%, and 14.16%/17.45%, respectively.
+None jointly beats the existing no-LDL development result. The 2k student on
+960 repeated regression frames improves aggregate LPIPS 0.34% and DISTS 2.20%
+against current `big2k`, but Sunflower LPIPS worsens 9.92%. The 2k EMA worsens
+aggregate LPIPS 1.40% while improving DISTS 0.41%. No promotion. The 4k weights
+have development/bank evidence only; do not imply they received native or 960
+regression testing. Receipts are `ldlref*-gate.json` and
+`ldlref100_2k-holdout-comparison.json`.
 
 ## Flip-cycle result
 
@@ -156,5 +170,69 @@ the existing detail and per-source safeguards and acceptable runtime cost.
 For stage-aware candidates, raw checkpoint scores are diagnostic only: these
 models are explicitly optimized for transformed inputs and/or presented outputs.
 Their raw scores cannot substitute for native evaluation. The r29 script fixes
-source-only (FP16 field), output-only, and combined 1,000-step arms; it is prepared
-separately from the immutable running r28 snapshot.
+source-only (FP16 field), output-only, and combined 1,000-step arms; all training
+and raw development/bank evaluations completed separately from the immutable
+r28 snapshot. Core ML random-image conversion errors are below one RGB level;
+timings collected alongside other GPU work are not latency admission evidence.
+
+The r28 source-control/input-stage native comparison is complete: 960 frames per
+candidate, with identical comparator and reference pixels verified by hash.
+Input-stage training worsens LPIPS 1.76% and improves DISTS 1.26% against the
+matched control. Against shipping `big2k`, it worsens LPIPS 1.61% and improves
+DISTS 1.52%, with LPIPS regressions of 20.11% on Rush Hour and 24.56% on Sunflower.
+Even the control has large regressions on those sources. Reject this candidate
+for promotion. `source-stage-native-comparison.json` retains all source deltas;
+`source-stage-matched-training.json` proves matched sampling and initialization.
+
+`score_native_holdout.py --reuse-scores RGB_DIRECTORY REPORT` reuses measurements
+only when current output/reference pixel hashes match a complete prior report
+with the same metric implementation, Torch version and device. It validates
+manifest binding, full sample coverage, metrics and conflicting duplicate pixel
+pairs. Current image/reference bytes are still hash-checked. This saves repeated
+scoring of unchanged comparators without relabeling candidate measurements.
+
+## Pre-cleaner experiment
+
+Inspired by [RealBasicVSR's cleaning stage](https://arxiv.org/abs/2111.12704), the
+independent three-convolution cleaner has 3,203 parameters, an identity
+initialization, and an RGB residual bounded to 1/8 of the range. The shipping
+`big2k` SR weights remain frozen. r30 trains two matched 2,000-step arms: decoded
+RGB and three-frame deband/TAA-proxy inputs. The final frame receives clean-LR
+L1 plus signed-Sobel supervision. Both use the same aligned sampler and targets.
+
+Targets are FFmpeg Lanczos 2x RGB reductions of the bank's HR patches, before
+codec and chroma subsampling. They are **not bit-exact pre-encode YUV**. Four LR
+border pixels are excluded; an interior crop/full-frame resize check differs by
+at most one RGB level. Cache manifests bind source splits, bank identity, target
+recipe, FFmpeg version and target hashes. Texture present in the clean target is
+retained as signal, not labeled noise.
+
+Source-disjoint clean-LR validation MSE improves 5.07% for decoded-input training
+and 4.75% for native-input training. Raw SR development LPIPS/DISTS instead worsen
+0.332%/0.378% and 0.303%/0.230%. The native-input model still requires native
+evaluation. These results show that cleaner LR reconstruction does not itself
+establish better SR. `precleaner-screen.json` binds both runs and source deltas.
+Tests cover identity, bounded corrections, frozen SR gradients, loadable
+checkpoints, improving a known corruption, alignment, and cache provenance.
+
+## Degradation-conditioning experiment
+
+[DASR](https://openaccess.thecvf.com/content/CVPR2021/html/Wang_Unsupervised_Degradation_Representation_Learning_for_Blind_Super-Resolution_CVPR_2021_paper.html)
+motivates conditioning on degradation; this experiment is not its architecture
+or contrastive training recipe. r31 freezes `big2k` and learns bounded gain/bias
+modulation of its first feature map. Compare a constant two-channel condition,
+a small local RGB/curvature estimator, and explicit reference-assisted maps.
+Oracle maps contain locally averaged clean-LR absolute error and curvature error.
+They include chroma/resize/stage error, not solely codec blockiness. Curvature
+alone also responds to real texture; no codec-grid alignment is assumed.
+
+All three arms share 2,000 steps, three-frame native-input sampling, initialization
+and reconstruction losses. The estimator learns reference-only damage labels;
+its SR condition is detached so calibration and reconstruction remain distinct.
+Validation compares the same frozen backbone and candidate on source-disjoint
+third-frame patches. The oracle is a mechanism diagnostic, not a mathematical
+upper bound or deployable checkpoint. Ordinary inference and the shared loader
+reject oracle use. Estimated inference accepts only current RGB. Identity in
+FP32/BF16, frozen-backbone preservation, crop locality and checkpoint round trips
+are tested. Fold the backbone in FP32 once before training to prevent autocast
+from refreshing its supposedly frozen fused convolution caches.

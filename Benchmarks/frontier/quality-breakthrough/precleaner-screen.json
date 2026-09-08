@@ -1,0 +1,126 @@
+{
+  "complete": true,
+  "scope": "matched 2k frozen-SR pre-cleaner training and raw development screen; native-input arm needs native evaluation",
+  "target_limitation": "RGB Lanczos target precedes codec and chroma subsampling; not bit-exact pre-encode YUV",
+  "models": {
+    "cleaner_raw_2k": {
+      "experiment": {
+        "args": {
+          "bank": "C:\\lucid\\stream-bank-v4",
+          "clean_cache": "C:\\lucid\\clean-lr-bank-v4-r30",
+          "init": "C:\\lucid\\paired-ladder-20260905-r10\\big_2k\\step002000.pth",
+          "out": "cleaner_raw_2k",
+          "steps": 2000,
+          "batch": 8,
+          "crop": 96,
+          "channels": 16,
+          "lr": 0.001,
+          "seed": 20260914,
+          "native_input_stages": false
+        },
+        "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+        "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+        "clean_target_manifest_sha256": "d5823c422e39e01e46cdef368472b9c6eb2c5a0e230cc2ddc2cde1094d19a7ec",
+        "target": "clean RGB Lanczos 2x downsample, pre-codec/pre-420",
+        "base_initial_state_sha256": "19a536814d1a607e266a3cfededf2cb5e36dd4db98f1454e4e9c71ec2aa76c9d",
+        "cleaner_parameters": 3203,
+        "training": "three aligned frames; only third-frame clean LR supervised; SR backbone frozen; no GAN",
+        "source_hashes": {
+          "train_precleaner.py": "338b6fa80c3cc4887bb6d59e5f3ac778350b9c37a6d00fd118396932ea9a3141",
+          "clean_lr_targets.py": "23f7fe50a173959881c6a05279554974e615b4d87556e3faa9c0f69df70e3fae",
+          "native_stages.py": "f8765f3206cd7ec5a977806e6706b92006cd84a335d67542b8a0fbc3765f69af",
+          "precleaner.py": "a1f17967f8a78e5ad63121bb20842b3f27bb374c2d299e38f6b7652c84447598"
+        },
+        "purpose": "cleaner mechanism experiment; requires native SR quality and latency admission",
+        "first_decoded_sequence_sha256": "193d0b6ff4599ed6208383d2efcdd7c0237d401a96e688a144a6ef49abc278c5"
+      },
+      "completion": {
+        "complete": true,
+        "steps": 2000,
+        "minutes": 0.28385000000028715,
+        "backbone_unchanged": true
+      },
+      "checkpoint_sha256": "efe2dfa2291e255a16b913cc0db7cd9c99c50da668c1e503af8753b7e98b1c13",
+      "development_report_sha256": "af86da0a3b89fdb4a1cc2a1cc3c2f8634cd2fd01238a65154834e969416c7777",
+      "raw_development_change_percent": {
+        "lpips": 0.33189853329687047,
+        "dists": 0.37833167832130865
+      },
+      "per_source_change_percent": {
+        "crowd_run": {
+          "lpips": 0.29118936101633075,
+          "dists": 0.23949100355098452
+        },
+        "four_people": {
+          "lpips": 0.23570479380055076,
+          "dists": 0.676935629101405
+        },
+        "johnny": {
+          "lpips": 0.4744600893692663,
+          "dists": 0.3387551458165383
+        }
+      },
+      "clean_lr_validation_mse_change_percent": -5.071696956148042
+    },
+    "cleaner_native_input_2k": {
+      "experiment": {
+        "args": {
+          "bank": "C:\\lucid\\stream-bank-v4",
+          "clean_cache": "C:\\lucid\\clean-lr-bank-v4-r30",
+          "init": "C:\\lucid\\paired-ladder-20260905-r10\\big_2k\\step002000.pth",
+          "out": "cleaner_native_input_2k",
+          "steps": 2000,
+          "batch": 8,
+          "crop": 96,
+          "channels": 16,
+          "lr": 0.001,
+          "seed": 20260914,
+          "native_input_stages": true
+        },
+        "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+        "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+        "clean_target_manifest_sha256": "d5823c422e39e01e46cdef368472b9c6eb2c5a0e230cc2ddc2cde1094d19a7ec",
+        "target": "clean RGB Lanczos 2x downsample, pre-codec/pre-420",
+        "base_initial_state_sha256": "19a536814d1a607e266a3cfededf2cb5e36dd4db98f1454e4e9c71ec2aa76c9d",
+        "cleaner_parameters": 3203,
+        "training": "three aligned frames; only third-frame clean LR supervised; SR backbone frozen; no GAN",
+        "source_hashes": {
+          "train_precleaner.py": "338b6fa80c3cc4887bb6d59e5f3ac778350b9c37a6d00fd118396932ea9a3141",
+          "clean_lr_targets.py": "23f7fe50a173959881c6a05279554974e615b4d87556e3faa9c0f69df70e3fae",
+          "native_stages.py": "f8765f3206cd7ec5a977806e6706b92006cd84a335d67542b8a0fbc3765f69af",
+          "precleaner.py": "a1f17967f8a78e5ad63121bb20842b3f27bb374c2d299e38f6b7652c84447598"
+        },
+        "purpose": "cleaner mechanism experiment; requires native SR quality and latency admission",
+        "first_decoded_sequence_sha256": "193d0b6ff4599ed6208383d2efcdd7c0237d401a96e688a144a6ef49abc278c5"
+      },
+      "completion": {
+        "complete": true,
+        "steps": 2000,
+        "minutes": 2.049216666666325,
+        "backbone_unchanged": true
+      },
+      "checkpoint_sha256": "08b162bda45b645a49b0c9529c5d7f4a9378ccd513f9dd77f26be33adaae6127",
+      "development_report_sha256": "4c2654332f54710b7e32aa3a811a65a7c68e631a4fe86665d13967664b32e9ff",
+      "raw_development_change_percent": {
+        "lpips": 0.30305826276606496,
+        "dists": 0.22958171632150304
+      },
+      "per_source_change_percent": {
+        "crowd_run": {
+          "lpips": 0.3042342015029842,
+          "dists": 0.14812118879565794
+        },
+        "four_people": {
+          "lpips": 0.194150887953759,
+          "dists": 0.3487192664800354
+        },
+        "johnny": {
+          "lpips": 0.38802377902940055,
+          "dists": 0.2507977587591581
+        }
+      },
+      "clean_lr_validation_mse_change_percent": -4.749970916374702
+    }
+  },
+  "decision": "no promotion; clean-LR error decreased but raw SR LPIPS/DISTS worsened"
+}
