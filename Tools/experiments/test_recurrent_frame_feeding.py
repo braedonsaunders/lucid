@@ -118,6 +118,14 @@ class RecurrentFrameTest(unittest.TestCase):
         torch.optim.SGD(model.parameters(), lr=.1).step()
         self.assertFalse(torch.equal(before, model.sr.core.conv_1.weight))
         self.assertGreater(float(model.history.weight.detach().abs().sum()), 0)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'joint.pth'
+            torch.save({'architecture': 'recurrent_span2x', 'scale': 2, 'channels': 4,
+                        'version': 1, 'model': model.state_dict()}, path)
+            restored, _ = load_recurrent_checkpoint(path, 'cpu')
+            actual, _ = run_sequence(restored, source)
+            expected, _ = run_sequence(model, source)
+            torch.testing.assert_close(actual, expected, atol=0, rtol=0)
 
     def test_joint_no_history_control_is_independent_of_prior_frames(self):
         model = RecurrentSPAN(Unshuffled(4, scale=2), train_backbone=True).train()

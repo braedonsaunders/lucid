@@ -1,0 +1,223 @@
+{
+  "complete": true,
+  "scope": "Joint FP32 fused SR and previous-output branch, paired BF16 critic .0075; source-stage proxy; 72 full16-frame sequences/216 spatially scored frames over Sintel and two REDS validation sources; no native output evaluation",
+  "report_sha256": {
+    "control": "b753e287ddf4e7f55cea7a7212ad4171031168f5efec7afbf9e52d00be371072",
+    "recurrent": "c1ec2e337f424d14fcec6a797ab7340f9eac2d191d4f986ebe5564fab57a2608",
+    "reds": "2a2143f66d3cecf82e986f3b0e4295b046eb9efd5a9e8a50d1f57adbd9610b71"
+  },
+  "initial_parity": {
+    "bank_sha256": true,
+    "checkpoint_sha256": true,
+    "frozen_backbone_sha256": true,
+    "first_decoded_sequence_sha256": true,
+    "first_output_sha256": true,
+    "discriminator_initial_sha256": true
+  },
+  "summaries": {
+    "control": {
+      "sources": {
+        "sintel": {
+          "lpips": 0.2218612294258222,
+          "dists": 0.19679484599166447,
+          "psnr_y": 29.86627522017723,
+          "detail_energy": 0.6820114408514464,
+          "fine_correlation": 0.4916454370687067
+        },
+        "reds_154": {
+          "lpips": 0.28253426954702093,
+          "dists": 0.24233563851427148,
+          "psnr_y": 25.059556109177667,
+          "detail_energy": 0.5416422989849452,
+          "fine_correlation": 0.3716298675060744
+        },
+        "reds_073": {
+          "lpips": 0.3509420671120838,
+          "dists": 0.2561071084605323,
+          "psnr_y": 22.666317083852764,
+          "detail_energy": 0.4783729180750444,
+          "fine_correlation": 0.2597786965820723
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.285112522028309,
+        "dists": 0.23174586432215608,
+        "psnr_y": 25.864049471069222,
+        "detail_energy": 0.567342219303812,
+        "fine_correlation": 0.3743513337189512
+      }
+    },
+    "recurrent": {
+      "sources": {
+        "sintel": {
+          "lpips": 0.22059242191823647,
+          "dists": 0.19834870651916223,
+          "psnr_y": 29.833722829554294,
+          "detail_energy": 0.6804864397768791,
+          "fine_correlation": 0.486607207402615
+        },
+        "reds_154": {
+          "lpips": 0.28182060575043716,
+          "dists": 0.24597219736487777,
+          "psnr_y": 25.031931331657265,
+          "detail_energy": 0.5440139667408164,
+          "fine_correlation": 0.3683124120805444
+        },
+        "reds_073": {
+          "lpips": 0.3490607839215685,
+          "dists": 0.25614836370503463,
+          "psnr_y": 22.65927188868264,
+          "detail_energy": 0.47847714936651337,
+          "fine_correlation": 0.2584435600998164
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.283824603863414,
+        "dists": 0.2334897558630249,
+        "psnr_y": 25.841642016631397,
+        "detail_energy": 0.5676591852947362,
+        "fine_correlation": 0.3711210598609919
+      }
+    },
+    "initial": {
+      "sources": {
+        "sintel": {
+          "lpips": 0.21635994810235892,
+          "dists": 0.19730844376263795,
+          "psnr_y": 28.622942152547854,
+          "detail_energy": 0.6371381732070184,
+          "fine_correlation": 0.5019482732400781
+        },
+        "reds_154": {
+          "lpips": 0.29064538219460734,
+          "dists": 0.24943473272853428,
+          "psnr_y": 25.16115712138241,
+          "detail_energy": 0.5085919286884766,
+          "fine_correlation": 0.37924407946156713
+        },
+        "reds_073": {
+          "lpips": 0.35605835997396046,
+          "dists": 0.26142901292553655,
+          "psnr_y": 22.73919486483099,
+          "detail_energy": 0.45009965597599755,
+          "fine_correlation": 0.26606008788262614
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.2876878967569756,
+        "dists": 0.23605739647223625,
+        "psnr_y": 25.50776471292042,
+        "detail_energy": 0.5319432526238308,
+        "fine_correlation": 0.3824174801947571
+      }
+    },
+    "own_current_frame": {
+      "sources": {
+        "sintel": {
+          "lpips": 0.22013630533021772,
+          "dists": 0.1975724592253014,
+          "psnr_y": 29.84717658108789,
+          "detail_energy": 0.6756375548847603,
+          "fine_correlation": 0.4887372164220954
+        },
+        "reds_154": {
+          "lpips": 0.2813717943650705,
+          "dists": 0.24425488820782415,
+          "psnr_y": 25.04052710644694,
+          "detail_energy": 0.5398789265347849,
+          "fine_correlation": 0.3700208485307168
+        },
+        "reds_073": {
+          "lpips": 0.349635004721306,
+          "dists": 0.25649806746730097,
+          "psnr_y": 22.662086759254883,
+          "detail_energy": 0.4741448199124291,
+          "fine_correlation": 0.25984280058243997
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.28371436813886475,
+        "dists": 0.23277513830014218,
+        "psnr_y": 25.849930148929904,
+        "detail_energy": 0.5632204337773248,
+        "fine_correlation": 0.3728669551784174
+      }
+    }
+  },
+  "percent_change": {
+    "control": {
+      "source_balanced": {
+        "lpips": -0.4517227639574184,
+        "dists": 0.752501687988949,
+        "fine_correlation": -0.8628989847233814
+      },
+      "sources": {
+        "sintel": {
+          "lpips": -0.5718923990773006,
+          "dists": 0.789583954634443,
+          "fine_correlation": -1.0247689261860593
+        },
+        "reds_154": {
+          "lpips": -0.25259371110201156,
+          "dists": 1.5006289924591965,
+          "fine_correlation": -0.8926772887746459
+        },
+        "reds_073": {
+          "lpips": -0.5360665952635735,
+          "dists": 0.016108590171626247,
+          "fine_correlation": -0.5139514901808417
+        }
+      }
+    },
+    "initial": {
+      "source_balanced": {
+        "lpips": -1.3428764077708433,
+        "dists": -1.0877187699193103,
+        "fine_correlation": -2.953949784934551
+      },
+      "sources": {
+        "sintel": {
+          "lpips": 1.9562187239364537,
+          "dists": 0.5272266795513847,
+          "fine_correlation": -3.056304136367771
+        },
+        "reds_154": {
+          "lpips": -3.0362692768541533,
+          "dists": -1.3881528549694266,
+          "fine_correlation": -2.8824886064254485
+        },
+        "reds_073": {
+          "lpips": -1.965289075898613,
+          "dists": -2.0199170556505996,
+          "fine_correlation": -2.8627096395494767
+        }
+      }
+    },
+    "own_current_frame": {
+      "source_balanced": {
+        "lpips": 0.038854473699156955,
+        "dists": 0.30699909281604043,
+        "fine_correlation": -0.4682354639311104
+      },
+      "sources": {
+        "sintel": {
+          "lpips": 0.20719734863112738,
+          "dists": 0.39289245925497873,
+          "fine_correlation": -0.4358188711458433
+        },
+        "reds_154": {
+          "lpips": 0.15950830692872398,
+          "dists": 0.7030807733896527,
+          "fine_correlation": -0.46171356477785475
+        },
+        "reds_073": {
+          "lpips": -0.16423435639553174,
+          "dists": -0.13633777662317437,
+          "fine_correlation": -0.5384949975474229
+        }
+      }
+    }
+  },
+  "visual_review": "Unscaled final-frame patches show only minor texture changes and no substantial recovered detail. Selection and crops retained locally with inputs and weights.",
+  "decision": "No material advantage demonstrated. Keep native integration deferred; a short small-bank probe does not rule out recurrence trained on broader data or a different correspondence method."
+}

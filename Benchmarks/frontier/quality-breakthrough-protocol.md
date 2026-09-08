@@ -525,3 +525,22 @@ explicitly has history disabled. Nine tests now cover the original frozen
 behavior, joint gradients, and independence from earlier frames in the control.
 Positive patch evidence would still require native state, warp-cost and visual
 validation before any deployment.
+
+r41 is complete. Its original bank validation has one source, Sintel. A second
+evaluation adds REDS 154/073, selecting the first patch from all 18 codec windows
+per source before looking at the recurrent outcome. Source identity, family and
+master hashes are checked against training to prevent overlap. Across these
+three sources, recurrence improves LPIPS 0.452% against its matched control but
+worsens DISTS 0.753% and fine correlation 0.863%. Disabling history in the same
+trained checkpoint slightly improves all three aggregate measurements. Direct
+unscaled crop review shows no substantial recovery of missing detail. The
+comparison is retained in `joint-recurrence-comparison.json`; native integration
+remains deferred. This does not rule out recurrence with broader training data
+or a different correspondence method. The joint checkpoint round-trip is also
+tested after both backbone and history weights have actually been updated.
+
+The completed 4k LDL EMA native comparison worsens LPIPS 0.845% while improving
+DISTS only 0.155%. RushHour LPIPS worsens 16.18% and Sunflower 15.52%. Together
+with the student result, this closes the missing 4k native measurement without
+establishing a breakthrough. `ldlref100-4k-ema-native-comparison.json` records all
+sources. The matched 40k-base/2k-critic control is now being measured natively.
