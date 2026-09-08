@@ -1,0 +1,385 @@
+{
+  "complete": true,
+  "decision": "Use full-search motion globally by default in the repository app and verified Release build. Keep one big2k model; expose no product model or policy picker.",
+  "incremental_improvement_only": true,
+  "default_motion_policy": 2,
+  "unchanged_checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+  "deband_guard": 0.005,
+  "evidence": {
+    "native_quality_receipt_sha256": "84f9c1aced15783d2bb2777d20fc08d4b90b8eaf65422dfbe49c330507b3de66",
+    "native_temporal_receipt_sha256": "a125e23fe2f63a027385df923cc5cb55cb09b190b0680e4eb7940beab092be57",
+    "default_verification": {
+      "complete": true,
+      "default_motion_policy": 2,
+      "environment_override_absent": true,
+      "rgb_and_reference_pairs_identical": 360,
+      "scope": "New application default versus previously measured explicit full-search policy, every frame in three120-frame clips",
+      "default_manifest_sha256": "ab2928dc006c7d4b86a52299779c818dc2928d0d523bcfaf61f9b5468818def4",
+      "measured_search_manifest_sha256": "1baea0c91832bb0555e1b1746db858d9a7c68760c693eae6e80ec86ec42a9498",
+      "default_executable_sha256": "7b1f9da74bbf420f51c592462930d0ed46e069d2a0482371c760e918a2a46324",
+      "measured_executable_sha256": "2fa8adc00ca3ce95a5d85552c621761e7b0e498c0b5e387101041c4d176ff702",
+      "code_sha256": "6d5d24e4b6499d7f12f75b8d282550109544c0059030322543aa4b2a2968d555"
+    },
+    "counterbalanced_timing": {
+      "complete": true,
+      "scope": "Counterbalanced native enhancement-stage timing, no packet writes or browser presentation; three selected clips, two runs per policy per clip, eight warmups plus112 measured frames",
+      "executable_sha256": "2fa8adc00ca3ce95a5d85552c621761e7b0e498c0b5e387101041c4d176ff702",
+      "tuning_sha256": "16a3317669ad52f49344d0961dbae22c5ca3b24db291ce277d61312e3b4add0e",
+      "selection_sha256": "6f7e6fd1a9502a932c7743c935fc9198894c3daac626abe9779b644f37307436",
+      "code_sha256": "e403ca449b416c1d81d870564428b5e69c3fbc00c2a5526d29503ed61d5514cf",
+      "rows": [
+        {
+          "sequence": "sunflower-vp9-1000000",
+          "position": 0,
+          "policy": "taa",
+          "log_sha256": "02d7360959c0bd76bac179fe9d6067bd5c8392a605b73383a3897f5d5fff204c",
+          "mean": 8.7,
+          "p50": 9.38,
+          "p95": 10.23,
+          "max": 10.92,
+          "preprocess": 0.46,
+          "span": 7.74,
+          "detail": 0.5
+        },
+        {
+          "sequence": "sunflower-vp9-1000000",
+          "position": 1,
+          "policy": "gain_only",
+          "log_sha256": "ab5982e4c6271849fdf418d4b440de9bdd4abafe61491fc26b351ec0ab2e2e76",
+          "mean": 8.22,
+          "p50": 8.5,
+          "p95": 10.28,
+          "max": 10.51,
+          "preprocess": 0.47,
+          "span": 7.24,
+          "detail": 0.51
+        },
+        {
+          "sequence": "sunflower-vp9-1000000",
+          "position": 2,
+          "policy": "search",
+          "log_sha256": "f4ce9ad93552a9f4502a435c92ab2dcb12a987dcf763611ce8d638e249ea1e22",
+          "mean": 9.22,
+          "p50": 9.36,
+          "p95": 10.04,
+          "max": 14.1,
+          "preprocess": 0.51,
+          "span": 8.2,
+          "detail": 0.51
+        },
+        {
+          "sequence": "sunflower-vp9-1000000",
+          "position": 3,
+          "policy": "search",
+          "log_sha256": "b5a979646adadf6cc048fa26dc421ad3c4cb6fe0c44f6a93f4d8852e7a291047",
+          "mean": 8.71,
+          "p50": 8.98,
+          "p95": 10.35,
+          "max": 10.99,
+          "preprocess": 0.48,
+          "span": 7.69,
+          "detail": 0.53
+        },
+        {
+          "sequence": "sunflower-vp9-1000000",
+          "position": 4,
+          "policy": "gain_only",
+          "log_sha256": "cf7e5632ab81d68e6cb586253c977fd35c2bc8d4be5d525bd5216e554d44f560",
+          "mean": 9.18,
+          "p50": 9.19,
+          "p95": 10.05,
+          "max": 10.36,
+          "preprocess": 0.52,
+          "span": 8.17,
+          "detail": 0.49
+        },
+        {
+          "sequence": "sunflower-vp9-1000000",
+          "position": 5,
+          "policy": "taa",
+          "log_sha256": "b7b4a614ec736a5524269b9ee1e742ecc3f67b5c160329bc02c24b71a3181f4d",
+          "mean": 9.59,
+          "p50": 9.55,
+          "p95": 10.14,
+          "max": 10.87,
+          "preprocess": 0.5,
+          "span": 8.55,
+          "detail": 0.54
+        },
+        {
+          "sequence": "in_to_tree-vp9-1000000",
+          "position": 0,
+          "policy": "gain_only",
+          "log_sha256": "3873bff91debf47f33dee1fdd55950e3ab90be74ad406d54c2b87a2ba238f06c",
+          "mean": 8.27,
+          "p50": 7.99,
+          "p95": 10.08,
+          "max": 10.84,
+          "preprocess": 0.47,
+          "span": 7.34,
+          "detail": 0.47
+        },
+        {
+          "sequence": "in_to_tree-vp9-1000000",
+          "position": 1,
+          "policy": "search",
+          "log_sha256": "c17d23e5cb649bfcb2993b8bee3943cbbbb03879956d2cc74171bc284769eeed",
+          "mean": 9.14,
+          "p50": 9.32,
+          "p95": 10.08,
+          "max": 10.46,
+          "preprocess": 0.52,
+          "span": 8.08,
+          "detail": 0.53
+        },
+        {
+          "sequence": "in_to_tree-vp9-1000000",
+          "position": 2,
+          "policy": "taa",
+          "log_sha256": "e29c1ab1f7c139b71950d4cb7969c20f9179d4aac4deae00c9b6bc59ad210bb3",
+          "mean": 8.93,
+          "p50": 8.99,
+          "p95": 10.05,
+          "max": 10.79,
+          "preprocess": 0.41,
+          "span": 8.03,
+          "detail": 0.49
+        },
+        {
+          "sequence": "in_to_tree-vp9-1000000",
+          "position": 3,
+          "policy": "taa",
+          "log_sha256": "ceea159ebf6e258e7ced28dad461afe633598538d97e6d8d550fd97caaae01ee",
+          "mean": 8.7,
+          "p50": 9.19,
+          "p95": 9.99,
+          "max": 10.47,
+          "preprocess": 0.42,
+          "span": 7.79,
+          "detail": 0.49
+        },
+        {
+          "sequence": "in_to_tree-vp9-1000000",
+          "position": 4,
+          "policy": "search",
+          "log_sha256": "ac389e6123cb70a49141f564e0cbe702c500a4d3518024058ce3ee30b51061cc",
+          "mean": 8.99,
+          "p50": 9.04,
+          "p95": 10.26,
+          "max": 10.92,
+          "preprocess": 0.49,
+          "span": 7.95,
+          "detail": 0.54
+        },
+        {
+          "sequence": "in_to_tree-vp9-1000000",
+          "position": 5,
+          "policy": "gain_only",
+          "log_sha256": "bb52b029ff45b7a5b4404cdcf428bd9e312920aef3da66aa3f1140551541e6c8",
+          "mean": 9.12,
+          "p50": 9.26,
+          "p95": 10.04,
+          "max": 11.4,
+          "preprocess": 0.53,
+          "span": 8.07,
+          "detail": 0.52
+        },
+        {
+          "sequence": "old_town_cross-vp9-350000",
+          "position": 0,
+          "policy": "search",
+          "log_sha256": "815bc2b6542dcc17620192ed8cb4995dcba2b674c6a0c4f18e03f7856e0fb63d",
+          "mean": 9.54,
+          "p50": 9.86,
+          "p95": 10.52,
+          "max": 14.39,
+          "preprocess": 0.54,
+          "span": 8.46,
+          "detail": 0.54
+        },
+        {
+          "sequence": "old_town_cross-vp9-350000",
+          "position": 1,
+          "policy": "taa",
+          "log_sha256": "45383d1feb62f5a86440c796612a8c96ecfb8f15bc21d387b02718b9436ca8b5",
+          "mean": 6.71,
+          "p50": 6.66,
+          "p95": 7.29,
+          "max": 7.48,
+          "preprocess": 0.33,
+          "span": 5.96,
+          "detail": 0.42
+        },
+        {
+          "sequence": "old_town_cross-vp9-350000",
+          "position": 2,
+          "policy": "gain_only",
+          "log_sha256": "58732baa027b551b39bca10c7ba51581fc98d633433c0f33378a080ae6ca795a",
+          "mean": 7.64,
+          "p50": 6.85,
+          "p95": 10.13,
+          "max": 10.51,
+          "preprocess": 0.45,
+          "span": 6.71,
+          "detail": 0.48
+        },
+        {
+          "sequence": "old_town_cross-vp9-350000",
+          "position": 3,
+          "policy": "gain_only",
+          "log_sha256": "f0926fa19a503c3682a1fee52489a5f40ef8e6fd1bdffaf13f4e81ff1a2fc08b",
+          "mean": 6.76,
+          "p50": 6.68,
+          "p95": 7.38,
+          "max": 9.03,
+          "preprocess": 0.4,
+          "span": 5.95,
+          "detail": 0.41
+        },
+        {
+          "sequence": "old_town_cross-vp9-350000",
+          "position": 4,
+          "policy": "taa",
+          "log_sha256": "a13b1d09e4bf4be12983e40c8d5ed29fec33a1ba2573f7895b33cc5731d33328",
+          "mean": 7.63,
+          "p50": 6.9,
+          "p95": 10.87,
+          "max": 11.37,
+          "preprocess": 0.37,
+          "span": 6.74,
+          "detail": 0.52
+        },
+        {
+          "sequence": "old_town_cross-vp9-350000",
+          "position": 5,
+          "policy": "search",
+          "log_sha256": "5f02bb440562ca3a73885359f7c2b698365e5dbca4491f81efdc0132c7dc0f8b",
+          "mean": 6.74,
+          "p50": 6.7,
+          "p95": 7.33,
+          "max": 7.53,
+          "preprocess": 0.39,
+          "span": 5.95,
+          "detail": 0.4
+        }
+      ],
+      "summary": {
+        "taa": {
+          "mean_of_run_means": 8.376666666666667,
+          "mean_preprocess": 0.415,
+          "maximum_run_p95": 10.87,
+          "maximum_frame": 11.37
+        },
+        "gain_only": {
+          "mean_of_run_means": 8.198333333333332,
+          "mean_preprocess": 0.47333333333333333,
+          "maximum_run_p95": 10.28,
+          "maximum_frame": 11.4
+        },
+        "search": {
+          "mean_of_run_means": 8.723333333333333,
+          "mean_preprocess": 0.48833333333333334,
+          "maximum_run_p95": 10.52,
+          "maximum_frame": 14.39
+        }
+      },
+      "finished_utc": "2026-09-08T16:16:02.407778+00:00"
+    },
+    "focused_unit_tests": {
+      "passed": 9,
+      "log_sha256": "9b1daf17283b34da5813d21d792c081cb838a2b818013b5b6d57f695abc74096"
+    },
+    "native_math": {
+      "passed": 120,
+      "legacy_control_checks": 30,
+      "three_policy_checks": 90,
+      "taa_absolute_tolerance": 2e-05,
+      "other_absolute_tolerance": 1e-05,
+      "receipt_sha256": "d90285ad72692ac86f25e6ea7212a5926f30536a480b53a31393ab1e1a65226b"
+    },
+    "release_build_log_sha256": "96d18a6ef8983df88dd69680a3bc74f636549d38663d284662144d20741aeaa5"
+  },
+  "reasoning": [
+    "Both native perceptual distances improve across all eight regression sources: source-balanced LPIPS -0.58797%, DISTS -1.34031%.",
+    "The default path, with no motion-policy environment override, reproduces all360 consecutive native full-search images and references exactly.",
+    "Counterbalanced timing has full-search mean8.723ms and maximum run p95 10.52ms; this verifies enhancement-stage headroom for60fps, not end-to-end browser cadence.",
+    "Full search increases selected adjacent-frame residual-change L1 by0.33858% and MSE by0.59898%, while lowering spatial RGB/luma MSE. These are disclosed non-perceptual diagnostics, not standalone flicker rejection thresholds.",
+    "Fixed native image comparisons show modest changes without a dramatic detail breakthrough. The small temporal tradeoff is retained alongside the broader perceptual improvement."
+  ],
+  "source_sha256": {
+    "Lucid/Metal/DetailEnhancer.swift": "f324088787424baa9982a1c48df8d7976c11bc63dffb4b0a402d0c4257b20747",
+    "Lucid/Diagnostics/PipelineTiming.swift": "77715fec2ec2d9bd30243e59e089759bf49f2b88ed2adb02769fd257dbad97ff",
+    "Tools/experiments/NativeStageBench.swift": "5382ac5e45b8408d40405b5549c3912c6c21a71902341282276684ebbdb71ab0",
+    "Tools/experiments/check_native_stage_parity.py": "8ddf7f570fa49b3761eb38eae4817837145eb92fce935f5bcb319dd4b65c5a9b",
+    "Tools/frontier_eval/export_native_holdout.py": "f90237c27edb88cd7b7fe0d3d1fa24ca8ca3b429be9d8f4591db25b6bfcb59c8"
+  },
+  "limitations": [
+    "Repeated regression sources; no fresh blind evaluation.",
+    "Installed application was not replaced; the repository default and local Release build are updated.",
+    "Legacy and gain-check policies remain process-only ablations for reproducibility; historical experiment configurations explicitly select legacy motion.",
+    "The broader quality-breakthrough Codex goal remains active."
+  ],
+  "review_artifacts": {
+    "receipt_sha256": "23b8a7573c796770ca1354b4263a2ebe7f006f4e0ac9d577b8bf6d1a00894db7",
+    "columns": [
+      "Reference",
+      "Legacy motion",
+      "Motion gain check",
+      "Full motion search"
+    ],
+    "clips": [
+      {
+        "sequence": "sunflower-vp9-1000000",
+        "crop_xywh": [
+          440,
+          275,
+          320,
+          220
+        ],
+        "file": ".build/quality-breakthrough-r52/review/sunflower-vp9-1000000.mp4",
+        "sha256": "048edd7d04faa7327ce751a3bdb1519be1599cc57089e9a626d187193fcd744b",
+        "probe": {
+          "width": 1280,
+          "height": 244,
+          "r_frame_rate": "25/1",
+          "nb_read_frames": "120"
+        }
+      },
+      {
+        "sequence": "in_to_tree-vp9-1000000",
+        "crop_xywh": [
+          480,
+          230,
+          320,
+          220
+        ],
+        "file": ".build/quality-breakthrough-r52/review/in_to_tree-vp9-1000000.mp4",
+        "sha256": "a8855b2b11b86df0f6a3db278a86b86087e211810e0a3252f641d14fdf197589",
+        "probe": {
+          "width": 1280,
+          "height": 244,
+          "r_frame_rate": "50/1",
+          "nb_read_frames": "120"
+        }
+      },
+      {
+        "sequence": "old_town_cross-vp9-350000",
+        "crop_xywh": [
+          480,
+          230,
+          320,
+          220
+        ],
+        "file": ".build/quality-breakthrough-r52/review/old_town_cross-vp9-350000.mp4",
+        "sha256": "44879df065ca0ea12d4e8c4d5c53228151adb0e28ec7ec2d1ed14efc0a0104e5",
+        "probe": {
+          "width": 1280,
+          "height": 244,
+          "r_frame_rate": "50/1",
+          "nb_read_frames": "120"
+        }
+      }
+    ],
+    "scope": "Review encodes of the unscaled native crops; exact PNGs remain the measurement source."
+  }
+}

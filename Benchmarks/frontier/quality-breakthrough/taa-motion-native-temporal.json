@@ -1,0 +1,203 @@
+{
+  "complete": true,
+  "scope": "Three selected native sequences, all first120 frames processed; 112 adjacent error transitions per clip after eight warmups",
+  "selection": {
+    "purpose": "Consecutive-frame diagnostic following r51; NOT fresh or blind validation",
+    "selection": "Three fixed cases: largest gain-only native LPIPS gain and regression, plus OldTown source-level LPIPS exception. First120 frames include the selected positions; no content-dependent policy is proposed.",
+    "sources": [
+      "sunflower-vp9-1000000",
+      "in_to_tree-vp9-1000000",
+      "old_town_cross-vp9-350000"
+    ],
+    "frames_each": 120,
+    "policies": [
+      "taa",
+      "gain_only",
+      "search"
+    ],
+    "required_checks": "All every-tenth reference/native RGB must match r51. Analyze error changes over adjacent frames after eight warmups; pair this diagnostic with broad native spatial evidence and visual review."
+  },
+  "policies": {
+    "taa": {
+      "source_balanced": {
+        "rgb_mse": 0.00153058999629658,
+        "luma_mse": 0.0012496971560592232,
+        "residual_change_l1": 0.022050505623199223,
+        "residual_change_mse": 0.0010494970154121845
+      },
+      "summary": {
+        "sunflower-vp9-1000000": {
+          "rgb_mse": 0.0011242175886374234,
+          "luma_mse": 0.0007870842735948307,
+          "residual_change_l1": 0.018420851232284412,
+          "residual_change_mse": 0.0007702489730425961
+        },
+        "in_to_tree-vp9-1000000": {
+          "rgb_mse": 0.0015312532621984637,
+          "luma_mse": 0.0013172210320980021,
+          "residual_change_l1": 0.023593138587394997,
+          "residual_change_mse": 0.001129865828261245
+        },
+        "old_town_cross-vp9-350000": {
+          "rgb_mse": 0.0019362991380538525,
+          "luma_mse": 0.0016447861624848364,
+          "residual_change_l1": 0.02413752704991826,
+          "residual_change_mse": 0.0012483762449327124
+        }
+      },
+      "percent_change": {
+        "rgb_mse": 0.0,
+        "luma_mse": 0.0,
+        "residual_change_l1": 0.0,
+        "residual_change_mse": 0.0
+      },
+      "source_percent_change": {
+        "sunflower-vp9-1000000": {
+          "rgb_mse": 0.0,
+          "luma_mse": 0.0,
+          "residual_change_l1": 0.0,
+          "residual_change_mse": 0.0
+        },
+        "in_to_tree-vp9-1000000": {
+          "rgb_mse": 0.0,
+          "luma_mse": 0.0,
+          "residual_change_l1": 0.0,
+          "residual_change_mse": 0.0
+        },
+        "old_town_cross-vp9-350000": {
+          "rgb_mse": 0.0,
+          "luma_mse": 0.0,
+          "residual_change_l1": 0.0,
+          "residual_change_mse": 0.0
+        }
+      },
+      "same_sampled_rgb_and_references_as_r51": 36,
+      "report_sha256": "38dd84f8b341bd689a5f1bc704999f7e1d9ee57f321c622a247f8db9db566e7a",
+      "rgb_manifest_sha256": "86043a450615279d2b8b71c23924f06a0609dabe14f4a1dce281a342e4904178",
+      "reference_manifest_sha256": "747e9ed3908e162e65a2dfaf49cc1072e2fb231813aa9ad84c12c9af5fb33ac0",
+      "code_sha256": "6d167d6b60ddcd2f63422ce81a95fb30cf432d58279bebf195821d7abebcd29e"
+    },
+    "gain_only": {
+      "source_balanced": {
+        "rgb_mse": 0.0015238982402176287,
+        "luma_mse": 0.0012419804335790797,
+        "residual_change_l1": 0.02201569187621187,
+        "residual_change_mse": 0.0010479429564016062
+      },
+      "summary": {
+        "sunflower-vp9-1000000": {
+          "rgb_mse": 0.001106060310641104,
+          "luma_mse": 0.0007681307018044338,
+          "residual_change_l1": 0.018213903190501566,
+          "residual_change_mse": 0.0007582741602943445
+        },
+        "in_to_tree-vp9-1000000": {
+          "rgb_mse": 0.0015291950507422111,
+          "luma_mse": 0.0013136615650312575,
+          "residual_change_l1": 0.023654257745615075,
+          "residual_change_mse": 0.0011342342711161888
+        },
+        "old_town_cross-vp9-350000": {
+          "rgb_mse": 0.0019364393592695706,
+          "luma_mse": 0.0016441490339015477,
+          "residual_change_l1": 0.024178914692518965,
+          "residual_change_mse": 0.0012513204377942852
+        }
+      },
+      "percent_change": {
+        "rgb_mse": -0.43720108553843007,
+        "luma_mse": -0.617487400265615,
+        "residual_change_l1": -0.1578818535150739,
+        "residual_change_mse": -0.14807655360200567
+      },
+      "source_percent_change": {
+        "sunflower-vp9-1000000": {
+          "rgb_mse": -1.6151035333227926,
+          "luma_mse": -2.4080740050656413,
+          "residual_change_l1": -1.1234445095574586,
+          "residual_change_mse": -1.5546677979912604
+        },
+        "in_to_tree-vp9-1000000": {
+          "rgb_mse": -0.13441352303129595,
+          "luma_mse": -0.270225495950005,
+          "residual_change_l1": 0.2590548010120708,
+          "residual_change_mse": 0.3866337706368572
+        },
+        "old_town_cross-vp9-350000": {
+          "rgb_mse": 0.007241712448369242,
+          "luma_mse": -0.038736256287941195,
+          "residual_change_l1": 0.17146596051498264,
+          "residual_change_mse": 0.2358417883649766
+        }
+      },
+      "same_sampled_rgb_and_references_as_r51": 36,
+      "report_sha256": "58ec57460fc306c061235a0ae97e9b6bdc6a70fca49af8d3dc99c08f934c74f2",
+      "rgb_manifest_sha256": "9c31cbdcd3a739e44bf1a1a0917028e93839efb844aa2a45d22a1763f7728553",
+      "reference_manifest_sha256": "747e9ed3908e162e65a2dfaf49cc1072e2fb231813aa9ad84c12c9af5fb33ac0",
+      "code_sha256": "6d167d6b60ddcd2f63422ce81a95fb30cf432d58279bebf195821d7abebcd29e"
+    },
+    "search": {
+      "source_balanced": {
+        "rgb_mse": 0.0015212681951414285,
+        "luma_mse": 0.0012393322464222796,
+        "residual_change_l1": 0.022125164221506566,
+        "residual_change_mse": 0.0010557833111306536
+      },
+      "summary": {
+        "sunflower-vp9-1000000": {
+          "rgb_mse": 0.0011034026668182509,
+          "luma_mse": 0.000765846974640486,
+          "residual_change_l1": 0.01821975751746712,
+          "residual_change_mse": 0.0007576136100137124
+        },
+        "in_to_tree-vp9-1000000": {
+          "rgb_mse": 0.001525592414379519,
+          "luma_mse": 0.0013099120748977708,
+          "residual_change_l1": 0.02382874342479876,
+          "residual_change_mse": 0.0011457507711643952
+        },
+        "old_town_cross-vp9-350000": {
+          "rgb_mse": 0.0019348095042265154,
+          "luma_mse": 0.0016422376897285826,
+          "residual_change_l1": 0.024326991722253815,
+          "residual_change_mse": 0.0012639855522138532
+        }
+      },
+      "percent_change": {
+        "rgb_mse": -0.6090331948925831,
+        "luma_mse": -0.8293937124437489,
+        "residual_change_l1": 0.33857998353015173,
+        "residual_change_mse": 0.5989817623254678
+      },
+      "source_percent_change": {
+        "sunflower-vp9-1000000": {
+          "rgb_mse": -1.8515029501006697,
+          "luma_mse": -2.698224277477701,
+          "residual_change_l1": -1.091663529993958,
+          "residual_change_mse": -1.6404258195856114
+        },
+        "in_to_tree-vp9-1000000": {
+          "rgb_mse": -0.36968723324168895,
+          "luma_mse": -0.554877049646707,
+          "residual_change_l1": 0.9986159176365028,
+          "residual_change_mse": 1.4059140922595637
+        },
+        "old_town_cross-vp9-350000": {
+          "rgb_mse": -0.07693200900943387,
+          "luma_mse": -0.15494249735198418,
+          "residual_change_l1": 0.7849382082254275,
+          "residual_change_mse": 1.2503688166528804
+        }
+      },
+      "same_sampled_rgb_and_references_as_r51": 36,
+      "report_sha256": "67d55f0276c4b164f30d93df3de73396cc35ddb475d927ca9e960feaaaa7aaa2",
+      "rgb_manifest_sha256": "1baea0c91832bb0555e1b1746db858d9a7c68760c693eae6e80ec86ec42a9498",
+      "reference_manifest_sha256": "747e9ed3908e162e65a2dfaf49cc1072e2fb231813aa9ad84c12c9af5fb33ac0",
+      "code_sha256": "6d167d6b60ddcd2f63422ce81a95fb30cf432d58279bebf195821d7abebcd29e"
+    }
+  },
+  "limitations": [
+    "Selected development diagnostic, not fresh or blind validation.",
+    "Error-change statistics compare output-reference residuals between adjacent frames; they are not motion-compensated perceptual flicker scores. Interpret alongside native spatial metrics and visible output."
+  ]
+}

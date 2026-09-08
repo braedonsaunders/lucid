@@ -703,6 +703,7 @@ kernel void motion_blocks(texture2d<float, access::read> source [[texture(0)]],
                           texture2d<float, access::read> previous [[texture(1)]],
                           texture2d<float, access::write> field [[texture(2)]],
                           constant float& valid [[buffer(0)]],
+                          constant uint& policy [[buffer(1)]],
                           uint2 gid [[thread_position_in_grid]]) {
     if (gid.x >= field.get_width() || gid.y >= field.get_height()) return;
     if (valid < 0.5f) { field.write(float4(0), gid); return; }
@@ -718,7 +719,7 @@ kernel void motion_blocks(texture2d<float, access::read> source [[texture(0)]],
     stationaryError /= 25.0f;
     // Do not chase quantization noise across repeated textures. A stationary
     // match already within the codec-noise floor needs no displacement search.
-    if (stationaryError <= 6.5f / 255.0f) {
+    if (policy == 0u && stationaryError <= 6.5f / 255.0f) {
         field.write(float4(0, 0, 1, stationaryError), gid);
         return;
     }
@@ -746,13 +747,14 @@ kernel void motion_blocks(texture2d<float, access::read> source [[texture(0)]],
         }
     }
     // A displacement must explain more than a small photometric fluctuation.
-    if (stationaryError - error < 2.0f / 255.0f) {
+    if (policy != 2u && stationaryError - error < 2.0f / 255.0f) {
         displacement = int2(0);
         error = stationaryError;
     }
     // Quantization noise is evidence to average, not evidence of a bad match.
     // A flat confidence region keeps stationary codec noise from disabling TAA.
-    const float confidence = 1.0f - smoothstep(6.0f / 255.0f, 16.0f / 255.0f, error);
+    const float confidence = policy != 2u && stationaryError <= 6.5f / 255.0f
+        ? 1.0f : 1.0f - smoothstep(6.0f / 255.0f, 16.0f / 255.0f, error);
     field.write(float4(float2(displacement), confidence, error), gid);
 }
 
@@ -1003,6 +1005,14 @@ private struct DetailParams {
 
 final class DetailEnhancer: @unchecked Sendable {
     enum Failure: Error { case library, pipeline, textureCache, texture, pool, execution }
+
+    // Preserve low-contrast motion by default. The native r51 comparison keeps
+    // the same model and improves LPIPS/DISTS across all eight sources.
+    // Process-only ablations: 0 legacy early exit, 1 gain guard, 2 full search.
+    static let motionPolicy: UInt32 = {
+        let value = UInt32(ProcessInfo.processInfo.environment["LUCID_TAA_MOTION_POLICY"] ?? "2") ?? 2
+        return value <= 2 ? value : 2
+    }()
 
     var settings: DetailSettings {
         didSet {
@@ -1297,6 +1307,8 @@ final class DetailEnhancer: @unchecked Sendable {
             encoder.setTexture(field, index: 2)
             var motionValid: Float = historyValid && settings.stageMotion ? 1 : 0
             encoder.setBytes(&motionValid, length: MemoryLayout<Float>.stride, index: 0)
+            var motionPolicy = Self.motionPolicy
+            encoder.setBytes(&motionPolicy, length: MemoryLayout<UInt32>.stride, index: 1)
             encoder.dispatchThreadgroups(grid(field.width, field.height), threadsPerThreadgroup: threads)
             encoder.endEncoding()
             let gamma = settings.taaGamma, feedback = settings.taaFeedback

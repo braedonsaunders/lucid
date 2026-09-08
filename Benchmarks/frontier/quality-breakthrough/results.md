@@ -2,12 +2,16 @@
 
 All nine suggestions have working experimental implementations and completed
 initial comparisons. No candidate has yet demonstrated a broad native quality
-breakthrough. Shipping remains `big2k` with `debandGuard = 0.005`.
+breakthrough. The repository app now defaults to full-search TAA motion with
+the same `big2k` model and `debandGuard = 0.005`. This incremental change improves
+native LPIPS/DISTS by 0.588%/1.340%; both distances improve on all eight sources.
 
 Measurements below supplement direct image review. Lower LPIPS/DISTS is better;
 small changes from a single training run are not strong evidence by themselves.
 Native comparisons use 960 frames across eight regression sources, unless noted.
 These repeatedly examined sources are regression evidence, not a fresh blind test.
+Historical comparisons below use the preceding `big2k`/guard/legacy-motion
+baseline unless explicitly stated otherwise.
 
 | Rank | Implemented experiment | Completed evidence and current conclusion |
 | --- | --- | --- |
@@ -27,8 +31,8 @@ The source-balanced sampler corrects unequal per-source sequence counts without
 copying image arrays. All 68 relevant unit tests pass. Tests establish software
 behavior, not perceptual improvement.
 
-Architecture and pipeline experiments remain opt-in research tools. No model
-picker, content-specific deployment policy, or shipping asset has been added.
+Unpromoted architecture experiments remain opt-in research tools. The motion
+change applies globally; no model picker or content-specific policy was added.
 See [the protocol](../quality-breakthrough-protocol.md) for recipes, provenance,
 matched controls, limitations, and detailed follow-up results.
 
@@ -72,8 +76,26 @@ only 0.063%/0.063% versus its matched SR-only control, with small visual changes
 policy probe gives a stronger improvement on one fixed low-contrast patch;
 broader comparison is required before interpreting it as a quality breakthrough.
 
-The full TAA replay gives modest overall gains: preserving the match-gain guard
+The full TAA proxy replay gives modest overall gains: preserving the match-gain guard
 improves LPIPS/DISTS by 0.221%/0.254%; retaining all integer matches improves
 them by 0.298%/0.345%. Baseline rows reproduce exactly. The larger fixed-patch
-gain is localized; native quality and timing remain untested.
+gain is localized.
 [TAA policy comparison](taa-motion-proxy-comparison.json).
+
+Native follow-up verifies the same default RGB bytes on all 960 baseline frames.
+The gain-check alternative improves LPIPS/DISTS by 0.281%/0.645%; full search
+improves them by 0.588%/1.340%, with improvements in both distances across all
+eight sources. Fixed images show small local changes, not dramatic recovery of
+reference detail. [Native comparison](taa-motion-native-comparison.json).
+
+On three selected consecutive-frame cases, full search lowers RGB/luma MSE but
+raises adjacent-frame residual-change L1 by 0.339%. This diagnostic tradeoff is
+recorded alongside the spatial improvement; it is not a perceptual flicker
+score. [Temporal evidence](taa-motion-native-temporal.json). Counterbalanced
+enhancement-stage timing averages 8.72 ms for full search, with a maximum run
+p95 of 10.52 ms. Browser transport and presentation are outside that measurement.
+
+Full search is now the single default in the source and rebuilt Release app.
+Without an environment override, the rebuilt default reproduces all 360
+consecutive full-search images exactly. The installed app was not replaced.
+[Default verification and decision](taa-motion-default-admission.json).

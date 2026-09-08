@@ -33,6 +33,11 @@ def main():
     ap.add_argument('--tensor-output', action='store_true', help='Fixed FP32 full-4x output-storage regression; Standard radius4 in both arms')
     ap.add_argument('--preserve-display-gain', action='store_true',
                     help='Diagnostic: keep nominal gain when the presentation candidate changes output scale')
+    ap.add_argument('--candidate-only', action='store_true', help='Capture the candidate against an already frozen native baseline')
+    ap.add_argument('--motion-policy', choices=['taa', 'gain_only', 'search'], default='taa',
+                    help='Process-only candidate TAA policy; must match the frozen config')
+    ap.add_argument('--use-native-default', action='store_true',
+                    help='Do not override candidate motion policy; still require the frozen expected policy in native logs')
     args=ap.parse_args()
     if args.preserve_display_gain and not args.development_presentation:
         ap.error('--preserve-display-gain requires --development-presentation')
@@ -44,6 +49,8 @@ def main():
     sequences=json.loads(args.manifest.read_text())
     frames=json.loads((args.frozen_frames/'manifest.json').read_text())
     config=json.loads(args.native_config.read_text())
+    if config.get('motion_policy', 'taa') != args.motion_policy:
+        raise ValueError('motion policy differs from frozen config')
     development = args.development_presentation
     if development and (config['candidate_sha256']!='fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65' or config['radius']!=(4 if args.tensor_output else 2)):
         raise ValueError('development presentation requires unchanged shipping weights and declared output scale')
@@ -64,6 +71,9 @@ def main():
               'candidate':args.models/('tensor4x_fp32.mlpackage' if args.tensor_output else ('quantized_bicubic2x_640x360.mlpackage' if development else 'direct2x_trained_640x360.mlpackage'))}
     expected={'shipping4x':'fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65',
               'candidate':config['candidate_sha256']}
+    if args.candidate_only:
+        packages = {'candidate': packages['candidate']}
+        expected = {'candidate': expected['candidate']}
     for label,package in packages.items():
         model=ct.models.MLModel(str(package),skip_model_load=True)
         if model.user_defined_metadata.get('lucid.checkpoint_sha256')!=expected[label]:
@@ -92,6 +102,8 @@ def main():
     shipping_tuning=args.out/'shipping-tuning.json';shipping_tuning.write_text(json.dumps(dict(config['tuning'],sharpness=.75),indent=2)+'\n')
     report={'purpose':'frozen native spatial holdout; no browser cadence or release claim',
         'split':'development-presentation' if development else 'quality-holdout','complete':False,'rows':[],'input_streams':[],
+        'candidate_only': args.candidate_only, 'motion_policy': args.motion_policy,
+        'candidate_uses_native_default': args.use_native_default,
         'source_manifest_sha256':digest(args.manifest),'frozen_frames_manifest_sha256':digest(args.frozen_frames/'manifest.json'),
         'native_config_sha256':digest(args.native_config),'checkpoint_sha256':expected,
         'executable_sha256':digest(args.executable),'code_sha256':digest(__file__),
@@ -141,10 +153,15 @@ def main():
             env={k:v for k,v in os.environ.items() if not k.startswith('LUCID_')}
             env.update(LUCID_COMPUTE_UNITS='gpu',LUCID_PIPELINE_MODEL=str(package.resolve()),LUCID_PIPELINE_PACKETS=str(target.resolve()))
             env['LUCID_TUNING']=str((tuning if label=='candidate' else shipping_tuning).resolve())
+            policy = ['taa', 'gain_only', 'search'].index(args.motion_policy) if label == 'candidate' else 0
+            if label != 'candidate' or not args.use_native_default:
+                env['LUCID_TAA_MOTION_POLICY'] = str(policy)
             if label=='candidate' and args.preserve_display_gain:env['LUCID_PIPELINE_PRESERVE_GAIN']='1'
             result=subprocess.run([str(args.executable.resolve()),'--pipeline-ms',str(descriptor_path.resolve()),str(sequence['frames']-8)],
                 env=env,capture_output=True,text=True,timeout=180)
             (args.out/(target.name+'.log')).write_text(result.stdout+result.stderr);result.check_returncode()
+            if f'pipeline-ms detail motionPolicy={policy}' not in result.stdout:
+                raise ValueError('actual native motion policy differs from frozen arm')
             if args.preserve_display_gain:
                 reference_radius=2 if label=='candidate' else 4
                 if f'pipeline-ms detail referenceRadius={reference_radius}' not in result.stdout:

@@ -1004,3 +1004,96 @@ emulator which already computes the full search. Native performance therefore
 must be measured. A gain-only native implementation must also retain the old
 low-error confidence floor to match this diagnostic's stationary weak-match
 behavior. No Metal source, shipping model or runtime default has changed yet.
+
+## Native TAA motion validation and default change
+
+r51 carries the source-TAA experiment into the native Metal kernel without
+changing model weights or stage tuning. Policy 0 preserves the prior low-error
+return and match-gain rejection; policy 1 removes the low-error veto but retains
+the gain check and prior low-error confidence floor; policy 2 uses the full
+integer-search result and its error-based confidence. These remain process-only
+ablations. There is no app model picker or content-dependent policy selection.
+
+The initial native Release build reproduces all 960 frozen legacy-default RGB
+images byte for byte. All baseline metric scores are consequently reused with
+matching image, reference, scorer and execution-environment identities. Each
+alternative processes all 300 frames in each of the same 32 clips and scores the
+same 960 native sender outputs. All 32 first-frame images are identical across
+policies; models, input streams and tuning identities match.
+
+| Native policy | LPIPS change | DISTS change | Fine-correlation change |
+| --- | ---: | ---: | ---: |
+| Retain gain check | −0.281% | −0.645% | +0.075% |
+| Full search | −0.588% | −1.340% | +0.067% |
+
+Full search improves both perceptual distances on all eight sources. Its
+Sunflower source improves LPIPS/DISTS by 3.563%/3.189%. The gain-check version
+improves seven sources on LPIPS, with a 0.053% OldTown regression, and all eight
+on DISTS. Six preselected native crops and an explicitly post-score selection
+of gain-check extremes were inspected. The differences remain modest; the
+fine reference detail is still substantially missing. This supports an
+incremental native improvement, not a quality-breakthrough claim.
+
+The new brightness-ramp fixtures expose a pre-existing FP32 TAA comparison
+error: the unchanged shader reaches 1.523e-5, exceeding the earlier blanket
+1e-5 limit. Its complete default rows match the experimental shader exactly,
+including that error. All motion fields and all original fixtures pass the
+original limit. TAA's variance calculation is sensitive to floating-point
+reduction roundoff at low variance. The checker now permits 2e-5 for TAA only
+(0.0051 of one RGB8 code value), retaining 1e-5 for motion and other stages.
+No fixture changed. All 120 final checks pass: 30 unchanged-shader controls and
+30 for each of the three policies. Initial failing receipts are retained, and
+the independent native 960-image byte comparison verifies the default output.
+Nine focused unit tests and the native Release build also pass.
+
+r52 examines all first 120 frames of three cases selected from the gain-check
+results: Sunflower VP9 1 Mbps, InToTree VP9 1 Mbps, and OldTown VP9 350 kbps.
+These are selected diagnostics, not fresh validation. Every overlapping sampled
+RGB/reference pair matches r51 exactly: 36 per policy. After eight warmups,
+there are 112 adjacent error transitions per clip, measured against the same
+reference frames.
+
+| Policy | RGB MSE change | Luma MSE change | Residual-change L1 | Residual-change MSE |
+| --- | ---: | ---: | ---: | ---: |
+| Retain gain check | −0.437% | −0.617% | −0.158% | −0.148% |
+| Full search | −0.609% | −0.829% | +0.339% | +0.599% |
+
+The adjacent-error statistic is not a motion-compensated perceptual flicker
+score. Full search has a small tradeoff here: the Sunflower temporal residual
+improves, while Tree and OldTown increase. This is preserved in the decision
+rather than treated as a standalone numerical rejection rule.
+
+Capture timing initially contains some full-search latency spikes. A separate
+counterbalanced measurement removes packet writes and rotates policy order
+across the three clips: two runs per policy per clip, 18 runs total, with eight
+warmups and 112 measured frames per run. Full search averages 8.723 ms with
+maximum run p95 10.52 ms and maximum observed frame 14.39 ms. Legacy averages
+8.377 ms, and gain-check 8.198 ms; the order-sensitive model portion limits
+precision when attributing small total-time differences. Mean preprocessing is
+0.415/0.473/0.488 ms for legacy/gain-check/full-search. These results support
+native enhancement-stage headroom for 60 fps; decode, transport, sender packing
+and browser presentation are outside the measurement.
+
+Full search is selected as the one global default because it improves both
+native perceptual distances across all eight sources, preserves model identity,
+and retains enhancement-stage timing headroom. The selected temporal tradeoff
+and modest visual size of the improvement remain explicit. A new Release build
+with no motion-policy environment override reproduces all 360 consecutive
+full-search RGB images and references exactly. The repository default and local
+Release build are updated; the installed application was not replaced.
+
+The exporter can now capture only the candidate and can omit the candidate
+motion-policy override while still requiring the declared policy in native
+logs. Historical configurations explicitly select legacy motion, preserving
+reproducibility. Future comparisons against the updated default should use the
+r51 full-search RGB/report baseline and declare the policy in their configuration.
+All native RGB, reference, score and timing artifacts remain available. Owned
+LUCE scratch packets were removed only after complete RGB/reference/packet hash
+verification. Exact duplicate default PNGs share storage with their verified,
+immutable baseline; their paths and bytes are retained.
+
+See `taa-motion-native-comparison.json`, `taa-motion-native-temporal.json`, and
+`taa-motion-default-admission.json` under `quality-breakthrough/` for identities,
+source-level measurements, timing rows, the floating-point controls and the
+new-default verification. The broader Codex quality-breakthrough goal remains
+active.

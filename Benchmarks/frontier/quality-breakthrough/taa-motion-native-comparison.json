@@ -1,0 +1,1565 @@
+{
+  "complete": true,
+  "scope": "960 native RGB outputs per policy, eight previously examined regression sources, unchanged big2k weights and tuning; not blind release validation or browser cadence",
+  "frame_count": 960,
+  "default_regression": {
+    "complete": true,
+    "rows": 960,
+    "identical_rgb_and_reference": 960,
+    "changed": [],
+    "new_manifest_sha256": "f929983b3123d9dacf131c9b79c9b245dd58c561a77b3ed34074fb3cc5622ff5",
+    "baseline_manifest_sha256": "59b00b86289d791f6bfc3a069968b4cd2967dc59c947052026c5198043bd6c35",
+    "default_policy": 0,
+    "interpretation": "Exact native RGB byte regression; includes same model, stage tuning, sender and PNG decode."
+  },
+  "parity": {
+    "complete": true,
+    "scope": "FP32 native Metal probes against Torch policy emulation; no native quality or timing claim",
+    "default_previous_rows_identical": true,
+    "default_previous_source_sha256": "b889f4d1d021b7d159ed3eb6a9d194c84222a2cb45ef65b2986c95c6511c8c09",
+    "current_source_sha256": "33b3d383bbce66b20c0b2514a692f25958fc45061eea209620f87ee65b307b58",
+    "executable_sha256": "d08bd18afdcd4341148737f784518a7e3f60cfd2bbb37170cce5e6cb85582ef8",
+    "motion_emulator_sha256": "c254586f83cfa5bf6b39add846254ab13e04409a5e1eeac60d60d6b11a45e028",
+    "checker_sha256": "0f87fc2d394b4eccd178b89124afe9eca8206cc4bf0d6b7400dc55c98db43112",
+    "strict_tolerance": 1e-05,
+    "motion_checks_pass": 18,
+    "original_fixture_checks_pass": 60,
+    "new_ramp_taa_discrepancies": {
+      "taa": [
+        {
+          "fixture": "low-error-strong",
+          "stage": "taa",
+          "max_absolute_error": 1.5228986740112305e-05,
+          "mean_absolute_error": 4.4670500187748985e-07,
+          "pass": false
+        }
+      ],
+      "gain-only": [
+        {
+          "fixture": "low-error-strong",
+          "stage": "taa",
+          "max_absolute_error": 1.5228986740112305e-05,
+          "mean_absolute_error": 2.648060615229042e-07,
+          "pass": false
+        }
+      ],
+      "search": [
+        {
+          "fixture": "low-error-strong",
+          "stage": "taa",
+          "max_absolute_error": 1.5228986740112305e-05,
+          "mean_absolute_error": 2.648060615229042e-07,
+          "pass": false
+        },
+        {
+          "fixture": "low-error-weak",
+          "stage": "taa",
+          "max_absolute_error": 1.4483928680419922e-05,
+          "mean_absolute_error": 2.8572199539667054e-07,
+          "pass": false
+        }
+      ]
+    },
+    "interpretation": "Strict parity receipts retain failures in newly added brightness-ramp TAA fixtures. The old and new default shader have identical rows, including the 1.5229e-5 error. All motion fields and all original fixtures pass. No tolerance or fixture changed. Native RGB regression and quality comparison remain required.",
+    "receipts": {
+      "previous": "b92bf199075be2667a3cd34f975b0a1105c37e9a40ae686394cac0e44ee793ed",
+      "taa": "e67df89772fb2a2a3733da0ecfabac3edab2c2e9d4184352967d7bb08adf3208",
+      "gain-only": "6328dbd8d6e9dbd5fe28f35d236c879f538d21500c4d4903cdd079722be12ff2",
+      "search": "9886b4b7012f8c9639324536f63b7942735edc3373a9bf6316532b4befaaeed7"
+    }
+  },
+  "policies": {
+    "taa": {
+      "summary": {
+        "sources": {
+          "ducks_take_off": {
+            "lpips": 0.4345580593993266,
+            "dists": 0.17676989634831747,
+            "psnr_y": 21.460578851544987,
+            "detail_energy": 0.5212106291685867,
+            "fine_correlation": 0.28844208437604507
+          },
+          "old_town_cross": {
+            "lpips": 0.2937719773501158,
+            "dists": 0.08776445289452871,
+            "psnr_y": 27.9063701100641,
+            "detail_energy": 0.7082567150185305,
+            "fine_correlation": 0.5323747219542544
+          },
+          "park_joy": {
+            "lpips": 0.5096641233811776,
+            "dists": 0.19911971638600032,
+            "psnr_y": 20.712122454804998,
+            "detail_energy": 0.4490772168700393,
+            "fine_correlation": 0.2678904899747544
+          },
+          "in_to_tree": {
+            "lpips": 0.39714423616727196,
+            "dists": 0.1063590774933497,
+            "psnr_y": 27.888993194706554,
+            "detail_energy": 0.5872515936838707,
+            "fine_correlation": 0.4476667275848121
+          },
+          "pedestrian_area": {
+            "lpips": 0.17899257379273573,
+            "dists": 0.08125922530889511,
+            "psnr_y": 31.030573240223443,
+            "detail_energy": 0.895692498577658,
+            "fine_correlation": 0.6040069519700967
+          },
+          "rush_hour": {
+            "lpips": 0.156343618221581,
+            "dists": 0.06090772499640783,
+            "psnr_y": 31.174932928533426,
+            "detail_energy": 1.1679591049680982,
+            "fine_correlation": 0.5416231853375674
+          },
+          "sunflower": {
+            "lpips": 0.10135120109965404,
+            "dists": 0.08106997708479563,
+            "psnr_y": 30.491114300916585,
+            "detail_energy": 1.099767809186499,
+            "fine_correlation": 0.6421189192709842
+          },
+          "tractor": {
+            "lpips": 0.2248762738580505,
+            "dists": 0.08157384594281515,
+            "psnr_y": 28.287395371439594,
+            "detail_energy": 0.863741904860039,
+            "fine_correlation": 0.4774580035349673
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.28708775790873914,
+          "dists": 0.10935298955688874,
+          "psnr_y": 27.369010056529213,
+          "detail_energy": 0.7866196840416652,
+          "fine_correlation": 0.4751976355004352
+        }
+      },
+      "percent_change": {
+        "lpips": 0.0,
+        "dists": 0.0,
+        "fine_correlation": 0.0
+      },
+      "sources": {
+        "ducks_take_off": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "fine_correlation": 0.0
+        },
+        "old_town_cross": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "fine_correlation": 0.0
+        },
+        "park_joy": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "fine_correlation": 0.0
+        },
+        "in_to_tree": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "fine_correlation": 0.0
+        },
+        "pedestrian_area": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "fine_correlation": 0.0
+        },
+        "rush_hour": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "fine_correlation": 0.0
+        },
+        "sunflower": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "fine_correlation": 0.0
+        },
+        "tractor": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "fine_correlation": 0.0
+        }
+      },
+      "identical_rgb": 960,
+      "all_first_frames_identical": true,
+      "timing_ms": {
+        "mean_of_clip_means": 8.6003125,
+        "mean_preprocess": 0.4390625,
+        "maximum_clip_p95": 10.61,
+        "maximum_observed_frame": 16.81,
+        "rows": [
+          {
+            "sequence": "ducks_take_off-h264-1000000",
+            "mean": 9.09,
+            "p50": 9.61,
+            "p95": 10.32,
+            "max": 11.16,
+            "preprocess": 0.43,
+            "span": 8.08,
+            "detail": 0.58,
+            "log_sha256": "7bd975bda24188d004d9be8101a3dcd2b375d22ca9234606378799391da91679"
+          },
+          {
+            "sequence": "ducks_take_off-h264-350000",
+            "mean": 8.56,
+            "p50": 9.18,
+            "p95": 10.26,
+            "max": 12.08,
+            "preprocess": 0.41,
+            "span": 7.67,
+            "detail": 0.48,
+            "log_sha256": "29ffaa5be0c3471337d6ce4b3db411ce048e10930600bd77a41d740f516e726d"
+          },
+          {
+            "sequence": "ducks_take_off-vp9-1000000",
+            "mean": 9.56,
+            "p50": 9.71,
+            "p95": 10.43,
+            "max": 11.58,
+            "preprocess": 0.47,
+            "span": 8.47,
+            "detail": 0.62,
+            "log_sha256": "e374cb7f55c1c20696cc1c49ff65ae384aa4f80e40e567a0fd63aab273c74cfa"
+          },
+          {
+            "sequence": "ducks_take_off-vp9-350000",
+            "mean": 8.2,
+            "p50": 7.61,
+            "p95": 10.28,
+            "max": 11.09,
+            "preprocess": 0.4,
+            "span": 7.26,
+            "detail": 0.54,
+            "log_sha256": "e7e7adf885891df738f4de4a88360874fcc4f3d5a19c2d1bec72f1a1c310a7d0"
+          },
+          {
+            "sequence": "in_to_tree-h264-1000000",
+            "mean": 7.21,
+            "p50": 6.69,
+            "p95": 9.74,
+            "max": 11.1,
+            "preprocess": 0.37,
+            "span": 6.38,
+            "detail": 0.47,
+            "log_sha256": "a50902b6bebbe77939c62e14e4c39bfb382a35094adaf61c24fddb7409fc5f3a"
+          },
+          {
+            "sequence": "in_to_tree-h264-350000",
+            "mean": 9.4,
+            "p50": 9.67,
+            "p95": 10.45,
+            "max": 10.77,
+            "preprocess": 0.44,
+            "span": 8.4,
+            "detail": 0.56,
+            "log_sha256": "b4acd6f4a51a96192f47dbc125b83631502849e251e55c6eb9c420621b8e66db"
+          },
+          {
+            "sequence": "in_to_tree-vp9-1000000",
+            "mean": 6.82,
+            "p50": 6.65,
+            "p95": 7.61,
+            "max": 9.03,
+            "preprocess": 0.35,
+            "span": 5.99,
+            "detail": 0.47,
+            "log_sha256": "ccc7a43a3ccea571f2cefbc2cf9606fb479752a1e4a006588b506a7315ef1d93"
+          },
+          {
+            "sequence": "in_to_tree-vp9-350000",
+            "mean": 6.93,
+            "p50": 6.67,
+            "p95": 8.25,
+            "max": 9.81,
+            "preprocess": 0.36,
+            "span": 6.11,
+            "detail": 0.46,
+            "log_sha256": "dc12f802882a5b6902efda5a515a2658e461c1b5743e9e3d92f4332da859fac5"
+          },
+          {
+            "sequence": "old_town_cross-h264-1000000",
+            "mean": 8.14,
+            "p50": 7.88,
+            "p95": 10.42,
+            "max": 11.02,
+            "preprocess": 0.4,
+            "span": 7.26,
+            "detail": 0.49,
+            "log_sha256": "08a2132a0bd6711fb64c0115d3ae4f676b4434d4d3b110d7227cfd2bc22194bf"
+          },
+          {
+            "sequence": "old_town_cross-h264-350000",
+            "mean": 9.83,
+            "p50": 9.81,
+            "p95": 10.61,
+            "max": 11.44,
+            "preprocess": 0.46,
+            "span": 8.77,
+            "detail": 0.6,
+            "log_sha256": "fd6f0b7b3283ed7e3e35142b2450ea551fa9107d50ff97a2b6c8751366afe1ac"
+          },
+          {
+            "sequence": "old_town_cross-vp9-1000000",
+            "mean": 9.75,
+            "p50": 9.71,
+            "p95": 10.37,
+            "max": 12.97,
+            "preprocess": 0.45,
+            "span": 8.73,
+            "detail": 0.57,
+            "log_sha256": "57efb9ecaaabb8197fce0234a738c9f0469f684573c7cc1ad1241a3d13f8a2ca"
+          },
+          {
+            "sequence": "old_town_cross-vp9-350000",
+            "mean": 9.75,
+            "p50": 9.73,
+            "p95": 10.35,
+            "max": 10.84,
+            "preprocess": 0.46,
+            "span": 8.73,
+            "detail": 0.56,
+            "log_sha256": "e3468f46d6761050978d7b7666369832fae312c9ad39820a3d84f06db45944a0"
+          },
+          {
+            "sequence": "park_joy-h264-1000000",
+            "mean": 8.44,
+            "p50": 8.57,
+            "p95": 10.22,
+            "max": 10.88,
+            "preprocess": 0.48,
+            "span": 7.46,
+            "detail": 0.51,
+            "log_sha256": "14529178257ba095606cf1b7bf818eb3a75d67584bb166476a07d90788f54bbd"
+          },
+          {
+            "sequence": "park_joy-h264-350000",
+            "mean": 9.71,
+            "p50": 9.76,
+            "p95": 10.42,
+            "max": 10.86,
+            "preprocess": 0.52,
+            "span": 8.58,
+            "detail": 0.6,
+            "log_sha256": "a33553a8f2ea27bd0cbee4ecd35f61b7b504609f53014b4acc13305c365b1a64"
+          },
+          {
+            "sequence": "park_joy-vp9-1000000",
+            "mean": 9.58,
+            "p50": 9.64,
+            "p95": 10.46,
+            "max": 12.49,
+            "preprocess": 0.53,
+            "span": 8.46,
+            "detail": 0.58,
+            "log_sha256": "54c55181cb9f185193128177b76d03f78c1fc55602125cc55d00c659bc8197f0"
+          },
+          {
+            "sequence": "park_joy-vp9-350000",
+            "mean": 9.78,
+            "p50": 9.78,
+            "p95": 10.41,
+            "max": 11.16,
+            "preprocess": 0.53,
+            "span": 8.66,
+            "detail": 0.6,
+            "log_sha256": "1b5a8fab3b11b52fcdb94949397574042622530669a2c4dee68ddfaa7eccd978"
+          },
+          {
+            "sequence": "pedestrian_area-h264-1000000",
+            "mean": 8.11,
+            "p50": 7.62,
+            "p95": 10.23,
+            "max": 10.77,
+            "preprocess": 0.42,
+            "span": 7.16,
+            "detail": 0.53,
+            "log_sha256": "d73b399ffbe3797c650264a3cbffcfc96bc62d45079da00b9232a661e3d987dc"
+          },
+          {
+            "sequence": "pedestrian_area-h264-350000",
+            "mean": 7.7,
+            "p50": 6.77,
+            "p95": 10.2,
+            "max": 11.76,
+            "preprocess": 0.39,
+            "span": 6.82,
+            "detail": 0.48,
+            "log_sha256": "ad9ddc1d1ac9d251503dbf3986cce38a17e3dfaafaba44403383fa67c6bc7ce6"
+          },
+          {
+            "sequence": "pedestrian_area-vp9-1000000",
+            "mean": 7.73,
+            "p50": 6.88,
+            "p95": 10.44,
+            "max": 15.62,
+            "preprocess": 0.4,
+            "span": 6.82,
+            "detail": 0.51,
+            "log_sha256": "5330054fbe03d262890325ca8cdc58ad312c50eef15286d3312b5d067ecc634b"
+          },
+          {
+            "sequence": "pedestrian_area-vp9-350000",
+            "mean": 6.72,
+            "p50": 6.63,
+            "p95": 7.37,
+            "max": 8.05,
+            "preprocess": 0.35,
+            "span": 5.94,
+            "detail": 0.43,
+            "log_sha256": "2328bf0c2a07a74cc3a5251dc17143462f4080bcdd43c99ff2bf557c38c4b108"
+          },
+          {
+            "sequence": "rush_hour-h264-1000000",
+            "mean": 9.74,
+            "p50": 9.75,
+            "p95": 10.46,
+            "max": 11.17,
+            "preprocess": 0.46,
+            "span": 8.7,
+            "detail": 0.58,
+            "log_sha256": "320885b2a702f9a782699a6fa05ad2960689981db9b792670668f53a3adc1643"
+          },
+          {
+            "sequence": "rush_hour-h264-350000",
+            "mean": 7.33,
+            "p50": 6.75,
+            "p95": 10.02,
+            "max": 10.96,
+            "preprocess": 0.37,
+            "span": 6.45,
+            "detail": 0.51,
+            "log_sha256": "4799f453b12ad7480b3bb2710db775b6f84e6a873924856e93be8127691575fb"
+          },
+          {
+            "sequence": "rush_hour-vp9-1000000",
+            "mean": 9.49,
+            "p50": 9.6,
+            "p95": 10.38,
+            "max": 16.81,
+            "preprocess": 0.43,
+            "span": 8.48,
+            "detail": 0.57,
+            "log_sha256": "cd5de38cd97d632cbcf0608c631b0254475e20d9fe27b34bbae7064663b63fcf"
+          },
+          {
+            "sequence": "rush_hour-vp9-350000",
+            "mean": 9.8,
+            "p50": 9.77,
+            "p95": 10.38,
+            "max": 10.83,
+            "preprocess": 0.46,
+            "span": 8.76,
+            "detail": 0.58,
+            "log_sha256": "d9d4844b1724f282d5ae241ee75e7f9f13ca846bb4622c6faebb9aeab71b58f0"
+          },
+          {
+            "sequence": "sunflower-h264-1000000",
+            "mean": 9.44,
+            "p50": 9.58,
+            "p95": 10.32,
+            "max": 11.03,
+            "preprocess": 0.48,
+            "span": 8.39,
+            "detail": 0.57,
+            "log_sha256": "248c813d18b75df5c04e05b3c6942fba5f83b60745ff4aab3051807b17dd961a"
+          },
+          {
+            "sequence": "sunflower-h264-350000",
+            "mean": 9.58,
+            "p50": 9.65,
+            "p95": 10.31,
+            "max": 11.06,
+            "preprocess": 0.48,
+            "span": 8.53,
+            "detail": 0.57,
+            "log_sha256": "e4a7632d65da029528d124657e3aa2b92a126bdad9aec7149956899919520aed"
+          },
+          {
+            "sequence": "sunflower-vp9-1000000",
+            "mean": 8.99,
+            "p50": 9.47,
+            "p95": 10.32,
+            "max": 11.64,
+            "preprocess": 0.48,
+            "span": 7.98,
+            "detail": 0.53,
+            "log_sha256": "fae4757497df1c54e90f084e6d82c8bdc005fd15bdde7d9ff07fbcb854811b68"
+          },
+          {
+            "sequence": "sunflower-vp9-350000",
+            "mean": 8.71,
+            "p50": 9.57,
+            "p95": 10.33,
+            "max": 10.72,
+            "preprocess": 0.46,
+            "span": 7.72,
+            "detail": 0.53,
+            "log_sha256": "4dc77ad758e5ec9618cec26e523c054a336cd7276b1bf0ed42341bfc73988d52"
+          },
+          {
+            "sequence": "tractor-h264-1000000",
+            "mean": 8.67,
+            "p50": 9.55,
+            "p95": 10.4,
+            "max": 11.37,
+            "preprocess": 0.5,
+            "span": 7.65,
+            "detail": 0.52,
+            "log_sha256": "ffb8dc272ee2633a82c48f7bfde5313e2de69c4e0f3cdba96deee34f12d60adc"
+          },
+          {
+            "sequence": "tractor-h264-350000",
+            "mean": 7.4,
+            "p50": 6.71,
+            "p95": 10.28,
+            "max": 11.56,
+            "preprocess": 0.43,
+            "span": 6.5,
+            "detail": 0.47,
+            "log_sha256": "3980ddc61603099f57671adfaa89857926b00f01306075e51f94762ff06a4c8c"
+          },
+          {
+            "sequence": "tractor-vp9-1000000",
+            "mean": 8.01,
+            "p50": 7.1,
+            "p95": 10.43,
+            "max": 11.38,
+            "preprocess": 0.47,
+            "span": 7.07,
+            "detail": 0.47,
+            "log_sha256": "2904b6a9c24a2c3fb66023305500e975513b6bfb29ac62873ad979580fa65687"
+          },
+          {
+            "sequence": "tractor-vp9-350000",
+            "mean": 7.04,
+            "p50": 6.65,
+            "p95": 9.8,
+            "max": 11.05,
+            "preprocess": 0.41,
+            "span": 6.22,
+            "detail": 0.41,
+            "log_sha256": "cbe04892add5dc7bb99bf2a74af458964cc858c968b6fe789c72d23f149aaea3"
+          }
+        ]
+      },
+      "report_sha256": "2e2bce021852cb3c319750809c354f3a40b90925681ab89e63bc0d9f0c524bb6",
+      "rgb_manifest_sha256": "f929983b3123d9dacf131c9b79c9b245dd58c561a77b3ed34074fb3cc5622ff5",
+      "config_sha256": "358b19efe10ffb0a028336241fbf6e10dd177165960b1dd5703ba78bd480f30a"
+    },
+    "gain_only": {
+      "summary": {
+        "sources": {
+          "ducks_take_off": {
+            "lpips": 0.4344808587183555,
+            "dists": 0.17655570258696873,
+            "psnr_y": 21.461006544063682,
+            "detail_energy": 0.5216367294543143,
+            "fine_correlation": 0.2884238415729391
+          },
+          "old_town_cross": {
+            "lpips": 0.2939285001407067,
+            "dists": 0.08663042138020198,
+            "psnr_y": 27.90995223735384,
+            "detail_energy": 0.7087325942909601,
+            "fine_correlation": 0.5325216051436004
+          },
+          "park_joy": {
+            "lpips": 0.5089023263504108,
+            "dists": 0.19842313677072526,
+            "psnr_y": 20.7128044232422,
+            "detail_energy": 0.4494078968337013,
+            "fine_correlation": 0.267950457642643
+          },
+          "in_to_tree": {
+            "lpips": 0.39612506826718646,
+            "dists": 0.1057909831404686,
+            "psnr_y": 27.898296659957094,
+            "detail_energy": 0.5903309237400018,
+            "fine_correlation": 0.44787740172608487
+          },
+          "pedestrian_area": {
+            "lpips": 0.17847370424618322,
+            "dists": 0.08096994012594223,
+            "psnr_y": 31.039571758246925,
+            "detail_energy": 0.8958014718387456,
+            "fine_correlation": 0.604367100856377
+          },
+          "rush_hour": {
+            "lpips": 0.15548403486609458,
+            "dists": 0.06045192132393519,
+            "psnr_y": 31.189620259079554,
+            "detail_energy": 1.1671414087470129,
+            "fine_correlation": 0.5422009455562491
+          },
+          "sunflower": {
+            "lpips": 0.09834108259528876,
+            "dists": 0.07909925083319345,
+            "psnr_y": 30.596315237819248,
+            "detail_energy": 1.1000943090435853,
+            "fine_correlation": 0.6433902589276745
+          },
+          "tractor": {
+            "lpips": 0.22451225351542234,
+            "dists": 0.08126422464847564,
+            "psnr_y": 28.294108451792688,
+            "detail_energy": 0.8636213322286908,
+            "fine_correlation": 0.47768187004001433
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.28628097858745605,
+          "dists": 0.10864819760123888,
+          "psnr_y": 27.387709446444404,
+          "detail_energy": 0.7870958332721265,
+          "fine_correlation": 0.4755516851831978
+        }
+      },
+      "percent_change": {
+        "lpips": -0.28102184752146764,
+        "dists": -0.6445109168992658,
+        "fine_correlation": 0.0745057753475109
+      },
+      "sources": {
+        "ducks_take_off": {
+          "lpips": -0.01776533176667261,
+          "dists": -0.12117094922468041,
+          "fine_correlation": -0.006324598279561222
+        },
+        "old_town_cross": {
+          "lpips": 0.053280367992480926,
+          "dists": -1.29213078521615,
+          "fine_correlation": 0.027590188506088076
+        },
+        "park_joy": {
+          "lpips": -0.14947040527651945,
+          "dists": -0.349829553756853,
+          "fine_correlation": 0.022385142486491816
+        },
+        "in_to_tree": {
+          "lpips": -0.2566241197206276,
+          "dists": -0.5341286952367796,
+          "fine_correlation": 0.047060486806649315
+        },
+        "pedestrian_area": {
+          "lpips": -0.28988328150045817,
+          "dists": -0.35600288072301645,
+          "fine_correlation": 0.05962661275762393
+        },
+        "rush_hour": {
+          "lpips": -0.5498039288486689,
+          "dists": -0.7483511697399914,
+          "fine_correlation": 0.1066719878916711
+        },
+        "sunflower": {
+          "lpips": -2.9699879939316776,
+          "dists": -2.4308952863535183,
+          "fine_correlation": 0.19799130948108257
+        },
+        "tractor": {
+          "lpips": -0.16187583348964418,
+          "dists": -0.37955951538261035,
+          "fine_correlation": 0.04688716146541427
+        }
+      },
+      "identical_rgb": 32,
+      "all_first_frames_identical": true,
+      "timing_ms": {
+        "mean_of_clip_means": 8.62125,
+        "mean_preprocess": 0.4928125,
+        "maximum_clip_p95": 11.47,
+        "maximum_observed_frame": 18.09,
+        "rows": [
+          {
+            "sequence": "ducks_take_off-h264-1000000",
+            "mean": 8.19,
+            "p50": 8.69,
+            "p95": 10.21,
+            "max": 14.25,
+            "preprocess": 0.47,
+            "span": 7.22,
+            "detail": 0.5,
+            "log_sha256": "e5704632a61f77a408707a4ae56cdb2c45b1cdfc15bfc32f91fca11125de7b64"
+          },
+          {
+            "sequence": "ducks_take_off-h264-350000",
+            "mean": 9.0,
+            "p50": 9.25,
+            "p95": 10.37,
+            "max": 11.57,
+            "preprocess": 0.51,
+            "span": 7.99,
+            "detail": 0.5,
+            "log_sha256": "f693751e1e4af9dc531cd1307796a8fa70adfe2f7204e6fcaa6179b999faca1c"
+          },
+          {
+            "sequence": "ducks_take_off-vp9-1000000",
+            "mean": 8.0,
+            "p50": 7.3,
+            "p95": 10.26,
+            "max": 12.46,
+            "preprocess": 0.45,
+            "span": 7.06,
+            "detail": 0.49,
+            "log_sha256": "5d60d7b2593486ee47d2e25ebef2e5148ffca1730e7584c2c78e1162c013e831"
+          },
+          {
+            "sequence": "ducks_take_off-vp9-350000",
+            "mean": 7.11,
+            "p50": 6.63,
+            "p95": 10.04,
+            "max": 11.17,
+            "preprocess": 0.4,
+            "span": 6.27,
+            "detail": 0.43,
+            "log_sha256": "5cf2dfe6452e3c5f49a0c8b423a9b46147338dd4642fefaee86eb12db80eea7c"
+          },
+          {
+            "sequence": "in_to_tree-h264-1000000",
+            "mean": 8.85,
+            "p50": 9.1,
+            "p95": 10.06,
+            "max": 10.73,
+            "preprocess": 0.51,
+            "span": 7.85,
+            "detail": 0.49,
+            "log_sha256": "103fd3e898776df734a08017e33de1e786a70ae0564c83419e725185f83c1c39"
+          },
+          {
+            "sequence": "in_to_tree-h264-350000",
+            "mean": 9.5,
+            "p50": 9.5,
+            "p95": 10.19,
+            "max": 10.64,
+            "preprocess": 0.54,
+            "span": 8.43,
+            "detail": 0.52,
+            "log_sha256": "e19704d58fb45d1353aa3e5d63e96577ff38c7e85562fe9b4b9c224847c2b6a1"
+          },
+          {
+            "sequence": "in_to_tree-vp9-1000000",
+            "mean": 8.1,
+            "p50": 7.73,
+            "p95": 10.31,
+            "max": 10.93,
+            "preprocess": 0.47,
+            "span": 7.13,
+            "detail": 0.5,
+            "log_sha256": "b891be6bdd81449359a0752508e0504c63a3c96a27e57ea092589c2fbfac632d"
+          },
+          {
+            "sequence": "in_to_tree-vp9-350000",
+            "mean": 8.58,
+            "p50": 9.0,
+            "p95": 10.29,
+            "max": 10.77,
+            "preprocess": 0.49,
+            "span": 7.59,
+            "detail": 0.5,
+            "log_sha256": "50f38868d509b66ea8763973e8155bd3fb04ce76449c0f451e284475ca6dd27c"
+          },
+          {
+            "sequence": "old_town_cross-h264-1000000",
+            "mean": 9.93,
+            "p50": 9.88,
+            "p95": 11.47,
+            "max": 14.81,
+            "preprocess": 0.55,
+            "span": 8.76,
+            "detail": 0.62,
+            "log_sha256": "ab5f49767d60059d3003db7c7ca4f49d4630e262f5e6cb15926a2b630e80fb9c"
+          },
+          {
+            "sequence": "old_town_cross-h264-350000",
+            "mean": 9.23,
+            "p50": 9.44,
+            "p95": 10.88,
+            "max": 18.09,
+            "preprocess": 0.54,
+            "span": 8.12,
+            "detail": 0.57,
+            "log_sha256": "36c39ab86107b70ab3664f51b4164bd07364ded8a6773ce376341c0945f59882"
+          },
+          {
+            "sequence": "old_town_cross-vp9-1000000",
+            "mean": 9.74,
+            "p50": 9.72,
+            "p95": 10.55,
+            "max": 11.64,
+            "preprocess": 0.55,
+            "span": 8.61,
+            "detail": 0.58,
+            "log_sha256": "0474dd98ccd9919bc9c955d8f721cd53723cdf4a7c5cc1e9814cdc0d29801572"
+          },
+          {
+            "sequence": "old_town_cross-vp9-350000",
+            "mean": 9.37,
+            "p50": 9.66,
+            "p95": 10.73,
+            "max": 11.8,
+            "preprocess": 0.52,
+            "span": 8.3,
+            "detail": 0.56,
+            "log_sha256": "6eb38886863e9c464b80ba6918d6dc20abd95125bcc988d78bd91d16208259f3"
+          },
+          {
+            "sequence": "park_joy-h264-1000000",
+            "mean": 8.73,
+            "p50": 9.08,
+            "p95": 10.15,
+            "max": 10.83,
+            "preprocess": 0.5,
+            "span": 7.74,
+            "detail": 0.49,
+            "log_sha256": "d161fdd7caa6492d5853298ae5fe865467b2d803f2fbe02cd13db3552221b679"
+          },
+          {
+            "sequence": "park_joy-h264-350000",
+            "mean": 9.24,
+            "p50": 9.37,
+            "p95": 10.32,
+            "max": 11.03,
+            "preprocess": 0.52,
+            "span": 8.19,
+            "detail": 0.54,
+            "log_sha256": "caf7244831453f2aa2b36477a0aae3d4595ea4b32839fab658ef5ae76d5e2747"
+          },
+          {
+            "sequence": "park_joy-vp9-1000000",
+            "mean": 8.4,
+            "p50": 8.71,
+            "p95": 10.01,
+            "max": 10.43,
+            "preprocess": 0.48,
+            "span": 7.4,
+            "detail": 0.51,
+            "log_sha256": "a5f98be82e72fe8da64152d565f04cc27a1500889f35838d79ec988a4659f9ce"
+          },
+          {
+            "sequence": "park_joy-vp9-350000",
+            "mean": 8.97,
+            "p50": 9.01,
+            "p95": 10.12,
+            "max": 11.75,
+            "preprocess": 0.52,
+            "span": 7.96,
+            "detail": 0.5,
+            "log_sha256": "2a4ab3ffa65e6c10d1c420416aaaa1ef06ac0be6644d0eec78baae024c3bcf6f"
+          },
+          {
+            "sequence": "pedestrian_area-h264-1000000",
+            "mean": 8.56,
+            "p50": 9.43,
+            "p95": 10.26,
+            "max": 10.78,
+            "preprocess": 0.49,
+            "span": 7.57,
+            "detail": 0.49,
+            "log_sha256": "16fd6337172753c69bc0cf9681763acd27b54321d43c01d85e9923a3e4986feb"
+          },
+          {
+            "sequence": "pedestrian_area-h264-350000",
+            "mean": 7.5,
+            "p50": 6.78,
+            "p95": 10.08,
+            "max": 14.5,
+            "preprocess": 0.44,
+            "span": 6.61,
+            "detail": 0.45,
+            "log_sha256": "41084f8f1900193f76abfebd6344ed138dffbb13a1178a4f17917a19a3f76efe"
+          },
+          {
+            "sequence": "pedestrian_area-vp9-1000000",
+            "mean": 9.76,
+            "p50": 9.83,
+            "p95": 10.43,
+            "max": 11.53,
+            "preprocess": 0.56,
+            "span": 8.61,
+            "detail": 0.59,
+            "log_sha256": "8fbcc74601cce85381e221c8842260b56bbca908cafc8ccdb89f60b034df42cf"
+          },
+          {
+            "sequence": "pedestrian_area-vp9-350000",
+            "mean": 8.07,
+            "p50": 7.94,
+            "p95": 9.99,
+            "max": 10.45,
+            "preprocess": 0.46,
+            "span": 7.13,
+            "detail": 0.47,
+            "log_sha256": "5db50e217f88f2c556b227f49c123b98ada0316582d43be7c017fd666b5ee421"
+          },
+          {
+            "sequence": "rush_hour-h264-1000000",
+            "mean": 7.0,
+            "p50": 6.72,
+            "p95": 8.85,
+            "max": 9.59,
+            "preprocess": 0.41,
+            "span": 6.15,
+            "detail": 0.44,
+            "log_sha256": "ec224ae68646464dc5c827fe4cc1b5f9889faf91c84fd03ca87c3cb2233c2018"
+          },
+          {
+            "sequence": "rush_hour-h264-350000",
+            "mean": 9.07,
+            "p50": 9.61,
+            "p95": 10.39,
+            "max": 12.89,
+            "preprocess": 0.53,
+            "span": 7.97,
+            "detail": 0.57,
+            "log_sha256": "31a0faab887aafd98294354fa0c9fc156f8575855c60a14bfc3a4a97820311b4"
+          },
+          {
+            "sequence": "rush_hour-vp9-1000000",
+            "mean": 9.56,
+            "p50": 9.68,
+            "p95": 10.36,
+            "max": 11.05,
+            "preprocess": 0.54,
+            "span": 8.43,
+            "detail": 0.59,
+            "log_sha256": "e431d639bbe9a817c8154664ad8b6e643b4355d1e193fec16e2ccd12577bfeb3"
+          },
+          {
+            "sequence": "rush_hour-vp9-350000",
+            "mean": 9.64,
+            "p50": 9.71,
+            "p95": 10.62,
+            "max": 14.71,
+            "preprocess": 0.55,
+            "span": 8.5,
+            "detail": 0.59,
+            "log_sha256": "1457b8982abbc5ef3730d8bfcb55796a25b847a37d2c88ed872686a06ee7a369"
+          },
+          {
+            "sequence": "sunflower-h264-1000000",
+            "mean": 9.58,
+            "p50": 9.66,
+            "p95": 10.33,
+            "max": 13.82,
+            "preprocess": 0.54,
+            "span": 8.5,
+            "detail": 0.54,
+            "log_sha256": "b79c60f7547462387d68661680e8d6aeb664e9e1c131f0ab12e8f594f96bcf1a"
+          },
+          {
+            "sequence": "sunflower-h264-350000",
+            "mean": 9.41,
+            "p50": 9.54,
+            "p95": 10.43,
+            "max": 11.41,
+            "preprocess": 0.53,
+            "span": 8.32,
+            "detail": 0.56,
+            "log_sha256": "37201f07a603fa899682ea0e6e7686168e1ee0f95a69743dbdaef66d7217562c"
+          },
+          {
+            "sequence": "sunflower-vp9-1000000",
+            "mean": 9.72,
+            "p50": 9.69,
+            "p95": 10.34,
+            "max": 10.95,
+            "preprocess": 0.55,
+            "span": 8.63,
+            "detail": 0.54,
+            "log_sha256": "af993b9abae8343643aef883c3e9270217bd049a696f7ce7a6d0a034e3f59d32"
+          },
+          {
+            "sequence": "sunflower-vp9-350000",
+            "mean": 6.88,
+            "p50": 6.71,
+            "p95": 7.88,
+            "max": 10.39,
+            "preprocess": 0.41,
+            "span": 6.07,
+            "detail": 0.41,
+            "log_sha256": "503be4434fb0342bd1a5dafb66c5e8bf16af14c4048a671ad364e0d0f96e426c"
+          },
+          {
+            "sequence": "tractor-h264-1000000",
+            "mean": 8.68,
+            "p50": 9.29,
+            "p95": 10.37,
+            "max": 10.83,
+            "preprocess": 0.49,
+            "span": 7.7,
+            "detail": 0.49,
+            "log_sha256": "6c0ef3cb067815bc9cf17a5b0b01d531b4772a89f2c52f4eed9734eb831832bd"
+          },
+          {
+            "sequence": "tractor-h264-350000",
+            "mean": 7.36,
+            "p50": 6.74,
+            "p95": 10.3,
+            "max": 10.97,
+            "preprocess": 0.43,
+            "span": 6.49,
+            "detail": 0.45,
+            "log_sha256": "6fe7211c3059ff4fb6db01101a05b23ce9690455c318214b125ed4cfed602751"
+          },
+          {
+            "sequence": "tractor-vp9-1000000",
+            "mean": 7.1,
+            "p50": 6.72,
+            "p95": 9.6,
+            "max": 10.64,
+            "preprocess": 0.41,
+            "span": 6.22,
+            "detail": 0.47,
+            "log_sha256": "0bfd6ba96a041980862b9b69b76d598308ecd108b7e15437910a6b36292c2247"
+          },
+          {
+            "sequence": "tractor-vp9-350000",
+            "mean": 7.05,
+            "p50": 6.7,
+            "p95": 9.58,
+            "max": 10.71,
+            "preprocess": 0.41,
+            "span": 6.2,
+            "detail": 0.45,
+            "log_sha256": "d3200fc65d4b8714635780aeec994178da4aa3e20918d8d3001dd5b97fa73f8b"
+          }
+        ]
+      },
+      "report_sha256": "bf80fc49cdefff129781972c93f566fd4e6da7d42bca23a06ffb86e9d71e9840",
+      "rgb_manifest_sha256": "ec9ed6ec939975590352602d4a9bdeb709e6ee82836f15a207c6710177f5d564",
+      "config_sha256": "459a4df5c1d57998ad122fd2d2160a358221cda7727a96672a04b4ad59f4d5b5"
+    },
+    "search": {
+      "summary": {
+        "sources": {
+          "ducks_take_off": {
+            "lpips": 0.4339756326129039,
+            "dists": 0.17657287021478016,
+            "psnr_y": 21.464509572858834,
+            "detail_energy": 0.5219156633714699,
+            "fine_correlation": 0.2881657157344924
+          },
+          "old_town_cross": {
+            "lpips": 0.29374787136912345,
+            "dists": 0.08543239931265513,
+            "psnr_y": 27.92010597753562,
+            "detail_energy": 0.7101372520144743,
+            "fine_correlation": 0.5330672864369127
+          },
+          "park_joy": {
+            "lpips": 0.5056854952126741,
+            "dists": 0.19693047056595483,
+            "psnr_y": 20.713799574247208,
+            "detail_energy": 0.44956661549969196,
+            "fine_correlation": 0.26789157495285426
+          },
+          "in_to_tree": {
+            "lpips": 0.3938625025252501,
+            "dists": 0.10312480678160986,
+            "psnr_y": 27.90764639818084,
+            "detail_energy": 0.594091054870477,
+            "fine_correlation": 0.44774368937790016
+          },
+          "pedestrian_area": {
+            "lpips": 0.17820417707165082,
+            "dists": 0.0808230921626091,
+            "psnr_y": 31.048897930865174,
+            "detail_energy": 0.8973122023624344,
+            "fine_correlation": 0.6047020571267143
+          },
+          "rush_hour": {
+            "lpips": 0.15558387227356435,
+            "dists": 0.06056210945049922,
+            "psnr_y": 31.188449858107113,
+            "detail_energy": 1.1677740184067178,
+            "fine_correlation": 0.5415499057536941
+          },
+          "sunflower": {
+            "lpips": 0.0977395978445808,
+            "dists": 0.0784844214717547,
+            "psnr_y": 30.634827080260404,
+            "detail_energy": 1.1012109244051365,
+            "fine_correlation": 0.6433256974482258
+          },
+          "tractor": {
+            "lpips": 0.22439890050639708,
+            "dists": 0.08116842458645503,
+            "psnr_y": 28.299416692862746,
+            "detail_energy": 0.8631757935743648,
+            "fine_correlation": 0.47768047192460655
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.28539975617701807,
+          "dists": 0.10788732431828975,
+          "psnr_y": 27.397206635614744,
+          "detail_energy": 0.7881479405630959,
+          "fine_correlation": 0.47551579984442505
+        }
+      },
+      "percent_change": {
+        "lpips": -0.5879741247126424,
+        "dists": -1.3403065106295187,
+        "fine_correlation": 0.06695410924231204
+      },
+      "sources": {
+        "ducks_take_off": {
+          "lpips": -0.13402738111170098,
+          "dists": -0.11145909886662864,
+          "fine_correlation": -0.09581425753129036
+        },
+        "old_town_cross": {
+          "lpips": -0.008205677481487594,
+          "dists": -2.6571732688587812,
+          "fine_correlation": 0.13008966318235338
+        },
+        "park_joy": {
+          "lpips": -0.7806372836504094,
+          "dists": -1.0994621023874718,
+          "fine_correlation": 0.00040500806877119544
+        },
+        "in_to_tree": {
+          "lpips": -0.8263329398137342,
+          "dists": -3.040897672266929,
+          "fine_correlation": 0.01719176082244367
+        },
+        "pedestrian_area": {
+          "lpips": -0.4404633691662774,
+          "dists": -0.5367183167549361,
+          "fine_correlation": 0.11508231061752028
+        },
+        "rush_hour": {
+          "lpips": -0.4859462488196242,
+          "dists": -0.5674412333230183,
+          "fine_correlation": -0.013529624627794945
+        },
+        "sunflower": {
+          "lpips": -3.5634538277667827,
+          "dists": -3.1892886935647624,
+          "fine_correlation": 0.18793686668066023
+        },
+        "tractor": {
+          "lpips": -0.21228266702549847,
+          "dists": -0.49699919339873944,
+          "fine_correlation": 0.04659433667300039
+        }
+      },
+      "identical_rgb": 32,
+      "all_first_frames_identical": true,
+      "timing_ms": {
+        "mean_of_clip_means": 9.414375,
+        "mean_preprocess": 0.5381250000000001,
+        "maximum_clip_p95": 16.41,
+        "maximum_observed_frame": 38.28,
+        "rows": [
+          {
+            "sequence": "ducks_take_off-h264-1000000",
+            "mean": 9.75,
+            "p50": 9.67,
+            "p95": 10.7,
+            "max": 11.73,
+            "preprocess": 0.54,
+            "span": 8.68,
+            "detail": 0.54,
+            "log_sha256": "4dff6e961898bd8b7af35beff545159ce4afabc5b31e8b5fc5c0a2ae61a4199b"
+          },
+          {
+            "sequence": "ducks_take_off-h264-350000",
+            "mean": 9.71,
+            "p50": 9.66,
+            "p95": 10.43,
+            "max": 13.58,
+            "preprocess": 0.54,
+            "span": 8.64,
+            "detail": 0.53,
+            "log_sha256": "079f23f5f9c147380eca0a2f06ed01ebd4bb092685417e8ef9e8d3f118ed2fe7"
+          },
+          {
+            "sequence": "ducks_take_off-vp9-1000000",
+            "mean": 9.55,
+            "p50": 9.55,
+            "p95": 10.23,
+            "max": 10.95,
+            "preprocess": 0.54,
+            "span": 8.49,
+            "detail": 0.52,
+            "log_sha256": "7f8e0b4f6df7315ae70a4664584b400dd7b26fbd61acf3a18c5a26f4419d4fe1"
+          },
+          {
+            "sequence": "ducks_take_off-vp9-350000",
+            "mean": 9.17,
+            "p50": 9.38,
+            "p95": 10.71,
+            "max": 11.57,
+            "preprocess": 0.52,
+            "span": 8.11,
+            "detail": 0.54,
+            "log_sha256": "a370e7f51217873c823755165fa3cf96a15ed1fd8b52a75afb83dfa47f3a837e"
+          },
+          {
+            "sequence": "in_to_tree-h264-1000000",
+            "mean": 9.76,
+            "p50": 9.71,
+            "p95": 10.42,
+            "max": 10.91,
+            "preprocess": 0.56,
+            "span": 8.65,
+            "detail": 0.56,
+            "log_sha256": "b5b69595f4e013b4d506077b9ea79b6553ad6f34dcd0cdfecafa69ecc72acd81"
+          },
+          {
+            "sequence": "in_to_tree-h264-350000",
+            "mean": 9.69,
+            "p50": 9.89,
+            "p95": 10.69,
+            "max": 11.13,
+            "preprocess": 0.55,
+            "span": 8.51,
+            "detail": 0.63,
+            "log_sha256": "06379ac2fc76ce949dae2e30b82f27d53c044cb24b495b0c12c7de4be4a9c053"
+          },
+          {
+            "sequence": "in_to_tree-vp9-1000000",
+            "mean": 9.65,
+            "p50": 9.74,
+            "p95": 10.4,
+            "max": 10.86,
+            "preprocess": 0.54,
+            "span": 8.55,
+            "detail": 0.56,
+            "log_sha256": "277e3bf6419643355d1afcc27bea700fe3d2c6215ad48a7e1d7f9c19faaa8d70"
+          },
+          {
+            "sequence": "in_to_tree-vp9-350000",
+            "mean": 9.71,
+            "p50": 9.68,
+            "p95": 10.27,
+            "max": 10.88,
+            "preprocess": 0.55,
+            "span": 8.62,
+            "detail": 0.54,
+            "log_sha256": "4af6ecde6b227aa48cc3a38267c14f0938d4669657d7eed5b286dcd98f427e95"
+          },
+          {
+            "sequence": "old_town_cross-h264-1000000",
+            "mean": 9.68,
+            "p50": 9.6,
+            "p95": 10.47,
+            "max": 16.26,
+            "preprocess": 0.55,
+            "span": 8.59,
+            "detail": 0.54,
+            "log_sha256": "f33860a57a2e1b72396661c7afb3f74662249a80448c366b5ac72b51b5b81bdb"
+          },
+          {
+            "sequence": "old_town_cross-h264-350000",
+            "mean": 9.16,
+            "p50": 9.49,
+            "p95": 10.22,
+            "max": 11.16,
+            "preprocess": 0.52,
+            "span": 8.13,
+            "detail": 0.51,
+            "log_sha256": "420b2735e6a8405ec3f03662a78bd6d7f6a8742a55e41071c572469bacb6b7c3"
+          },
+          {
+            "sequence": "old_town_cross-vp9-1000000",
+            "mean": 9.28,
+            "p50": 9.56,
+            "p95": 10.1,
+            "max": 10.74,
+            "preprocess": 0.52,
+            "span": 8.24,
+            "detail": 0.52,
+            "log_sha256": "1ff5e7b3c51e0af1744a9cba9dc3446dfd47c5b328d5798b8fe43f9da6a407ab"
+          },
+          {
+            "sequence": "old_town_cross-vp9-350000",
+            "mean": 9.27,
+            "p50": 9.44,
+            "p95": 10.27,
+            "max": 11.23,
+            "preprocess": 0.53,
+            "span": 8.22,
+            "detail": 0.52,
+            "log_sha256": "7c2afad9c3520705e4da3fc0ebe40c0e1f4cb7d8467e9cf0de01cf745b07a91c"
+          },
+          {
+            "sequence": "park_joy-h264-1000000",
+            "mean": 10.68,
+            "p50": 9.95,
+            "p95": 16.41,
+            "max": 38.28,
+            "preprocess": 0.78,
+            "span": 9.13,
+            "detail": 0.78,
+            "log_sha256": "f8526017ab89720e2860d65dd9c634adaed9fedf51553ff9fca029929b0bcbf7"
+          },
+          {
+            "sequence": "park_joy-h264-350000",
+            "mean": 9.02,
+            "p50": 9.42,
+            "p95": 10.17,
+            "max": 10.81,
+            "preprocess": 0.51,
+            "span": 8.0,
+            "detail": 0.51,
+            "log_sha256": "4d4dfca0af262d6c5c30f24a38aa51cc0066099751578741701d34a9616253ce"
+          },
+          {
+            "sequence": "park_joy-vp9-1000000",
+            "mean": 9.92,
+            "p50": 9.98,
+            "p95": 11.19,
+            "max": 14.01,
+            "preprocess": 0.57,
+            "span": 8.69,
+            "detail": 0.65,
+            "log_sha256": "1a36ed18ebc25e52c8866ebb50e2bb2f0eddd5c41822572ad60062cb7f96b088"
+          },
+          {
+            "sequence": "park_joy-vp9-350000",
+            "mean": 10.15,
+            "p50": 10.04,
+            "p95": 12.2,
+            "max": 20.53,
+            "preprocess": 0.59,
+            "span": 8.9,
+            "detail": 0.66,
+            "log_sha256": "2219319a0f107c5c4916c317c1ebd4efdc10d6992a4997bc3a6d2713a302741f"
+          },
+          {
+            "sequence": "pedestrian_area-h264-1000000",
+            "mean": 9.47,
+            "p50": 9.72,
+            "p95": 10.42,
+            "max": 10.91,
+            "preprocess": 0.53,
+            "span": 8.36,
+            "detail": 0.59,
+            "log_sha256": "0d2b5e055d240eb76e3259e25ab3a52586e9d6f6b070fe1122aec0b9a3ba3bd9"
+          },
+          {
+            "sequence": "pedestrian_area-h264-350000",
+            "mean": 9.7,
+            "p50": 9.66,
+            "p95": 10.29,
+            "max": 12.0,
+            "preprocess": 0.55,
+            "span": 8.6,
+            "detail": 0.55,
+            "log_sha256": "bbc04d62ab205736b4d1c1d4159af8e81d2508d4db5284f4b334b4bd757ba57d"
+          },
+          {
+            "sequence": "pedestrian_area-vp9-1000000",
+            "mean": 9.37,
+            "p50": 9.58,
+            "p95": 10.22,
+            "max": 10.44,
+            "preprocess": 0.53,
+            "span": 8.29,
+            "detail": 0.55,
+            "log_sha256": "0d8ad7294a03e18763d00a66ea6cbdfa18eb8c15145a2fc0f7cda3a1ba730c4e"
+          },
+          {
+            "sequence": "pedestrian_area-vp9-350000",
+            "mean": 9.31,
+            "p50": 9.61,
+            "p95": 10.37,
+            "max": 12.17,
+            "preprocess": 0.53,
+            "span": 8.24,
+            "detail": 0.54,
+            "log_sha256": "cdd38b9d9bdfa20661cf189f5a71c608def5579458f7295d288ba6084484b3b1"
+          },
+          {
+            "sequence": "rush_hour-h264-1000000",
+            "mean": 9.58,
+            "p50": 9.58,
+            "p95": 10.35,
+            "max": 11.19,
+            "preprocess": 0.54,
+            "span": 8.47,
+            "detail": 0.56,
+            "log_sha256": "3f5d4d5ec92b91af9a37add99a5409eef62e65ee3eaf866025f84a004339177b"
+          },
+          {
+            "sequence": "rush_hour-h264-350000",
+            "mean": 9.02,
+            "p50": 9.49,
+            "p95": 10.3,
+            "max": 12.58,
+            "preprocess": 0.51,
+            "span": 7.95,
+            "detail": 0.56,
+            "log_sha256": "07dec54461b81b8fe249796e161dc8be5b71736581dd29e3819f73fb26cd6ee5"
+          },
+          {
+            "sequence": "rush_hour-vp9-1000000",
+            "mean": 9.6,
+            "p50": 9.73,
+            "p95": 10.36,
+            "max": 11.2,
+            "preprocess": 0.54,
+            "span": 8.48,
+            "detail": 0.57,
+            "log_sha256": "61fa4cac8cbab6bf2b9bce3bf9d1b8b8cae70ef7c85dd3febc5c736238ca7774"
+          },
+          {
+            "sequence": "rush_hour-vp9-350000",
+            "mean": 9.55,
+            "p50": 9.65,
+            "p95": 10.33,
+            "max": 10.79,
+            "preprocess": 0.54,
+            "span": 8.44,
+            "detail": 0.57,
+            "log_sha256": "e1a394746f8c5ed9af32645e819ba2f8a1973e2fe7026ee9eec46efcb85e5a5f"
+          },
+          {
+            "sequence": "sunflower-h264-1000000",
+            "mean": 9.69,
+            "p50": 9.67,
+            "p95": 10.37,
+            "max": 11.27,
+            "preprocess": 0.54,
+            "span": 8.56,
+            "detail": 0.58,
+            "log_sha256": "5d04f416a1123ec7531d8702e549796cc7e2c0add6650b80c4bedb83f0a4b5b0"
+          },
+          {
+            "sequence": "sunflower-h264-350000",
+            "mean": 9.17,
+            "p50": 9.55,
+            "p95": 10.4,
+            "max": 14.66,
+            "preprocess": 0.51,
+            "span": 8.11,
+            "detail": 0.54,
+            "log_sha256": "5e75f5cf1a7e1ded562ce836953afb702caf4c1fa12539eef6ddc3acd87fea56"
+          },
+          {
+            "sequence": "sunflower-vp9-1000000",
+            "mean": 7.15,
+            "p50": 6.71,
+            "p95": 9.87,
+            "max": 10.84,
+            "preprocess": 0.42,
+            "span": 6.26,
+            "detail": 0.46,
+            "log_sha256": "8c4e3b26cf2fc0e8ec766dd732fe91e82721558e5fe01016c20201545b21ccea"
+          },
+          {
+            "sequence": "sunflower-vp9-350000",
+            "mean": 7.8,
+            "p50": 6.87,
+            "p95": 10.16,
+            "max": 11.02,
+            "preprocess": 0.45,
+            "span": 6.86,
+            "detail": 0.49,
+            "log_sha256": "c52b70404ed0349d0ff646906aa9b143d76e47feb07e050765a89b63ebf1e101"
+          },
+          {
+            "sequence": "tractor-h264-1000000",
+            "mean": 9.5,
+            "p50": 9.66,
+            "p95": 10.45,
+            "max": 10.92,
+            "preprocess": 0.54,
+            "span": 8.4,
+            "detail": 0.56,
+            "log_sha256": "33f2d4ced8254c70b34edc2b69e9590e4fa68152e2dd01c052c6fccfa32cc3da"
+          },
+          {
+            "sequence": "tractor-h264-350000",
+            "mean": 9.49,
+            "p50": 9.72,
+            "p95": 10.37,
+            "max": 10.91,
+            "preprocess": 0.53,
+            "span": 8.38,
+            "detail": 0.58,
+            "log_sha256": "d0109d98dbccffe9b9f306f6d18e9af3009cf78e5fb0690dbe793eb333644a9b"
+          },
+          {
+            "sequence": "tractor-vp9-1000000",
+            "mean": 9.63,
+            "p50": 9.69,
+            "p95": 10.42,
+            "max": 10.97,
+            "preprocess": 0.54,
+            "span": 8.52,
+            "detail": 0.58,
+            "log_sha256": "b958245adf721f13fe5be2a1fc2abc7b53f18f0233024f9d00a29e355fed336f"
+          },
+          {
+            "sequence": "tractor-vp9-350000",
+            "mean": 9.08,
+            "p50": 9.53,
+            "p95": 10.42,
+            "max": 11.16,
+            "preprocess": 0.51,
+            "span": 8.02,
+            "detail": 0.55,
+            "log_sha256": "cb960ac9f5baa0ad481b773eb560a0484984a4186e6b9189df1353f256d6def1"
+          }
+        ]
+      },
+      "report_sha256": "afde960f1aac5a342bae134bfc977dad570815196dedfad48a743a40e3b4dea1",
+      "rgb_manifest_sha256": "651900b5389b9e32a63bf0571f24a662bb546e5005374cf3cdca9fe94e0f62a1",
+      "config_sha256": "fa9f0b5ae38bc98bd3a3799b1f7474ff50894f0f5aa0c4fcc2cece2adf05f022"
+    }
+  },
+  "limitations": [
+    "Negative LPIPS/DISTS changes are better; fine correlation is higher-better. Metrics supplement image review.",
+    "Timing includes native preprocessing, model and detail only, excludes input decode, sender packing, disk, transport and browser presentation. Capture order is not randomized; separate matched timing repeats are required to quantify small runtime changes.",
+    "No weights or shipping defaults changed. Strict FP32 parity failures on new TAA ramps are retained; all motion fields pass and default native RGB exactly matches the frozen baseline."
+  ],
+  "final_math_validation": {
+    "complete": true,
+    "all_checks_pass": 120,
+    "new_policy_checks_pass": 90,
+    "default_previous_rows_identical": true,
+    "tolerances": {
+      "taa": 2e-05,
+      "other_stages": 1e-05
+    },
+    "basis": "Unchanged shader reaches1.523e-5 on the new low-variance ramp; TAA variance is sensitive to FP32 reduction roundoff. Limit2e-5 is0.0051 of one RGB8 code value. Initial strict1e-5 failures retained, all960 native default RGBs match their frozen baseline. No fixtures or motion-field tolerance changed.",
+    "receipt_sha256": "d90285ad72692ac86f25e6ea7212a5926f30536a480b53a31393ab1e1a65226b",
+    "checker_sha256": "8ddf7f570fa49b3761eb38eae4817837145eb92fce935f5bcb319dd4b65c5a9b"
+  },
+  "visual_review": {
+    "selection": "Six preselected frame100 h264350kbps crops; additionally inspected largest gain-only LPIPS gain/regression and the OldTown exception, explicitly selected after scoring.",
+    "observations": "Small changes in local boundaries and texture; no dramatic recovery of the fine reference detail. Full search has the strongest broad native spatial metrics. These results support an incremental motion-policy improvement, not a breakthrough claim.",
+    "galleries": {
+      "gain-only-gallery.png": {
+        "path": ".build/quality-breakthrough-r51/gain-only-gallery.png",
+        "sha256": "8f35445ba2f855ed6b8880dbf5587dcb11dcb43bb6fa6a24410701b96eb9bb83",
+        "selection_receipt_sha256": "53967b12670920839522d42c9e5c178f90bbc1f8e917f4f6d0d0a403cf97e3b4"
+      },
+      "gain-only-natural.png": {
+        "path": ".build/quality-breakthrough-r51/gain-only-natural.png",
+        "sha256": "ecef9cdee70e4d685ff94181767d35cc5f22aafd09c7b965517e413fc3a2dfe0",
+        "selection_receipt_sha256": "bc7bcf03ee4a1a4f25a2e16743613fb7d38ae4641561642f4f90867f32a58752"
+      },
+      "gain-only-extremes.png": {
+        "path": ".build/quality-breakthrough-r51/gain-only-extremes.png",
+        "sha256": "c0f7481eb8672d5d8559fd39ba495cd4291a47f6c796d0b2cd75289d7e50af0e",
+        "selection_receipt_sha256": "9afb501e93175820713722465684e7c2801b038d6396ada3a45540eb379da186"
+      },
+      "search-gallery.png": {
+        "path": ".build/quality-breakthrough-r51/search-gallery.png",
+        "sha256": "c538661514f044fe11d9e162bc71090500dd856fd5761b47fbc595f57738aecc",
+        "selection_receipt_sha256": "1d63163034aa9805fbdf9814a2c28abb6fa61513eabf00f884dcc3463513fbb8"
+      },
+      "search-natural.png": {
+        "path": ".build/quality-breakthrough-r51/search-natural.png",
+        "sha256": "90fca9f587d7db3139c4ec06fcadd5e550c71fe704f6b88579e11c5590c40fed",
+        "selection_receipt_sha256": "2f9064b8f1509e30bdfeee39b11287e0aabfd2ba1257744000ae394e1252e4c9"
+      }
+    }
+  }
+}

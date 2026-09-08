@@ -4,10 +4,12 @@ import Foundation
 import Metal
 
 let args = CommandLine.arguments
-guard args.count == 5, let width = Int(args[3]), let height = Int(args[4]),
+guard (args.count == 5 || args.count == 6), let width = Int(args[3]), let height = Int(args[4]),
       let device = MTLCreateSystemDefaultDevice(), let queue = device.makeCommandQueue() else {
     fatalError("source, fixture directory, width, height and Metal device required")
 }
+let motionPolicy = args.count == 6 ? UInt32(args[5])! : 0
+guard motionPolicy <= 2 else { fatalError("motion policy must be 0, 1 or 2") }
 let source = try String(contentsOfFile: args[1], encoding: .utf8)
 let start = source.range(of: "#include <metal_stdlib>")!.lowerBound
 let end = source.range(of: "\"\"\"", range: start..<source.endIndex)!.lowerBound
@@ -65,7 +67,7 @@ let raw = try texture("current"), previous = try texture("previous"), history = 
 let clean = try texture(nil), field = try texture(nil, 4, (width + 7) / 8, (height + 7) / 8)
 try execute("deband_plane", [raw, clean], [0.008, 16, 2, 3, 0.005], clean)
 try save(clean, "metal-deband")
-try execute("motion_blocks", [raw, previous, field], [1], field)
+try execute("motion_blocks", [raw, previous, field], [1], field, buffers: [1: [motionPolicy]])
 try save(field, "metal-motion", 4)
 let output = try texture(nil), historyOut = try texture(nil)
 try execute("taa_luma", [clean, history, output, historyOut, field, previous, raw], [0.45, 0.5, 1.25, 1, 1], output)

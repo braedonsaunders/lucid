@@ -461,6 +461,7 @@ enum PipelineTiming {
                 print("pipeline-ms input \(width)x\(height) → model \(learned!.inputWidth)x\(learned!.inputHeight) → output \(learned!.outputWidth)x\(learned!.outputHeight)")
                 print("pipeline-ms detail radius=\(detail.settings.radius)")
                 print("pipeline-ms detail referenceRadius=\(detail.settings.referenceRadius)")
+                print("pipeline-ms detail motionPolicy=\(DetailEnhancer.motionPolicy)")
                 let incoming = CVBufferCopyAttachment(frame, kCVImageBufferChromaLocationTopFieldKey, nil)
                     .map { "\($0)" } ?? "nil"
                 print("pipeline-ms chroma incoming=\(incoming)")
