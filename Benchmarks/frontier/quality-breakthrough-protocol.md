@@ -199,6 +199,14 @@ r33 follow-up repeats control/output-only training from current shipping `big2k`
 rather than carrying the v4 initialization's large source-specific regressions.
 The r33 script is prepared; it has not yet been launched.
 
+The combined r29 arm has finished native export and RGB decoding: 1,920 frozen
+rows (960 candidate and 960 comparator) are ready in
+`.build/quality-breakthrough-r29/full_stages_1k-native-rgb`. Its spatial scoring
+is still pending. All training/export/scoring processes started for the current
+checkpoint have exited. The next checks are that combined-arm score, the r33
+shipping-initialized output-stage ablation, native pre-cleaner evaluation, and
+the remaining confidence/consistency/AESOP/larger-bank items.
+
 `score_native_holdout.py --reuse-scores RGB_DIRECTORY REPORT` reuses measurements
 only when current output/reference pixel hashes match a complete prior report
 with the same metric implementation, Torch version and device. It validates
