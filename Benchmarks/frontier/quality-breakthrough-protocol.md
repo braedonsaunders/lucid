@@ -782,3 +782,23 @@ performance target; this prototype makes no runtime claim.
 Twelve recurrent tests cover observed-versus-generated input selection, absence
 of gradients through generated history in decoded mode, backbone/history
 gradients, reset/disabled behavior, checkpoint semantics and legacy compatibility.
+
+The full relevant suite now passes 71 tests, including 12 recurrent tests. The
+GPU-host recurrent tests pass before training. Comparison will include each
+trained model's current-frame branch and the unchanged initial model, so a gain
+from backbone fine-tuning is not automatically attributed to history.
+
+The fresh no-history control completes and matches r41's initialization, data,
+first batch, first output and discriminator hashes. Its Sintel validation changes
+LPIPS +0.165% and DISTS -0.224% relative to r41, while initial-model scores are
+identical. The reconstruction objective and sequence-forward function source
+match exactly, although the surrounding snapshots differ. This is a small
+repeat-control difference, not a pure estimate of training variance. Use the
+fresh r46 controls and do not overinterpret similarly tiny changes.
+
+All three r46 arms match bank, initial checkpoint, fused backbone, source code,
+first decoded sequence, first output and discriminator hashes. Excluding output
+directories, the no-history control changes only `no_history`; decoded versus
+generated history changes only `history_source`. The trainable history branch
+has 13,824 parameters in both history arms.
+`decoded-history-training-parity.json` records the exact argument differences.

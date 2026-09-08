@@ -1,0 +1,52 @@
+{
+  "complete": true,
+  "scope": "r46 initialization parity; training/evaluation completion is recorded separately",
+  "matched": {
+    "bank_sha256": true,
+    "checkpoint_sha256": true,
+    "frozen_backbone_sha256": true,
+    "first_decoded_sequence_sha256": true,
+    "first_output_sha256": true,
+    "discriminator_initial_sha256": true,
+    "source_hashes": true
+  },
+  "argument_changes_vs_sr": {
+    "joint_control_2k": {
+      "out": [
+        "joint_sr_2k",
+        "joint_control_2k"
+      ],
+      "no_history": [
+        false,
+        true
+      ]
+    },
+    "joint_sr_2k": {},
+    "joint_decoded_2k": {
+      "out": [
+        "joint_sr_2k",
+        "joint_decoded_2k"
+      ],
+      "history_source": [
+        "sr",
+        "decoded"
+      ]
+    }
+  },
+  "history_parameters": {
+    "joint_control_2k": 13824,
+    "joint_sr_2k": 13824,
+    "joint_decoded_2k": 13824
+  },
+  "source_hashes": {
+    "architectures/recurrent_span.py": "d00ba7e6d6c3f36dde853e3fb07e19324a5cbdd4ed82b73ffecb69a62d85f1e0",
+    "architectures/subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+    "experiments/recurrent_frame_feeding.py": "579aedec0aaff0e45676c467e49211ed7b6b04390d5a64747149c8f8b0a71e6b",
+    "experiments/native_stages.py": "f8765f3206cd7ec5a977806e6706b92006cd84a335d67542b8a0fbc3765f69af",
+    "experiments/train_presented_detail.py": "76aa0cf85a567fbfe0db3f2fa5ff23a9a190ca42ede35fa576b9604d881cc743",
+    "experiments/train_recurrent_span.py": "283edf267ceea093973cef90f56f7a0a513b6f8075a79152c0d0420b7a27ad74",
+    "dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+    "dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a",
+    "paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb"
+  }
+}
