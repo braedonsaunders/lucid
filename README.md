@@ -55,79 +55,16 @@ not supported promises. Lucid is an independent application; it does not
 contain NVIDIA RTX software or integrate with the browser compositor at driver
 level.
 
-## Evidence, September 8, 2026
+## How it is measured
 
-Native delivery holdout (960 frame pairs, eight sources, the Release app's own
-pipeline end to end, scored with LPIPS and DISTS against the SPAN ch32utc 4×
-model that shipped before): **+12.26% LPIPS / +16.10% DISTS, all eight sources
-up**, at about 40% lower graph cost. The full ladder of what was tried, what was
-measured natively and what was rejected is in
-`Benchmarks/frontier/paired-ladder-protocol.md`; the promotion gate is
-`Tools/frontier_eval/gate_perceptual.py` (`paired-critic-protocol.md` and
-`perceptual-gate-protocol.md` explain why it is perceptual rather than
-fidelity-based). Apple's MetalFX temporal scaler fed with video was measured on
-the same holdout and lands at Lanczos level; the receipt is in the protocol.
-
-### Earlier evidence, September 4, 2026 (4× SPAN era)
-
-The [current development evidence](Benchmarks/frontier/README.md) records
-source-disjoint sequence screening, rejected candidates, temporal fixes, trained
-Core ML conversion checks and the experimental causal 2× architecture. No new
-model has passed promotion, and native 720p/1080p support remains experimental.
-
-The initial [benchmark artifacts](Benchmarks/2026-09-04/) include corpus hashes,
-per-frame metrics, CUDA training logs, native ablations, and browser checks.
-That checkpoint evaluation contains 120 paired images from one crowd scene
-across six resolutions; it is not broad source-disjoint evidence.
-These image metrics evaluate reconstruction; they do not establish temporal
-quality or superiority to RTX VSR.
-
-| Checkpoint | LPIPS ↓ | DISTS ↓ | PSNR Y ↑ | Decision |
-|---|---:|---:|---:|---|
-| Lanczos anchor | 0.6129 | 0.2243 | 25.17 | Reference |
-| Shipping ch32utc | 0.5336 | 0.1986 | 25.48 | Retained |
-| ch48utc | 0.5341 | 0.1975 | 25.49 | Added cost without a clear overall gain |
-| ch48utc GAN | 0.5358 | 0.1982 | 25.09 | Not promoted |
-| ch32 motion-supervised candidate | 0.5552 | 0.1971 | 25.55 | Not promoted |
-| Matched ch32 control | 0.5549 | 0.1962 | 25.55 | Not promoted |
-
-The RTX 4080's existing GAN run was allowed to finish. Two additional matched
-2,000-step experiments ran on that GPU: motion-aligned consistency versus static
-consistency, with the same initial weights, data, seed, FFT objective, and learning
-rate. They completed in approximately 1.0 and 0.8 minutes. Their improvement in
-pixel fidelity did not justify the perceptual regression. Shipping weights were
-preserved.
-
-The initial native motion filter is a separate change. In a 12-frame ablation on each
-of two matched clips, it lowered LPIPS from 0.5532 to 0.5385 on Crowdrun and
-0.2524 to 0.2509 on Dinner. Fine-detail energy increased. Static-pixel flicker
-also increased from 2.044 to 2.488 and 0.382 to 0.406 respectively. It trades
-some smoothing for retained detail; it is not a universal temporal-quality win.
-The subsequent stationary-history fix reduces flicker on those clips, but the
-crowd still flickers more than motion-off; see the current evidence above.
-
-The final optimized native pipeline was also timed for 60 frames after eight
-warmup frames, with the browser test stopped:
-
-| Input | Native mean | Native p95 |
-|---|---:|---:|
-| 424×240 | 9.57 ms | 12.62 ms |
-| 640×360 | 12.59 ms | 14.14 ms |
-| 854×480 | 17.90 ms | 18.36 ms |
-
-These timings include preprocessing, Core ML color conversions and prediction,
-and detail processing. They exclude decoding, transport, and presentation.
-
-An isolated Chrome 152 test verified real WebCodecs input, MessageChannel
-structured cloning through the actual companion worker, Core ML inference,
-visible iframe output, original comparison, and no frame capture while Off.
-The worker/iframe snapshot recorded about 36 presented frames/s and 39 ms p95
-with 640×360 input and 2560×1440 internal reconstruction on an M4 Pro.
-Internal reconstruction dimensions do not prove delivered transport resolution;
-the later copy/presentation fixture delivers a 1280×720 display surface.
-The harness emulates the runtime ports;
-it does not certify extension installation, third-party CSP behavior, or Safari
-playback. The Safari companion was separately build-verified.
+Every candidate model or pipeline change goes through the Release app end to
+end on a fixed holdout: 960 frame pairs from eight sources, decoded from real
+H.264 and VP9 streams at 350 kbps and 1 Mbps, scored with LPIPS and DISTS
+against the reference frames. A change ships only if it improves the aggregate
+and no source gets worse. The current build scores +12.3% LPIPS and +16.1%
+DISTS against the previous 4× SPAN model with all eight sources improved, at
+about 40% lower graph cost. The receipts, including everything that was tried
+and rejected, are in `Benchmarks/frontier/`.
 
 ## Build and browser companion
 
@@ -139,13 +76,9 @@ xcodebuild -project Lucid.xcodeproj -scheme Lucid -configuration Release \
 ```
 
 Every Xcode build verifies the source model hashes in
-`Lucid/Resources/Models.json` and compiles the required models into the app.
-Changed models invalidate their compilation receipt. Missing or corrupt source
-models fail the build. The six image models and six tensor-output alternatives
-are tracked in git. On the measured M4 Pro/macOS 26.5.1 backend, Lucid checks
-the bundled alternatives against the image model before using their faster
-output conversion. Other backends and failed checks use the image model;
-a prediction failure also restores it. Reconstruction weights are unchanged.
+`Lucid/Resources/Models.json`, compiles the seven shipping models into the app
+and removes anything else from the bundle. Changed models invalidate their
+compilation receipt; missing or corrupt source models fail the build.
 
 Open the app at `.build/release/Build/Products/Release/Lucid.app`.
 For Chrome or Edge, open `chrome://extensions` or `edge://extensions`, enable
@@ -188,11 +121,12 @@ the test token and enable switch out of the normal app's persisted state.
 
 ## Training and evaluation
 
-The minimal SPAN architecture and Apache-2.0 license are included under
-`Tools/architectures`; training no longer depends on an ignored upstream checkout.
-Training requires PyTorch, NumPy, Pillow, and a codec-degradation patch bank.
-The CUDA experiments used the available PyTorch 2.6.0+cu124 environment; Mac
-conversion/evaluation used PyTorch 2.14.0 and coremltools 9.0.
+The minimal SPAN architecture and its Apache-2.0 license are included under
+`Tools/architectures`. Training requires PyTorch, NumPy, Pillow and a
+codec-degradation stream bank (`Tools/experiments/build_stream_bank.py`); the
+shipping model was fine-tuned with `Tools/experiments/train_presented_detail.py`
+on an RTX 4080 and converted on a Mac with PyTorch 2.14 and coremltools 9.
+Older notes on how the model got here live in `Docs/history/`.
 
 ```sh
 python Tools/train_span.py --init baseline.pth --bank-dir path/to/bank \
@@ -208,10 +142,6 @@ version. This supports resuming the same environment; it does not guarantee
 bitwise reproducibility across different GPU kernels or PyTorch versions.
 Patch-bank validation is an internal training diagnostic, not an independent
 benchmark. Checkpoints and training corpora are separate artifacts.
-
-The latest [matched subspace experiment](Benchmarks/frontier/subspace-adapter-protocol.md)
-completed both RTX 4080 training arms. It improved perceptual scores but failed
-reference-detail limits on both validation sets; shipping weights remain unchanged.
 
 Tuning tools require an explicitly matched reference or a registered clean pair;
 they cannot silently score an arbitrary clip against the compressed BBB video.
