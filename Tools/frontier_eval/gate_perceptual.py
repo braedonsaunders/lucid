@@ -2,8 +2,8 @@
 """Perceptual promotion gate: reward synthesized detail, floor hallucination at the interpolation anchor.
 
 The frozen development gate required every source's fine-band correlation to stay
-within 0.01 of shipping. That is a fidelity guard: it rejects the measured NVIDIA
-VFX SDK output (the competitive target) and every candidate that improved LPIPS
+within 0.01 of shipping. That is a fidelity guard: it rejects the measured commercial
+reference (the competitive target) and every candidate that improved LPIPS
 and DISTS by 5-18%. Fine correlation cannot reward invented detail by
 construction, so a gate built on it can only ever admit models that synthesize
 nothing.
@@ -15,7 +15,7 @@ guards that a good synthesizer passes and a bad one fails:
 * hallucination floor: source-balanced fine correlation must not fall below the
   Lanczos anchor, which synthesizes nothing. Below the anchor, added fine energy
   is invented rather than recovered. Calibration on the 960-pair holdout showed
-  the NVIDIA VFX SDK itself below the anchor on four of eight sources (grain,
+  the commercial reference itself below the anchor on four of eight sources (grain,
   water, noise) while improving both perceptual metrics on every source, so the
   floor is aggregate; per-source deltas are reported, not gated.
 * embellishment cap: per-source fine-band energy must not exceed the reference
