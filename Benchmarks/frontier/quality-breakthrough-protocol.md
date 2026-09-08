@@ -682,3 +682,28 @@ several matched follow-ups. These experiments do not establish a broad native
 quality breakthrough. The current shipping model and 60fps target remain in
 force. The native Codex quality goal remains active. These data and objective changes
 retain the existing inference architecture.
+
+## Broader-data artifact suppression
+
+A fixed six-crop raw/native comparison of r44 shows the bee/car speckling is
+already present in FP32 raw output. Native processing is therefore not necessary
+for this failure. The comparison includes the same frame100, h264350kbps crops
+used in native review, both models, reference/input hashes and original pixels.
+It is a visual mechanism check, not a complete arithmetic or stage ablation.
+
+r45 combines ranked items 1 and 9: keep r44's equal-source shipping-initialized
+2k critic recipe and add the reference LDL loss at the previously tested weight
+100, with EMA decay 0.999. This isolates artifact supervision on the broader
+data; there is no loss-weight sweep or changed inference architecture. Match
+code, bank, first batch and discriminator initialization against r44. Evaluate
+both final student and EMA on development/REDS, inspect the fixed artifact and
+foliage crops, then verify plausible improvements natively.
+
+The six full-frame diagnostic scores agree with the crop review. In raw output,
+r44's balanced shipping continuation worsens Sunflower LPIPS/DISTS
+129.374%/91.256% and RushHour 66.187%/53.971%, while raising detail energy
+56.977%/78.118% and lowering fine correlation 23.850%/31.112%. Raw OldTown,
+ParkJoy, InToTree and Ducks improve on both perceptual distances. These are
+six fixed frame100 observations, not the full regression corpus.
+`raw-native-artifact-diagnostic.json` records all four raw/native model variants,
+image/reference hashes, scorer context and absolute metrics.
