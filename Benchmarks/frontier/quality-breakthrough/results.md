@@ -53,5 +53,9 @@ by 0.450%/0.062%. [Matched comparison](decoded-history-comparison.json).
 Investigation identifies and corrects a recurrent motion-seed defect that
 discarded valid low-contrast translations before subpixel refinement. Native TAA
 and archived checkpoint semantics remain compatible; 70 relevant tests pass.
-Fixed-weight real-footage replay is the next check; the synthetic correction
-alone is not a quality claim. [Motion reproduction](recurrent-motion-seed-diagnostic.json).
+Fixed-weight replay reproduces all legacy results exactly. The correction
+improves LPIPS by only about 0.018%, with subtle visual changes and no promotion.
+[Replay evidence](recurrent-motion-replay-comparison.json). The previous-clean-HR
+diagnostic confirms substantially better alignment on the fixed low-contrast
+Sintel patch, but this oracle result is not a deployable quality gain.
+[Alignment comparison](recurrent-motion-information-comparison.json).

@@ -839,3 +839,24 @@ the same 72 complete 16-frame validation sequences, unchanged initial model,
 and no-history control. No checkpoint bytes are changed. The replay records
 trained and overridden policies and source/bank/checkpoint hashes. This isolates
 the inference effect before deciding whether corrected-motion retraining helps.
+
+The replay completes successfully, after 18 relevant tests pass on the GPU host.
+All legacy spatial metric rows reproduce r46 exactly; initial/current-frame
+outputs remain invariant to the motion-policy override. Corrected SR history
+improves LPIPS/DISTS only 0.0176%/0.0056% versus legacy history; decoded history
+improves 0.0171%/0.0145%. Both still worsen those distances versus their own
+current-frame branches. Fixed three-patch visuals show subtle changes, without
+a clear detail gain. `recurrent-motion-replay-comparison.json` retains the full
+source-balanced comparison, temporal measurements, exact replay check and hashes.
+
+A separate replay of the earlier oracle-information diagnostic also reproduces
+every legacy row exactly. On its low-contrast Sintel patch, the fixed .25 blend
+of aligned previous clean HR changes MSE by -32.137% versus current SR, compared
+with -12.275% under legacy motion. At full confidence-weighted blend, the result
+changes from +46.604% error to -44.835%. The two REDS patches improve modestly:
+the .25 oracle blend changes from -9.160% to -9.430% and -10.635% to -10.970%.
+This demonstrates more usable correspondence on these specific real patches,
+not deployable oracle inputs or a broad perceptual gain. The fixed-weight models
+were trained with legacy motion; corrected-motion training remains the next
+controlled question. `recurrent-motion-information-comparison.json` retains all
+45 transitions under both policies. No native model is promoted.
