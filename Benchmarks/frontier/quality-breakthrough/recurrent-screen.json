@@ -1,0 +1,73 @@
+{
+  "complete": true,
+  "scope": "16-frame source-disjoint patch sequence validation; trained with 3 frames; no native or playback claim",
+  "experiment": {
+    "args": {
+      "bank": "C:\\lucid\\stream-bank-v4",
+      "init": "C:\\lucid\\paired-ladder-20260905-r10\\big_2k\\step002000.pth",
+      "out": "recurrent_2k",
+      "steps": 2000,
+      "batch": 4,
+      "crop": 96,
+      "frames": 3,
+      "seed": 20260914,
+      "native_input_stages": true
+    },
+    "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+    "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+    "frozen_backbone_sha256": "2de8c2017b3856bb4f84933b6d8315412e997f5aa7e0c611f866d8973a90f341",
+    "source_hashes": {
+      "architectures/recurrent_span.py": "d602bd572b4e898e22db5757d2292963f7a66fd24aa6700528af32b1aca4e461",
+      "architectures/subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+      "experiments/recurrent_frame_feeding.py": "d2d17e8e73bf1c48c51e51910cb8635d0227f78d848ab22fe05a87a99859484c",
+      "experiments/native_stages.py": "f8765f3206cd7ec5a977806e6706b92006cd84a335d67542b8a0fbc3765f69af",
+      "experiments/train_presented_detail.py": "46776c4a1d2529cc32215392d1f971f40c3010c8be343eaa561f936434664288",
+      "experiments/train_recurrent_span.py": "5797ab2c1de430f6a485513002e7bb9c31af74836b68ae63a35afb41b1440c16"
+    },
+    "history_parameters": 13824,
+    "recipe": "final-frame HR reconstruction; backpropagation through quantized recurrent outputs; frozen current-frame graph; no GAN",
+    "motion": "decoded-LR native integer search plus half-pixel refinement around integer and zero seeds; detached correspondence",
+    "history_storage": "RGB8 straight-through quantization before output detail stages",
+    "limitations": "crop-local history; no native SR warp/cost parity; no browser timing or release admission",
+    "torch": "2.6.0+cu124",
+    "gpu": "NVIDIA GeForce RTX 4080",
+    "first_decoded_sequence_sha256": "1cb6fc7da87f8c2653639c18098591a079458b2502ab315555ead5a33731db6d"
+  },
+  "completion": {
+    "complete": true,
+    "backbone_unchanged": true,
+    "steps": 2000,
+    "minutes": 4.245583333333101
+  },
+  "checkpoint_sha256": "aad73d64369d2daf7d3b23a9554a595e3e685ea7449928d2390b96abf27ab50f",
+  "validation_report_sha256": "d10c12bd2d3458e6f6c9f63b6e502d41fd6699bba607f627c2ea475d4f12cc69",
+  "distance_change_percent": {
+    "lpips": 2.293371669188682,
+    "dists": 0.13630772109907152
+  },
+  "psnr_y_change_db": 0.05211213248424329,
+  "per_source_distance_change_percent": {
+    "sintel": {
+      "lpips": 2.293371669188682,
+      "dists": 0.13630772109907152
+    }
+  },
+  "temporal_patch_averages": {
+    "base": {
+      "mean_rgb_mse": 0.0037279608525548407,
+      "last_rgb_mse": 0.0037174911333042676,
+      "residual_change_l1": 0.03957994903462728
+    },
+    "recurrent": {
+      "mean_rgb_mse": 0.003689676645181963,
+      "last_rgb_mse": 0.003678081280769321,
+      "residual_change_l1": 0.03929118118872389
+    }
+  },
+  "temporal_change_percent": {
+    "mean_rgb_mse": -1.0269476769489305,
+    "last_rgb_mse": -1.060119610827892,
+    "residual_change_l1": -0.729581146379843
+  },
+  "decision": "No promotion. Modest reconstruction/temporal-error improvements do not compensate for worse LPIPS. This is a frozen-backbone reconstruction-loss probe, not a test of every joint/perceptual recurrent training recipe."
+}

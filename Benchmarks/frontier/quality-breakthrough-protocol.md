@@ -41,8 +41,9 @@ one. The feature remains disabled by default.
    arms are fixed in r31. Compare reference-assisted damage maps with local
    input-only estimates; never deploy oracle information.
 6. **Recurrent frame feeding:** prototype and state-lifetime tests implemented;
-   r32 fixes the first 2k training probe. Training results and native integration
-   remain pending. Warp previous predictions using decoded-input motion.
+   r32's first 2k probe is complete. It modestly improves fidelity/temporal error
+   but worsens LPIPS. Native integration and joint/perceptual training remain
+   untested. Warp previous predictions using decoded-input motion.
 7. **Confidence head:** pending. Test per-pixel stage strength and calibration,
    including the actual pre/post model placement of each controlled stage.
 8. **Clean-LR consistency and AESOP:** pending. Exact resize provenance matters;
@@ -189,6 +190,15 @@ and DISTS improves 1.28% against the matched control (1.35% worse / 1.54% better
 against shipping). `source-fp16-native-comparison.json` records that native run;
 960 identical comparator scores were reused after full pixel/provenance checks.
 
+The r29 output-only arm improves native LPIPS 1.27% and DISTS 2.40% against its
+matched control, the first joint native aggregate improvement in these ablations.
+Against shipping it improves 1.41%/2.66%, but Rush Hour LPIPS worsens 18.27% and
+Sunflower 24.79%, so it cannot ship. `output-stage-native-comparison.json` records
+all source deltas. The input-stage ablation did not supply this gain. The fixed
+r33 follow-up repeats control/output-only training from current shipping `big2k`,
+rather than carrying the v4 initialization's large source-specific regressions.
+The r33 script is prepared; it has not yet been launched.
+
 `score_native_holdout.py --reuse-scores RGB_DIRECTORY REPORT` reuses measurements
 only when current output/reference pixel hashes match a complete prior report
 with the same metric implementation, Torch version and device. It validates
@@ -282,3 +292,11 @@ Validation uses full bank sequences to expose longer-history drift and compares
 spatial metrics and temporal residual error with the same frozen backbone.
 Native SR warping, model-interface integration, latency and delivered quality
 are not implemented or established by these prototype tests.
+
+The completed r32 probe preserves the frozen backbone. Validation on all 16
+frames of each source-disjoint bank patch sequence reduces mean RGB MSE 1.03%,
+last-frame MSE 1.06%, and temporal residual-change L1 0.73%. Spatial samples at
+the first/middle/final frames improve PSNR by 0.052 dB but worsen LPIPS 2.293%
+and DISTS 0.136%. No promotion. `recurrent-screen.json` records the experiment
+and deltas. This frozen-backbone reconstruction-loss probe does not rule out
+joint or perceptually supervised recurrent training.
