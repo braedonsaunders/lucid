@@ -429,3 +429,20 @@ The sharpen lobe and the tone grade are each worth about three points on old_tow
 ## Results, r26: bank v6, 57 sources (receipts `paired-ladder/v6_*`)
 
 Union of bank v4 (33) and the Commons 24. `v6_w0075_2k` dev +14.58 / +16.26, bank +16.10 / +8.77; `v6_w005_2k` dev +13.59 / +15.55, bank +15.13 / +8.31. Between v4 and v5 on every dev number, as a mixture would be. 960-pair holdouts scoring.
+
+### The stage is debanding (receipts `paired-ladder/native-v4-2k-{onlytaa,onlydeband}-*`)
+
+Single stages on, everything else off, absolute change against torch for the same checkpoint:
+
+| Source | temporal only (LPIPS / DISTS) | deband only (LPIPS / DISTS) |
+|---|---|---|
+| old_town_cross | −0.7% / +9.3% | **−10.8%** / +2.2% |
+| in_to_tree | +1.9% / +9.6% | −3.9% / −0.2% |
+| pedestrian_area | −2.9% / +0.5% | +4.1% / +12.4% |
+| rush_hour | −12.2% / −7.2% | +2.9% / +19.5% |
+| sunflower | +1.9% / +24.5% | **+17.2%** / +25.5% |
+| tractor | +4.0% / +4.4% | +7.7% / +8.6% |
+
+The temporal stage is close to neutral on LPIPS and helps RushHour; its cost is DISTS on the structured sources. Debanding is the transfer: it buys old_town_cross and in_to_tree, and it flattens Sunflower, Tractor, pedestrian_area and RushHour, every source that carries film grain or fine texture the reference keeps, with DISTS +9 to +26%. Summed over the eight sources it is net negative on both metrics. The deband threshold (0.008, about two 8-bit levels) sits exactly at the amplitude of compressed film grain, so the stage cannot tell a banding step from grain the reference has.
+
+Fix candidates, in order: debanding off (shipping configuration otherwise; running now on `v4_2k` and on shipping `big2k`), then debanding moved ahead of the model where the banding actually lives, then a texture guard on the stage. r26 (`v6_w005_2k`): 960 holdout +9.42 / +15.83, Tractor −1.0; the union bank inherits the Commons Tractor weakness and is not the lever.
