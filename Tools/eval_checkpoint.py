@@ -133,7 +133,13 @@ def load(path, device):
         if scale != 2 or frames != 1 or state['conditioning_mode'] == 'oracle':
             raise ValueError('deployable single-frame 2x degradation condition required; oracle is diagnostic only')
         from architectures.degradation_conditioning import DegradationConditionedSPAN
-        model = DegradationConditionedSPAN(model, state['conditioning_mode'], state['estimator_channels'])
+        conditioning = state.get('use_conditioning', True)
+        experiment = state.get('experiment', {})
+        if (experiment.get('use_conditioning', conditioning) != conditioning or
+                experiment.get('conditioning_mode', state['conditioning_mode']) != state['conditioning_mode']):
+            raise ValueError('degradation checkpoint policies differ from training declaration')
+        model = DegradationConditionedSPAN(model, state['conditioning_mode'], state['estimator_channels'],
+                                          use_conditioning=conditioning)
     if state.get('architecture') == 'confidence_span2x':
         if scale != 2 or frames != 1:
             raise ValueError('confidence head requires single-frame 2x geometry')

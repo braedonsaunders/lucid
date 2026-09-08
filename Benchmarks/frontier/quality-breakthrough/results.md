@@ -6,6 +6,15 @@ breakthrough. The repository app now defaults to full-search TAA motion with
 the same `big2k` model and `debandGuard = 0.005`. This incremental change improves
 native LPIPS/DISTS by 0.588%/1.340%; both distances improve on all eight sources.
 
+That 0.588%/1.340% is the improvement attributable to this ranked continuation,
+relative to the `big2k`/guard/legacy-motion baseline already present when the
+native Codex goal began. Against the older SPAN4x predecessor, the current
+Release output improves LPIPS/DISTS by 12.779%/17.226%; most of that improvement
+predates this goal. These are reductions in perceptual distances, not literal
+percentages of visual quality. The source and local Release build are updated;
+the installed application has not been replaced. No new learned weights have
+been promoted during this continuation.
+
 Measurements below supplement direct image review. Lower LPIPS/DISTS is better;
 small changes from a single training run are not strong evidence by themselves.
 Native comparisons use 960 frames across eight regression sources, unless noted.
@@ -19,7 +28,7 @@ baseline unless explicitly stated otherwise.
 | 2 | Four-orientation cycling and actual static four-pass ensemble | Native accumulator precedes SR, so cycling cannot average model predictions. Actual ensemble also worsens raw development quality. Disabled. [Receipt](static-flip-ensemble-comparison.json) |
 | 3 | Differentiable source deband/TAA and output stages, three-frame training | Proxy parity checked against Metal. Shipping-initialized full-stage native result +0.101%/−3.935%, with visible/source-level tradeoffs. [Receipt](shipping-init-full-stage-native-comparison.json) |
 | 4 | Identity-initialized supervised clean-LR pre-cleaner | Clean-LR MSE improves about 5%; native LPIPS +0.168%, DISTS −0.683%. No visible breakthrough. [Receipt](precleaner-native-comparison.json) |
-| 5 | Constant, estimated and reference-oracle degradation conditioning | All three frozen-backbone development probes worsen perceptual distances. Joint backbone adaptation remains untested. [Receipt](degradation-conditioning-screen.json) |
+| 5 | Constant, estimated and reference-oracle degradation conditioning, frozen and joint backbone training | Frozen probes worsen perceptual distances. Joint estimated conditioning versus its matched SR-only control is effectively flat: LPIPS +0.016%/DISTS −0.056%; reference-only oracle −0.308%/−0.229%. Fixed visual differences remain small. No native promotion. [Joint receipt](joint-conditioning-comparison.json) |
 | 6 | Warped previous-output recurrence, frozen and jointly trained backbone | Joint perceptual follow-up covers Sintel plus held-out REDS. Recurrence worsens LPIPS 0.039%/DISTS 0.307% versus its own trained current-frame branch. No native integration. [Receipt](joint-recurrence-comparison.json) |
 | 7 | Gaussian-NLL confidence head controlling spatial stage strength | Constant/post/causal policies all worsen proxy perceptual quality. Calibration remains weak; no native integration. [Receipt](confidence-screen.json) |
 | 8 | Clean-LR consistency, pinned AESOP teacher, combined VGG/LDL follow-up | AESOP native −0.496%/−0.019% versus shipping, with substantial individual-source regressions. Combined full-stage fidelity native +8.665%/+6.460%. [Receipt](aesop-native-comparison.json) |
@@ -99,3 +108,18 @@ Full search is now the single default in the source and rebuilt Release app.
 Without an environment override, the rebuilt default reproduces all 360
 consecutive full-search images exactly. The installed app was not replaced.
 [Default verification and decision](taa-motion-default-admission.json).
+
+Joint conditioning now has four completed matched 2,000-step arms using the
+updated full-search source proxy. All 216 initial metric rows match exactly
+across arms and reproduce the earlier full-search replay. The SR-only control
+improves LPIPS/DISTS by 0.735%/1.758% versus its initialization; almost all of the
+conditioned models' gains versus initialization are therefore shared with
+ordinary continued SR training. Constant conditioning versus that control is
+−0.050%/+0.035%, estimated +0.016%/−0.056%, oracle −0.308%/−0.229%.
+Estimated-map calibration improves, but does not translate into a substantial
+reconstruction gain in this recipe. Fixed Sintel/palm/chair patches remain
+visually close to the SR-only control. The oracle is reference-only and cannot
+be deployed; none of these four arms has native quality or runtime admission.
+Twenty-seven focused tests pass locally and on the GPU host, followed by a
+real CUDA forward/backward smoke check. All training processes have exited.
+[Joint conditioning evidence](joint-conditioning-comparison.json).

@@ -1,0 +1,1110 @@
+{
+  "scope": "r53 four matched 2000-step joint conditioning arms; 72 source-disjoint validation sequences across three sources; 216 scored frames per variant; full-search source-stage proxy, not native playback",
+  "percent_convention": "100*(candidate/baseline-1); negative is better for LPIPS,DISTS,MSE and residual-change L1; positive is better for fine correlation and PSNR; detail energy has no monotone quality interpretation",
+  "run_exit": {
+    "complete": true,
+    "utc": "2026-09-08T16:56:24.7605653Z",
+    "exit_code": 0
+  },
+  "initial_hashes_match": {
+    "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+    "reds_bank_sha256": "bf641e3c99628e4ce6a1a75f59ffe9f70ab8f4bd790cd8f5946de83e461db7fb",
+    "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+    "initial_backbone_sha256": "2de8c2017b3856bb4f84933b6d8315412e997f5aa7e0c611f866d8973a90f341",
+    "initial_estimator_sha256": "91ed9c7fb68d4b6de928ce5f8513ecfa412a6baf4aea8f605df1c453d862c124",
+    "initial_modulation_sha256": "110283f36b467ca5df1cf4495e03b563248b71e9f59c88284bff2c245e0a8399",
+    "discriminator_initial_sha256": "f4630b06495775294403ba28f3f775f0a159ad0629ce5fad724a2bbbcaa5c0e9",
+    "first_decoded_sequence_sha256": "1cb6fc7da87f8c2653639c18098591a079458b2502ab315555ead5a33731db6d",
+    "first_input_sha256": "d0ed2596f24eebf806210121decb3b4d4a5594430d6736c04bbd50e4d99e740d",
+    "first_oracle_target_sha256": "8f1a0e909bfd6c43829735bdf5ba677e4d7e9b9453d52d7a8f7c15c624573c56",
+    "first_output_sha256": "c4ed274060d74f157c71846914c85860c0d7e1fb6bf177201d4fc03b8980eeb9",
+    "source_sha256": {
+      "architectures/degradation_conditioning.py": "e72baf3c689bf816219307a5e14215dd4750e391290dce549f9426c2cbf7340b",
+      "architectures/subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+      "eval_checkpoint.py": "6dbf8dc5aa43c1c489c57bd9d5bd7df16e69e877c2c032d1f084aa13397bbdf9",
+      "experiments/train_joint_conditioning.py": "6033448b917953fa59410b9dd90556a2b9e1494cdf20a5cc9b0711c7a153bb54",
+      "experiments/train_causal_detail.py": "51b3b776485caa5ccaec4a7c58eec5d3b6060d22ad1c311c0561d2abb994ee7a",
+      "experiments/train_presented_detail.py": "76aa0cf85a567fbfe0db3f2fa5ff23a9a190ca42ede35fa576b9604d881cc743",
+      "experiments/clean_lr_targets.py": "c7fed48821fe30cd0ce03ddfc92e2e1675cf3087c608f786bc4fe7b776c184cf",
+      "experiments/native_stages.py": "8ed2e8c6ea5270c855d880bf20e5b14fa6f5948e2a921b389d8115c464938b86",
+      "experiments/paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb",
+      "experiments/dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+      "experiments/dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a",
+      "experiments/replay_recurrent_motion.py": "c2b1bbaded47c5e453a12b92bf862e0726241dcaf56c4df90d21b428996ebe3d",
+      "frontier_eval/evaluate_sequences.py": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75"
+    }
+  },
+  "all_216_initial_metric_rows_exact": true,
+  "control_candidate_base_216_rows_exact": true,
+  "source_files_match_current_checkout": true,
+  "remote_owned_python_processes_after_completion": [],
+  "initial_r50_search_replay": {
+    "complete": true,
+    "initial_rows": 216,
+    "control_candidate_base_rows_identical": 216,
+    "initial_matches_previous_search_metrics_exactly": true,
+    "maximum_absolute_metric_differences": {
+      "lpips": 0.0,
+      "dists": 0.0,
+      "psnr_y": 0.0,
+      "detail_energy": 0.0,
+      "fine_correlation": 0.0
+    },
+    "validation_sha256": "714fd8960ef299c1ea89951307100b7cf235a8a31ae2658490f631a17bd20045",
+    "previous_report_sha256": "680814931e65b0e6b186aad0e9b45c3028e65f2a4bcc3e187c314ae399577300"
+  },
+  "arms": {
+    "none": {
+      "checkpoint_sha256": "cf2698acf42686f07495497e3b1b2113901bde91fe7f83582337556a35cf4ff4",
+      "experiment_sha256": "b9296d294c44a882ba385a96269046b1e27671680c511661b7eb874eb1ec4d2d",
+      "validation_sha256": "714fd8960ef299c1ea89951307100b7cf235a8a31ae2658490f631a17bd20045",
+      "complete": {
+        "complete": true,
+        "steps": 2000,
+        "backbone_changed": true,
+        "minutes": 4.092966666666325
+      },
+      "exit": {
+        "step": "none",
+        "utc": "2026-09-08T16:42:32.5136367Z",
+        "exit_code": 0
+      },
+      "summary": {
+        "candidate": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2188637347620291,
+              "dists": 0.1942247853234962,
+              "psnr_y": 29.92340370955013,
+              "detail_energy": 0.6852472773782972,
+              "fine_correlation": 0.49348260925457843
+            },
+            "reds_154": {
+              "lpips": 0.28399470917604586,
+              "dists": 0.2428021905598817,
+              "psnr_y": 25.080042434587345,
+              "detail_energy": 0.5371288119321523,
+              "fine_correlation": 0.3728770179272866
+            },
+            "reds_073": {
+              "lpips": 0.3513089139704351,
+              "dists": 0.25629467986248156,
+              "psnr_y": 22.677935164857878,
+              "detail_energy": 0.4751571853069254,
+              "fine_correlation": 0.2610992361734014
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28472245263617,
+            "dists": 0.23110721858195316,
+            "psnr_y": 25.89379376966512,
+            "detail_energy": 0.5658444248724582,
+            "fine_correlation": 0.37581962111842215
+          }
+        },
+        "base": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2188637347620291,
+              "dists": 0.1942247853234962,
+              "psnr_y": 29.92340370955013,
+              "detail_energy": 0.6852472773782972,
+              "fine_correlation": 0.49348260925457843
+            },
+            "reds_154": {
+              "lpips": 0.28399470917604586,
+              "dists": 0.2428021905598817,
+              "psnr_y": 25.080042434587345,
+              "detail_energy": 0.5371288119321523,
+              "fine_correlation": 0.3728770179272866
+            },
+            "reds_073": {
+              "lpips": 0.3513089139704351,
+              "dists": 0.25629467986248156,
+              "psnr_y": 22.677935164857878,
+              "detail_energy": 0.4751571853069254,
+              "fine_correlation": 0.2610992361734014
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28472245263617,
+            "dists": 0.23110721858195316,
+            "psnr_y": 25.89379376966512,
+            "detail_energy": 0.5658444248724582,
+            "fine_correlation": 0.37581962111842215
+          }
+        },
+        "initial": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2137711979976976,
+              "dists": 0.19477422645798437,
+              "psnr_y": 28.677276227811983,
+              "detail_energy": 0.6415185516656143,
+              "fine_correlation": 0.5036951956226896
+            },
+            "reds_154": {
+              "lpips": 0.29054888765569087,
+              "dists": 0.24941719461370399,
+              "psnr_y": 25.163160260919515,
+              "detail_energy": 0.5087248457153069,
+              "fine_correlation": 0.37924668110685517
+            },
+            "reds_073": {
+              "lpips": 0.35617565474024526,
+              "dists": 0.2615368167559306,
+              "psnr_y": 22.7398870833138,
+              "detail_energy": 0.450108753680454,
+              "fine_correlation": 0.2662052878712313
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28683191346454456,
+            "dists": 0.23524274594253966,
+            "psnr_y": 25.5267745240151,
+            "detail_energy": 0.5334507170204584,
+            "fine_correlation": 0.38304905486692536
+          }
+        }
+      },
+      "candidate_vs_control_percent": {
+        "lpips": 0.0,
+        "dists": 0.0,
+        "psnr_y": 0.0,
+        "detail_energy": 0.0,
+        "fine_correlation": 0.0
+      },
+      "candidate_vs_initial_percent": {
+        "lpips": -0.7354344929387691,
+        "dists": -1.7579829482166631,
+        "psnr_y": 1.437781515658143,
+        "detail_energy": 6.072483702511833,
+        "fine_correlation": -1.8873388817040149
+      },
+      "candidate_vs_own_base_percent": {
+        "lpips": 0.0,
+        "dists": 0.0,
+        "psnr_y": 0.0,
+        "detail_energy": 0.0,
+        "fine_correlation": 0.0
+      },
+      "candidate_vs_control_sources_percent": {
+        "sintel": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        },
+        "reds_154": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        },
+        "reds_073": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        }
+      },
+      "temporal": {
+        "candidate": {
+          "residual_change_l1": 0.05541787768830078,
+          "mean_rgb_mse": 0.005293245683661654,
+          "last_rgb_mse": 0.0052969474275844025
+        },
+        "base": {
+          "residual_change_l1": 0.05541787768830078,
+          "mean_rgb_mse": 0.005293245683661654,
+          "last_rgb_mse": 0.0052969474275844025
+        },
+        "initial": {
+          "residual_change_l1": 0.054908704285945,
+          "mean_rgb_mse": 0.005164905433225108,
+          "last_rgb_mse": 0.005168550302844071
+        }
+      },
+      "condition_mae_by_source": {
+        "sintel": 0.24945068859960884,
+        "reds_154": 0.3472936645978027,
+        "reds_073": 0.45450347832714516
+      },
+      "temporal_vs_control_percent": {
+        "residual_change_l1": 0.0,
+        "mean_rgb_mse": 0.0,
+        "last_rgb_mse": 0.0
+      }
+    },
+    "constant": {
+      "checkpoint_sha256": "7b77de5b6134ec54fb96a5a1478d8363d48da8a72a3d602828510aa15e47f9a1",
+      "experiment_sha256": "74f9a7fa559bb2c68b397c8425ea74cd44a4b2a4cbb92e515d03b9749ca102dd",
+      "validation_sha256": "2c00a7a6073ec56003a9bb855449ed71d3f03fd76a36eefedf8019591e41d0cc",
+      "complete": {
+        "complete": true,
+        "steps": 2000,
+        "backbone_changed": true,
+        "minutes": 4.2875
+      },
+      "exit": {
+        "step": "constant",
+        "utc": "2026-09-08T16:47:09.1324241Z",
+        "exit_code": 0
+      },
+      "summary": {
+        "candidate": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21892618677143386,
+              "dists": 0.19414099719789293,
+              "psnr_y": 29.9217499136863,
+              "detail_energy": 0.6858071810086641,
+              "fine_correlation": 0.49327995276611897
+            },
+            "reds_154": {
+              "lpips": 0.2836294298370679,
+              "dists": 0.24314290947384304,
+              "psnr_y": 25.077621920959203,
+              "detail_energy": 0.5376058562310453,
+              "fine_correlation": 0.37264268314844656
+            },
+            "reds_073": {
+              "lpips": 0.3511838228614242,
+              "dists": 0.2562783415670748,
+              "psnr_y": 22.67711193826794,
+              "detail_energy": 0.4752595490291481,
+              "fine_correlation": 0.2609408984101287
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.284579813156642,
+            "dists": 0.2311874160796036,
+            "psnr_y": 25.892161257637813,
+            "detail_energy": 0.5662241954229524,
+            "fine_correlation": 0.3756211781082314
+          }
+        },
+        "base": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21894312653953588,
+              "dists": 0.1941943566004435,
+              "psnr_y": 29.93121122244927,
+              "detail_energy": 0.6832204896008365,
+              "fine_correlation": 0.4930823048092256
+            },
+            "reds_154": {
+              "lpips": 0.28378184015552205,
+              "dists": 0.24340422396306638,
+              "psnr_y": 25.077979203061417,
+              "detail_energy": 0.5351852284830918,
+              "fine_correlation": 0.3727749257162489
+            },
+            "reds_073": {
+              "lpips": 0.3513648824559318,
+              "dists": 0.2565819775616681,
+              "psnr_y": 22.677971536958836,
+              "detail_energy": 0.473248851127931,
+              "fine_correlation": 0.26085711669073663
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.2846966163836632,
+            "dists": 0.23139351937505934,
+            "psnr_y": 25.89572065415651,
+            "detail_energy": 0.563884856403953,
+            "fine_correlation": 0.37557144907207035
+          }
+        },
+        "initial": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2137711979976976,
+              "dists": 0.19477422645798437,
+              "psnr_y": 28.677276227811983,
+              "detail_energy": 0.6415185516656143,
+              "fine_correlation": 0.5036951956226896
+            },
+            "reds_154": {
+              "lpips": 0.29054888765569087,
+              "dists": 0.24941719461370399,
+              "psnr_y": 25.163160260919515,
+              "detail_energy": 0.5087248457153069,
+              "fine_correlation": 0.37924668110685517
+            },
+            "reds_073": {
+              "lpips": 0.35617565474024526,
+              "dists": 0.2615368167559306,
+              "psnr_y": 22.7398870833138,
+              "detail_energy": 0.450108753680454,
+              "fine_correlation": 0.2662052878712313
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28683191346454456,
+            "dists": 0.23524274594253966,
+            "psnr_y": 25.5267745240151,
+            "detail_energy": 0.5334507170204584,
+            "fine_correlation": 0.38304905486692536
+          }
+        }
+      },
+      "candidate_vs_control_percent": {
+        "lpips": -0.05009772787757383,
+        "dists": 0.034701424794314484,
+        "psnr_y": -0.006304645977439627,
+        "detail_energy": 0.0671157183495863,
+        "fine_correlation": -0.052802727436152
+      },
+      "candidate_vs_initial_percent": {
+        "lpips": -0.7851637848453552,
+        "dists": -1.7238915685530265,
+        "psnr_y": 1.4313862226462026,
+        "detail_energy": 6.143675011920013,
+        "fine_correlation": -1.939145042734658
+      },
+      "candidate_vs_own_base_percent": {
+        "lpips": -0.0410272621097163,
+        "dists": -0.08907047008592794,
+        "psnr_y": -0.013745114747854004,
+        "detail_energy": 0.41486111790942637,
+        "fine_correlation": 0.013240898977784354
+      },
+      "candidate_vs_control_sources_percent": {
+        "sintel": {
+          "lpips": 0.02853465398122701,
+          "dists": -0.04313976996485058,
+          "psnr_y": -0.0055267638664480145,
+          "detail_energy": 0.0817082604850583,
+          "fine_correlation": -0.04106659174182292
+        },
+        "reds_154": {
+          "lpips": -0.12862188173777822,
+          "dists": 0.14032777594619184,
+          "psnr_y": -0.009651154436662868,
+          "detail_energy": 0.08881376092579885,
+          "fine_correlation": -0.06284505817565345
+        },
+        "reds_073": {
+          "lpips": -0.03560715485331212,
+          "dists": -0.006374808644304952,
+          "psnr_y": -0.0036300773591291247,
+          "detail_energy": 0.021543128334799988,
+          "fine_correlation": -0.060642752385375864
+        }
+      },
+      "temporal": {
+        "candidate": {
+          "residual_change_l1": 0.05542596308164763,
+          "mean_rgb_mse": 0.005293380309151669,
+          "last_rgb_mse": 0.0052968153141187534
+        },
+        "base": {
+          "residual_change_l1": 0.05540348284321163,
+          "mean_rgb_mse": 0.005290455345364838,
+          "last_rgb_mse": 0.005293537244306713
+        },
+        "initial": {
+          "residual_change_l1": 0.054908704285945,
+          "mean_rgb_mse": 0.005164905433225108,
+          "last_rgb_mse": 0.005168550302844071
+        }
+      },
+      "condition_mae_by_source": {
+        "sintel": 0.24945068859960884,
+        "reds_154": 0.3472936645978027,
+        "reds_073": 0.45450347832714516
+      },
+      "temporal_vs_control_percent": {
+        "residual_change_l1": 0.014589864650393913,
+        "mean_rgb_mse": 0.002543344822081295,
+        "last_rgb_mse": -0.0024941434185521416
+      }
+    },
+    "estimated": {
+      "checkpoint_sha256": "5825a11722936424033cb0e837326f17b1c0978f7a54e403dd188167e662b49c",
+      "experiment_sha256": "7fe861cdd69e6732ea39ca63df5a1686773cb382d61b2751fd08c33223a06e4b",
+      "validation_sha256": "73ffd2469adb5822b73b623472132989831a0808aa294fd613ed281333b0abef",
+      "complete": {
+        "complete": true,
+        "steps": 2000,
+        "backbone_changed": true,
+        "minutes": 4.2875
+      },
+      "exit": {
+        "step": "estimated",
+        "utc": "2026-09-08T16:51:45.9516568Z",
+        "exit_code": 0
+      },
+      "summary": {
+        "candidate": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.219015337288578,
+              "dists": 0.193912907882973,
+              "psnr_y": 29.92388014092237,
+              "detail_energy": 0.6851777244976073,
+              "fine_correlation": 0.49337461501484453
+            },
+            "reds_154": {
+              "lpips": 0.2839992634124226,
+              "dists": 0.24282942988254405,
+              "psnr_y": 25.078442447861715,
+              "detail_energy": 0.5376057552927193,
+              "fine_correlation": 0.3728809156457962
+            },
+            "reds_073": {
+              "lpips": 0.35129051876288875,
+              "dists": 0.2561892558027197,
+              "psnr_y": 22.678365771264,
+              "detail_energy": 0.4756153519498306,
+              "fine_correlation": 0.26103875736016185
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.2847683731546298,
+            "dists": 0.23097719785607893,
+            "psnr_y": 25.893562786682693,
+            "detail_energy": 0.5661329439133858,
+            "fine_correlation": 0.37576476267360087
+          }
+        },
+        "base": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21911721511666352,
+              "dists": 0.1942680803713975,
+              "psnr_y": 29.930394974173513,
+              "detail_energy": 0.6821356563194223,
+              "fine_correlation": 0.4928323861886109
+            },
+            "reds_154": {
+              "lpips": 0.2842349401778645,
+              "dists": 0.24315320783191258,
+              "psnr_y": 25.08923856947379,
+              "detail_energy": 0.5338013556037874,
+              "fine_correlation": 0.3725429666046612
+            },
+            "reds_073": {
+              "lpips": 0.3510623808812212,
+              "dists": 0.25647552256230954,
+              "psnr_y": 22.686877797361507,
+              "detail_energy": 0.47315361019789454,
+              "fine_correlation": 0.2606040764763937
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.2848048453919164,
+            "dists": 0.2312989369218732,
+            "psnr_y": 25.902170447002934,
+            "detail_energy": 0.5630302073737015,
+            "fine_correlation": 0.375326476423222
+          }
+        },
+        "initial": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2137711979976976,
+              "dists": 0.19477422645798437,
+              "psnr_y": 28.677276227811983,
+              "detail_energy": 0.6415185516656143,
+              "fine_correlation": 0.5036951956226896
+            },
+            "reds_154": {
+              "lpips": 0.29054888765569087,
+              "dists": 0.24941719461370399,
+              "psnr_y": 25.163160260919515,
+              "detail_energy": 0.5087248457153069,
+              "fine_correlation": 0.37924668110685517
+            },
+            "reds_073": {
+              "lpips": 0.35617565474024526,
+              "dists": 0.2615368167559306,
+              "psnr_y": 22.7398870833138,
+              "detail_energy": 0.450108753680454,
+              "fine_correlation": 0.2662052878712313
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28683191346454456,
+            "dists": 0.23524274594253966,
+            "psnr_y": 25.5267745240151,
+            "detail_energy": 0.5334507170204584,
+            "fine_correlation": 0.38304905486692536
+          }
+        }
+      },
+      "candidate_vs_control_percent": {
+        "lpips": 0.01612816904132952,
+        "dists": -0.05625991549378373,
+        "psnr_y": -0.0008920399400813572,
+        "detail_energy": 0.050989110830701456,
+        "fine_correlation": -0.014597014561934518
+      },
+      "candidate_vs_initial_percent": {
+        "lpips": -0.7194249360156557,
+        "dists": -1.8132538239893803,
+        "psnr_y": 1.4368766501327013,
+        "detail_energy": 6.126569118787772,
+        "fine_correlation": -1.9016604011345528
+      },
+      "candidate_vs_own_base_percent": {
+        "lpips": -0.012806045218949347,
+        "dists": -0.13910097040478187,
+        "psnr_y": -0.033231424902602225,
+        "detail_energy": 0.5510781657981134,
+        "fine_correlation": 0.11677466896438116
+      },
+      "candidate_vs_control_sources_percent": {
+        "sintel": {
+          "lpips": 0.0692679976030508,
+          "dists": -0.16057551048582752,
+          "psnr_y": 0.001592169717268277,
+          "detail_energy": -0.010150041158274448,
+          "fine_correlation": -0.02188410244020611
+        },
+        "reds_154": {
+          "lpips": 0.0016036342331604558,
+          "dists": 0.011218730193296444,
+          "psnr_y": -0.006379521604893412,
+          "detail_energy": 0.08879496872478132,
+          "fine_correlation": 0.0010453093975071326
+        },
+        "reds_073": {
+          "lpips": -0.005236191515456401,
+          "dists": -0.04113392436333463,
+          "psnr_y": 0.0018987901808209529,
+          "detail_energy": 0.09642422698696862,
+          "fine_correlation": -0.023163152112548602
+        }
+      },
+      "temporal": {
+        "candidate": {
+          "residual_change_l1": 0.055407518121642046,
+          "mean_rgb_mse": 0.005289430025982256,
+          "last_rgb_mse": 0.005293046033064759
+        },
+        "base": {
+          "residual_change_l1": 0.05539730230203569,
+          "mean_rgb_mse": 0.005282346537986389,
+          "last_rgb_mse": 0.005286631328178575
+        },
+        "initial": {
+          "residual_change_l1": 0.054908704285945,
+          "mean_rgb_mse": 0.005164905433225108,
+          "last_rgb_mse": 0.005168550302844071
+        }
+      },
+      "condition_mae_by_source": {
+        "sintel": 0.15446079961515757,
+        "reds_154": 0.20611471762984163,
+        "reds_073": 0.3281296231111305
+      },
+      "temporal_vs_control_percent": {
+        "residual_change_l1": -0.01869354636242493,
+        "mean_rgb_mse": -0.07208540671322927,
+        "last_rgb_mse": -0.07365363868492292
+      }
+    },
+    "oracle": {
+      "checkpoint_sha256": "45e6f9249b4dcfc24a4f93bc4ecb3ab449a94d4406f8203fafcf88591d6cb11a",
+      "experiment_sha256": "1e3aef216a6918f9ade6466c827d95768672d6af6f938aa77f6508957b9af588",
+      "validation_sha256": "ad72b72cde6e6ba99ac8b7ca921d33aa32e62b05f8487b2837452c1e6899cac8",
+      "complete": {
+        "complete": true,
+        "steps": 2000,
+        "backbone_changed": true,
+        "minutes": 4.321616666667008
+      },
+      "exit": {
+        "step": "oracle",
+        "utc": "2026-09-08T16:56:24.7595609Z",
+        "exit_code": 0
+      },
+      "summary": {
+        "candidate": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21815550039388687,
+              "dists": 0.1934856590297487,
+              "psnr_y": 29.941007551074865,
+              "detail_energy": 0.6851879823212998,
+              "fine_correlation": 0.4936913885978282
+            },
+            "reds_154": {
+              "lpips": 0.28274535705093984,
+              "dists": 0.24248248449078313,
+              "psnr_y": 25.04851063047436,
+              "detail_energy": 0.5424057958134688,
+              "fine_correlation": 0.3725205173730532
+            },
+            "reds_073": {
+              "lpips": 0.3506356236283426,
+              "dists": 0.2557640075683594,
+              "psnr_y": 22.629699684186146,
+              "detail_energy": 0.4800463172434955,
+              "fine_correlation": 0.2609672122806802
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28384549369105644,
+            "dists": 0.23057738369629707,
+            "psnr_y": 25.873072621911792,
+            "detail_energy": 0.5692133651260881,
+            "fine_correlation": 0.3757263727505205
+          }
+        },
+        "base": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21899915594366137,
+              "dists": 0.1941289316724848,
+              "psnr_y": 29.91912496742419,
+              "detail_energy": 0.6757697560372807,
+              "fine_correlation": 0.49322764914785
+            },
+            "reds_154": {
+              "lpips": 0.2841370750080656,
+              "dists": 0.24355373669553687,
+              "psnr_y": 25.106743164162282,
+              "detail_energy": 0.5303594258601007,
+              "fine_correlation": 0.37277547484858314
+            },
+            "reds_073": {
+              "lpips": 0.35144230005917726,
+              "dists": 0.2568166068306676,
+              "psnr_y": 22.704827974474036,
+              "detail_energy": 0.46929975073560337,
+              "fine_correlation": 0.2607490375819485
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28485951033696805,
+            "dists": 0.23149975839956308,
+            "psnr_y": 25.910232035353502,
+            "detail_energy": 0.5584763108776616,
+            "fine_correlation": 0.3755840538594606
+          }
+        },
+        "initial": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2137711979976976,
+              "dists": 0.19477422645798437,
+              "psnr_y": 28.677276227811983,
+              "detail_energy": 0.6415185516656143,
+              "fine_correlation": 0.5036951956226896
+            },
+            "reds_154": {
+              "lpips": 0.29054888765569087,
+              "dists": 0.24941719461370399,
+              "psnr_y": 25.163160260919515,
+              "detail_energy": 0.5087248457153069,
+              "fine_correlation": 0.37924668110685517
+            },
+            "reds_073": {
+              "lpips": 0.35617565474024526,
+              "dists": 0.2615368167559306,
+              "psnr_y": 22.7398870833138,
+              "detail_energy": 0.450108753680454,
+              "fine_correlation": 0.2662052878712313
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28683191346454456,
+            "dists": 0.23524274594253966,
+            "psnr_y": 25.5267745240151,
+            "detail_energy": 0.5334507170204584,
+            "fine_correlation": 0.38304905486692536
+          }
+        }
+      },
+      "candidate_vs_control_percent": {
+        "lpips": -0.30800484366232395,
+        "dists": -0.2292593407108079,
+        "psnr_y": -0.08002360696022226,
+        "detail_energy": 0.5953827775875498,
+        "fine_correlation": -0.024812000933893685
+      },
+      "candidate_vs_initial_percent": {
+        "lpips": -1.0411741627408877,
+        "dists": -1.9832119488105926,
+        "psnr_y": 1.356607344068883,
+        "detail_energy": 6.704021002235927,
+        "fine_correlation": -1.911682596096942
+      },
+      "candidate_vs_own_base_percent": {
+        "lpips": -0.35597078879764377,
+        "dists": -0.39843441290940973,
+        "psnr_y": -0.14341598095689578,
+        "detail_energy": 1.922562164105579,
+        "fine_correlation": 0.03789268729528228
+      },
+      "candidate_vs_control_sources_percent": {
+        "sintel": {
+          "lpips": -0.3235960351824829,
+          "dists": -0.38055199418366437,
+          "psnr_y": 0.05882967624808444,
+          "detail_energy": -0.008653089031473993,
+          "fine_correlation": 0.042307335523972256
+        },
+        "reds_154": {
+          "lpips": -0.4399209156856321,
+          "dists": -0.13167346981562966,
+          "psnr_y": -0.12572468405993575,
+          "detail_energy": 0.9824429008628677,
+          "fine_correlation": -0.09560807909672064
+        },
+        "reds_073": {
+          "lpips": -0.19165193802886948,
+          "dists": -0.20705552468234245,
+          "psnr_y": -0.2126978506688637,
+          "detail_energy": 1.028950437403564,
+          "fine_correlation": -0.050564641496508855
+        }
+      },
+      "temporal": {
+        "candidate": {
+          "residual_change_l1": 0.05541218160692867,
+          "mean_rgb_mse": 0.005322292773649274,
+          "last_rgb_mse": 0.0053213240231571035
+        },
+        "base": {
+          "residual_change_l1": 0.055346559721894235,
+          "mean_rgb_mse": 0.005267605484890383,
+          "last_rgb_mse": 0.005275584039591447
+        },
+        "initial": {
+          "residual_change_l1": 0.054908704285945,
+          "mean_rgb_mse": 0.005164905433225108,
+          "last_rgb_mse": 0.005168550302844071
+        }
+      },
+      "condition_mae_by_source": {
+        "sintel": 0.0,
+        "reds_154": 0.0,
+        "reds_073": 0.0
+      },
+      "temporal_vs_control_percent": {
+        "residual_change_l1": -0.010278418462983385,
+        "mean_rgb_mse": 0.5487576380079684,
+        "last_rgb_mse": 0.4602008214345643
+      }
+    }
+  },
+  "visual_review": {
+    "artifact": ".build/quality-breakthrough-r53/joint-conditioning-gallery.png",
+    "receipt": {
+      "scope": "Previously fixed three validation patches, frame15 after all16 full-search source-proxy frames; original256px pixels; not native output",
+      "checkpoint_sha256": {
+        "none": "cf2698acf42686f07495497e3b1b2113901bde91fe7f83582337556a35cf4ff4",
+        "constant": "7b77de5b6134ec54fb96a5a1478d8363d48da8a72a3d602828510aa15e47f9a1",
+        "estimated": "5825a11722936424033cb0e837326f17b1c0978f7a54e403dd188167e662b49c",
+        "oracle": "45e6f9249b4dcfc24a4f93bc4ecb3ab449a94d4406f8203fafcf88591d6cb11a"
+      },
+      "rows": [
+        {
+          "id": "sintel-stream-000-00",
+          "file": "validation/sintel-stream-000-00.npz",
+          "sha256": "efb2d3e031f034340d2764338cdf31a35213a343df0171ce18eb8e62d01970d7",
+          "source_id": "sintel",
+          "family": "blender_sintel",
+          "source_sha256": "648178454637253705ea56bd8a02db0bf17134703fe82ec3d6a9a880a343bc08",
+          "split": "validation",
+          "scale": 2,
+          "frames": 16,
+          "frame_rate": "24/1",
+          "start_seconds": 517.2646243716367,
+          "codec_warmup_frames": 8,
+          "full_reference_size": [
+            1920,
+            816
+          ],
+          "lr_patch_xy": [
+            720,
+            169
+          ],
+          "reference_size": [
+            256,
+            256
+          ],
+          "codec": "h264",
+          "rate_control": "constrained bitrate",
+          "target_bitrate": 940032,
+          "target_bits_per_pixel_frame": 0.1,
+          "gop": 60,
+          "encoded_sha256": "9dc6cf2839dc267819dfc3738974e28925021a7d2f0c084882d4bf30b030fcb6",
+          "encoded_container_bytes": 101512,
+          "hr_command": [
+            "ffmpeg",
+            "-nostdin",
+            "-v",
+            "error",
+            "-ss",
+            "517.2646243716367",
+            "-i",
+            "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/Sintel.2010.4k.mkv",
+            "-an",
+            "-frames:v",
+            "24",
+            "-vf",
+            "scale=1920:816:flags=lanczos",
+            "-threads",
+            "2",
+            "-pix_fmt",
+            "rgb24",
+            "-f",
+            "rawvideo",
+            "-"
+          ],
+          "encode_command": [
+            "ffmpeg",
+            "-nostdin",
+            "-v",
+            "error",
+            "-f",
+            "rawvideo",
+            "-pix_fmt",
+            "rgb24",
+            "-s",
+            "1920x816",
+            "-r",
+            "24/1",
+            "-i",
+            "-",
+            "-vf",
+            "scale=960:408:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "medium",
+            "-b:v",
+            "940032",
+            "-maxrate",
+            "940032",
+            "-bufsize",
+            "1880064",
+            "-threads",
+            "2",
+            "-g",
+            "60",
+            "-pix_fmt",
+            "yuv420p",
+            "-colorspace",
+            "bt709",
+            "-color_primaries",
+            "bt709",
+            "-color_trc",
+            "bt709",
+            "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-017oig5c/stream.mkv"
+          ],
+          "reference_std": 12.77340098621862,
+          "reference_temporal_change": 7.34506368637085
+        },
+        {
+          "id": "reds_154-stream-000-00",
+          "file": "validation\\reds_154-stream-000-00.npz",
+          "sha256": "4bb6c237cc0e507470fbfc18af15594275f5c5507816b406dcc9c57b8478ea7b",
+          "source_id": "reds_154",
+          "family": "reds_sequence_154",
+          "source_sha256": "fe5b5fd7d18b8726773fc1a62fba0afb9a26578ebe17350765635472ca5ebd1a",
+          "split": "validation",
+          "scale": 2,
+          "frames": 16,
+          "frame_rate": "24/1",
+          "start_seconds": 0.21195283079911212,
+          "codec_warmup_frames": 24,
+          "full_reference_size": [
+            1280,
+            720
+          ],
+          "lr_patch_xy": [
+            459,
+            28
+          ],
+          "reference_size": [
+            256,
+            256
+          ],
+          "codec": "h264",
+          "rate_control": "constrained bitrate",
+          "target_bitrate": 552960,
+          "target_bits_per_pixel_frame": 0.1,
+          "gop": 60,
+          "encoded_sha256": "b15aa025b97a9f1bca385b7c87a0181176d85436c33a25f878b350034bf5674e",
+          "encoded_container_bytes": 120796,
+          "hr_command": [
+            "ffmpeg",
+            "-nostdin",
+            "-v",
+            "error",
+            "-ss",
+            "0.21195283079911212",
+            "-i",
+            "D:\\lucid-quality-breakthrough-r37\\reds-masters\\reds_154.mkv",
+            "-an",
+            "-frames:v",
+            "40",
+            "-vf",
+            "scale=1280:720:flags=lanczos",
+            "-threads",
+            "2",
+            "-pix_fmt",
+            "rgb24",
+            "-f",
+            "rawvideo",
+            "-"
+          ],
+          "encode_command": [
+            "ffmpeg",
+            "-nostdin",
+            "-v",
+            "error",
+            "-f",
+            "rawvideo",
+            "-pix_fmt",
+            "rgb24",
+            "-s",
+            "1280x720",
+            "-r",
+            "24/1",
+            "-i",
+            "-",
+            "-vf",
+            "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "medium",
+            "-b:v",
+            "552960",
+            "-maxrate",
+            "552960",
+            "-bufsize",
+            "1105920",
+            "-threads",
+            "2",
+            "-g",
+            "60",
+            "-pix_fmt",
+            "yuv420p",
+            "-colorspace",
+            "bt709",
+            "-color_primaries",
+            "bt709",
+            "-color_trc",
+            "bt709",
+            "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-2w3n9f2f\\stream.mkv"
+          ],
+          "reference_std": 70.01338804664341,
+          "reference_temporal_change": 33.258033752441406,
+          "bank": "REDS"
+        },
+        {
+          "id": "reds_073-stream-000-00",
+          "file": "validation\\reds_073-stream-000-00.npz",
+          "sha256": "8c6d38cb8e167ad5ce2b3744313ef8a6501dc5ecdf6395afb6c6a0869b341a65",
+          "source_id": "reds_073",
+          "family": "reds_sequence_073",
+          "source_sha256": "66ac1fda6844c388683c5f38f9e8795e85896df4cded04bd76a44eedc11dc176",
+          "split": "validation",
+          "scale": 2,
+          "frames": 16,
+          "frame_rate": "24/1",
+          "start_seconds": 2.696626445378337,
+          "codec_warmup_frames": 8,
+          "full_reference_size": [
+            1280,
+            720
+          ],
+          "lr_patch_xy": [
+            387,
+            150
+          ],
+          "reference_size": [
+            256,
+            256
+          ],
+          "codec": "h264",
+          "rate_control": "constrained bitrate",
+          "target_bitrate": 110592,
+          "target_bits_per_pixel_frame": 0.02,
+          "gop": 60,
+          "encoded_sha256": "5c2e251869ed02da06271bf45b220e083134b20ec1b64b242e5cf048a97164ca",
+          "encoded_container_bytes": 20518,
+          "hr_command": [
+            "ffmpeg",
+            "-nostdin",
+            "-v",
+            "error",
+            "-ss",
+            "2.696626445378337",
+            "-i",
+            "D:\\lucid-quality-breakthrough-r37\\reds-masters\\reds_073.mkv",
+            "-an",
+            "-frames:v",
+            "24",
+            "-vf",
+            "scale=1280:720:flags=lanczos",
+            "-threads",
+            "2",
+            "-pix_fmt",
+            "rgb24",
+            "-f",
+            "rawvideo",
+            "-"
+          ],
+          "encode_command": [
+            "ffmpeg",
+            "-nostdin",
+            "-v",
+            "error",
+            "-f",
+            "rawvideo",
+            "-pix_fmt",
+            "rgb24",
+            "-s",
+            "1280x720",
+            "-r",
+            "24/1",
+            "-i",
+            "-",
+            "-vf",
+            "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "medium",
+            "-b:v",
+            "110592",
+            "-maxrate",
+            "110592",
+            "-bufsize",
+            "221184",
+            "-threads",
+            "2",
+            "-g",
+            "60",
+            "-pix_fmt",
+            "yuv420p",
+            "-colorspace",
+            "bt709",
+            "-color_primaries",
+            "bt709",
+            "-color_trc",
+            "bt709",
+            "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-3_x6pcr9\\stream.mkv"
+          ],
+          "reference_std": 58.69145498617113,
+          "reference_temporal_change": 44.47105026245117,
+          "bank": "REDS"
+        }
+      ]
+    },
+    "observations": "Fixed unscaled frame15 patches inspected for Sintel, REDS154 and REDS073. Conditioning columns remain visually close to SR-only control; coarse dark texture, softened palm detail and blurred chair edges remain. Reference-only oracle does not show substantial detail recovery in these patches. This limited review cannot rule out smaller or other-content gains."
+  },
+  "decision": "No conditioned weights promoted. Estimated conditioning is effectively flat versus matched control; oracle gives small improvements under this recipe but is reference-only and undeployable. No native conversion or timing admission performed for these arms. Results do not rule out other conditioning mechanisms or longer training."
+}

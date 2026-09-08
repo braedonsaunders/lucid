@@ -85,8 +85,8 @@ def motion_blocks(current, previous, *, stationary_override=True):
 
     Match decisions are deliberately detached. Confidence and displacements
     depend on decoded inputs, never HR targets or model-generated features.
-    The default matches native TAA. SR experiments can retain the integer
-    search result by disabling its stationary overrides.
+    The default preserves legacy TAA recipes. The current app uses the full
+    integer search result, selected here by disabling stationary overrides.
     """
     n, _, height, width = current.shape
     cy, cx = torch.meshgrid(torch.arange(0, height, 8, device=current.device),
@@ -166,13 +166,17 @@ def planes_to_rgb(y, uv):
     return quantize8(torch.cat((y + 1.5748 * cr, y - .1873 * cb - .4681 * cr, y + 1.8556 * cb), 1))
 
 
-def preprocess_sequence(frames, settings=StageSettings(), first_frame=1):
+def preprocess_sequence(frames, settings=StageSettings(), first_frame=1, *, motion_policy='taa'):
     """Process BxTx3xHxW frames with reset history and preserve gradients.
 
     Reset at each training sequence; temporal history is kept in FP16 just as
     the native texture is. Quantize every UNORM8 intermediate plane. Crop-edge
     context and RGB/420 resampling remain explicit proxy limitations.
+    Legacy recipes retain their default; current-app training must explicitly
+    request motion_policy='search'.
     """
+    if motion_policy not in ('taa', 'search'):
+        raise ValueError('source motion policy must be taa or search')
     if frames.ndim != 5 or frames.shape[2] != 3 or any(s % 2 for s in frames.shape[-2:]):
         raise ValueError('BTCHW RGB sequence with even spatial size required')
     history = raw_history = None
@@ -184,7 +188,8 @@ def preprocess_sequence(frames, settings=StageSettings(), first_frame=1):
         raw, uv = rgb_to_planes(frames[:, t])
         cleaned = quantize8(deband(raw, first_frame + t, settings))
         if history is not None:
-            field = motion_blocks(raw, raw_history).half().float()
+            field = (motion_blocks(raw, raw_history) if motion_policy == 'taa'
+                     else motion_blocks(raw, raw_history, stationary_override=False)).half().float()
             cleaned = taa(cleaned, history, raw, raw_history, field, settings)
         history = cleaned.half().float()
         raw_history = raw

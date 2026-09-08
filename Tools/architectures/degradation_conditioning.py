@@ -1,4 +1,4 @@
-"""Local degradation conditioning of a frozen SPAN backbone.
+"""Local degradation conditioning of a frozen or jointly trained SPAN backbone.
 
 This is a small codec-domain mechanism probe, not a DASR reproduction. The
 oracle receives clean LR only in explicit training/diagnostic calls. Ordinary
@@ -40,8 +40,11 @@ class DegradationEstimator(nn.Module):
 
 
 class DegradationConditionedSPAN(nn.Module):
-    def __init__(self, sr, mode='estimated', estimator_channels=16):
+    def __init__(self, sr, mode='estimated', estimator_channels=16, *,
+                 train_backbone=False, use_conditioning=True):
         super().__init__()
+        if not isinstance(train_backbone, bool) or not isinstance(use_conditioning, bool):
+            raise ValueError('explicit boolean training and conditioning policies required')
         if mode not in ('constant', 'estimated', 'oracle'):
             raise ValueError('unknown degradation condition mode')
         if sr.frames != 1 or sr.core.upsampler[1].upscale_factor != 4:
@@ -51,13 +54,16 @@ class DegradationConditionedSPAN(nn.Module):
         # Fold in FP32 once; Conv3XC otherwise refreshes cached weights inside
         # autocast, which would change the supposedly frozen inference graph.
         fuse_convolutions(sr)
-        self.sr = sr.eval().requires_grad_(False)
+        self.sr = sr.eval().requires_grad_(train_backbone)
         self.mode = mode
+        self.use_conditioning = use_conditioning
         self.estimator = DegradationEstimator(estimator_channels)
         channels = sr.core.conv_1.out_channels
         self.modulation = nn.Conv2d(2, channels * 2, 3, padding=1)
         nn.init.zeros_(self.modulation.weight)
         nn.init.zeros_(self.modulation.bias)
+        self.modulation.requires_grad_(use_conditioning)
+        self.estimator.requires_grad_(use_conditioning and mode == 'estimated')
 
     @property
     def core(self):
@@ -73,6 +79,8 @@ class DegradationConditionedSPAN(nn.Module):
         return self
 
     def conditioned(self, image, condition):
+        if not self.use_conditioning:
+            return self.sr(image)
         core = self.sr.core
         features = core.conv_1(self.sr.unshuffle(image))
         values = self.modulation(F.avg_pool2d(condition, 2)).tanh()
@@ -91,6 +99,8 @@ class DegradationConditionedSPAN(nn.Module):
     def forward(self, image):
         if self.mode == 'oracle':
             raise ValueError('oracle has no deployable inference path; supply an explicit diagnostic condition')
+        if not self.use_conditioning:
+            return self.sr(image)
         condition = (torch.full_like(image[:, :2], .25) if self.mode == 'constant'
                      else self.estimator(image))
         return self.conditioned(image, condition)

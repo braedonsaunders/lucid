@@ -1097,3 +1097,74 @@ See `taa-motion-native-comparison.json`, `taa-motion-native-temporal.json`, and
 source-level measurements, timing rows, the floating-point controls and the
 new-default verification. The broader Codex quality-breakthrough goal remains
 active.
+
+## Joint degradation-conditioning follow-up
+
+r53 removes the frozen-backbone limitation of rank5. Four matched 2,000-step
+arms use the same big2k initialization, original training bank, seed20260914,
+batch4 and crop96: disabled conditioning, constant condition, estimated local
+degradation, and a reference-only oracle diagnostic. Every model instantiates
+the same estimator/modulation structure before critic initialization. Initial
+backbone, estimator, modulation, decoded batch, preprocessed input, oracle target,
+output and discriminator hashes are recorded to check matching.
+
+The fused SR graph is trainable in every arm at learning rate2e-5; active
+conditioning groups use2e-4. All arms use final-frame HR reconstruction and the
+same paired DINO critic at0.0075. Estimated conditioning also uses0.5 L1
+calibration against the clean-reference degradation map. The SR loss receives a
+detached condition, and optimizer groups are clipped independently at norm1,
+so calibration cannot rescale SR gradients through a shared norm cap. AdamW
+has zero weight decay and the same cosine schedule in each arm. SR and the
+conditioning modules run FP32; the critic runs BF16.
+
+Clean LR is derived directly from HR with the full-chroma RGB8 Lanczos3 helper,
+not the older subsampled cleaner cache. Native source preprocessing explicitly
+uses full-search motion for both three-frame training and full16-frame
+validation. The source-stage helper retains legacy behavior by default for
+older recipes; an explicit search option matches the earlier policy replay
+exactly in the compatibility test. The updated native baseline is r51 full
+search, not the historical legacy-motion report.
+
+Validation uses the same72 source-disjoint sequences, scoring frames0/8/15
+against each arm's candidate, its trained current-frame SR branch, and the
+initial big2k model. Full-sequence residual and calibration diagnostics are
+also recorded. The oracle has no deployable inference path. Conditioning is
+still one input-derived operation within one model; no content/model picker is
+introduced. Native quality and runtime validation are required if a candidate
+warrants promotion. No training outcome is asserted by this setup.
+
+Twenty-seven focused local tests pass, including joint gradients, disabled
+control checkpoint round-trip, contradictory conditioning metadata rejection,
+calibration/reconstruction gradient separation, and explicit-versus-legacy
+source-motion behavior. The remote run uses an immutable206-file Python
+snapshot whose archive and individual file hashes were verified over Tailscale
+before launch. CUDA smoke verification precedes the four training arms.
+
+All four arms completed with exit0. The 216 initial metric rows are identical
+across arms and reproduce the earlier full-search replay exactly. All recorded
+initialization/data hashes match; downloaded checkpoint hashes match both
+their validation reports and the remote files. The source hashes match the
+committed experiment code. All SR backbones changed during training. The
+disabled control's candidate and base metrics match exactly on all216 frames.
+
+The SR-only control improves proxy LPIPS/DISTS by0.735%/1.758% versus initial
+big2k under the same full-search preprocessing. Relative to that trained
+control, constant conditioning changes the distances by−0.050%/+0.035%,
+estimated by+0.016%/−0.056%, and reference-only oracle by−0.308%/−0.229%.
+Estimated-map MAE falls from the constant map's0.249/0.347/0.455 to
+0.154/0.206/0.328 on Sintel/REDS154/REDS073, but the calibrated map provides
+little reconstruction advantage here. The oracle improves both perceptual
+distances on all three sources while raising mean RGB MSE0.549% versus the
+control. It remains an undeployable mechanism diagnostic, not an upper bound
+on other conditioning designs.
+
+The fixed three-patch frame15 gallery was inspected at original pixels:
+conditioning variants remain close to the SR-only control. Coarse dark
+texture, softened palms and blurred chair edges remain. This limited visual
+review and small single-run effects do not establish a quality breakthrough;
+they also do not rule out longer training or different conditioning designs.
+No conditioned weights were promoted and no native conversion was performed.
+The native full-search default and model weights remain as previously admitted.
+All four training processes and their Python children exited. See
+`quality-breakthrough/joint-conditioning-comparison.json` for closed receipts,
+matched hashes, source-level scores, calibration and temporal diagnostics.
