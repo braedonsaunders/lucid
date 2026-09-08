@@ -1,0 +1,705 @@
+{
+  "complete": true,
+  "scope": "Matched joint pre-cleaner/SR vs SR-only control;72full16-frame sequences/216scoredframes pervariant onSintel+REDS; native-input proxy,notnativeplayback",
+  "initialization_parity": {
+    "bank_sha256": true,
+    "reds_bank_sha256": true,
+    "checkpoint_sha256": true,
+    "initial_backbone_sha256": true,
+    "first_decoded_sequence_sha256": true,
+    "first_output_sha256": true,
+    "first_clean_target_sha256": true,
+    "discriminator_initial_sha256": true,
+    "source_sha256": true
+  },
+  "argument_changes": {
+    "no_cleaner": {
+      "control": true,
+      "joint": false
+    },
+    "out": {
+      "control": "control_2k",
+      "joint": "joint_cleaner_2k"
+    }
+  },
+  "initial_metric_rows_identical": true,
+  "disabled_control_matches_own_sr_exactly": true,
+  "summary": {
+    "control": {
+      "candidate": {
+        "sources": {
+          "reds_073": {
+            "lpips": 0.35172349449109147,
+            "dists": 0.25618813655994555,
+            "psnr_y": 22.669093106045164,
+            "fine_correlation": 0.26035210191472574,
+            "detail_energy": 0.47647509465616217
+          },
+          "reds_154": {
+            "lpips": 0.28395077820729325,
+            "dists": 0.24262230594952902,
+            "psnr_y": 25.063899309684167,
+            "fine_correlation": 0.3719797688567385,
+            "detail_energy": 0.5401760094615161
+          },
+          "sintel": {
+            "lpips": 0.2227645271211966,
+            "dists": 0.19642587613176415,
+            "psnr_y": 29.868113371314937,
+            "fine_correlation": 0.4919087955775283,
+            "detail_energy": 0.6826497497978384
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.2861462666065271,
+          "dists": 0.23174543954707957,
+          "psnr_y": 25.867035262348093,
+          "fine_correlation": 0.3747468887829975,
+          "detail_energy": 0.5664336179718389
+        }
+      },
+      "base": {
+        "sources": {
+          "reds_073": {
+            "lpips": 0.35172349449109147,
+            "dists": 0.25618813655994555,
+            "psnr_y": 22.669093106045164,
+            "fine_correlation": 0.26035210191472574,
+            "detail_energy": 0.47647509465616217
+          },
+          "reds_154": {
+            "lpips": 0.28395077820729325,
+            "dists": 0.24262230594952902,
+            "psnr_y": 25.063899309684167,
+            "fine_correlation": 0.3719797688567385,
+            "detail_energy": 0.5401760094615161
+          },
+          "sintel": {
+            "lpips": 0.2227645271211966,
+            "dists": 0.19642587613176415,
+            "psnr_y": 29.868113371314937,
+            "fine_correlation": 0.4919087955775283,
+            "detail_energy": 0.6826497497978384
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.2861462666065271,
+          "dists": 0.23174543954707957,
+          "psnr_y": 25.867035262348093,
+          "fine_correlation": 0.3747468887829975,
+          "detail_energy": 0.5664336179718389
+        }
+      },
+      "initial": {
+        "sources": {
+          "reds_073": {
+            "lpips": 0.35605835997396046,
+            "dists": 0.26142901292553655,
+            "psnr_y": 22.73919486483099,
+            "fine_correlation": 0.26606008788262614,
+            "detail_energy": 0.45009965597599755
+          },
+          "reds_154": {
+            "lpips": 0.29064538219460734,
+            "dists": 0.24943473272853428,
+            "psnr_y": 25.161157121382416,
+            "fine_correlation": 0.37924407946156713,
+            "detail_energy": 0.5085919286884766
+          },
+          "sintel": {
+            "lpips": 0.21635994810235892,
+            "dists": 0.19730844376263795,
+            "psnr_y": 28.622942152547854,
+            "fine_correlation": 0.5019482732400782,
+            "detail_energy": 0.6371381732070184
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.2876878967569756,
+          "dists": 0.23605739647223625,
+          "psnr_y": 25.50776471292042,
+          "fine_correlation": 0.38241748019475713,
+          "detail_energy": 0.5319432526238308
+        }
+      }
+    },
+    "joint": {
+      "candidate": {
+        "sources": {
+          "reds_073": {
+            "lpips": 0.35197347885480634,
+            "dists": 0.2560477609987612,
+            "psnr_y": 22.670343151862173,
+            "fine_correlation": 0.26005740930342597,
+            "detail_energy": 0.4766429694267724
+          },
+          "reds_154": {
+            "lpips": 0.2836856135615596,
+            "dists": 0.24237642023298475,
+            "psnr_y": 25.06552763034154,
+            "fine_correlation": 0.3719780728283444,
+            "detail_energy": 0.5404401447919002
+          },
+          "sintel": {
+            "lpips": 0.2222365009300928,
+            "dists": 0.19637156967763547,
+            "psnr_y": 29.863983888236866,
+            "fine_correlation": 0.49175701273419314,
+            "detail_energy": 0.6807895765310364
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.2859651977821529,
+          "dists": 0.23159858363646046,
+          "psnr_y": 25.86661822348019,
+          "fine_correlation": 0.37459749828865446,
+          "detail_energy": 0.5659575635832363
+        }
+      },
+      "base": {
+        "sources": {
+          "reds_073": {
+            "lpips": 0.35129780460287025,
+            "dists": 0.25612366530630326,
+            "psnr_y": 22.665162010606306,
+            "fine_correlation": 0.2600068150199529,
+            "detail_energy": 0.47645638450657823
+          },
+          "reds_154": {
+            "lpips": 0.2833167756045306,
+            "dists": 0.24255535889554908,
+            "psnr_y": 25.020860701630824,
+            "fine_correlation": 0.37213725926174074,
+            "detail_energy": 0.5401769407482744
+          },
+          "sintel": {
+            "lpips": 0.22192418099159653,
+            "dists": 0.19584940539466011,
+            "psnr_y": 29.60982698784916,
+            "fine_correlation": 0.4918704290537925,
+            "detail_energy": 0.6802837344601117
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.2855129203996658,
+          "dists": 0.2315094765321708,
+          "psnr_y": 25.765283233362098,
+          "fine_correlation": 0.3746715011118287,
+          "detail_energy": 0.5656390199049881
+        }
+      },
+      "initial": {
+        "sources": {
+          "reds_073": {
+            "lpips": 0.35605835997396046,
+            "dists": 0.26142901292553655,
+            "psnr_y": 22.73919486483099,
+            "fine_correlation": 0.26606008788262614,
+            "detail_energy": 0.45009965597599755
+          },
+          "reds_154": {
+            "lpips": 0.29064538219460734,
+            "dists": 0.24943473272853428,
+            "psnr_y": 25.161157121382416,
+            "fine_correlation": 0.37924407946156713,
+            "detail_energy": 0.5085919286884766
+          },
+          "sintel": {
+            "lpips": 0.21635994810235892,
+            "dists": 0.19730844376263795,
+            "psnr_y": 28.622942152547854,
+            "fine_correlation": 0.5019482732400782,
+            "detail_energy": 0.6371381732070184
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.2876878967569756,
+          "dists": 0.23605739647223625,
+          "psnr_y": 25.50776471292042,
+          "fine_correlation": 0.38241748019475713,
+          "detail_energy": 0.5319432526238308
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "joint_vs_control": {
+      "source_balanced": {
+        "lpips": -0.06327841579816251,
+        "dists": -0.06336949322762742,
+        "fine_correlation": -0.039864372144138294
+      },
+      "sources": {
+        "reds_073": {
+          "lpips": 0.07107411578421985,
+          "dists": -0.05479393506244712,
+          "fine_correlation": -0.11319002578911164
+        },
+        "reds_154": {
+          "lpips": -0.09338401796529228,
+          "dists": -0.10134505794179294,
+          "fine_correlation": -0.0004559464078734976
+        },
+        "sintel": {
+          "lpips": -0.23703333646856173,
+          "dists": -0.02764730146462835,
+          "fine_correlation": -0.030855891315573203
+        }
+      }
+    },
+    "joint_vs_own_sr": {
+      "source_balanced": {
+        "lpips": 0.15840872695147556,
+        "dists": 0.03848961417234342,
+        "fine_correlation": -0.01975138833740786
+      },
+      "sources": {
+        "reds_073": {
+          "lpips": 0.19233659962660798,
+          "dists": -0.029635804036809432,
+          "fine_correlation": 0.019458829749985362
+        },
+        "reds_154": {
+          "lpips": 0.1301857104091253,
+          "dists": -0.07377229815870301,
+          "fine_correlation": -0.04277626854998218
+        },
+        "sintel": {
+          "lpips": 0.14073272101344791,
+          "dists": 0.2666151995320831,
+          "fine_correlation": -0.023058169977319132
+        }
+      }
+    },
+    "joint_vs_initial": {
+      "source_balanced": {
+        "lpips": -0.5988082899010316,
+        "dists": -1.8888680898843213,
+        "fine_correlation": -2.0448808726316936
+      },
+      "sources": {
+        "reds_073": {
+          "lpips": -1.1472504449699938,
+          "dists": -2.0583989001664915,
+          "fine_correlation": -2.2561364340555556
+        },
+        "reds_154": {
+          "lpips": -2.394591161399462,
+          "dists": -2.8297231978640536,
+          "fine_correlation": -1.9159182770997152
+        },
+        "sintel": {
+          "lpips": 2.716100128177934,
+          "dists": -0.4748271625564793,
+          "fine_correlation": -2.0303407839418197
+        }
+      }
+    },
+    "control_vs_initial": {
+      "source_balanced": {
+        "lpips": -0.5358689634937241,
+        "dists": -1.826656139395244,
+        "fine_correlation": -2.00581610648477
+      },
+      "sources": {
+        "reds_073": {
+          "lpips": -1.2174592623484526,
+          "dists": -2.0047034209947356,
+          "fine_correlation": -2.145374758508878
+        },
+        "reds_154": {
+          "lpips": -2.3033581117870905,
+          "dists": -2.731146021440156,
+          "fine_correlation": -1.9154710642133588
+        },
+        "sintel": {
+          "lpips": 2.960150006972495,
+          "dists": -0.44730352844682963,
+          "fine_correlation": -2.0001020419385007
+        }
+      }
+    }
+  },
+  "clean_lr": {
+    "control": {
+      "sources": {
+        "reds_073": {
+          "input_mse": 0.007679903113360827,
+          "cleaned_mse": 0.007679903113360827,
+          "mse_percent_change": 0.0
+        },
+        "reds_154": {
+          "input_mse": 0.003531725273609886,
+          "cleaned_mse": 0.003531725273609886,
+          "mse_percent_change": 0.0
+        },
+        "sintel": {
+          "input_mse": 0.0011111888434050471,
+          "cleaned_mse": 0.0011111888434050471,
+          "mse_percent_change": 0.0
+        }
+      },
+      "source_balanced": {
+        "input_mse": 0.004107605743458587,
+        "cleaned_mse": 0.004107605743458587,
+        "mse_percent_change": 0.0
+      }
+    },
+    "joint": {
+      "sources": {
+        "reds_073": {
+          "input_mse": 0.007679903113360827,
+          "cleaned_mse": 0.007712013482685304,
+          "mse_percent_change": 0.41810904187860043
+        },
+        "reds_154": {
+          "input_mse": 0.003531725273609886,
+          "cleaned_mse": 0.003557236853844693,
+          "mse_percent_change": 0.7223546074049736
+        },
+        "sintel": {
+          "input_mse": 0.0011111888434050471,
+          "cleaned_mse": 0.0010632674722930663,
+          "mse_percent_change": -4.312621693098895
+        }
+      },
+      "source_balanced": {
+        "input_mse": 0.004107605743458587,
+        "cleaned_mse": 0.0041108392696076876,
+        "mse_percent_change": 0.07872046031316415
+      }
+    }
+  },
+  "temporal": {
+    "control": {
+      "candidate": {
+        "sources": {
+          "reds_073": {
+            "residual_change_l1": 0.0849714069109824,
+            "mean_rgb_mse": 0.008862423626447303,
+            "last_rgb_mse": 0.009207940641014526
+          },
+          "reds_154": {
+            "residual_change_l1": 0.05614888367967473,
+            "mean_rgb_mse": 0.004523055550331871,
+            "last_rgb_mse": 0.00421556293440517
+          },
+          "sintel": {
+            "residual_change_l1": 0.04028647207059066,
+            "mean_rgb_mse": 0.003914164940144676,
+            "last_rgb_mse": 0.0039021173462161743
+          }
+        },
+        "source_balanced": {
+          "residual_change_l1": 0.06046892088708259,
+          "mean_rgb_mse": 0.005766548038974616,
+          "last_rgb_mse": 0.005775206973878624
+        }
+      },
+      "base": {
+        "sources": {
+          "reds_073": {
+            "residual_change_l1": 0.0849714069109824,
+            "mean_rgb_mse": 0.008862423626447303,
+            "last_rgb_mse": 0.009207940641014526
+          },
+          "reds_154": {
+            "residual_change_l1": 0.05614888367967473,
+            "mean_rgb_mse": 0.004523055550331871,
+            "last_rgb_mse": 0.00421556293440517
+          },
+          "sintel": {
+            "residual_change_l1": 0.04028647207059066,
+            "mean_rgb_mse": 0.003914164940144676,
+            "last_rgb_mse": 0.0039021173462161743
+          }
+        },
+        "source_balanced": {
+          "residual_change_l1": 0.06046892088708259,
+          "mean_rgb_mse": 0.005766548038974616,
+          "last_rgb_mse": 0.005775206973878624
+        }
+      },
+      "initial": {
+        "sources": {
+          "reds_073": {
+            "residual_change_l1": 0.0845650594888462,
+            "mean_rgb_mse": 0.008769575661669174,
+            "last_rgb_mse": 0.009109656358810348
+          },
+          "reds_154": {
+            "residual_change_l1": 0.05573858838114473,
+            "mean_rgb_mse": 0.00445047876079722,
+            "last_rgb_mse": 0.004150245893268018
+          },
+          "sintel": {
+            "residual_change_l1": 0.03957994903462728,
+            "mean_rgb_mse": 0.0037279608525548407,
+            "last_rgb_mse": 0.0037174911333042676
+          }
+        },
+        "source_balanced": {
+          "residual_change_l1": 0.05996119896820607,
+          "mean_rgb_mse": 0.005649338425007078,
+          "last_rgb_mse": 0.005659131128460879
+        }
+      }
+    },
+    "joint": {
+      "candidate": {
+        "sources": {
+          "reds_073": {
+            "residual_change_l1": 0.08498412339637677,
+            "mean_rgb_mse": 0.00886096671456471,
+            "last_rgb_mse": 0.009205085484104024
+          },
+          "reds_154": {
+            "residual_change_l1": 0.05614736665868097,
+            "mean_rgb_mse": 0.00451966071947633,
+            "last_rgb_mse": 0.004212617064088893
+          },
+          "sintel": {
+            "residual_change_l1": 0.04026520048189594,
+            "mean_rgb_mse": 0.003916656458639207,
+            "last_rgb_mse": 0.0039057043867766574
+          }
+        },
+        "source_balanced": {
+          "residual_change_l1": 0.06046556351231789,
+          "mean_rgb_mse": 0.005765761297560082,
+          "last_rgb_mse": 0.005774468978323191
+        }
+      },
+      "base": {
+        "sources": {
+          "reds_073": {
+            "residual_change_l1": 0.08495714546491702,
+            "mean_rgb_mse": 0.008840775363043778,
+            "last_rgb_mse": 0.00920809817681503
+          },
+          "reds_154": {
+            "residual_change_l1": 0.05615216938571797,
+            "mean_rgb_mse": 0.004500519979046658,
+            "last_rgb_mse": 0.004204840423578086
+          },
+          "sintel": {
+            "residual_change_l1": 0.04029323787039453,
+            "mean_rgb_mse": 0.0039973796922557385,
+            "last_rgb_mse": 0.0039907302082614
+          }
+        },
+        "source_balanced": {
+          "residual_change_l1": 0.0604675175736765,
+          "mean_rgb_mse": 0.005779558344782058,
+          "last_rgb_mse": 0.0058012229362181715
+        }
+      },
+      "initial": {
+        "sources": {
+          "reds_073": {
+            "residual_change_l1": 0.0845650594888462,
+            "mean_rgb_mse": 0.008769575661669174,
+            "last_rgb_mse": 0.009109656358810348
+          },
+          "reds_154": {
+            "residual_change_l1": 0.05573858838114473,
+            "mean_rgb_mse": 0.00445047876079722,
+            "last_rgb_mse": 0.004150245893268018
+          },
+          "sintel": {
+            "residual_change_l1": 0.03957994903462728,
+            "mean_rgb_mse": 0.0037279608525548407,
+            "last_rgb_mse": 0.0037174911333042676
+          }
+        },
+        "source_balanced": {
+          "residual_change_l1": 0.05996119896820607,
+          "mean_rgb_mse": 0.005649338425007078,
+          "last_rgb_mse": 0.005659131128460879
+        }
+      }
+    }
+  },
+  "experiment": {
+    "control": {
+      "args": {
+        "bank": "C:\\lucid\\stream-bank-v4",
+        "reds_bank": "D:\\lucid-quality-breakthrough-r37\\reds-bank",
+        "init": "C:\\lucid\\paired-ladder-20260905-r10\\big_2k\\step002000.pth",
+        "out": "control_2k",
+        "steps": 2000,
+        "batch": 4,
+        "crop": 96,
+        "seed": 20260914,
+        "cleaner_channels": 16,
+        "cleaner_lr": 0.001,
+        "sr_lr": 2e-05,
+        "clean_weight": 1.0,
+        "no_cleaner": true,
+        "dino_gan_weight": 0.0075,
+        "pixrestore_repository": "C:\\lucid\\pixrestore-baseline-20260904",
+        "dino_repository": "C:\\lucid\\causal-frontier-20260904-dino\\third_party\\dinov2",
+        "dino_checkpoint": "C:\\lucid\\frontier-teachers-20260904\\dinov2_vits14_pretrain.pth"
+      },
+      "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+      "reds_bank_sha256": "bf641e3c99628e4ce6a1a75f59ffe9f70ab8f4bd790cd8f5946de83e461db7fb",
+      "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+      "initial_backbone_sha256": "2de8c2017b3856bb4f84933b6d8315412e997f5aa7e0c611f866d8973a90f341",
+      "fused_sr": true,
+      "use_cleaner": false,
+      "source_sha256": {
+        "architectures/precleaner.py": "0b9449ed25ace29f8d0013f306727acfac8d836e0dff4041b1223ed41ed4d5ab",
+        "architectures/subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+        "eval_checkpoint.py": "97397d5246fd43dd129b4c5fe386c4bd0397e7aef67a150c0f0479023e0ab701",
+        "experiments/train_joint_precleaner.py": "daa7a3a208f9855530be7e9798ca73be464f22e851fb8eebce7bdbbfaa9372d9",
+        "experiments/train_precleaner.py": "338b6fa80c3cc4887bb6d59e5f3ac778350b9c37a6d00fd118396932ea9a3141",
+        "experiments/train_causal_detail.py": "51b3b776485caa5ccaec4a7c58eec5d3b6060d22ad1c311c0561d2abb994ee7a",
+        "experiments/train_presented_detail.py": "76aa0cf85a567fbfe0db3f2fa5ff23a9a190ca42ede35fa576b9604d881cc743",
+        "experiments/clean_lr_targets.py": "c7fed48821fe30cd0ce03ddfc92e2e1675cf3087c608f786bc4fe7b776c184cf",
+        "experiments/native_stages.py": "da9a187625e7ce9524f2efb151a672c074bede94d603ee3b38718934b0544fc4",
+        "experiments/paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb",
+        "experiments/dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+        "experiments/dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a",
+        "experiments/replay_recurrent_motion.py": "c2b1bbaded47c5e453a12b92bf862e0726241dcaf56c4df90d21b428996ebe3d",
+        "frontier_eval/evaluate_sequences.py": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75"
+      },
+      "cleaner_parameters": 3203,
+      "clean_target": "FP32 RGB8 Lanczos3 half-pixel 2x downsample preserving full chroma; derived from reference; four LR border pixels excluded; not the older FFmpeg cleaner cache",
+      "recipe": "three-frame native input proxies, final-frame HR reconstruction plus clean-LR supervision and paired critic; fused SR/cleaner FP32; critic BF16; AdamW cosine no weight decay",
+      "torch": "2.6.0+cu124",
+      "gpu": "NVIDIA GeForce RTX 4080",
+      "discriminator_initial_sha256": "d95408e9f83d6bd76c1c2fba673189b7c83a26a5b9a6a01e27dbdaa51d3f01fb",
+      "adversary": {
+        "upstream": "https://github.com/csslc/PixRestore",
+        "gan_sha256": "21be7412da65dc94eb7048e3510ce8ec8e6b47ae241ff4679df0eba728f99b59",
+        "feature_encoder": {
+          "inspiration": "https://github.com/csslc/PixRestore",
+          "reviewed_pixrestore_commit": "909ca06e614cf72e218d52b4fa41077c603d872b",
+          "encoder_repository": "https://github.com/facebookresearch/dinov2",
+          "encoder_commit": "7764ea0f912e53c92e82eb78a2a1631e92725fc8",
+          "encoder_weight_sha256": "b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9",
+          "layers": [
+            1,
+            2,
+            4,
+            6,
+            8,
+            10
+          ],
+          "size": 224,
+          "temperature": 1.0,
+          "normalization": "ImageNet RGB; raw intermediate patch tokens; cosine distance",
+          "weighting": "softmax((1-mean_LQ_HQ_cosine)/temperature), detached",
+          "resize": "PyTorch bicubic antialias",
+          "inference_cost": "none; used only for training"
+        },
+        "real_target": "known training HQ reference",
+        "real_label": 0.8,
+        "discriminator_optimizer": "AdamW, lr 1e-4, weight_decay 0",
+        "discriminator_loss": "0.5 real BCE + 0.25 generated BCE + 0.25 wrong-detail BCE; clip 1",
+        "inference_cost": "none; feature encoder and discriminator discarded",
+        "condition": "detached DINO tokens of bicubic LR at matching output coordinates",
+        "features": "concatenate output and condition tokens; 768 inputs, 96 hidden units",
+        "negatives": "half generated output, half HR with signed 3x3 highpass displaced two pixels right",
+        "limitation": "combined conditioning/negative recipe; not isolated component attribution"
+      },
+      "first_decoded_sequence_sha256": "1cb6fc7da87f8c2653639c18098591a079458b2502ab315555ead5a33731db6d",
+      "first_output_sha256": "9e3876d899bf23748e63e0464d2998ad4aa4b459714933236bf24d0822cdcf35",
+      "first_clean_target_sha256": "73afc7d74cf4b4a8ace2a25637cb72b83e0c3430accbb9f96c6b2eb151dde091"
+    },
+    "joint": {
+      "args": {
+        "bank": "C:\\lucid\\stream-bank-v4",
+        "reds_bank": "D:\\lucid-quality-breakthrough-r37\\reds-bank",
+        "init": "C:\\lucid\\paired-ladder-20260905-r10\\big_2k\\step002000.pth",
+        "out": "joint_cleaner_2k",
+        "steps": 2000,
+        "batch": 4,
+        "crop": 96,
+        "seed": 20260914,
+        "cleaner_channels": 16,
+        "cleaner_lr": 0.001,
+        "sr_lr": 2e-05,
+        "clean_weight": 1.0,
+        "no_cleaner": false,
+        "dino_gan_weight": 0.0075,
+        "pixrestore_repository": "C:\\lucid\\pixrestore-baseline-20260904",
+        "dino_repository": "C:\\lucid\\causal-frontier-20260904-dino\\third_party\\dinov2",
+        "dino_checkpoint": "C:\\lucid\\frontier-teachers-20260904\\dinov2_vits14_pretrain.pth"
+      },
+      "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+      "reds_bank_sha256": "bf641e3c99628e4ce6a1a75f59ffe9f70ab8f4bd790cd8f5946de83e461db7fb",
+      "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+      "initial_backbone_sha256": "2de8c2017b3856bb4f84933b6d8315412e997f5aa7e0c611f866d8973a90f341",
+      "fused_sr": true,
+      "use_cleaner": true,
+      "source_sha256": {
+        "architectures/precleaner.py": "0b9449ed25ace29f8d0013f306727acfac8d836e0dff4041b1223ed41ed4d5ab",
+        "architectures/subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+        "eval_checkpoint.py": "97397d5246fd43dd129b4c5fe386c4bd0397e7aef67a150c0f0479023e0ab701",
+        "experiments/train_joint_precleaner.py": "daa7a3a208f9855530be7e9798ca73be464f22e851fb8eebce7bdbbfaa9372d9",
+        "experiments/train_precleaner.py": "338b6fa80c3cc4887bb6d59e5f3ac778350b9c37a6d00fd118396932ea9a3141",
+        "experiments/train_causal_detail.py": "51b3b776485caa5ccaec4a7c58eec5d3b6060d22ad1c311c0561d2abb994ee7a",
+        "experiments/train_presented_detail.py": "76aa0cf85a567fbfe0db3f2fa5ff23a9a190ca42ede35fa576b9604d881cc743",
+        "experiments/clean_lr_targets.py": "c7fed48821fe30cd0ce03ddfc92e2e1675cf3087c608f786bc4fe7b776c184cf",
+        "experiments/native_stages.py": "da9a187625e7ce9524f2efb151a672c074bede94d603ee3b38718934b0544fc4",
+        "experiments/paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb",
+        "experiments/dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+        "experiments/dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a",
+        "experiments/replay_recurrent_motion.py": "c2b1bbaded47c5e453a12b92bf862e0726241dcaf56c4df90d21b428996ebe3d",
+        "frontier_eval/evaluate_sequences.py": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75"
+      },
+      "cleaner_parameters": 3203,
+      "clean_target": "FP32 RGB8 Lanczos3 half-pixel 2x downsample preserving full chroma; derived from reference; four LR border pixels excluded; not the older FFmpeg cleaner cache",
+      "recipe": "three-frame native input proxies, final-frame HR reconstruction plus clean-LR supervision and paired critic; fused SR/cleaner FP32; critic BF16; AdamW cosine no weight decay",
+      "torch": "2.6.0+cu124",
+      "gpu": "NVIDIA GeForce RTX 4080",
+      "discriminator_initial_sha256": "d95408e9f83d6bd76c1c2fba673189b7c83a26a5b9a6a01e27dbdaa51d3f01fb",
+      "adversary": {
+        "upstream": "https://github.com/csslc/PixRestore",
+        "gan_sha256": "21be7412da65dc94eb7048e3510ce8ec8e6b47ae241ff4679df0eba728f99b59",
+        "feature_encoder": {
+          "inspiration": "https://github.com/csslc/PixRestore",
+          "reviewed_pixrestore_commit": "909ca06e614cf72e218d52b4fa41077c603d872b",
+          "encoder_repository": "https://github.com/facebookresearch/dinov2",
+          "encoder_commit": "7764ea0f912e53c92e82eb78a2a1631e92725fc8",
+          "encoder_weight_sha256": "b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9",
+          "layers": [
+            1,
+            2,
+            4,
+            6,
+            8,
+            10
+          ],
+          "size": 224,
+          "temperature": 1.0,
+          "normalization": "ImageNet RGB; raw intermediate patch tokens; cosine distance",
+          "weighting": "softmax((1-mean_LQ_HQ_cosine)/temperature), detached",
+          "resize": "PyTorch bicubic antialias",
+          "inference_cost": "none; used only for training"
+        },
+        "real_target": "known training HQ reference",
+        "real_label": 0.8,
+        "discriminator_optimizer": "AdamW, lr 1e-4, weight_decay 0",
+        "discriminator_loss": "0.5 real BCE + 0.25 generated BCE + 0.25 wrong-detail BCE; clip 1",
+        "inference_cost": "none; feature encoder and discriminator discarded",
+        "condition": "detached DINO tokens of bicubic LR at matching output coordinates",
+        "features": "concatenate output and condition tokens; 768 inputs, 96 hidden units",
+        "negatives": "half generated output, half HR with signed 3x3 highpass displaced two pixels right",
+        "limitation": "combined conditioning/negative recipe; not isolated component attribution"
+      },
+      "first_decoded_sequence_sha256": "1cb6fc7da87f8c2653639c18098591a079458b2502ab315555ead5a33731db6d",
+      "first_output_sha256": "9e3876d899bf23748e63e0464d2998ad4aa4b459714933236bf24d0822cdcf35",
+      "first_clean_target_sha256": "73afc7d74cf4b4a8ace2a25637cb72b83e0c3430accbb9f96c6b2eb151dde091"
+    }
+  },
+  "report_sha256": {
+    "control": "523450c9d534f7701dddd8b09b032f605d4d02ced8a5aac587b6feab92f5cb69",
+    "joint": "880915fd34819d6973c0a471cdf1cfcadfd11d9408620b111362685650d5344c"
+  },
+  "checkpoint_sha256": {
+    "control": "39f5fe74ad25a28de40426c31024ba038064031c158bacbdd0c8758fba997cd3",
+    "joint": "bdae9e8dbabe3a5c0d06d415408005aadb1ef35bd385f7201741811074b3f3ef"
+  }
+}

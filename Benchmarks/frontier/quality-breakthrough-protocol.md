@@ -944,3 +944,42 @@ MSE for all frames. Compare the candidate with the fresh control, unchanged
 initial SR and its own trained SR without cleaning. Initial hashes must match.
 Cleaner MSE alone cannot establish final SR quality. Native deployment and the
 single-model 60fps target still require separate validation if results warrant it.
+
+The initial r49 preflight exits before training because FFmpeg is absent from
+the job PATH; two existing conversion tests error and a third is skipped. Keep
+that failed receipt. Fresh r49b uses the identical code snapshot with the existing
+`C:\ffmpeg\bin` added to its PATH. All 18 cleaner/fidelity tests then pass, and
+the two training arms start. No training run is interrupted or repeated to recover
+from this environment failure.
+
+Both r49b arms finish training and full validation successfully. Initialization,
+bank, first decoded sequence, clean target, output, critic and source hashes match.
+The cleaner changes source-balanced LPIPS/DISTS by -0.063%/-0.063% versus the
+fresh SR-only control, and +0.158%/+0.038% versus its own SR branch without
+cleaning. Clean-LR MSE improves 4.313% on Sintel but worsens 0.418%/0.722% on
+the two REDS sources, for an aggregate +0.079%. Its objective optimizes L1/Sobel,
+not MSE. Fixed original-pixel images show small differences, without a clear
+quality breakthrough. `joint-precleaner-comparison.json` records all comparisons,
+per-source clean-LR errors, temporal measurements, hashes and arguments. The
+checkpoint/disabled-control checks pass. No native integration or promotion.
+
+## Retain TAA motion while preserving denoising
+
+The recurrent alignment discovery motivates testing source TAA itself. Keep the
+shipping big2k weights, deband and TAA feedback/clipping unchanged, but retain
+the integer search result instead of forcing stationary correspondence. On the
+three fixed r41 patches at frame15 after full16-frame processing, the Sintel
+patch improves LPIPS/DISTS 24.045%/18.302% and fine correlation 4.868%. The REDS
+patches change slightly and remain mixed. This is a source-stage proxy with no
+subpixel refinement or native shader change, not a broad delivered-quality claim.
+`taa-search-fixed-patch-probe.json` records this limited diagnostic.
+
+r50 evaluates the same 72 full validation sequences under three fixed policies:
+current TAA; removing only its low-error stationary veto while retaining the
+existing 2/255 match-gain rejection; and retaining all integer-search matches.
+No thresholds are tuned. The gain-only diagnostic derives its field using two
+search calls, so it is not a native cost implementation. Tests verify a strong
+four-pixel low-error match survives while a weak one-pixel match remains rejected,
+and the baseline reproduces the current field exactly. Six policy/native-stage
+tests pass locally before the GPU replay. Broad proxy and native quality/runtime
+results remain required before changing shipping behavior.

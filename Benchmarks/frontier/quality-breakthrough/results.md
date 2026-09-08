@@ -65,3 +65,9 @@ to establish a quality advantage. Across the same 72 sequences, history worsens
 LPIPS/DISTS versus each model's own current-frame branch: SR +0.456%/+0.170%,
 decoded +0.883%/+0.551%. Fixed visual comparisons show small changes without a
 clear detail breakthrough. [Corrected training](corrected-motion-training-comparison.json).
+
+Joint clean-LR/SR training also provides no substantial gain: LPIPS/DISTS improve
+only 0.063%/0.063% versus its matched SR-only control, with small visual changes.
+[Joint cleaner evidence](joint-precleaner-comparison.json). A separate TAA motion
+policy probe gives a stronger improvement on one fixed low-contrast patch;
+broader comparison is required before interpreting it as a quality breakthrough.
