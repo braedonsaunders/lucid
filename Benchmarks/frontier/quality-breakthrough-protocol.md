@@ -51,8 +51,9 @@ one. The feature remains disabled by default.
    policies worsen perceptual quality. Native integration is not justified yet.
 8. **Clean-LR consistency and AESOP:** implemented and unit-tested; r36 fixes
    matched loss ablations. Explicit full-chroma resize differs from pre-encode YUV.
-9. **Larger base pretraining bank:** pending. Keep source-disjoint evaluation,
-   licence provenance, and disk requirements explicit before acquisition.
+9. **Larger base pretraining bank:** implemented and assembled. r38b's matched
+   original-bank control is complete; r39's expanded-bank training is underway.
+   Preserve source-disjoint evaluation and licence provenance.
 
 ## LDL implementation and verification
 
@@ -544,3 +545,12 @@ DISTS only 0.155%. RushHour LPIPS worsens 16.18% and Sunflower 15.52%. Together
 with the student result, this closes the missing 4k native measurement without
 establishing a breakthrough. `ldlref100-4k-ema-native-comparison.json` records all
 sources. The matched 40k-base/2k-critic control is now being measured natively.
+
+The expanded mapped bank is complete: 11,592 training and 396 validation
+sequences from 93 sources, with Sintel and REDS 154/073 held out. Its manifest
+hash is `4f7ce2f230ee57dd60eabcbad3af7fb63e74e77992bcd650d206e01589feeae7`.
+`expanded-bank-receipt.json` binds the original and expanded banks, composition,
+geometry and materializer. r39 has started from the same pretrained checkpoint
+and immutable training code as r38b. Matching 40k steps tests the bank change
+at fixed training compute; it does not give the 10× larger bank equal epochs.
+Longer training would be a separate compute-and-data experiment.

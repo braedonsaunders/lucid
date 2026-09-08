@@ -1,0 +1,44 @@
+{
+  "complete": true,
+  "scope": "10.06x training patch-sequence count; codec-before-crop 16-frame examples; not 10x independent footage",
+  "storage": "mmap-pairs-v1",
+  "original": {
+    "manifest_sha256": "2c99d8823116c53e6889c29f22fe4abce6151f7bb36ad896edb6425eac38b26f",
+    "sources": 33,
+    "sequences": {
+      "train": 1152,
+      "validation": 36
+    }
+  },
+  "expanded": {
+    "manifest_sha256": "4f7ce2f230ee57dd60eabcbad3af7fb63e74e77992bcd650d206e01589feeae7",
+    "sources": 93,
+    "sequences": {
+      "train": 11592,
+      "validation": 396
+    }
+  },
+  "training_expansion_factor": 10.0625,
+  "geometry": {
+    "scale": 2,
+    "frames": 16,
+    "lr_patch": 128
+  },
+  "validation_sources": [
+    "sintel",
+    "reds_154",
+    "reds_073"
+  ],
+  "materializer_sha256": "de1a78931b3a8a26ce1980d4b1a92ea887aeab7e70e26cd546e59ce534153b94",
+  "composition": [
+    {
+      "bank": "C:\\lucid\\stream-bank-v4",
+      "manifest_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76"
+    },
+    {
+      "bank": "D:\\lucid-quality-breakthrough-r37\\reds-bank",
+      "manifest_sha256": "bf641e3c99628e4ce6a1a75f59ffe9f70ab8f4bd790cd8f5946de83e461db7fb"
+    }
+  ],
+  "purpose": "Fixed-budget base-pretraining comparison, same 40k reconstruction plus original-v4 2k critic recipe in both arms; quality not yet measured."
+}
