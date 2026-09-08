@@ -89,9 +89,9 @@ development LPIPS/DISTS gains against the original SPAN comparator are
 None jointly beats the existing no-LDL development result. The 2k student on
 960 repeated regression frames improves aggregate LPIPS 0.34% and DISTS 2.20%
 against current `big2k`, but Sunflower LPIPS worsens 9.92%. The 2k EMA worsens
-aggregate LPIPS 1.40% while improving DISTS 0.41%. No promotion. The 4k weights
-have development/bank evidence only; do not imply they received native or 960
-regression testing. Receipts are `ldlref*-gate.json` and
+aggregate LPIPS 1.40% while improving DISTS 0.41%. No promotion. Both 4k student and EMA now also have native regression
+measurements, recorded in the later follow-up and their native receipts.
+The earlier 2k receipts are `ldlref*-gate.json` and
 `ldlref100_2k-holdout-comparison.json`.
 
 ## Flip-cycle result
@@ -667,3 +667,18 @@ improves raw development 5.904%/7.429% and REDS720 10.886%/6.507%; its native ru
 is active. Both arms have matching code, bank, sampler, discriminator initial
 state, first decoded sample and first training batch; their starting SR weights
 differ as intended. `balanced-critic-training-parity.json` records these checks.
+
+r44's shipping-initialized native result is complete: source-balanced LPIPS
+worsens 9.557% and DISTS 10.792% against shipping. Ducks, OldTown, ParkJoy and
+InToTree improve on both distances; ParkJoy improves 15.262%/13.885% and InToTree
+12.694%/20.026%. Pedestrian, RushHour, Sunflower and Tractor regress. Unscaled
+crops confirm improved foliage separation alongside false texture on the bee
+and small cars. Both source-balanced arms therefore remain research candidates,
+not shipping replacements. Their initialization parity, raw development/REDS
+comparisons and complete native receipts are retained under `balanced-*`.
+
+All nine ranked suggestions have implemented and evaluated initial probes, with
+several matched follow-ups. These experiments do not establish a broad native
+quality breakthrough. The current shipping model and 60fps target remain in
+force. The native Codex quality goal remains active. These data and objective changes
+retain the existing inference architecture.
