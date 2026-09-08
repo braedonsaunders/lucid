@@ -14,6 +14,39 @@ import torch
 from train_causal_detail import digest
 
 
+def differentiable_clean_lr(image):
+    """Lanczos-3 2x RGB downsample with a half-pixel sampling phase.
+
+    Interior parity is checked against FFmpeg lanczos+full_chroma_inp.
+    This deliberately preserves RGB chroma: the older cleaner cache uses
+    plain FFmpeg lanczos, which internally subsamples input chroma. Do NOT
+    use that cache as the target for this operator. Derive both sides with
+    this function and exclude four LR border pixels in the loss.
+    """
+    from torch.nn import functional as F
+    from native_stages import quantize8
+    if image.ndim != 4 or image.shape[1] != 3 or any(s % 2 for s in image.shape[-2:]):
+        raise ValueError('even BCHW RGB reconstruction required')
+    with torch.autocast(device_type=image.device.type, enabled=False):
+        source = quantize8(image.float())
+        distance = (torch.arange(-5, 7, device=image.device, dtype=torch.float32) - .5) / 2
+        taps = torch.sinc(distance) * torch.sinc(distance / 3)
+        taps = taps / taps.sum()
+        horizontal = taps.reshape(1, 1, 1, -1).repeat(3, 1, 1, 1)
+        vertical = taps.reshape(1, 1, -1, 1).repeat(3, 1, 1, 1)
+        x = F.conv2d(F.pad(source, (5, 5, 0, 0), mode='replicate'), horizontal, stride=(1, 2), groups=3)
+        x = F.conv2d(F.pad(x, (0, 0, 5, 5), mode='replicate'), vertical, stride=(2, 1), groups=3)
+        return quantize8(x)
+
+
+def clean_lr_consistency(prediction, clean_target):
+    from torch.nn import functional as F
+    reduced = differentiable_clean_lr(prediction)
+    if reduced.shape != clean_target.shape or min(reduced.shape[-2:]) <= 8:
+        raise ValueError('aligned clean LR with interior samples required')
+    return F.l1_loss(reduced[..., 4:-4, 4:-4], clean_target.detach()[..., 4:-4, 4:-4])
+
+
 def clean_lr_rgb(reference):
     if reference.dtype != np.uint8 or reference.ndim != 4 or reference.shape[-1] != 3:
         raise ValueError('THWC RGB8 reference sequence required')

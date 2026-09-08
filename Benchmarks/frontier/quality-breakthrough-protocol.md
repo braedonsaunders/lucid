@@ -36,7 +36,8 @@ one. The feature remains disabled by default.
    ablation. The input-only arm must not be described as the full pipeline.
 4. **Learned pre-cleaner:** implemented; matched 2k raw/native-input arms complete.
    Clean-LR error improves about 5%, but raw SR development distances worsen.
-   Native-input arm still needs native evaluation. Preserve the raw residual path.
+   Native-input arm is also natively evaluated: mixed perceptual result, no promotion.
+   Preserve the raw residual path.
 5. **Degradation conditioning:** implemented; constant, estimated, and oracle
    arms are fixed in r31. Compare reference-assisted damage maps with local
    input-only estimates; never deploy oracle information.
@@ -44,10 +45,10 @@ one. The feature remains disabled by default.
    r32's first 2k probe is complete. It modestly improves fidelity/temporal error
    but worsens LPIPS. Native integration and joint/perceptual training remain
    untested. Warp previous predictions using decoded-input motion.
-7. **Confidence head:** pending. Test per-pixel stage strength and calibration,
-   including the actual pre/post model placement of each controlled stage.
-8. **Clean-LR consistency and AESOP:** pending. Exact resize provenance matters;
-   a generic RGB downsample is not automatically the bank's pre-encode target.
+7. **Confidence head:** implemented and first 2k proxy probe complete; learned
+   policies worsen perceptual quality. Native integration is not justified yet.
+8. **Clean-LR consistency and AESOP:** implemented and unit-tested; r36 fixes
+   matched loss ablations. Explicit full-chroma resize differs from pre-encode YUV.
 9. **Larger base pretraining bank:** pending. Keep source-disjoint evaluation,
    licence provenance, and disk requirements explicit before acquisition.
 
@@ -308,3 +309,76 @@ the first/middle/final frames improve PSNR by 0.052 dB but worsen LPIPS 2.293%
 and DISTS 0.136%. No promotion. `recurrent-screen.json` records the experiment
 and deltas. This frozen-backbone reconstruction-loss probe does not rule out
 joint or perceptually supervised recurrent training.
+
+## Completed combined-stage and cleaner native results
+
+The r29 combined source/output-stage arm improves native source-balanced LPIPS
+1.760% and DISTS 4.461% against current `big2k`, and 1.619% / 4.213% against its
+matched r28 control. It still worsens Sunflower LPIPS 25.85%, RushHour 8.90%, and
+PedestrianArea 3.43% against `big2k`. No promotion. The first-frame sampler and
+initial model differ from shipping's original training; r33 repeats the control
+and output-only ablation from actual shipping weights, and r35 adds both stages
+using the same immutable r33 code and schedule. `full-stage-native-comparison.json`
+contains the complete comparison.
+
+The native-input pre-cleaner's completed 960-frame sender-output comparison
+improves DISTS 0.683% but worsens LPIPS 0.168% against its frozen `big2k` backbone.
+The cleaner improves its low-resolution reconstruction objective, but does not
+establish a joint perceptual improvement after playback stages. No promotion;
+`precleaner-native-comparison.json` records the result. Joint cleaner/SR training
+remains untested.
+
+## Confidence head: implemented, first probe rejected
+
+`ConfidenceSPAN` adds a 4,624-parameter log-variance head to frozen SR features.
+Its mean prediction is unchanged. The head learns Gaussian RGB error NLL with
+the mean detached, bounds log variance to [-12, 0], and uses a fixed confidence
+mapping `0.0025 / (variance + 0.0025)`. r34 trains 2,000 steps from current `big2k`
+on three-frame native-input proxy sequences. Only the head changes.
+
+Current-frame confidence controls post-SR sharpening. A separate causal policy
+warps the previous frame's confidence to control pre-SR debanding; cuts, unknown
+history and rejected correspondence fall back to normal shipping strength.
+Debanding never uses a future or not-yet-computed SR prediction. Validation
+compares both policies with fixed shipping strengths and a constant half-strength
+control over all 16 frames of each validation patch sequence.
+
+Post-only confidence worsens LPIPS 0.811% / DISTS 0.154%; the causal policy worsens
+0.651% / 0.192%. Even the constant half-strength control scores better than both
+learned policies on these perceptual metrics. Calibration also underestimates
+error in the populated 0.05–0.10 and 0.10–0.20 predicted-standard-deviation bins.
+`confidence-screen.json` includes calibration, temporal summaries and provenance.
+Seven tests cover mean identity, frozen gradients, analytic NLL, stage ordering,
+causality, reset fallback and checkpoint loading. This is a tested proxy, not a
+native confidence-output model or evidence for shipping it. No promotion.
+
+## Clean LR and AESOP fidelity implementation
+
+The clean-LR consistency term compares downsampled prediction with downsampled HR,
+not with the codec-damaged decoded input. Both use the same half-pixel Lanczos-3
+RGB operator, straight-through RGB8 quantization and four-pixel LR border exclusion.
+Its interior agrees with FFmpeg `lanczos+full_chroma_inp` within one RGB level on
+three random-image geometries. Plain FFmpeg `lanczos` subsamples input chroma
+internally; the older pre-cleaner target cache therefore is deliberately not reused.
+This is an explicit clean RGB surrogate, not a claim of recovering bit-exact
+pre-encode YUV samples. FFmpeg's [RGB input conversion](https://github.com/FFmpeg/FFmpeg/blob/master/libswscale/input.c)
+contains the half-chroma conversion path that motivated this distinction.
+
+AESOP uses the [authors' published implementation](https://github.com/2minkyulee/AESOP-SR)
+and synthetic 100,000-step autoencoder checkpoint, pinned by SHA256. It compares
+L1 **after the decoder**, with frozen weights and a detached target branch;
+prediction gradients pass through the full autoencoder in FP32. The published
+4x-bottleneck teacher accepts same-size input/output images for this 2x SR loss.
+It has not been pretrained locally for the 2x codec domain. The vendored graph
+preserves state keys, records its upstream commit and Apache 2.0 licence, and
+loads `params_ema` strictly. `aesop-provenance.json` binds the source and weights.
+
+When enabled, AESOP replaces both existing pixel L1 terms with 1.1× decoded-image
+L1; signed Sobel, FFT and paired-critic losses remain. Teacher initialization
+preserves the discriminator RNG. Default training retains the original floating-
+point operation order. Six tests cover this control, replacement semantics,
+frozen/target gradients, rejection of bottleneck comparison and clean-LR parity.
+r36 fixes three independent 1,000-step arms from `big2k`: clean-LR weight 1,
+AESOP alone, and both. The reference control is r33's matched `big_control_1k`.
+The teachers add no SR inference cost. Training and native quality remain to be
+measured; implementing the losses is not a quality claim.

@@ -1,0 +1,210 @@
+{
+  "complete": true,
+  "scope": "source-disjoint full-bank-sequence patch validation through stage proxies; not native playback",
+  "experiment": {
+    "args": {
+      "bank": "C:\\lucid\\stream-bank-v4",
+      "init": "C:\\lucid\\paired-ladder-20260905-r10\\big_2k\\step002000.pth",
+      "out": "confidence_2k",
+      "steps": 2000,
+      "batch": 8,
+      "crop": 96,
+      "seed": 20260914
+    },
+    "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+    "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+    "frozen_backbone_sha256": "2de8c2017b3856bb4f84933b6d8315412e997f5aa7e0c611f866d8973a90f341",
+    "head_parameters": 4624,
+    "source_hashes": {
+      "architectures/confidence_span.py": "75bad4c820f2a3923e7193730987766905a628d81cdd7307d74a4081ed330f49",
+      "architectures/subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+      "experiments/train_confidence_head.py": "4e71709269979751f33f4fb50eb642b8080c636705dd5eabc44a4e764452b7a7",
+      "experiments/confidence_stages.py": "737e091699c8ec0934f9d71e9d358a865c0a7527a14da50581da54067d4b6996",
+      "experiments/native_stages.py": "f8765f3206cd7ec5a977806e6706b92006cd84a335d67542b8a0fbc3765f69af",
+      "experiments/native_output_stages.py": "d43f70078ecf1edf69492ba6f7aebe98c624a7a22cbe155e20a8f57b7aaced1e"
+    },
+    "confidence_reference_variance": 0.0025,
+    "training": "three-frame fixed native input proxy; final-frame RGB8 SR Gaussian error NLL; only variance head trained",
+    "log_variance_bounds": [
+      -12,
+      0
+    ],
+    "native_control_status": "proxy only; no extra current-frame inference for debanding",
+    "torch": "2.6.0+cu124",
+    "gpu": "NVIDIA GeForce RTX 4080",
+    "first_decoded_sequence_sha256": "74751a779d6ca5424b14d0789a02a803c94d0448095b3253b95b481440a30f37"
+  },
+  "validation_sha256": "8c9502c66e2445fd3925620296b1d8c48c7b3856c623327807b0572e0dd7962f",
+  "checkpoint_sha256": "a5762c679a81c4beab02faedab4434bd460beffa42d6c26701f41575fa344dd4",
+  "summary": {
+    "fixed": {
+      "sources": {
+        "sintel": {
+          "lpips": 0.21389567821163083,
+          "dists": 0.19532697509836267,
+          "psnr_y": 28.087420135581368,
+          "detail_energy": 0.7152558299885377,
+          "fine_correlation": 0.49305749107213015
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.21389567821163083,
+        "dists": 0.19532697509836267,
+        "psnr_y": 28.087420135581368,
+        "detail_energy": 0.7152558299885377,
+        "fine_correlation": 0.49305749107213015
+      }
+    },
+    "constant": {
+      "sources": {
+        "sintel": {
+          "lpips": 0.21439847105404106,
+          "dists": 0.1955251732358226,
+          "psnr_y": 28.111624601089375,
+          "detail_energy": 0.6977631851546646,
+          "fine_correlation": 0.4947610461895447
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.21439847105404106,
+        "dists": 0.1955251732358226,
+        "psnr_y": 28.111624601089375,
+        "detail_energy": 0.6977631851546646,
+        "fine_correlation": 0.4947610461895447
+      }
+    },
+    "post": {
+      "sources": {
+        "sintel": {
+          "lpips": 0.2156299629646797,
+          "dists": 0.1956279206055182,
+          "psnr_y": 28.118569130708266,
+          "detail_energy": 0.6978685475875638,
+          "fine_correlation": 0.49463947968516253
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.2156299629646797,
+        "dists": 0.1956279206055182,
+        "psnr_y": 28.118569130708266,
+        "detail_energy": 0.6978685475875638,
+        "fine_correlation": 0.49463947968516253
+      }
+    },
+    "causal": {
+      "sources": {
+        "sintel": {
+          "lpips": 0.21528760195655217,
+          "dists": 0.1957016051919372,
+          "psnr_y": 28.1133458334934,
+          "detail_energy": 0.698003833124263,
+          "fine_correlation": 0.4946512229156572
+        }
+      },
+      "source_balanced": {
+        "lpips": 0.21528760195655217,
+        "dists": 0.1957016051919372,
+        "psnr_y": 28.1133458334934,
+        "detail_energy": 0.698003833124263,
+        "fine_correlation": 0.4946512229156572
+      }
+    }
+  },
+  "change_percent_vs_fixed": {
+    "fixed": {
+      "lpips": 0.0,
+      "dists": 0.0
+    },
+    "constant": {
+      "lpips": 0.23506451678410034,
+      "dists": 0.10146992618922379
+    },
+    "post": {
+      "lpips": 0.8108086930737057,
+      "dists": 0.1540726809515114
+    },
+    "causal": {
+      "lpips": 0.6507488868214395,
+      "dists": 0.19179639339925725
+    }
+  },
+  "temporal": {
+    "fixed": {
+      "residual_change_l1": 0.040140612442295755,
+      "rgb_mse": 0.0043439813829167446,
+      "deband_strength_mean": 1.0
+    },
+    "constant": {
+      "residual_change_l1": 0.039930082188340696,
+      "rgb_mse": 0.004320563001908528,
+      "deband_strength_mean": 0.5
+    },
+    "post": {
+      "residual_change_l1": 0.0400107032911655,
+      "rgb_mse": 0.004320393475329877,
+      "deband_strength_mean": 1.0
+    },
+    "causal": {
+      "residual_change_l1": 0.03996075775499245,
+      "rgb_mse": 0.0043221848831949865,
+      "deband_strength_mean": 0.6456589582893584
+    }
+  },
+  "calibration_fixed": [
+    {
+      "std_range": [
+        0,
+        0.01
+      ],
+      "pixels": 0,
+      "predicted_variance": null,
+      "observed_mse": null
+    },
+    {
+      "std_range": [
+        0.01,
+        0.02
+      ],
+      "pixels": 303,
+      "predicted_variance": 0.000345702003380253,
+      "observed_mse": 0.004256635756775884
+    },
+    {
+      "std_range": [
+        0.02,
+        0.05
+      ],
+      "pixels": 24095486,
+      "predicted_variance": 0.0015990318765644529,
+      "observed_mse": 0.0019486467102666637
+    },
+    {
+      "std_range": [
+        0.05,
+        0.1
+      ],
+      "pixels": 8960824,
+      "predicted_variance": 0.0034038672052023205,
+      "observed_mse": 0.007954674046207111
+    },
+    {
+      "std_range": [
+        0.1,
+        0.2
+      ],
+      "pixels": 119610,
+      "predicted_variance": 0.014477045028709107,
+      "observed_mse": 0.04541186013123278
+    },
+    {
+      "std_range": [
+        0.2,
+        1.01
+      ],
+      "pixels": 1377,
+      "predicted_variance": 0.05280218629968625,
+      "observed_mse": 0.04274888651563191
+    }
+  ],
+  "decision": "no promotion; neither learned policy improves perceptual quality over fixed or half-strength control; native integration not justified by this probe"
+}

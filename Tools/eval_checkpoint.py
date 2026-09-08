@@ -127,6 +127,11 @@ def load(path, device):
             raise ValueError('deployable single-frame 2x degradation condition required; oracle is diagnostic only')
         from architectures.degradation_conditioning import DegradationConditionedSPAN
         model = DegradationConditionedSPAN(model, state['conditioning_mode'], state['estimator_channels'])
+    if state.get('architecture') == 'confidence_span2x':
+        if scale != 2 or frames != 1:
+            raise ValueError('confidence head requires single-frame 2x geometry')
+        from architectures.confidence_span import ConfidenceSPAN
+        model = ConfidenceSPAN(model)
     model = model.eval().to(device)
     model.load_state_dict(state["model"] if "model" in state else state)
     return model, state.get("step", "?"), frames

@@ -26,12 +26,19 @@ from reconstruction_loss import sobel_loss
 from train_span import fft_loss
 
 
-def reconstruction_objective(output, reference, intended, detail_target='mixture'):
+def reconstruction_objective(output, reference, intended, detail_target='mixture', fidelity=None):
     if detail_target not in ('mixture', 'reference'):
         raise ValueError('unknown detail supervision target')
     detail = reference if detail_target == 'reference' else intended
-    return (F.l1_loss(output, intended) + .2 * sobel_loss(output, detail)
-            + .05 * fft_loss(output, detail) + .1 * F.l1_loss(output, reference))
+    if fidelity is not None:
+        if detail_target != 'reference' or not torch.equal(reference, intended):
+            raise ValueError('AESOP replacement requires reference-only supervision')
+        pixel = 1.1 * fidelity(output, reference)
+    else:
+        # Preserve the control's original floating-point operation order.
+        return (F.l1_loss(output, intended) + .2 * sobel_loss(output, detail)
+                + .05 * fft_loss(output, detail) + .1 * F.l1_loss(output, reference))
+    return pixel + .2 * sobel_loss(output, detail) + .05 * fft_loss(output, detail)
 
 
 def temporal_consistency(previous_output, output, previous_reference, reference, threshold=2 / 255):
@@ -188,6 +195,10 @@ def main():
         help='Train on a three-frame proxy of native deband + TAA BEFORE the model')
     ap.add_argument('--native-output-stages', action='store_true',
         help='Apply the fixed native 2x sharpen/tone/grain proxy to predictions before losses')
+    ap.add_argument('--aesop-checkpoint', type=Path,
+        help='Pinned published AESOP autoencoder; replaces both pixel L1 terms')
+    ap.add_argument('--clean-lr-weight', type=float, default=0,
+        help='Clean full-chroma RGB Lanczos LR consistency against downsampled HR')
     ap.add_argument('--training-frames', type=int, choices=[1, 2, 3], default=1,
         help='Minimum sequence length; use 3 for the matched native-input control')
     ap.add_argument('--temporal', type=float, default=0,
@@ -220,6 +231,10 @@ def main():
         ap.error('nonnegative finite adversarial weight required')
     if not math.isfinite(args.ldl_weight) or args.ldl_weight < 0:
         ap.error('nonnegative finite LDL weight required')
+    if not math.isfinite(args.clean_lr_weight) or args.clean_lr_weight < 0:
+        ap.error('nonnegative finite clean LR weight required')
+    if args.aesop_checkpoint and (args.intended != 'reference' or args.detail_target != 'reference' or args.teacher_mix):
+        ap.error('AESOP replacement requires reference intended/detail targets and no teacher mixture')
     if not math.isfinite(args.gan_head_ratio_cap) or args.gan_head_ratio_cap < 0 or (args.gan_head_ratio_cap and not args.dino_gan_weight):
         ap.error('nonnegative finite ratio cap requires an adversary when enabled')
     if args.dino_gan_weight and not all((args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)):
@@ -242,8 +257,8 @@ def main():
     else:
         teacher, teacher_receipt = load_teacher_cache(args.pixrestore_cache, bank_hash, data, digest)
     shipping, _, frames = load(args.init, 'cuda')
-    if hasattr(shipping, 'cleaner') or hasattr(shipping, 'estimator'):
-        ap.error('cleaner/conditioning checkpoints require their dedicated trainer')
+    if any(hasattr(shipping, name) for name in ('cleaner', 'estimator', 'variance_head')):
+        ap.error('cleaner/conditioning/confidence checkpoints require their dedicated trainer')
     if frames != 1:
         raise ValueError('single-frame shipping initialization required')
     already_2x = shipping.core.upsampler[1].upscale_factor == 4
@@ -285,6 +300,12 @@ def main():
             model = AnchoredDetail(model, args.detail_channels, args.detail_blocks,
                                    residual_lowpass=args.architecture == 'anchored_lowpass').cuda().train()
     optimizer = torch.optim.AdamW((p for p in model.parameters() if p.requires_grad), lr=args.lr, weight_decay=0)
+    fidelity = None
+    if args.aesop_checkpoint:
+        from aesop_fidelity import load_aesop_loss
+        fidelity = load_aesop_loss(args.aesop_checkpoint, 'cuda')
+    if args.clean_lr_weight:
+        from clean_lr_targets import differentiable_clean_lr, clean_lr_consistency
     rng = np.random.default_rng(args.seed)
     adversary = None
     if args.dino_gan_weight:
@@ -312,6 +333,18 @@ def main():
         'temporal': args.temporal,
         'torch': str(torch.__version__), 'gpu': torch.cuda.get_device_name(),
         'purpose': 'controlled quality/performance experiment; not shipping promotion'}
+    if fidelity is not None:
+        experiment['aesop'] = fidelity.metadata
+        experiment['source_hashes']['aesop_fidelity.py'] = digest(Path(__file__).with_name('aesop_fidelity.py'))
+        experiment['loss'] = '1.1 AESOP decoded-image L1 + 0.2 signed Sobel + 0.05 FFT to HR; 8 output-pixel border excluded'
+    if args.clean_lr_weight:
+        experiment['source_hashes']['clean_lr_targets.py'] = digest(Path(__file__).with_name('clean_lr_targets.py'))
+        experiment['clean_lr'] = {
+            'weight': args.clean_lr_weight, 'target': 'HR downsampled with the same full-chroma RGB Lanczos-3 operator as prediction',
+            'order': 'before 8-pixel HR loss crop; after output-stage proxy when enabled',
+            'boundary_exclusion_lr': 4, 'quantization': 'RGB8 straight-through on prediction; target detached',
+            'scope': 'clean RGB supervision; not bit-exact bank pre-encode YUV; no decoded-input self-consistency',
+            'cache': 'none; older cleaner FFmpeg cache is incompatible with full-chroma operator'}
     if args.architecture in ('anchored_detail', 'anchored_lowpass'):
         experiment['source_hashes']['anchored_detail.py'] = digest(
             Path(__file__).resolve().parents[1] / 'architectures/anchored_detail.py')
@@ -392,8 +425,14 @@ def main():
             (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
         if args.native_output_stages:
             output = postprocess_rgb(output.float(), decoded_current)
+        if args.clean_lr_weight:
+            with torch.no_grad():
+                clean_target = differentiable_clean_lr(reference)
+            clean_loss = clean_lr_consistency(output, clean_target)
         output, reference, intended = (v.float()[:, :, 8:-8, 8:-8] for v in (output, reference, intended))
-        loss = reconstruction_objective(output, reference, intended, args.detail_target)
+        loss = reconstruction_objective(output, reference, intended, args.detail_target, fidelity)
+        if args.clean_lr_weight:
+            loss = loss + args.clean_lr_weight * clean_loss
         if args.ldl_weight:
             if ema_model is None:
                 import copy

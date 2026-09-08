@@ -97,11 +97,11 @@ def main():
         'executable_sha256':digest(args.executable),'code_sha256':digest(__file__),
         'models':{label:{str(p.relative_to(package)):digest(p) for p in sorted(package.rglob('*')) if p.is_file()} for label,package in packages.items()},
         'ffmpeg':subprocess.check_output(['ffmpeg','-version'],text=True).splitlines()[0],
-        'configuration':'Standard shipping sharpness0.75/radius4; frozen candidate sharpness0.4/radius2. Fixed grain phase0.',
+        'configuration':f"Standard shipping sharpness0.75/radius4; frozen candidate sharpness{config['tuning']['sharpness']}/radius{config['radius']}. Grain phase{config['tuning']['grainPhase']}.",
         'limitations':['FFmpeg decode boundary instead of Chrome WebCodecs; byte-identical NV12 inputs for model pair',
             'Native sender packets; browser rendering and monitor color management excluded',
             'Absent SDR primaries/transfer and chroma-location tags use the frozen corpus contract and existing Lucid defaults; other color spaces are not tested',
-            'Raw-weight holdout already completed before this native run; native config frozen before raw-weight results were inspected']}
+            'Repeated regression sources, not fresh release validation; tuning and weight identities are bound to the frozen config, and raw-model scores do not substitute for native results']}
     if development:
         report['purpose']='native presentation development regression; no fresh holdout or promotion'
         report['configuration']=f"Standard shipping sharpness0.75/radius4; quantized presentation sharpness{config['tuning']['sharpness']}/radius2. Fixed grain phase0."
