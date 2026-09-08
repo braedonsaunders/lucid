@@ -490,3 +490,19 @@ Absolute change for the candidate arm, unguarded → guarded, every source:
 The guard keeps everything the stage was buying on the blocky sources (old_town_cross unchanged on LPIPS, and better on DISTS because block-edge texture is no longer smeared) and gives back what it was taking from grain. Nothing gets worse beyond a tenth of a point. Against the SPAN comparator through the same guarded stages: **shipping `lucidbig2k_` +12.26% LPIPS / +16.10% DISTS, all eight sources up** (Sunflower +5.3, Tractor +8.6), the best native result of the campaign, up from +11.80 / +16.04; `v4_2k` +12.34 / +16.16 with Sunflower −0.7, so the 33-source family still does not clear the no-source-down rule and does not ship.
 
 `debandGuard` 0.005 is now the default in `Tuning`, `DetailSettings` and `Tools/tuning.json`. Model unchanged: `lucidbig2k_`.
+
+## Grain kept out of the temporal accumulator (2026-09-08; receipts `paired-ladder/native-big2k-grainkeep*`)
+
+`taa_luma` gained a bypass (`taaGrainKeep`): after the history blend, the current frame's fine residual (centre minus the 3×3 mean) in flat neighbourhoods (sigma under `taaGrainBand` 0.012, fading out by 3×) is restored in proportion to what the history took, and the history itself stores only the accumulated structure, so grain never averages across frames. Measured on shipping `big2k` with the guard, absolute change against the shipping configuration:
+
+| Source | keep 1.0 (LPIPS / DISTS) | keep 1.0, synthetic grain off |
+|---|---|---|
+| old_town_cross | −2.0% / −5.8% | +3.5% / −4.2% |
+| in_to_tree | −2.6% / −11.6% | +0.4% / −10.3% |
+| pedestrian_area | +5.0% / +1.3% | +7.6% / +0.6% |
+| rush_hour | +7.0% / +3.4% | +8.9% / +3.3% |
+| sunflower | +5.0% / −1.4% | +5.4% / −1.5% |
+| tractor | +0.8% / −1.4% | +0.9% / −1.7% |
+| mean of eight | +1.4% / −2.3% | +3.2% / −2.0% |
+
+Against SPAN: +9.31 / +13.02 and +8.13 / +12.98, both below the shipping +12.26 / +16.10. The structured sources like it (DISTS −6 to −12%: the fine texture the accumulator was blurring comes back), the grainy sources do not (LPIPS +5 to +9%): at 350 kbps and 1 Mbps the "grain" the bypass restores is mostly codec noise and mosquito, which the accumulator was rightly averaging, and LPIPS punishes restoring it per frame. The stage split that helps game upscalers, where the grain is a clean synthetic layer, does not transfer to compressed video where grain and codec noise share the same band. A partial keep (0.4) is measured next; if it does not beat shipping on the aggregate with no source down, the bypass is removed rather than left as a knob.
