@@ -1,0 +1,474 @@
+{
+  "complete": true,
+  "scope": "48 repeated development frames, raw SR; not native admission",
+  "initialization_and_sampler_matched": true,
+  "control_report_sha256": "882550207dcd526b8e6b57cc92aca3245dc8a432775132689a0402f92b85c402",
+  "arms": {
+    "big_clean_lr_1k": {
+      "experiment": {
+        "args": {
+          "bank": "C:\\lucid\\stream-bank-v4",
+          "pixrestore_cache": "none",
+          "shipping_cache": "none",
+          "init": "C:\\lucid\\paired-ladder-20260905-r10\\big_2k\\step002000.pth",
+          "out": "big_clean_lr_1k",
+          "teacher_mix": 0.0,
+          "steps": 1000,
+          "batch": 4,
+          "crop": 96,
+          "lr": 2e-05,
+          "seed": 20260914,
+          "architecture": "coupled",
+          "detail_channels": 32,
+          "detail_blocks": 4,
+          "detail_target": "reference",
+          "dino_gan_weight": 0.0075,
+          "ldl_weight": 0,
+          "ldl_formulation": "reference",
+          "native_input_stages": false,
+          "native_output_stages": false,
+          "aesop_checkpoint": null,
+          "clean_lr_weight": 1.0,
+          "training_frames": 3,
+          "temporal": 0,
+          "input_noise": 0,
+          "intended": "reference",
+          "paired_negatives": "shift",
+          "smooth_negative_share": 0.125,
+          "paired_dino": true,
+          "gan_head_ratio_cap": 0,
+          "pixrestore_repository": "C:\\lucid\\pixrestore-baseline-20260904",
+          "dino_repository": "C:\\lucid\\causal-frontier-20260904-dino\\third_party\\dinov2",
+          "dino_checkpoint": "C:\\lucid\\frontier-teachers-20260904\\dinov2_vits14_pretrain.pth"
+        },
+        "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+        "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+        "teacher_manifest_sha256": null,
+        "shipping_manifest_sha256": null,
+        "initialization": "2x checkpoint used directly",
+        "source_hashes": {
+          "train_presented_detail.py": "5b2a6d2c252d1dd6ca2d0c762d176c20a75d4079eb6c6784c214c019120dd57c",
+          "fold_shipping_head.py": "750795d69cce54883e601440b64344e25cd137b90c05e0e0d990d3bcf205d01e",
+          "train_causal_detail.py": "29484d4cf228a0ff04c17c509c68dfe62adf30eafea67f0903f4ebb52dfd662e",
+          "train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+          "span_arch.py": "0fd7c3c6bddcf6fd9c547793a58e9ded66a99e75c106fa20aa3e1cd059f6a806",
+          "clean_lr_targets.py": "c7fed48821fe30cd0ce03ddfc92e2e1675cf3087c608f786bc4fe7b776c184cf",
+          "dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+          "dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a",
+          "paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb"
+        },
+        "loss": "L1 to HR reference + 0.2 signed Sobel to reference + 0.05 FFT to reference + 0.1 L1 to reference; 8 output-pixel border excluded",
+        "precision": "CUDA BF16 autocast; AdamW FP32; no compilation",
+        "input_noise": 0,
+        "temporal": 0,
+        "torch": "2.6.0+cu124",
+        "gpu": "NVIDIA GeForce RTX 4080",
+        "purpose": "controlled quality/performance experiment; not shipping promotion",
+        "clean_lr": {
+          "weight": 1.0,
+          "target": "HR downsampled with the same full-chroma RGB Lanczos-3 operator as prediction",
+          "order": "before 8-pixel HR loss crop; after output-stage proxy when enabled",
+          "boundary_exclusion_lr": 4,
+          "quantization": "RGB8 straight-through on prediction; target detached",
+          "scope": "clean RGB supervision; not bit-exact bank pre-encode YUV; no decoded-input self-consistency",
+          "cache": "none; older cleaner FFmpeg cache is incompatible with full-chroma operator"
+        },
+        "adversary": {
+          "upstream": "https://github.com/csslc/PixRestore",
+          "gan_sha256": "21be7412da65dc94eb7048e3510ce8ec8e6b47ae241ff4679df0eba728f99b59",
+          "feature_encoder": {
+            "inspiration": "https://github.com/csslc/PixRestore",
+            "reviewed_pixrestore_commit": "909ca06e614cf72e218d52b4fa41077c603d872b",
+            "encoder_repository": "https://github.com/facebookresearch/dinov2",
+            "encoder_commit": "7764ea0f912e53c92e82eb78a2a1631e92725fc8",
+            "encoder_weight_sha256": "b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9",
+            "layers": [
+              1,
+              2,
+              4,
+              6,
+              8,
+              10
+            ],
+            "size": 224,
+            "temperature": 1.0,
+            "normalization": "ImageNet RGB; raw intermediate patch tokens; cosine distance",
+            "weighting": "softmax((1-mean_LQ_HQ_cosine)/temperature), detached",
+            "resize": "PyTorch bicubic antialias",
+            "inference_cost": "none; used only for training"
+          },
+          "real_target": "known training HQ reference",
+          "real_label": 0.8,
+          "discriminator_optimizer": "AdamW, lr 1e-4, weight_decay 0",
+          "discriminator_loss": "0.5 real BCE + 0.25 generated BCE + 0.25 wrong-detail BCE; clip 1",
+          "inference_cost": "none; feature encoder and discriminator discarded",
+          "condition": "detached DINO tokens of bicubic LR at matching output coordinates",
+          "features": "concatenate output and condition tokens; 768 inputs, 96 hidden units",
+          "negatives": "half generated output, half HR with signed 3x3 highpass displaced two pixels right",
+          "limitation": "combined conditioning/negative recipe; not isolated component attribution"
+        },
+        "discriminator_initial_sha256": "8fd80818539e329acfaeb34453193fae76ba9d7d70b78092f33df73fe9ff7f81",
+        "first_decoded_sequence_sha256": "1cb6fc7da87f8c2653639c18098591a079458b2502ab315555ead5a33731db6d",
+        "first_batch_sha256": "41cda4bb4af06791bf06147e37c6787f3c40004f16d76fe545ac2d8ffb843219",
+        "first_output_sha256": "8aebe122f7bd2a1f772bee10deb89f88809f58ca32d67678db5f027a61a5721f"
+      },
+      "report_sha256": "612bf1f713503867c243b08929cafe08f9283650ab28f023310d3042a82acb88",
+      "checkpoint_sha256": "bf954633b7f8d7750488af6bed27284af1fd55d84e02894d7307c78c70558ab6",
+      "candidate": {
+        "sources": {
+          "crowd_run": {
+            "lpips": 0.36806431226432323,
+            "dists": 0.1434507817029953,
+            "psnr_y": 22.93782833651759,
+            "detail_energy": 0.5257019401369046,
+            "fine_correlation": 0.3722512272410485
+          },
+          "four_people": {
+            "lpips": 0.1774866096675396,
+            "dists": 0.07874719053506851,
+            "psnr_y": 30.419329436892994,
+            "detail_energy": 0.7788778347338781,
+            "fine_correlation": 0.6584143709469829
+          },
+          "johnny": {
+            "lpips": 0.2244425266981125,
+            "dists": 0.09847761318087578,
+            "psnr_y": 32.76670448630162,
+            "detail_energy": 0.7635619310622173,
+            "fine_correlation": 0.631525711142906
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.25666448287665844,
+          "dists": 0.1068918618063132,
+          "psnr_y": 28.707954086570737,
+          "detail_energy": 0.6893805686443333,
+          "fine_correlation": 0.5540637697769791
+        }
+      },
+      "change_percent_vs_control": {
+        "lpips": 1.165782592797604,
+        "dists": 1.761136698630894
+      },
+      "change_percent_vs_shipping": {
+        "lpips": -2.0057958377770024,
+        "dists": -2.46493850848275
+      }
+    },
+    "big_aesop_1k": {
+      "experiment": {
+        "args": {
+          "bank": "C:\\lucid\\stream-bank-v4",
+          "pixrestore_cache": "none",
+          "shipping_cache": "none",
+          "init": "C:\\lucid\\paired-ladder-20260905-r10\\big_2k\\step002000.pth",
+          "out": "big_aesop_1k",
+          "teacher_mix": 0.0,
+          "steps": 1000,
+          "batch": 4,
+          "crop": 96,
+          "lr": 2e-05,
+          "seed": 20260914,
+          "architecture": "coupled",
+          "detail_channels": 32,
+          "detail_blocks": 4,
+          "detail_target": "reference",
+          "dino_gan_weight": 0.0075,
+          "ldl_weight": 0,
+          "ldl_formulation": "reference",
+          "native_input_stages": false,
+          "native_output_stages": false,
+          "aesop_checkpoint": "AE_RRDBdecoder_100K.pth",
+          "clean_lr_weight": 0,
+          "training_frames": 3,
+          "temporal": 0,
+          "input_noise": 0,
+          "intended": "reference",
+          "paired_negatives": "shift",
+          "smooth_negative_share": 0.125,
+          "paired_dino": true,
+          "gan_head_ratio_cap": 0,
+          "pixrestore_repository": "C:\\lucid\\pixrestore-baseline-20260904",
+          "dino_repository": "C:\\lucid\\causal-frontier-20260904-dino\\third_party\\dinov2",
+          "dino_checkpoint": "C:\\lucid\\frontier-teachers-20260904\\dinov2_vits14_pretrain.pth"
+        },
+        "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+        "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+        "teacher_manifest_sha256": null,
+        "shipping_manifest_sha256": null,
+        "initialization": "2x checkpoint used directly",
+        "source_hashes": {
+          "train_presented_detail.py": "5b2a6d2c252d1dd6ca2d0c762d176c20a75d4079eb6c6784c214c019120dd57c",
+          "fold_shipping_head.py": "750795d69cce54883e601440b64344e25cd137b90c05e0e0d990d3bcf205d01e",
+          "train_causal_detail.py": "29484d4cf228a0ff04c17c509c68dfe62adf30eafea67f0903f4ebb52dfd662e",
+          "train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+          "span_arch.py": "0fd7c3c6bddcf6fd9c547793a58e9ded66a99e75c106fa20aa3e1cd059f6a806",
+          "aesop_fidelity.py": "2bb9c8f6a9a144b7f13bc0ed2ea1d48b7af7710076169d47b02a224859639fa9",
+          "dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+          "dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a",
+          "paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb"
+        },
+        "loss": "1.1 AESOP decoded-image L1 + 0.2 signed Sobel + 0.05 FFT to HR; 8 output-pixel border excluded",
+        "precision": "CUDA BF16 autocast; AdamW FP32; no compilation",
+        "input_noise": 0,
+        "temporal": 0,
+        "torch": "2.6.0+cu124",
+        "gpu": "NVIDIA GeForce RTX 4080",
+        "purpose": "controlled quality/performance experiment; not shipping promotion",
+        "aesop": {
+          "checkpoint_sha256": "8a428a920a9e9d66362bf5da2d837e7ccabdbe2d6fb04d0a1b84b7fea9fd83c1",
+          "weights": "params_ema",
+          "upstream_commit": "3d6fe1d95a0a2fbaf2365861b0ce9f725985c498",
+          "loss": "L1 after frozen autoencoder decoder, FP32; target branch detached",
+          "architecture": "official 4x bottleneck, two encoder RRDBs and 23 decoder RRDBs",
+          "scope": "published synthetic AE trained 100k steps; not a locally pretrained 2x codec-domain AE",
+          "inference_cost": "none; teacher is not stored in the SR model",
+          "source_sha256": "6a87d40ab99f7e20379142eab010deca9db868cbe9d922cfb991602961d2eb44"
+        },
+        "adversary": {
+          "upstream": "https://github.com/csslc/PixRestore",
+          "gan_sha256": "21be7412da65dc94eb7048e3510ce8ec8e6b47ae241ff4679df0eba728f99b59",
+          "feature_encoder": {
+            "inspiration": "https://github.com/csslc/PixRestore",
+            "reviewed_pixrestore_commit": "909ca06e614cf72e218d52b4fa41077c603d872b",
+            "encoder_repository": "https://github.com/facebookresearch/dinov2",
+            "encoder_commit": "7764ea0f912e53c92e82eb78a2a1631e92725fc8",
+            "encoder_weight_sha256": "b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9",
+            "layers": [
+              1,
+              2,
+              4,
+              6,
+              8,
+              10
+            ],
+            "size": 224,
+            "temperature": 1.0,
+            "normalization": "ImageNet RGB; raw intermediate patch tokens; cosine distance",
+            "weighting": "softmax((1-mean_LQ_HQ_cosine)/temperature), detached",
+            "resize": "PyTorch bicubic antialias",
+            "inference_cost": "none; used only for training"
+          },
+          "real_target": "known training HQ reference",
+          "real_label": 0.8,
+          "discriminator_optimizer": "AdamW, lr 1e-4, weight_decay 0",
+          "discriminator_loss": "0.5 real BCE + 0.25 generated BCE + 0.25 wrong-detail BCE; clip 1",
+          "inference_cost": "none; feature encoder and discriminator discarded",
+          "condition": "detached DINO tokens of bicubic LR at matching output coordinates",
+          "features": "concatenate output and condition tokens; 768 inputs, 96 hidden units",
+          "negatives": "half generated output, half HR with signed 3x3 highpass displaced two pixels right",
+          "limitation": "combined conditioning/negative recipe; not isolated component attribution"
+        },
+        "discriminator_initial_sha256": "8fd80818539e329acfaeb34453193fae76ba9d7d70b78092f33df73fe9ff7f81",
+        "first_decoded_sequence_sha256": "1cb6fc7da87f8c2653639c18098591a079458b2502ab315555ead5a33731db6d",
+        "first_batch_sha256": "41cda4bb4af06791bf06147e37c6787f3c40004f16d76fe545ac2d8ffb843219",
+        "first_output_sha256": "8aebe122f7bd2a1f772bee10deb89f88809f58ca32d67678db5f027a61a5721f"
+      },
+      "report_sha256": "4e57d9b785441d261103efe0d49c14e621f6447e5c02d9297f1a14b27a188326",
+      "checkpoint_sha256": "865b4f91708435324cda8fb58b363f86ae2efa4fc4300458715d4b92e6f0bf27",
+      "candidate": {
+        "sources": {
+          "crowd_run": {
+            "lpips": 0.3514738557860255,
+            "dists": 0.13905741274356842,
+            "psnr_y": 22.84334824140835,
+            "detail_energy": 0.5588365992283452,
+            "fine_correlation": 0.3640845905338709
+          },
+          "four_people": {
+            "lpips": 0.17586788814514875,
+            "dists": 0.07626613974571228,
+            "psnr_y": 30.23192752592778,
+            "detail_energy": 0.8184029702856637,
+            "fine_correlation": 0.647676736800764
+          },
+          "johnny": {
+            "lpips": 0.2216051546856761,
+            "dists": 0.09627000242471695,
+            "psnr_y": 32.54749656776365,
+            "detail_energy": 0.8052300385079996,
+            "fine_correlation": 0.6183485419945245
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.2496489662056168,
+          "dists": 0.10386451830466588,
+          "psnr_y": 28.540924111699926,
+          "detail_energy": 0.7274898693406694,
+          "fine_correlation": 0.5433699564430531
+        }
+      },
+      "change_percent_vs_control": {
+        "lpips": -1.599423665443478,
+        "dists": -1.120896701283658
+      },
+      "change_percent_vs_shipping": {
+        "lpips": -4.684312028487758,
+        "dists": -5.227282896534913
+      }
+    },
+    "big_aesop_clean_lr_1k": {
+      "experiment": {
+        "args": {
+          "bank": "C:\\lucid\\stream-bank-v4",
+          "pixrestore_cache": "none",
+          "shipping_cache": "none",
+          "init": "C:\\lucid\\paired-ladder-20260905-r10\\big_2k\\step002000.pth",
+          "out": "big_aesop_clean_lr_1k",
+          "teacher_mix": 0.0,
+          "steps": 1000,
+          "batch": 4,
+          "crop": 96,
+          "lr": 2e-05,
+          "seed": 20260914,
+          "architecture": "coupled",
+          "detail_channels": 32,
+          "detail_blocks": 4,
+          "detail_target": "reference",
+          "dino_gan_weight": 0.0075,
+          "ldl_weight": 0,
+          "ldl_formulation": "reference",
+          "native_input_stages": false,
+          "native_output_stages": false,
+          "aesop_checkpoint": "AE_RRDBdecoder_100K.pth",
+          "clean_lr_weight": 1.0,
+          "training_frames": 3,
+          "temporal": 0,
+          "input_noise": 0,
+          "intended": "reference",
+          "paired_negatives": "shift",
+          "smooth_negative_share": 0.125,
+          "paired_dino": true,
+          "gan_head_ratio_cap": 0,
+          "pixrestore_repository": "C:\\lucid\\pixrestore-baseline-20260904",
+          "dino_repository": "C:\\lucid\\causal-frontier-20260904-dino\\third_party\\dinov2",
+          "dino_checkpoint": "C:\\lucid\\frontier-teachers-20260904\\dinov2_vits14_pretrain.pth"
+        },
+        "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+        "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+        "teacher_manifest_sha256": null,
+        "shipping_manifest_sha256": null,
+        "initialization": "2x checkpoint used directly",
+        "source_hashes": {
+          "train_presented_detail.py": "5b2a6d2c252d1dd6ca2d0c762d176c20a75d4079eb6c6784c214c019120dd57c",
+          "fold_shipping_head.py": "750795d69cce54883e601440b64344e25cd137b90c05e0e0d990d3bcf205d01e",
+          "train_causal_detail.py": "29484d4cf228a0ff04c17c509c68dfe62adf30eafea67f0903f4ebb52dfd662e",
+          "train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+          "span_arch.py": "0fd7c3c6bddcf6fd9c547793a58e9ded66a99e75c106fa20aa3e1cd059f6a806",
+          "aesop_fidelity.py": "2bb9c8f6a9a144b7f13bc0ed2ea1d48b7af7710076169d47b02a224859639fa9",
+          "clean_lr_targets.py": "c7fed48821fe30cd0ce03ddfc92e2e1675cf3087c608f786bc4fe7b776c184cf",
+          "dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+          "dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a",
+          "paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb"
+        },
+        "loss": "1.1 AESOP decoded-image L1 + 0.2 signed Sobel + 0.05 FFT to HR; 8 output-pixel border excluded",
+        "precision": "CUDA BF16 autocast; AdamW FP32; no compilation",
+        "input_noise": 0,
+        "temporal": 0,
+        "torch": "2.6.0+cu124",
+        "gpu": "NVIDIA GeForce RTX 4080",
+        "purpose": "controlled quality/performance experiment; not shipping promotion",
+        "aesop": {
+          "checkpoint_sha256": "8a428a920a9e9d66362bf5da2d837e7ccabdbe2d6fb04d0a1b84b7fea9fd83c1",
+          "weights": "params_ema",
+          "upstream_commit": "3d6fe1d95a0a2fbaf2365861b0ce9f725985c498",
+          "loss": "L1 after frozen autoencoder decoder, FP32; target branch detached",
+          "architecture": "official 4x bottleneck, two encoder RRDBs and 23 decoder RRDBs",
+          "scope": "published synthetic AE trained 100k steps; not a locally pretrained 2x codec-domain AE",
+          "inference_cost": "none; teacher is not stored in the SR model",
+          "source_sha256": "6a87d40ab99f7e20379142eab010deca9db868cbe9d922cfb991602961d2eb44"
+        },
+        "clean_lr": {
+          "weight": 1.0,
+          "target": "HR downsampled with the same full-chroma RGB Lanczos-3 operator as prediction",
+          "order": "before 8-pixel HR loss crop; after output-stage proxy when enabled",
+          "boundary_exclusion_lr": 4,
+          "quantization": "RGB8 straight-through on prediction; target detached",
+          "scope": "clean RGB supervision; not bit-exact bank pre-encode YUV; no decoded-input self-consistency",
+          "cache": "none; older cleaner FFmpeg cache is incompatible with full-chroma operator"
+        },
+        "adversary": {
+          "upstream": "https://github.com/csslc/PixRestore",
+          "gan_sha256": "21be7412da65dc94eb7048e3510ce8ec8e6b47ae241ff4679df0eba728f99b59",
+          "feature_encoder": {
+            "inspiration": "https://github.com/csslc/PixRestore",
+            "reviewed_pixrestore_commit": "909ca06e614cf72e218d52b4fa41077c603d872b",
+            "encoder_repository": "https://github.com/facebookresearch/dinov2",
+            "encoder_commit": "7764ea0f912e53c92e82eb78a2a1631e92725fc8",
+            "encoder_weight_sha256": "b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9",
+            "layers": [
+              1,
+              2,
+              4,
+              6,
+              8,
+              10
+            ],
+            "size": 224,
+            "temperature": 1.0,
+            "normalization": "ImageNet RGB; raw intermediate patch tokens; cosine distance",
+            "weighting": "softmax((1-mean_LQ_HQ_cosine)/temperature), detached",
+            "resize": "PyTorch bicubic antialias",
+            "inference_cost": "none; used only for training"
+          },
+          "real_target": "known training HQ reference",
+          "real_label": 0.8,
+          "discriminator_optimizer": "AdamW, lr 1e-4, weight_decay 0",
+          "discriminator_loss": "0.5 real BCE + 0.25 generated BCE + 0.25 wrong-detail BCE; clip 1",
+          "inference_cost": "none; feature encoder and discriminator discarded",
+          "condition": "detached DINO tokens of bicubic LR at matching output coordinates",
+          "features": "concatenate output and condition tokens; 768 inputs, 96 hidden units",
+          "negatives": "half generated output, half HR with signed 3x3 highpass displaced two pixels right",
+          "limitation": "combined conditioning/negative recipe; not isolated component attribution"
+        },
+        "discriminator_initial_sha256": "8fd80818539e329acfaeb34453193fae76ba9d7d70b78092f33df73fe9ff7f81",
+        "first_decoded_sequence_sha256": "1cb6fc7da87f8c2653639c18098591a079458b2502ab315555ead5a33731db6d",
+        "first_batch_sha256": "41cda4bb4af06791bf06147e37c6787f3c40004f16d76fe545ac2d8ffb843219",
+        "first_output_sha256": "8aebe122f7bd2a1f772bee10deb89f88809f58ca32d67678db5f027a61a5721f"
+      },
+      "report_sha256": "b203b162eaeed74fce4aabc977d64475d5fe64101cc22c563cde0946308bba83",
+      "checkpoint_sha256": "9045708af43cff210cd46c03f718329a12027949ac36a674f0cd41d1a26e8bfa",
+      "candidate": {
+        "sources": {
+          "crowd_run": {
+            "lpips": 0.35878026485443115,
+            "dists": 0.1420125737786293,
+            "psnr_y": 22.900462588173216,
+            "detail_energy": 0.5383660774337256,
+            "fine_correlation": 0.3676263308490286
+          },
+          "four_people": {
+            "lpips": 0.17572151264175773,
+            "dists": 0.07791661471128464,
+            "psnr_y": 30.334207003642735,
+            "detail_energy": 0.7943894172509216,
+            "fine_correlation": 0.6529514774207188
+          },
+          "johnny": {
+            "lpips": 0.2223443454131484,
+            "dists": 0.09754849970340729,
+            "psnr_y": 32.669329256430686,
+            "detail_energy": 0.7808511789432735,
+            "fine_correlation": 0.6249588118550882
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.2522820409697791,
+          "dists": 0.10582589606444041,
+          "psnr_y": 28.634666282748878,
+          "detail_energy": 0.7045355578759734,
+          "fine_correlation": 0.5485122067082785
+        }
+      },
+      "change_percent_vs_control": {
+        "lpips": -0.5615820982881603,
+        "dists": 0.7463364721054466
+      },
+      "change_percent_vs_shipping": {
+        "lpips": -3.679007113986943,
+        "dists": -3.4375947278103225
+      }
+    }
+  },
+  "decision": "AESOP alone selected for native measurement; clean LR alone and combination do not improve jointly over AESOP alone; no shipping change"
+}

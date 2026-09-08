@@ -413,3 +413,32 @@ target rather than eagerly duplicating every sequence. Four tests verify exact
 sampler/RNG equivalence, read-only memory maps, source/sequence conflicts,
 changed arrays and incomplete-bank rejection. No completed larger bank or
 pretraining quality result is claimed yet.
+
+The completed r33 native follow-up from current shipping weights also fails the
+per-source requirement. Its raw-objective control improves mean LPIPS 0.474% and
+DISTS 0.223% over shipping, but worsens RushHour LPIPS 13.43% and Sunflower 14.66%.
+The output-stage arm worsens mean LPIPS 0.056% while improving DISTS 2.733% over
+shipping; Sunflower LPIPS worsens 20.07%, RushHour 11.88% and PedestrianArea 7.12%.
+Against its control, output-stage training worsens LPIPS 0.532% and improves
+DISTS 2.516%. Initialization alone does not resolve the regressions. Neither is
+promoted. `shipping-init-output-native-comparison.json` records both arms.
+
+r36's three loss ablations completed with identical initialization, first sampled
+sequence, first model output and initial discriminator hashes. On development48,
+clean LR alone worsens LPIPS 1.166% / DISTS 1.761% against the matched control;
+AESOP improves 1.599% / 1.121%; the combination improves LPIPS 0.562% but worsens
+DISTS 0.746%. AESOP alone improves 4.684% / 5.227% against shipping on that screen,
+with all three sources improving. It is selected for native measurement, without
+changing its weights or stage settings. `fidelity-development-screen.json` binds
+all three reports. These reused development samples are not release evidence.
+
+r38 fixes the larger-bank base control before the new-bank outcome: original
+pretrained SPAN weights, folded to direct 2x, 40,000 reconstruction steps at
+batch 16/crop 96/AdamW 1e-4/cosine decay/seed 20260918, followed by 2,000 paired-
+critic steps at batch 4 and learning rate 2e-5. The critic weight is 0.0075.
+Both final critic passes use the same original v4 data, so that comparison
+isolates the changed **base-pretraining** bank rather than changing both stages
+at once. The larger arm must use the identical architecture, initialization,
+schedule and objectives. This is continuation of pretrained features, not
+training a new model from random initialization. The initial mapped v4 bank
+contains exactly the original pairs; materialization completed successfully.
