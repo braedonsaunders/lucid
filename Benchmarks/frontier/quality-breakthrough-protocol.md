@@ -652,3 +652,9 @@ three-crop gallery and additional natural-scene crops were reviewed, so the
 decision reflects visible gains and defects rather than aggregate scores alone.
 No promotion. `expanded-critic-native-comparison.json` retains all eight sources.
 All 68 relevant unit tests pass after the source-sampling addition.
+
+r44's equal-source expanded-base critic improves raw development LPIPS 4.076%
+and DISTS 2.959% versus shipping, and REDS720 11.573%/10.601%. Both held-out REDS
+sources improve. Development talking heads still regress slightly; the large
+natural-footage gain remains insufficient to infer native artifact control.
+Native evaluation and the matched shipping-initialized arm are in progress.

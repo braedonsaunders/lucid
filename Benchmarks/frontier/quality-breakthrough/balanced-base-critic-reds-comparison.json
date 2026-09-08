@@ -1,0 +1,78 @@
+{
+  "complete": true,
+  "scope": "r44 equal-source expanded-base critic, raw REDS720 versus shipping",
+  "frames": 720,
+  "report_sha256": "38994c626a550757cfa0bb522b3a4c3a187073ca46360b6cddb26a43008b40e2",
+  "baseline_report_sha256": "38994c626a550757cfa0bb522b3a4c3a187073ca46360b6cddb26a43008b40e2",
+  "checkpoint_sha256": {
+    "balanced_base_critic_2k": "c03d03ccdb0bf79c126aa26bebbb6b819f9bc03e6c1df265404bc657ea51b05f",
+    "big2k": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c"
+  },
+  "candidate": {
+    "sources": {
+      "reds_154": {
+        "lpips": 0.2657064733405908,
+        "dists": 0.23193761126862633,
+        "psnr_y": 25.891168668993476,
+        "detail_energy": 0.661975199667303,
+        "fine_correlation": 0.37121945423755404
+      },
+      "reds_073": {
+        "lpips": 0.31278185219400456,
+        "dists": 0.22683719976080788,
+        "psnr_y": 22.532087007729952,
+        "detail_energy": 0.5945067881479198,
+        "fine_correlation": 0.2557293863449401
+      }
+    },
+    "source_balanced": {
+      "lpips": 0.2892441627672977,
+      "dists": 0.2293874055147171,
+      "psnr_y": 24.211627838361714,
+      "detail_energy": 0.6282409939076115,
+      "fine_correlation": 0.31347442029124706
+    }
+  },
+  "baseline": {
+    "sources": {
+      "reds_154": {
+        "lpips": 0.3003982782984773,
+        "dists": 0.25876827604240843,
+        "psnr_y": 26.42307851189929,
+        "detail_energy": 0.5211994265990255,
+        "fine_correlation": 0.3850784161612187
+      },
+      "reds_073": {
+        "lpips": 0.3537989249245988,
+        "dists": 0.2544108046425713,
+        "psnr_y": 22.864455298966412,
+        "detail_energy": 0.4566856822268707,
+        "fine_correlation": 0.26709763488501487
+      }
+    },
+    "source_balanced": {
+      "lpips": 0.32709860161153803,
+      "dists": 0.2565895403424899,
+      "psnr_y": 24.64376690543285,
+      "detail_energy": 0.4889425544129481,
+      "fine_correlation": 0.3260880255231168
+    }
+  },
+  "percent_change": {
+    "source_balanced": {
+      "lpips": -11.572791402268434,
+      "dists": -10.601419992203887
+    },
+    "sources": {
+      "reds_154": {
+        "lpips": -11.54860312595286,
+        "dists": -10.368606687082826
+      },
+      "reds_073": {
+        "lpips": -11.59332882069547,
+        "dists": -10.838220853277969
+      }
+    }
+  },
+  "interpretation": "Negative LPIPS/DISTS change is better; these measurements supplement visual review and do not establish release admission."
+}
