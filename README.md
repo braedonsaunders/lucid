@@ -8,9 +8,16 @@ the result to the video player. Processing stays on your Mac.
 
 ## What ships
 
-- **4× learned reconstruction.** A compact SPAN network with a pixel-unshuffled
-  trunk, trained on codec degradation. Six fixed input shapes cover supported
-  144p–480p sources, including 426×240 and 854×480 through aligned variants.
+- **2× learned reconstruction, one model.** `lucidbig2k_`: an unshuffled SPAN
+  trunk with a direct 2× head, fine-tuned on full-frame codec-context streams
+  from 21 sources with a reference target and an input-conditioned paired DINO
+  critic. Seven fixed input shapes cover 144p through 720p. There is no model
+  choice anywhere in the product; promotion is a deliberate edit of
+  `Lucid/Resources/Models.json` backed by a native delivery holdout.
+- **Grain-aware post-stages.** Debanding runs only on true quantisation
+  plateaus (any neighbour more than about 1.3 levels away marks grain or
+  texture and is left alone), followed by contrast-adaptive sharpening that
+  cannot leave the range of the pixels it was computed from, and a tone grade.
 - **Motion-aligned temporal filtering.** A bounded Metal block matcher reprojects
   previous-frame luma. Photometric confidence rejects unreliable matches;
   neighborhood clipping limits trails. Seeks, repeated timestamps, long gaps,
@@ -38,16 +45,30 @@ and no native window match. Screen-capture fallback is a separate path.
 
 ## Supported video
 
-Lucid currently targets unprotected SDR video from 144p through 480p that is
-being enlarged by at least 1.15×. It keeps an existing session down to 1.0× to
-avoid toggling at the boundary. A source must fit a bundled model.
+Lucid targets unprotected SDR video from 144p through 720p that is being
+enlarged by at least 1.15×. It keeps an existing session down to 1.0× to avoid
+toggling at the boundary. A source must fit a bundled model shape; 1080p and
+above are declined.
 
-720p/1080p input, HDR enhancement, protected playback, and universal website
-compatibility are not supported promises. Lucid is an independent application;
-it does not contain NVIDIA RTX software or integrate with the browser compositor
-at driver level.
+HDR enhancement, protected playback, and universal website compatibility are
+not supported promises. Lucid is an independent application; it does not
+contain NVIDIA RTX software or integrate with the browser compositor at driver
+level.
 
-## Evidence, September 4, 2026
+## Evidence, September 8, 2026
+
+Native delivery holdout (960 frame pairs, eight sources, the Release app's own
+pipeline end to end, scored with LPIPS and DISTS against the SPAN ch32utc 4×
+model that shipped before): **+12.26% LPIPS / +16.10% DISTS, all eight sources
+up**, at about 40% lower graph cost. The full ladder of what was tried, what was
+measured natively and what was rejected is in
+`Benchmarks/frontier/paired-ladder-protocol.md`; the promotion gate is
+`Tools/frontier_eval/gate_perceptual.py` (`paired-critic-protocol.md` and
+`perceptual-gate-protocol.md` explain why it is perceptual rather than
+fidelity-based). Apple's MetalFX temporal scaler fed with video was measured on
+the same holdout and lands at Lanczos level; the receipt is in the protocol.
+
+### Earlier evidence, September 4, 2026 (4× SPAN era)
 
 The [current development evidence](Benchmarks/frontier/README.md) records
 source-disjoint sequence screening, rejected candidates, temporal fixes, trained
