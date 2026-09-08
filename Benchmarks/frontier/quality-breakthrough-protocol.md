@@ -750,3 +750,10 @@ observed information instead of assuming generated previous output is sufficient
 This is a limited MSE mechanism probe, not a perceptual result, exact alignment
 proof, optimal oracle bound, or native runtime claim.
 `history-information-diagnostic.json` retains every transition and all fixed blends.
+
+r45 student native evaluation also completes: LPIPS/DISTS worsen 5.945%/6.078%
+against shipping. It improves the same four sources as EMA, with stronger
+ParkJoy/InToTree gains but larger regressions elsewhere. The artifact-loss
+combination reduces r44's penalty without providing a broad delivered-quality
+breakthrough. Both complete native reports and the fixed smooth/textured scene
+crops are retained; neither checkpoint is promoted.

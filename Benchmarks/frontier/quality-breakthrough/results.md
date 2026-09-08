@@ -31,3 +31,16 @@ Architecture and pipeline experiments remain opt-in research tools. No model
 picker, content-specific deployment policy, or shipping asset has been added.
 See [the protocol](../quality-breakthrough-protocol.md) for recipes, provenance,
 matched controls, limitations, and detailed follow-up results.
+
+Combining source-balanced broader data with reference LDL100 and EMA improves
+all five raw development/REDS sources on LPIPS and DISTS and visibly reduces
+false texture. Native output remains mixed: EMA is +2.822%/+2.669% versus
+shipping; student +5.945%/+6.078%. Both improve Ducks, OldTown, ParkJoy and
+InToTree, while the other four sources regress. [EMA native evidence](balanced-ldl-ema-native-comparison.json).
+
+A separate fixed three-patch temporal diagnostic finds that a .25 blend of
+aligned previous clean HR improves MSE 9–12%, while blending previous SR
+generally does not. Clean HR is strictly an oracle diagnostic, not an inference
+input. This motivates investigating better preservation of observed information
+in temporal state; it does not establish a deployable temporal quality gain.
+[Transition-level evidence](history-information-diagnostic.json).
