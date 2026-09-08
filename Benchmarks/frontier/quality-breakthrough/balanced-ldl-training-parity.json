@@ -1,0 +1,37 @@
+{
+  "complete": true,
+  "scope": "r45 LDL100+EMA versus r44 balanced shipping control",
+  "matched": {
+    "bank_sha256": true,
+    "checkpoint_sha256": true,
+    "source_hashes": true,
+    "sampling": true,
+    "discriminator_initial_sha256": true,
+    "first_decoded_sequence_sha256": true,
+    "first_batch_sha256": true,
+    "first_output_sha256": true
+  },
+  "argument_changes": {
+    "out": [
+      "balanced_shipping_critic_2k",
+      "balanced_ldl100_2k"
+    ],
+    "ldl_weight": [
+      0,
+      100.0
+    ]
+  },
+  "control_initial_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+  "source_hashes": {
+    "train_presented_detail.py": "76aa0cf85a567fbfe0db3f2fa5ff23a9a190ca42ede35fa576b9604d881cc743",
+    "fold_shipping_head.py": "750795d69cce54883e601440b64344e25cd137b90c05e0e0d990d3bcf205d01e",
+    "train_causal_detail.py": "51b3b776485caa5ccaec4a7c58eec5d3b6060d22ad1c311c0561d2abb994ee7a",
+    "train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+    "span_arch.py": "0fd7c3c6bddcf6fd9c547793a58e9ded66a99e75c106fa20aa3e1cd059f6a806",
+    "mmap_training_bank.py": "de1a78931b3a8a26ce1980d4b1a92ea887aeab7e70e26cd546e59ce534153b94",
+    "source_sampling.py": "13156e6190fc0d26337699b34e45f1fecb44f93cb6a942e044aa3e2e8ee36466",
+    "dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+    "dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a",
+    "paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb"
+  }
+}

@@ -707,3 +707,13 @@ ParkJoy, InToTree and Ducks improve on both perceptual distances. These are
 six fixed frame100 observations, not the full regression corpus.
 `raw-native-artifact-diagnostic.json` records all four raw/native model variants,
 image/reference hashes, scorer context and absolute metrics.
+
+r45's training completes in 3.07 minutes. Initial code, bank, weights, sampler,
+discriminator, decoded sample, batch and model output match r44 exactly; only
+LDL weight and output directory arguments differ. Student/EMA improve raw
+development LPIPS 3.701%/3.812% and DISTS 5.896%/5.341% versus shipping, with
+both distances improving on all three sources. Fixed crop review shows much
+less bee/car speckling while retaining some foliage separation. EMA native
+evaluation is underway. REDS scoring is rerun to a fresh report after a Windows
+sharing violation during concurrent report transfer; trained weights are intact
+and no training is repeated. The partial failed report is not quality evidence.
