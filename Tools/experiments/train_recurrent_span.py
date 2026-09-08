@@ -24,10 +24,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'frontier_eval'))
 from evaluate_sequences import Scorer, summarize
 
 
-def run_sequence(model, decoded, native_inputs=False, *, use_history=True):
+def run_sequence(model, decoded, native_inputs=False, *, use_history=True, source_motion_policy='taa'):
+    if source_motion_policy not in ('taa', 'search'):
+        raise ValueError('source motion policy must be taa or search')
     if native_inputs:
         with torch.no_grad():
-            inputs = preprocess_sequence(decoded)
+            inputs = preprocess_sequence(decoded, motion_policy=source_motion_policy)
     else:
         inputs = decoded
     state, outputs = None, []
@@ -39,7 +41,8 @@ def run_sequence(model, decoded, native_inputs=False, *, use_history=True):
 
 
 @torch.inference_mode()
-def validate(model, data, source_ids, native_inputs, *, use_history=True, baseline=None):
+def validate(model, data, source_ids, native_inputs, *, use_history=True, baseline=None,
+             source_motion_policy='taa'):
     model.eval()
     scorer = Scorer(torch.device('cuda'))
     rows, temporal = [], []
@@ -47,7 +50,8 @@ def validate(model, data, source_ids, native_inputs, *, use_history=True, baseli
     for lr, hr, identity in data:
         source = torch.from_numpy(lr.copy()).permute(0, 3, 1, 2)[None].float().cuda() / 255
         reference = torch.from_numpy(hr.copy()).permute(0, 3, 1, 2)[None].float().cuda() / 255
-        output, inputs = run_sequence(model, source, native_inputs, use_history=use_history)
+        output, inputs = run_sequence(model, source, native_inputs, use_history=use_history,
+                                      source_motion_policy=source_motion_policy)
         base = torch.stack([model.sr(inputs[:, t]).clamp(0, 1) for t in range(inputs.shape[1])], 1)
         variants = [('base', base), ('recurrent', output)]
         if baseline is not None:
@@ -68,6 +72,8 @@ def validate(model, data, source_ids, native_inputs, *, use_history=True, baseli
     return {'complete': True, 'scope': 'source-disjoint full-bank-sequence patch diagnostic; not native playback',
             'use_history': use_history, 'base_definition': 'current checkpoint without history; initial is the unchanged starting model when present',
             'history_source': model.history_source,
+            'native_input_stages': native_inputs,
+            'source_motion_policy': source_motion_policy,
             'motion_seed': model.motion_seed,
             'rows': rows, 'summary': summarize(rows), 'temporal': temporal}
 
@@ -82,6 +88,11 @@ def main():
     ap.add_argument('--frames', type=int, default=3)
     ap.add_argument('--seed', type=int, default=20260914)
     ap.add_argument('--native-input-stages', action='store_true')
+    ap.add_argument('--source-motion-policy', choices=('taa', 'search'), default='taa',
+                    help='Source TAA policy; legacy default preserves archived recipes, current app uses search')
+    ap.add_argument('--reds-bank', type=Path, help='Include the fixed held-out REDS selection in final validation')
+    ap.add_argument('--separate-gradient-clipping', action='store_true',
+                    help='Clip each optimizer group independently so history gradients cannot rescale SR gradients')
     ap.add_argument('--joint', action='store_true', help='Optimize the fused SR backbone along with the history convolution')
     ap.add_argument('--no-history', action='store_true', help='Matched joint-training control; history remains zero and disabled')
     ap.add_argument('--history-source', choices=('sr', 'decoded'), default='sr',
@@ -109,6 +120,16 @@ def main():
     manifest, data = load_bank(args.bank)
     if manifest['frames'] < args.frames or any(min(lr.shape[1:3]) < args.crop for rows in data.values() for lr, _, _ in rows):
         ap.error('adequate bank sequence/crop geometry required')
+    validation_data = data['validation']
+    validation_sources = {r['id']: r['source_id'] for r in manifest['sequences']}
+    if args.reds_bank:
+        from replay_recurrent_motion import validation_pairs
+        validation_data, validation_sources = validation_pairs(args.bank, manifest)
+        reds_data, reds_sources = validation_pairs(args.reds_bank, manifest, reds=True)
+        if validation_sources.keys() & reds_sources.keys():
+            raise ValueError('duplicate validation identities')
+        validation_data.extend(reds_data)
+        validation_sources.update(reds_sources)
     base, _, frames = load(args.init, 'cuda')
     if type(base) is not Unshuffled or frames != 1:
         ap.error('ordinary single-frame 2x SPAN initialization required')
@@ -133,7 +154,9 @@ def main():
     source_root = Path(__file__).resolve().parents[1]
     files = ['architectures/recurrent_span.py', 'architectures/subspace_adapter.py',
              'experiments/recurrent_frame_feeding.py', 'experiments/native_stages.py',
-             'experiments/train_presented_detail.py', 'experiments/train_recurrent_span.py']
+             'experiments/train_presented_detail.py', 'experiments/train_recurrent_span.py',
+             'experiments/train_causal_detail.py', 'experiments/replay_recurrent_motion.py',
+             'frontier_eval/evaluate_sequences.py', 'eval_checkpoint.py']
     experiment = {'args': {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
         'bank_sha256': digest(args.bank / 'manifest.json'), 'checkpoint_sha256': digest(args.init),
         'frozen_backbone_sha256': frozen_hash, 'source_hashes': {p: digest(source_root / p) for p in files},
@@ -143,6 +166,8 @@ def main():
             else 'previous decoded observation only; no generated-history backpropagation'),
         'backbone_trainable': args.joint, 'use_history': not args.no_history,
         'optimizer': 'AdamW/cosine; history 2e-4, joint backbone 2e-5; no weight decay',
+        'gradient_clipping': 'per optimizer group norm1' if args.separate_gradient_clipping else 'joint norm1',
+        'source_motion_policy': args.source_motion_policy,
         'motion': 'decoded-LR native integer search plus half-pixel refinement around integer and zero seeds; detached correspondence',
         'motion_seed': args.motion_seed,
         'history_storage': 'RGB8 straight-through quantization before output detail stages',
@@ -150,6 +175,8 @@ def main():
                          'previous decoded RGB8 lifted to 2x by FP32 bicubic, align_corners=False, clamped; same motion and history convolution',
         'limitations': 'crop-local history; no native SR warp/cost parity; no browser timing or release admission',
         'torch': str(torch.__version__), 'gpu': torch.cuda.get_device_name()}
+    if args.reds_bank:
+        experiment['reds_bank_sha256'] = digest(args.reds_bank / 'manifest.json')
     if adversary:
         experiment['adversary'] = adversary.metadata
         experiment['discriminator_initial_sha256'] = state_digest(adversary.discriminator.state_dict())
@@ -165,9 +192,11 @@ def main():
         optimizer.zero_grad(set_to_none=True)
         # Keep warping/quantization FP32. Only the neural graph needs autocast;
         # this initial causal probe deliberately uses FP32 throughout.
-        output, _ = run_sequence(model, source, args.native_input_stages, use_history=not args.no_history)
+        output, inputs = run_sequence(model, source, args.native_input_stages, use_history=not args.no_history,
+                                      source_motion_policy=args.source_motion_policy)
         if step == 1:
             experiment['first_output_sha256'] = state_digest({'output': output})
+            experiment['first_input_sha256'] = state_digest({'inputs': inputs})
             (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
         a, b = output[:, -1, :, 8:-8, 8:-8], reference[..., 8:-8, 8:-8]
         loss = reconstruction_objective(a, b, b, 'reference')
@@ -180,7 +209,11 @@ def main():
         if not torch.isfinite(loss):
             raise ValueError('nonfinite recurrent objective')
         loss.backward()
-        torch.nn.utils.clip_grad_norm_((p for p in model.parameters() if p.requires_grad), 1)
+        if args.separate_gradient_clipping:
+            for group in optimizer.param_groups:
+                torch.nn.utils.clip_grad_norm_(group['params'], 1)
+        else:
+            torch.nn.utils.clip_grad_norm_((p for p in model.parameters() if p.requires_grad), 1)
         optimizer.step()
         if adversary:
             with torch.autocast('cuda', dtype=torch.bfloat16):
@@ -198,8 +231,10 @@ def main():
                 'motion_seed': args.motion_seed,
                 'channels': model.sr.core.conv_1.out_channels, 'version': model.sr.version,
                 'step': args.steps, 'experiment': experiment}, args.out / f'step{args.steps:06d}.pth')
-    result = validate(model, data['validation'], {r['id']: r['source_id'] for r in manifest['sequences']}, args.native_input_stages,
-                      use_history=not args.no_history, baseline=initial)
+    result = validate(model, validation_data, validation_sources, args.native_input_stages,
+                      use_history=not args.no_history, baseline=initial,
+                      source_motion_policy=args.source_motion_policy)
+    result['checkpoint_sha256'] = digest(args.out / f'step{args.steps:06d}.pth')
     (args.out / 'validation.json').write_text(json.dumps(result, indent=2) + '\n')
     (args.out / 'complete.json').write_text(json.dumps({'complete': True, 'backbone_unchanged': backbone_unchanged,
         'steps': args.steps, 'minutes': (time.monotonic() - started) / 60}) + '\n')

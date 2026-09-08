@@ -1168,3 +1168,33 @@ The native full-search default and model weights remain as previously admitted.
 All four training processes and their Python children exited. See
 `quality-breakthrough/joint-conditioning-comparison.json` for closed receipts,
 matched hashes, source-level scores, calibration and temporal diagnostics.
+
+## Raw versus filtered observations in temporal training
+
+r54 tests whether source preprocessing limits the decoded-history experiment.
+Four matched2k arms cross raw decoded versus full-search native source proxy
+with disabled versus enabled decoded-frame history. All instantiate the same
+RecurrentSPAN, share big2k initialization, original bank, seed20260914, batch4,
+crop96, three-frame unroll and paired DINO weight0.0075. Backbone/history learning
+rates remain2e-5/2e-4; each optimizer group is clipped independently at norm1
+in every arm. This avoids attributing a shared gradient-norm change to history.
+History uses the same decoded observation, subpixel correspondence and rejection
+in both enabled arms. It still retains one observed frame through the existing
+bicubic RGB interface; this does not introduce latent feature recurrence.
+
+Raw mode bypasses the complete deband/TAA/RGB420 proxy, so its difference from
+full-search mode cannot be attributed to TAA alone. Comparisons within each
+input mode isolate history from ordinary SR continuation. Across modes, they
+test the combined preprocessing choice. First data/backbone/discriminator hashes
+must match across all arms; first input/output hashes must match within each
+input-mode pair. Native source-policy defaults retain legacy behavior for old
+recipes; the new runs explicitly request search. Twenty-two focused local tests
+pass, including explicit-search, legacy-default and raw-bypass behavior.
+
+Each arm validates on all72 fixed source-disjoint16-frame sequences, scoring
+216 frames each for recurrent output, its own current-frame branch and initial
+big2k under that arm's input preprocessing. The full-search initial rows provide
+the common current-pipeline proxy comparison. Fixed three-patch visual review
+will accompany aggregate/source-level metrics and full-sequence residual
+diagnostics. Native quality and60fps cost remain separate requirements for any
+promotion. No outcome is asserted by this setup.
