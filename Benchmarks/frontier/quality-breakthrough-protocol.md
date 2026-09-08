@@ -802,3 +802,40 @@ directories, the no-history control changes only `no_history`; decoded versus
 generated history changes only `history_source`. The trainable history branch
 has 13,824 parameters in both history arms.
 `decoded-history-training-parity.json` records the exact argument differences.
+
+All three r46 training and Sintel validations finish successfully. The original
+orchestrator cannot start REDS evaluation because its snapshot lacks the evaluator;
+a fresh evaluation-only snapshot runs both REDS comparisons successfully, without
+retraining. Across 72 sequences and 216 scored frames per variant, SR history
+changes LPIPS/DISTS by -0.151%/+0.232% versus the fresh no-history control;
+decoded history changes them by -0.736%/+0.944%. Against each model's own
+current-frame branch, history worsens both distances: SR +0.450%/+0.062%,
+decoded +0.140%/+0.464%. Initial-model scores match across all arms, as do the
+repeated REDS control scores. Fixed three-patch visual review finds small changes,
+without a clear breakthrough. `decoded-history-comparison.json` retains source
+breakdowns, temporal measurements and checkpoint/report hashes. Neither model
+is promoted or integrated into native playback.
+
+## Preserve recurrent integer motion before refinement
+
+Investigation finds a concrete alignment defect in the temporal prototype:
+the shared native TAA search intentionally zeros displacement when stationary
+photometric error is small. Recurrent subpixel refinement inherited that zeroed
+seed, so its remaining half-pixel neighborhood could not recover a discarded
+four-pixel match. On a fixed RGB8-grid low-contrast translation, the legacy path
+recovers zero of the interior blocks despite confidence 1; preserving the integer
+search recovers every block. Higher-contrast controls match with either policy.
+`recurrent-motion-seed-diagnostic.json` records the geometric reproduction.
+
+The native TAA default remains unchanged. New recurrent training explicitly
+records `motion_seed=search`; archived checkpoints without the field load as
+`taa`, and contradictory checkpoint/training declarations are rejected. Tests
+cover low-contrast translation and exact legacy checkpoint replay on moving
+inputs. Seventy tests across twelve relevant experiment modules pass locally.
+This proves the implementation correction, not a real-footage quality gain.
+
+r47 replays the fixed r46 weights with both explicit motion policies, using
+the same 72 complete 16-frame validation sequences, unchanged initial model,
+and no-history control. No checkpoint bytes are changed. The replay records
+trained and overridden policies and source/bank/checkpoint hashes. This isolates
+the inference effect before deciding whether corrected-motion retraining helps.

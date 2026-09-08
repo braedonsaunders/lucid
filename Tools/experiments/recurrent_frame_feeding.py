@@ -15,20 +15,31 @@ def load_recurrent_checkpoint(path, device):
     declared = state.get('experiment', {}).get('args', {}).get('history_source', history_source)
     if declared != history_source:
         raise ValueError('checkpoint history source differs from training declaration')
+    # Historical checkpoints used the TAA-overridden integer seed. Preserve
+    # their inference semantics instead of silently changing archived results.
+    motion_seed = state.get('motion_seed', 'taa')
+    declared_motion = state.get('experiment', {}).get('args', {}).get('motion_seed', motion_seed)
+    if declared_motion != motion_seed:
+        raise ValueError('checkpoint motion seed differs from training declaration')
     model = RecurrentSPAN(Unshuffled(state['channels'], scale=2, version=state['version']),
-                          history_source=history_source)
+                          history_source=history_source, motion_seed=motion_seed)
     model.load_state_dict(state['model'])
     return model.eval().to(device), state
 
 
 @torch.no_grad()
-def subpixel_motion(current, previous):
+def subpixel_motion(current, previous, *, motion_seed='search'):
     """Refine native integer blocks over a half-pixel neighborhood.
 
     This experimental correspondence is not the production Metal kernel. It lets
     the temporal probe test fractional samples rather than only integer denoising.
     """
-    field = motion_blocks(current, previous)
+    if motion_seed not in ('taa', 'search'):
+        raise ValueError('motion seed must be taa or search')
+    # TAA can deliberately suppress low-error motion, but SR refinement needs
+    # the actual integer match. Otherwise a four-pixel match can be discarded
+    # and become unreachable inside the remaining +/-0.5-pixel search.
+    field = motion_blocks(current, previous, stationary_override=motion_seed == 'taa')
     n, _, height, width = current.shape
     bh, bw = field.shape[-2:]
     cy, cx = torch.meshgrid(torch.arange(bh, device=current.device) * 8 + 4,
@@ -61,7 +72,7 @@ def subpixel_motion(current, previous):
     return torch.cat((chosen, confidence[..., None], error[..., None]), -1).permute(0, 3, 1, 2)
 
 
-def warp_previous(current_rgb, previous_rgb, previous_output, *, subpixel=True):
+def warp_previous(current_rgb, previous_rgb, previous_output, *, subpixel=True, motion_seed='search'):
     """Warp a 2x reconstruction with LR block motion; reject cuts and occlusions.
 
     No output/reference target participates in motion. Optional half-pixel
@@ -70,10 +81,13 @@ def warp_previous(current_rgb, previous_rgb, previous_output, *, subpixel=True):
     n, _, height, width = current_rgb.shape
     if previous_rgb.shape != current_rgb.shape or previous_output.shape != (n, 3, height * 2, width * 2):
         raise ValueError('matched LR history and exact 2x reconstruction required')
+    if motion_seed not in ('taa', 'search'):
+        raise ValueError('motion seed must be taa or search')
     with torch.no_grad():
         current, _ = rgb_to_planes(current_rgb)
         previous, _ = rgb_to_planes(previous_rgb)
-        field = (subpixel_motion if subpixel else motion_blocks)(current, previous).half().float()
+        field = (subpixel_motion(current, previous, motion_seed=motion_seed) if subpixel else
+                 motion_blocks(current, previous, stationary_override=motion_seed == 'taa')).half().float()
         motion = field.repeat_interleave(8, -2).repeat_interleave(8, -1)[..., :height, :width]
         y, x = torch.meshgrid(torch.arange(height, device=current.device),
                               torch.arange(width, device=current.device), indexing='ij')
@@ -130,7 +144,8 @@ Pass raw decoded RGB separately when the SR input has been preprocessed.
                                      mode='bicubic', align_corners=False).clamp(0, 1)
         else:
             previous = state.output.detach() if detach_history else state.output
-        aligned, confidence, cut = warp_previous(raw_current, state.source, previous)
+        aligned, confidence, cut = warp_previous(raw_current, state.source, previous,
+                                                motion_seed=model.motion_seed)
     output = model(current, aligned, confidence).clamp(0, 1)
     stored = quantize8(output)
     if detach_history:

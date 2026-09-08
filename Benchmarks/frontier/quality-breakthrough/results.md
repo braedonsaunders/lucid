@@ -44,3 +44,14 @@ generally does not. Clean HR is strictly an oracle diagnostic, not an inference
 input. This motivates investigating better preservation of observed information
 in temporal state; it does not establish a deployable temporal quality gain.
 [Transition-level evidence](history-information-diagnostic.json).
+
+A matched decoded-observation history trial also fails to establish a temporal
+quality advantage: enabling history worsens LPIPS/DISTS by 0.140%/0.464%
+against its own trained current-frame branch. Generated-SR history worsens them
+by 0.450%/0.062%. [Matched comparison](decoded-history-comparison.json).
+
+Investigation identifies and corrects a recurrent motion-seed defect that
+discarded valid low-contrast translations before subpixel refinement. Native TAA
+and archived checkpoint semantics remain compatible; 70 relevant tests pass.
+Fixed-weight real-footage replay is the next check; the synthetic correction
+alone is not a quality claim. [Motion reproduction](recurrent-motion-seed-diagnostic.json).

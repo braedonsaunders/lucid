@@ -12,11 +12,14 @@ from .subspace_adapter import fuse_convolutions
 
 
 class RecurrentSPAN(nn.Module):
-    def __init__(self, sr, *, train_backbone=False, history_source='sr'):
+    def __init__(self, sr, *, train_backbone=False, history_source='sr', motion_seed='search'):
         super().__init__()
         if history_source not in ('sr', 'decoded'):
             raise ValueError('history source must be sr or decoded')
         self.history_source = history_source
+        if motion_seed not in ('taa', 'search'):
+            raise ValueError('motion seed must be taa or search')
+        self.motion_seed = motion_seed
         if sr.frames != 1 or sr.core.upsampler[1].upscale_factor != 4:
             raise ValueError('single-frame 2x source model required')
         if sr.core.img_range != 1 or torch.count_nonzero(sr.core.mean):

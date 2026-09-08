@@ -80,11 +80,13 @@ def deband(source, frame=1, settings=StageSettings()):
 
 
 @torch.no_grad()
-def motion_blocks(current, previous):
+def motion_blocks(current, previous, *, stationary_override=True):
     """Native two-pass 8px block correspondence, returned as Bx4xBHxBW.
 
     Match decisions are deliberately detached. Confidence and displacements
     depend on decoded inputs, never HR targets or model-generated features.
+    The default matches native TAA. SR experiments can retain the integer
+    search result by disabling its stationary overrides.
     """
     n, _, height, width = current.shape
     cy, cx = torch.meshgrid(torch.arange(0, height, 8, device=current.device),
@@ -114,11 +116,13 @@ def motion_blocks(current, previous):
                 best = torch.where(wins, regularized, best)
                 error = torch.where(wins, cost, error)
                 displacement = torch.where(wins[..., None], delta, displacement)
-    stationary_match = (stationary <= 6.5 / 255) | (stationary - error < 2 / 255)
-    displacement = torch.where(stationary_match[..., None], 0, displacement)
-    error = torch.where(stationary_match, stationary, error)
+    if stationary_override:
+        stationary_match = (stationary <= 6.5 / 255) | (stationary - error < 2 / 255)
+        displacement = torch.where(stationary_match[..., None], 0, displacement)
+        error = torch.where(stationary_match, stationary, error)
     confidence = 1 - smoothstep(6 / 255, 16 / 255, error)
-    confidence = torch.where(stationary <= 6.5 / 255, 1, confidence)
+    if stationary_override:
+        confidence = torch.where(stationary <= 6.5 / 255, 1, confidence)
     return torch.cat((displacement, confidence[..., None], error[..., None]), -1).permute(0, 3, 1, 2)
 
 
