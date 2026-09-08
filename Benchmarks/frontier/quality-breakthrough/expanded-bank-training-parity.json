@@ -1,0 +1,41 @@
+{
+  "complete": true,
+  "scope": "Same code, architecture, initialization and base40k schedule; bank changes only in base; same final v4 critic2k sampler and initialization RNG",
+  "phases": {
+    "base": {
+      "argument_differences": {
+        "out": [
+          "control_base_40k",
+          "expanded_base_40k"
+        ],
+        "bank": [
+          "I:\\lucid-quality-breakthrough-r37\\v4-mapped",
+          "I:\\lucid-quality-breakthrough-r37\\expanded-mapped"
+        ]
+      },
+      "same_training_source_hashes": true,
+      "identity_checks": {
+        "checkpoint_sha256": true
+      }
+    },
+    "critic": {
+      "argument_differences": {
+        "out": [
+          "control_critic_2k",
+          "expanded_critic_2k"
+        ],
+        "init": [
+          "control_base_40k\\step040000.pth",
+          "expanded_base_40k\\step040000.pth"
+        ]
+      },
+      "same_training_source_hashes": true,
+      "identity_checks": {
+        "bank_sha256": true,
+        "first_decoded_sequence_sha256": true,
+        "first_batch_sha256": true,
+        "discriminator_initial_sha256": true
+      }
+    }
+  }
+}

@@ -581,3 +581,32 @@ AESOP coefficient, critic, step budget and optional stages differ from the paper
 The three arms are prepared separately from the running immutable r39 snapshot.
 Eight fidelity tests now include teacher freezing, prediction gradients, disabled
 behavior and RNG preservation; 29 relevant tests pass together.
+
+The fixed-compute larger-bank comparison is complete. r39 matches the r38b
+trainer hashes and base initialization exactly; the final critic's first sample
+and discriminator initialization also match. Development LPIPS/DISTS worsen
+0.402%/1.194% against the control. Native regression worsens 3.823%/2.575% against
+the control and 2.599%/6.075% against shipping. Sunflower worsens 61.21%/36.85%
+against shipping. Direct crops show no recovered-detail breakthrough.
+
+The same expanded checkpoint does improve held-out REDS 154/073: on all 720
+stride-8 validation patches, raw LPIPS/DISTS improve 2.586%/2.474% against the
+control and 3.289%/5.212% against shipping. Both REDS sources improve. This is a
+distribution-dependent gain, not a universal failure of broader training data,
+and it does not override the native regressions. The `expanded-bank-*` receipts
+retain initialization parity, development, native and REDS comparisons.
+
+r43 tests the next data change: start from the identical completed r39 base,
+but perform the final 2k critic pass on the expanded bank instead of original
+v4. Code, seed, batch, schedule and objectives remain fixed. This distinguishes
+the original isolated base-pretraining test from adapting both training stages
+to the expanded data.
+
+r42's three development runs are complete with matching initial model, source
+sample and discriminator hashes. VGG+LDL worsens LPIPS/DISTS 7.981%/9.497% against
+shipping; adding AESOP worsens 8.263%/9.733%; adding both native stage proxies
+worsens raw-output scores 12.235%/9.600%. These are not native measurements of
+the stage-trained arm; its native run remains active. The VGG term dominates the
+initial head gradient at this coefficient, so this probes a substantially
+different objective rather than establishing an optimum loss balance.
+`combined-fidelity-development.json` records the full results and teacher hashes.

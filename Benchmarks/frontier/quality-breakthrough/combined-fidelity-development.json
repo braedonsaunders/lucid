@@ -1,0 +1,178 @@
+{
+  "complete": true,
+  "scope": "Three fixed1k VGG-weight1/LDL-weight1 combined objectives frombig2k; raw development48 output, thirdarm trainedthroughnative proxies; no release claim",
+  "arms": {
+    "vgg_ldl_1k": {
+      "report_sha256": "e05d418969b15032828edb4495933ef156b181b00eab2107aba874e1caffafb7",
+      "checkpoint_sha256": "bf84c6e1faebc6f4d976f54e3a6dc1d29ab9b5c477e981d947a5f93b4becf39b",
+      "summary": {
+        "sources": {
+          "crowd_run": {
+            "lpips": 0.4035779181867838,
+            "dists": 0.15382251515984535,
+            "psnr_y": 23.017198310306245,
+            "detail_energy": 0.49165178388515013,
+            "fine_correlation": 0.3761361589706611
+          },
+          "four_people": {
+            "lpips": 0.2035159352235496,
+            "dists": 0.09457045048475266,
+            "psnr_y": 30.611725680704566,
+            "detail_energy": 0.7136162822223573,
+            "fine_correlation": 0.6586973590719036
+          },
+          "johnny": {
+            "lpips": 0.2413689037784934,
+            "dists": 0.11161001026630402,
+            "psnr_y": 33.009272448331615,
+            "detail_energy": 0.6982144147247467,
+            "fine_correlation": 0.6330518195656155
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.28282091906294227,
+          "dists": 0.12000099197030067,
+          "psnr_y": 28.87939881311414,
+          "detail_energy": 0.634494160277418,
+          "fine_correlation": 0.5559617792027267
+        }
+      },
+      "percent_change_vs_shipping": {
+        "lpips": 7.980701394201151,
+        "dists": 9.496681347682067,
+        "fine_correlation": 0.8666815997278254
+      },
+      "perceptual_teacher": {
+        "weight": 1.0,
+        "teacher": "torchvision ImageNet VGG19 IMAGENET1K_V1",
+        "layers": {
+          "conv1_2": 0.1,
+          "conv2_2": 0.1,
+          "conv3_4": 1.0,
+          "conv4_4": 1.0,
+          "conv5_4": 1.0
+        },
+        "criterion": "pre-ReLU feature L1; ImageNet input normalization; detached HR target; frozen FP32 teacher",
+        "teacher_state_sha256": "d5a7837c21718abef776acd9d4e5e5cce8aa4d820505f014f1303e6cc056214b",
+        "inference_cost": "none"
+      }
+    },
+    "aesop_vgg_ldl_1k": {
+      "report_sha256": "c52ee1945391ed62a920922665548a2aa2d5b85f401b82ce93e1d13bb15243a2",
+      "checkpoint_sha256": "53d376e97c0b268339b8f0d6287f34717e88f811f3fef13ed6b3eee767507610",
+      "summary": {
+        "sources": {
+          "crowd_run": {
+            "lpips": 0.4039453724399209,
+            "dists": 0.15391476079821587,
+            "psnr_y": 23.012509984928187,
+            "detail_energy": 0.4915415376589865,
+            "fine_correlation": 0.3761439662949872
+          },
+          "four_people": {
+            "lpips": 0.20413642283529043,
+            "dists": 0.09481727704405785,
+            "psnr_y": 30.59025285309989,
+            "detail_energy": 0.713292781481062,
+            "fine_correlation": 0.6583553820536059
+          },
+          "johnny": {
+            "lpips": 0.24259782955050468,
+            "dists": 0.1120465099811554,
+            "psnr_y": 32.98214525402503,
+            "detail_energy": 0.6969971386964317,
+            "fine_correlation": 0.6326430835262503
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.2835598749419053,
+          "dists": 0.12025951594114304,
+          "psnr_y": 28.861636030684366,
+          "detail_energy": 0.6339438192788268,
+          "fine_correlation": 0.5557141439582812
+        }
+      },
+      "percent_change_vs_shipping": {
+        "lpips": 8.262833898310728,
+        "dists": 9.732575371483708,
+        "fine_correlation": 0.8217537894201321
+      },
+      "perceptual_teacher": {
+        "weight": 1.0,
+        "teacher": "torchvision ImageNet VGG19 IMAGENET1K_V1",
+        "layers": {
+          "conv1_2": 0.1,
+          "conv2_2": 0.1,
+          "conv3_4": 1.0,
+          "conv4_4": 1.0,
+          "conv5_4": 1.0
+        },
+        "criterion": "pre-ReLU feature L1; ImageNet input normalization; detached HR target; frozen FP32 teacher",
+        "teacher_state_sha256": "d5a7837c21718abef776acd9d4e5e5cce8aa4d820505f014f1303e6cc056214b",
+        "inference_cost": "none"
+      }
+    },
+    "aesop_vgg_ldl_native_1k": {
+      "report_sha256": "448c399ca3ac052ddfa5bab550b7922eb9c43050debe44243171fbdb988b4054",
+      "checkpoint_sha256": "e99ded0e809494cb38078c2a342f087cb76778d3ddc897d8cefea8d872446b25",
+      "summary": {
+        "sources": {
+          "crowd_run": {
+            "lpips": 0.4211519006639719,
+            "dists": 0.15369566157460213,
+            "psnr_y": 22.70534115700628,
+            "detail_energy": 0.46008457928373947,
+            "fine_correlation": 0.3751437069687088
+          },
+          "four_people": {
+            "lpips": 0.21235920721665025,
+            "dists": 0.09642903506755829,
+            "psnr_y": 29.183161813262267,
+            "detail_energy": 0.6728388369781428,
+            "fine_correlation": 0.662420098576316
+          },
+          "johnny": {
+            "lpips": 0.24838366266340017,
+            "dists": 0.11021855100989342,
+            "psnr_y": 31.065435607616923,
+            "detail_energy": 0.6539469548657999,
+            "fine_correlation": 0.6383703861596642
+          }
+        },
+        "source_balanced": {
+          "lpips": 0.2939649235146741,
+          "dists": 0.12011441588401794,
+          "psnr_y": 27.651312859295157,
+          "detail_energy": 0.5956234570425607,
+          "fine_correlation": 0.5586447305682297
+        }
+      },
+      "percent_change_vs_shipping": {
+        "lpips": 12.235469468023519,
+        "dists": 9.600176676625516,
+        "fine_correlation": 1.3534424010185786
+      },
+      "perceptual_teacher": {
+        "weight": 1.0,
+        "teacher": "torchvision ImageNet VGG19 IMAGENET1K_V1",
+        "layers": {
+          "conv1_2": 0.1,
+          "conv2_2": 0.1,
+          "conv3_4": 1.0,
+          "conv4_4": 1.0,
+          "conv5_4": 1.0
+        },
+        "criterion": "pre-ReLU feature L1; ImageNet input normalization; detached HR target; frozen FP32 teacher",
+        "teacher_state_sha256": "d5a7837c21718abef776acd9d4e5e5cce8aa4d820505f014f1303e6cc056214b",
+        "inference_cost": "none"
+      }
+    }
+  },
+  "shared_initialization": {
+    "bank_sha256": true,
+    "checkpoint_sha256": true,
+    "first_decoded_sequence_sha256": true,
+    "discriminator_initial_sha256": true
+  },
+  "decision": "The raw combined recipes show no development advantage. Complete native evaluation of the stage-trained arm before closing that comparison."
+}
