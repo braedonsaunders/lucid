@@ -55,23 +55,49 @@ def local_variance(x, size=7):
     return (square - mean * mean).clamp_min(0)
 
 
-def ldl_artifact_map(output, reference, ema_output, size=7, exponent=.2):
-    """Details or Artifacts (Liang, Zeng, Zhang, CVPR 2022), as in the reference
-    implementation: the channel-summed absolute residual, its local variance
-    over a size x size window, scaled by a patch-level factor var(R)^(1/5), and
-    zeroed wherever the EMA twin's residual is larger than the current one.
-    Real detail leaves a residual the EMA model shares; invented texture does
-    not, so the map is zero on detail and positive on artifacts."""
-    residual = (reference - output).abs().sum(1, keepdim=True).detach()
+def ldl_artifact_map(output, reference, ema_output, size=7, exponent=.2, formulation='reference'):
+    """LDL residual-variance heuristic, not a guarantee of artifact detection.
+
+    The author's formulation uses reflected, unbiased window variance and
+    differentiates through the current residual map. ``legacy`` reproduces r27
+    (detached map, population variance, truncated border windows).
+    """
+    if size < 3 or size % 2 == 0 or min(output.shape[-2:]) <= size // 2:
+        raise ValueError('odd window >=3 and images larger than its padding required')
+    if formulation not in ('reference', 'legacy'):
+        raise ValueError('unknown LDL formulation')
+    residual = (reference - output).abs().sum(1, keepdim=True)
     residual_ema = (reference - ema_output).abs().sum(1, keepdim=True).detach()
+    if formulation == 'legacy':
+        residual = residual.detach()
     patch = residual.flatten(1).var(1).clamp_min(1e-12).pow(exponent).view(-1, 1, 1, 1)
-    weight = patch * local_variance(residual, size)
+    if formulation == 'reference':
+        padded = F.pad(residual, [size // 2] * 4, mode='reflect')
+        windows = padded.unfold(2, size, 1).unfold(3, size, 1)
+        variance = windows.var(dim=(-1, -2), unbiased=True)
+    else:
+        variance = local_variance(residual, size)
+    weight = patch * variance
     return torch.where(residual < residual_ema, torch.zeros_like(weight), weight)
 
 
-def ldl_loss(output, reference, ema_output):
-    weight = ldl_artifact_map(output, reference, ema_output)
+def ldl_loss(output, reference, ema_output, formulation='reference'):
+    weight = ldl_artifact_map(output, reference, ema_output, formulation=formulation)
     return (weight * (output - reference).abs()).mean()
+
+
+@torch.no_grad()
+def update_ema(ema_model, model, decay=.999):
+    """Update by name, including buffers, and fail on a mismatched twin."""
+    source, target = model.state_dict(), ema_model.state_dict()
+    if source.keys() != target.keys():
+        raise ValueError('EMA and student states differ')
+    for name, value in target.items():
+        current = source[name].to(value)
+        if value.is_floating_point():
+            value.lerp_(current, 1 - decay)
+        else:
+            value.copy_(current)
 
 
 def bounded_adversarial_scale(base_norm, weighted_adversarial_norm, ratio_cap):
@@ -156,6 +182,14 @@ def main():
     ap.add_argument('--dino-gan-weight', type=float, default=0)
     ap.add_argument('--ldl-weight', type=float, default=0,
         help='weight of the Details-or-Artifacts residual-variance penalty against an EMA twin (alpha 0.999)')
+    ap.add_argument('--ldl-formulation', choices=['reference', 'legacy'], default='reference',
+        help='reference = differentiable reflected sample variance; legacy reproduces ladder r27')
+    ap.add_argument('--native-input-stages', action='store_true',
+        help='Train on a three-frame proxy of native deband + TAA BEFORE the model')
+    ap.add_argument('--native-output-stages', action='store_true',
+        help='Apply the fixed native 2x sharpen/tone/grain proxy to predictions before losses')
+    ap.add_argument('--training-frames', type=int, choices=[1, 2, 3], default=1,
+        help='Minimum sequence length; use 3 for the matched native-input control')
     ap.add_argument('--temporal', type=float, default=0,
                     help='Weight of the reference-static temporal consistency term (two consecutive frames per crop; 0 = off)')
     ap.add_argument('--input-noise', type=float, default=0,
@@ -184,6 +218,8 @@ def main():
         ap.error('detail channels >=4 and positive block count required')
     if not math.isfinite(args.dino_gan_weight) or args.dino_gan_weight < 0:
         ap.error('nonnegative finite adversarial weight required')
+    if not math.isfinite(args.ldl_weight) or args.ldl_weight < 0:
+        ap.error('nonnegative finite LDL weight required')
     if not math.isfinite(args.gan_head_ratio_cap) or args.gan_head_ratio_cap < 0 or (args.gan_head_ratio_cap and not args.dino_gan_weight):
         ap.error('nonnegative finite ratio cap requires an adversary when enabled')
     if args.dino_gan_weight and not all((args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)):
@@ -299,6 +335,23 @@ def main():
         if args.paired_dino:
             experiment['source_hashes']['paired_dino_adversary.py'] = digest(Path(__file__).with_name('paired_dino_adversary.py'))
     (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
+    if args.native_input_stages:
+        from native_stages import preprocess_sequence
+        experiment['source_hashes']['native_stages.py'] = digest(Path(__file__).with_name('native_stages.py'))
+        experiment['native_input_stages'] = {
+            'order': 'decoded RGB -> quantized 420 deband -> source-resolution TAA -> RGB -> model',
+            'frames': 3, 'feedback': .5, 'guard': .005,
+            'limitations': 'crop boundaries; short reset history; approximate RGB/420 conversion; output sharpen/grade not emulated'}
+        (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
+    if args.native_output_stages:
+        from native_output_stages import postprocess_rgb
+        for name in ('native_stages.py', 'native_output_stages.py'):
+            experiment['source_hashes'][name] = digest(Path(__file__).with_name(name))
+        experiment['native_output_stages'] = {
+            'order': 'model -> RGB8/420 proxy -> sharpen .2 -> tone/contrast .2/adaptive grain .01 -> RGB8 proxy -> losses',
+            'radius': 2, 'reference_radius': 2,
+            'limitations': 'crop-local grain phase/statistics; approximate RGB/420 conversion and chroma siting; straight-through quantization'}
+        (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
     started = time.monotonic()
     anchor_hash = None
     max_applied_head_ratio = torch.zeros((), device='cuda')
@@ -306,10 +359,21 @@ def main():
     temporal_coverage = []
     ema_model = None
     for step in range(1, args.steps + 1):
-        frames = 2 if args.temporal else 1
+        frames = max(args.training_frames, 3 if args.native_input_stages else 2 if args.temporal else 1)
         x, reference, intended = batch(data['train'], rng, args.batch, frames, args.crop, mixed)
+        if step == 1:
+            experiment['first_decoded_sequence_sha256'] = state_digest({'source': x, 'reference': reference})
+        if args.native_output_stages:
+            decoded_current = x[:, -1].cuda()
+            if args.temporal:
+                decoded_previous = x[:, -2].cuda()
+        if args.native_input_stages:
+            # Native source stages do not depend on model weights. Cacheable in
+            # principle; no gradient graph is needed for this input-only arm.
+            with torch.no_grad():
+                x = preprocess_sequence(x.cuda())
         if args.temporal:
-            previous = tuple(v[:, 0].cuda() for v in (x, reference))
+            previous = tuple(v[:, -2].cuda() for v in (x, reference))
         x, reference, intended = (v[:, -1].cuda() for v in (x, reference, intended))
         if step == 1:
             experiment['first_batch_sha256'] = state_digest({'source': x, 'reference': reference, 'intended': intended})
@@ -324,6 +388,8 @@ def main():
                 anchor_hash = state_digest(model.anchor.state_dict())
                 experiment['anchor_initial_sha256'] = anchor_hash
             (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
+        if args.native_output_stages:
+            output = postprocess_rgb(output.float(), decoded_current)
         output, reference, intended = (v.float()[:, :, 8:-8, 8:-8] for v in (output, reference, intended))
         loss = reconstruction_objective(output, reference, intended, args.detail_target)
         if args.ldl_weight:
@@ -332,8 +398,12 @@ def main():
                 ema_model = copy.deepcopy(model).eval()
                 for parameter in ema_model.parameters(): parameter.requires_grad_(False)
             with torch.no_grad(), torch.autocast('cuda', dtype=torch.bfloat16):
-                ema_output = ema_model(x).float()[:, :, 8:-8, 8:-8]
-            artifact = ldl_loss(output, reference, ema_output)
+                ema_output = ema_model(x).float()
+            if args.native_output_stages:
+                with torch.no_grad():
+                    ema_output = postprocess_rgb(ema_output, decoded_current)
+            ema_output = ema_output[:, :, 8:-8, 8:-8]
+            artifact = ldl_loss(output, reference, ema_output, args.ldl_formulation)
             if step in (1, 200, 1000):
                 print(json.dumps({'step': step, 'reconstruction': float(loss), 'ldl_raw': float(artifact),
                     'ldl_weighted': float(args.ldl_weight * artifact)}), flush=True)
@@ -341,6 +411,8 @@ def main():
         if args.temporal:
             with torch.autocast('cuda', dtype=torch.bfloat16):
                 previous_output = model(augment_input_noise(previous[0], args.input_noise))
+            if args.native_output_stages:
+                previous_output = postprocess_rgb(previous_output.float(), decoded_previous)
             previous_output = previous_output.float()[:, :, 8:-8, 8:-8]
             consistency, covered = temporal_consistency(previous_output, output, previous[1].float()[:, :, 8:-8, 8:-8], reference)
             temporal_coverage.append(covered)
@@ -378,9 +450,7 @@ def main():
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1)
         optimizer.step()
         if args.ldl_weight and ema_model is not None:
-            with torch.no_grad():
-                for ema_parameter, parameter in zip(ema_model.parameters(), model.parameters()):
-                    ema_parameter.lerp_(parameter.detach().float().to(ema_parameter.dtype), 1 - .999)
+            update_ema(ema_model, model)
         if adversary:
             with torch.autocast('cuda', dtype=torch.bfloat16):
                 discriminator_loss = adversary.update(reference, fake_features)
@@ -417,6 +487,10 @@ def main():
                 checkpoint.update(architecture='anchored_lowpass2x' if args.architecture == 'anchored_lowpass' else 'anchored_detail2x', detail_channels=args.detail_channels,
                                   detail_blocks=args.detail_blocks)
             torch.save(checkpoint, args.out / f'step{step:06d}.pth')
+            if ema_model is not None:
+                ema_state = merge_adapters(ema_model).state_dict() if subspace else ema_model.state_dict()
+                torch.save({**checkpoint, 'model': ema_state, 'weights': 'EMA decay 0.999'},
+                           args.out / f'ema{step:06d}.pth')
             if adversary:
                 torch.save({'discriminator': adversary.discriminator.state_dict(),
                     'optimizer': adversary.optimizer.state_dict(), 'step': step}, args.out / f'discriminator{step:06d}.pth')

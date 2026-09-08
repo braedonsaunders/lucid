@@ -1,0 +1,152 @@
+{
+  "complete": true,
+  "pass": true,
+  "tolerance": 1e-05,
+  "scope": "FP32 kernel math only; not NV12 conversion, native fast math, frame history duration, or image-quality equivalence",
+  "source_sha256": "b889f4d1d021b7d159ed3eb6a9d194c84222a2cb45ef65b2986c95c6511c8c09",
+  "executable_sha256": "1add7d0c85e22dbbb2040d1614366e81ecdb477f67bde6a690ea25c05650706d",
+  "emulator_sha256": "f8765f3206cd7ec5a977806e6706b92006cd84a335d67542b8a0fbc3765f69af",
+  "output_emulator_sha256": "d43f70078ecf1edf69492ba6f7aebe98c624a7a22cbe155e20a8f57b7aaced1e",
+  "rows": [
+    {
+      "fixture": "translated-texture",
+      "stage": "deband",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "translated-texture",
+      "stage": "motion",
+      "max_absolute_error": 7.450580596923828e-09,
+      "mean_absolute_error": 7.761021686425451e-11,
+      "pass": true
+    },
+    {
+      "fixture": "translated-texture",
+      "stage": "taa",
+      "max_absolute_error": 5.21540641784668e-06,
+      "mean_absolute_error": 1.8660891498711862e-07,
+      "pass": true
+    },
+    {
+      "fixture": "translated-texture",
+      "stage": "sharpen",
+      "max_absolute_error": 1.1920928955078125e-07,
+      "mean_absolute_error": 8.343097879226491e-10,
+      "pass": true
+    },
+    {
+      "fixture": "translated-texture",
+      "stage": "grade",
+      "max_absolute_error": 1.7881393432617188e-07,
+      "mean_absolute_error": 3.137392923235893e-08,
+      "pass": true
+    },
+    {
+      "fixture": "plateau",
+      "stage": "deband",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "plateau",
+      "stage": "motion",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "plateau",
+      "stage": "taa",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "plateau",
+      "stage": "sharpen",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "plateau",
+      "stage": "grade",
+      "max_absolute_error": 1.1920928955078125e-07,
+      "mean_absolute_error": 1.546383465722556e-08,
+      "pass": true
+    },
+    {
+      "fixture": "cut",
+      "stage": "deband",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "cut",
+      "stage": "motion",
+      "max_absolute_error": 5.960464477539063e-08,
+      "mean_absolute_error": 3.414849514271623e-09,
+      "pass": true
+    },
+    {
+      "fixture": "cut",
+      "stage": "taa",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "cut",
+      "stage": "sharpen",
+      "max_absolute_error": 5.960464477539063e-08,
+      "mean_absolute_error": 4.317068091896914e-10,
+      "pass": true
+    },
+    {
+      "fixture": "cut",
+      "stage": "grade",
+      "max_absolute_error": 1.1920928955078125e-07,
+      "mean_absolute_error": 1.3319852776305652e-08,
+      "pass": true
+    },
+    {
+      "fixture": "stationary",
+      "stage": "deband",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "stationary",
+      "stage": "motion",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "stationary",
+      "stage": "taa",
+      "max_absolute_error": 5.21540641784668e-06,
+      "mean_absolute_error": 1.6201131813886605e-07,
+      "pass": true
+    },
+    {
+      "fixture": "stationary",
+      "stage": "sharpen",
+      "max_absolute_error": 5.960464477539063e-08,
+      "mean_absolute_error": 1.2078089639544487e-09,
+      "pass": true
+    },
+    {
+      "fixture": "stationary",
+      "stage": "grade",
+      "max_absolute_error": 1.7881393432617188e-07,
+      "mean_absolute_error": 3.179593477398157e-08,
+      "pass": true
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "complete": true,
+  "pass": true,
+  "tolerance": 1e-05,
+  "scope": "FP32 kernel math only; not NV12 conversion, native fast math, frame history duration, or image-quality equivalence",
+  "source_sha256": "b889f4d1d021b7d159ed3eb6a9d194c84222a2cb45ef65b2986c95c6511c8c09",
+  "executable_sha256": "daffe7a312b5ef7add1ea734458ac34ed9aac1853266b4a4bc340c57408d524b",
+  "emulator_sha256": "e538f3c333298d9f7b7e01894df55a6687230c8052cffa3da6077a4f73e118e6",
+  "rows": [
+    {
+      "fixture": "translated-texture",
+      "stage": "deband",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "translated-texture",
+      "stage": "motion",
+      "max_absolute_error": 7.450580596923828e-09,
+      "mean_absolute_error": 7.761021686425451e-11,
+      "pass": true
+    },
+    {
+      "fixture": "translated-texture",
+      "stage": "taa",
+      "max_absolute_error": 5.21540641784668e-06,
+      "mean_absolute_error": 1.8660891498711862e-07,
+      "pass": true
+    },
+    {
+      "fixture": "plateau",
+      "stage": "deband",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "plateau",
+      "stage": "motion",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "plateau",
+      "stage": "taa",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "cut",
+      "stage": "deband",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "cut",
+      "stage": "motion",
+      "max_absolute_error": 5.960464477539063e-08,
+      "mean_absolute_error": 3.414849514271623e-09,
+      "pass": true
+    },
+    {
+      "fixture": "cut",
+      "stage": "taa",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "stationary",
+      "stage": "deband",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "stationary",
+      "stage": "motion",
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "pass": true
+    },
+    {
+      "fixture": "stationary",
+      "stage": "taa",
+      "max_absolute_error": 5.21540641784668e-06,
+      "mean_absolute_error": 1.6201131813886605e-07,
+      "pass": true
+    }
+  ]
+}

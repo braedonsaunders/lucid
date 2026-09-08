@@ -218,10 +218,9 @@ final class LearnedUpscaler: @unchecked Sendable {
     private let predict: Prediction
     private let inputFormat: OSType
     /// Experiment: cycle the model input through the four flip orientations,
-    /// one per frame, and flip the output back. Static content then reaches
-    /// the temporal accumulator as a free geometric self-ensemble, which
-    /// decorrelates orientation-specific synthesized speckle while leaving
-    /// real structure, which is orientation-invariant, untouched.
+    /// one per frame, and flip the output back. This is orientation cycling,
+    /// not an ensemble: the pipeline's temporal accumulator runs BEFORE this
+    /// model. The native experiment showed small, mixed spatial changes.
     nonisolated(unsafe) static var flipCycle = false
     private var frameCounter = 0
     private var flipInPool: CVPixelBufferPool?
