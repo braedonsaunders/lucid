@@ -71,8 +71,11 @@ struct DetailSettings: Equatable, Sendable {
     var cdefPrimary: Float = 4
     var cdefSecondary: Float = 2
     var debandThreshold: Float = 0.008
-    /// Plateau guard for debanding; 0 keeps the unguarded stage.
-    var debandGuard: Float = 0
+    /// Plateau guard for debanding: a pixel with any immediate neighbour
+    /// further than this is grain or texture and is left alone. 0.005 is
+    /// about 1.3 8-bit levels, so plateaus with 0 or 1 level steps qualify
+    /// and anything with a 2-level neighbour does not. 0 = unguarded.
+    var debandGuard: Float = 0.005
     var debandRadius: Float = 16
     var debandIterations: Float = 2
     var grain: Float = 0.010

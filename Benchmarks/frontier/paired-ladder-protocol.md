@@ -470,3 +470,23 @@ The fix is therefore a guard, not a switch. `deband_plane` now takes a plateau g
 `MetalFXTemporalUpscaler.swift`: Apple's temporal scaler at 2× with a synthesized contract, the same idea the community uses to feed DLSS with plain video: motion vectors from the app's bounded block correspondence (blocks the estimator does not trust are declared stationary), a constant depth plane, zero jitter. It is a pseudo-model on the lab's Model row (`metalfx_`) and a harness arm (`--candidate-metalfx`), so it runs through identical stages. Without sub-pixel jitter it cannot recover detail it was never shown; it is Apple's accumulator and resolve, measured on the delivery holdout for reference. Cost through the pipeline: about 2 ms per 640×360 frame.
 
 Result (receipts `paired-ladder/native-metalfx-*`): against the SPAN comparator through identical stages, **−12.02% LPIPS / −10.86% DISTS**, every source down, Sunflower −36.8% and Tractor −31.0% LPIPS with fine energy 0.6–0.9. In absolute terms it lands at the Lanczos anchor: better than Lanczos on the blocky low-bitrate sources (ducks, old_town_cross, park_joy), worse on the grainy ones (Sunflower 0.152 vs Lanczos 0.123). That is what a temporal accumulator without sub-pixel jitter is: it averages what the codec left, including the grain the reference keeps, and invents nothing. Apple's scaler is not a route to the target on video; the learned 2× graph beats it by 24 to 27 points on this holdout. It stays on the lab's Model row as the reference for what "MetalFX on video" means.
+
+### Debanding plateau guard 0.005: promoted to the shipping configuration (receipts `paired-ladder/native-{v4-2k,big2k}-guard-*`)
+
+Absolute change for the candidate arm, unguarded → guarded, every source:
+
+| Source | shipping `big2k` LPIPS / DISTS | `v4_2k` LPIPS / DISTS |
+|---|---|---|
+| ducks_take_off | +0.1% / +0.2% | +0.0% / +0.3% |
+| old_town_cross | −0.5% / −7.8% | −0.4% / −7.2% |
+| park_joy | +0.1% / −0.8% | −0.0% / −0.6% |
+| in_to_tree | −0.1% / −2.3% | −0.4% / −3.0% |
+| pedestrian_area | −1.5% / −5.7% | −3.0% / −5.9% |
+| rush_hour | −3.0% / −7.9% | −5.0% / −10.0% |
+| sunflower | −6.6% / −3.8% | −9.0% / −4.7% |
+| tractor | −3.1% / −5.0% | −3.1% / −4.6% |
+| mean of eight | −1.8% / −4.1% | −2.6% / −4.5% |
+
+The guard keeps everything the stage was buying on the blocky sources (old_town_cross unchanged on LPIPS, and better on DISTS because block-edge texture is no longer smeared) and gives back what it was taking from grain. Nothing gets worse beyond a tenth of a point. Against the SPAN comparator through the same guarded stages: **shipping `lucidbig2k_` +12.26% LPIPS / +16.10% DISTS, all eight sources up** (Sunflower +5.3, Tractor +8.6), the best native result of the campaign, up from +11.80 / +16.04; `v4_2k` +12.34 / +16.16 with Sunflower −0.7, so the 33-source family still does not clear the no-source-down rule and does not ship.
+
+`debandGuard` 0.005 is now the default in `Tuning`, `DetailSettings` and `Tools/tuning.json`. Model unchanged: `lucidbig2k_`.

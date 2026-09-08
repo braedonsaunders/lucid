@@ -424,7 +424,7 @@ enum PipelineTiming {
         TiledVideoToolboxUpscaler.chromaSitingLeft = t.stageSiting > 0.5
         let detail = try DetailEnhancer(device: compositor.device, settings: t.detailSettings(radius: 4))
 
-        var learned: (any FrameReconstructor)?
+        var learned: LearnedUpscaler?
         var preprocess: [Double] = []
         var upscale: [Double] = []
         var finish: [Double] = []
@@ -450,7 +450,7 @@ enum PipelineTiming {
             let width = CVPixelBufferGetWidth(frame)
             let height = CVPixelBufferGetHeight(frame)
             if learned == nil {
-                learned = try LearnedUpscaler.makeReconstructor(width: width, height: height)
+                learned = try LearnedUpscaler(width: width, height: height)
                 detail.settings = t.detailSettings(radius: learned!.scale)
                 // Diagnostic ablation: preserve the user's nominal gain when a
                 // presentation transform changes output scale without retraining.

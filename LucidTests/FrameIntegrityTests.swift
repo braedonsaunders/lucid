@@ -48,62 +48,6 @@ struct TensorImagePackerTests {
         #expect(!ValidatedTensorOutput.buffersMatch(a, b))
     }
 
-    @Test func everyBundledTensorAlternativePassesActualImageComparison() throws {
-        guard ValidatedTensorOutput.eligible(deviceName: MTLCreateSystemDefaultDevice()?.name ?? "",
-            version: ProcessInfo.processInfo.operatingSystemVersion, arguments: [], environment: [:]) else { return }
-        let config = MLModelConfiguration(); config.computeUnits = .cpuAndGPU
-        for variant in LearnedUpscaler.variants {
-            try autoreleasepool {
-                let size = "\(variant.width)x\(variant.height)"
-                // Tensor alternatives exist for the SPAN 4x ladder only; the 720p rung
-                // belongs to the direct-2x family and has no SPAN package.
-                guard let imageURL = Bundle.main.url(forResource: "SPAN_x4_ch32utc_" + size, withExtension: "mlmodelc") else { return }
-                let tensorURL = try #require(Bundle.main.url(forResource: "SPAN_x4_ch32utc_tensor_" + size, withExtension: "mlmodelc"))
-                let reference = try MLModel(contentsOf: imageURL, configuration: config)
-                #expect(try ValidatedTensorOutput.load(reference: reference, url: tensorURL, configuration: config) != nil)
-                #expect(try ValidatedTensorOutput.load(reference: reference, url: imageURL, configuration: config) == nil)
-            }
-        }
-    }
-
-    @Test func failedTensorPredictionRetriesSameFrameAndStaysOnImageFallback() throws {
-        guard ValidatedTensorOutput.eligible(deviceName: MTLCreateSystemDefaultDevice()?.name ?? "",
-            version: ProcessInfo.processInfo.operatingSystemVersion,
-            arguments: CommandLine.arguments, environment: ProcessInfo.processInfo.environment) else { return }
-        // Tensor alternatives exist only for the SPAN 4x family; exercise that family explicitly.
-        LearnedUpscaler.stemOverride = LearnedUpscaler.tensorFamilyStem
-        defer { LearnedUpscaler.stemOverride = nil }
-        var tensorAttempts = 0, imageAttempts = 0
-        let model = try LearnedUpscaler(width: 256, height: 144, prediction: { model, input in
-            if model.modelDescription.outputDescriptionsByName.first?.value.multiArrayConstraint != nil {
-                tensorAttempts += 1
-                throw LearnedUpscaler.Failure.prediction
-            }
-            imageAttempts += 1
-            return try model.prediction(from: input)
-        })
-        var buffer: CVPixelBuffer?
-        #expect(CVPixelBufferCreate(nil, 256, 144, kCVPixelFormatType_32BGRA, nil, &buffer) == kCVReturnSuccess)
-        let frame = try #require(buffer)
-        CVPixelBufferLockBaseAddress(frame, [])
-        memset(CVPixelBufferGetBaseAddress(frame), 128, CVPixelBufferGetDataSize(frame))
-        CVPixelBufferUnlockBaseAddress(frame, [])
-        let first = try model.upscale(frame), second = try model.upscale(frame)
-        #expect(tensorAttempts == 1)
-        #expect(imageAttempts == 2)
-        #expect(CVPixelBufferGetWidth(first) == 1024 && CVPixelBufferGetHeight(first) == 576)
-        CVPixelBufferLockBaseAddress(first, .readOnly)
-        CVPixelBufferLockBaseAddress(second, .readOnly)
-        defer {
-            CVPixelBufferUnlockBaseAddress(first, .readOnly)
-            CVPixelBufferUnlockBaseAddress(second, .readOnly)
-        }
-        for y in 0..<576 {
-            #expect(memcmp(CVPixelBufferGetBaseAddress(first)!.advanced(by: y*CVPixelBufferGetBytesPerRow(first)),
-                           CVPixelBufferGetBaseAddress(second)!.advanced(by: y*CVPixelBufferGetBytesPerRow(second)), 1024*4) == 0)
-        }
-    }
-
     @Test func tensorExperimentRequiresExplicitEphemeralOptIn() {
         #expect(!LearnedUpscaler.permitsTensorOutput(arguments: [], environment: [:]))
         #expect(!LearnedUpscaler.permitsTensorOutput(arguments: [], environment: ["LUCID_EXPERIMENTAL_TENSOR_OUTPUT":"1"]))

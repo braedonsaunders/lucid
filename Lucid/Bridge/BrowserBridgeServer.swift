@@ -403,7 +403,6 @@ struct BridgeControl: Codable, Sendable {
     /// Which reconstruction engine to use.
     var engine: String?
     /// Which bundled model family to run (a stem such as SPAN_x4_ch32utc_); swapped live.
-    var model: String?
     /// Capture one frame per engine into this folder under ~/Documents/Code/lucid/.build/shots.
     /// Ignored unless the app was launched with LUCID_SHOOT=1 or LUCID_DEBUG=1.
     var shoot: String?
@@ -447,8 +446,6 @@ struct BridgeStatus: Codable, Sendable {
     var engine: String = ""
     var engines: [String] = EngineKind.shipping.map(\.rawValue)
     var engineLabels: [String] = EngineKind.shipping.map(\.label)
-    var model: String = ""
-    var models: [String] = []
     var tuning: [String: Float] = [:]
     var status: String
     var stats: String

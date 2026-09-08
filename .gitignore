@@ -52,12 +52,6 @@ PLAN-INVISIBLE-PRESENTATION.md
 #
 # Keep this list in step with LearnedUpscaler.variants and Tools/release.sh.
 Model/*
-!Model/SPAN_x4_ch32utc_256x144.mlpackage
-!Model/SPAN_x4_ch32utc_320x180.mlpackage
-!Model/SPAN_x4_ch32utc_432x240.mlpackage
-!Model/SPAN_x4_ch32utc_480x270.mlpackage
-!Model/SPAN_x4_ch32utc_640x360.mlpackage
-!Model/SPAN_x4_ch32utc_864x480.mlpackage
 # Test clips are large and re-encodable from public sources; see TestSite/README.
 TestSite/*.mp4
 TestSite/*.webm
@@ -71,15 +65,6 @@ output/gallery/
 .build/degradation/
 
 # Validated tensor-output alternatives; original image models remain the fallback.
-!Model/SPAN_x4_ch32utc_tensor_256x144.mlpackage
-!Model/SPAN_x4_ch32utc_tensor_320x180.mlpackage
-!Model/SPAN_x4_ch32utc_tensor_432x240.mlpackage
-!Model/SPAN_x4_ch32utc_tensor_480x270.mlpackage
-!Model/SPAN_x4_ch32utc_tensor_640x360.mlpackage
-!Model/SPAN_x4_ch32utc_tensor_864x480.mlpackage
 
 # Lab candidate families bundled for the lab page (see Lucid/Resources/Models.json lab_models)
-!Model/lucid2k_*.mlpackage
-!Model/lucid2kraw_*.mlpackage
 !Model/lucidbig2k_*.mlpackage
-!Model/lucidv4_*.mlpackage

@@ -23,8 +23,7 @@ class PackagingTests(unittest.TestCase):
             (package / 'weights').write_bytes(b'frozen weights')
             self.items.append(dict(name=name, width=256, height=144, scale=4,
                                    sha256=package_models.digest(package)))
-        self.items[1]['reference'] = 'image'
-        self.manifest = dict(models=self.items[:1], tensor_models=self.items[1:])
+        self.manifest = dict(models=self.items)
         self.addCleanup(patch.stopall)
         patch.object(package_models, 'ROOT', root).start()
         patch.object(package_models, 'MANIFEST', self.manifest_path).start()
@@ -33,22 +32,13 @@ class PackagingTests(unittest.TestCase):
         self.manifest_path.write_text(json.dumps(self.manifest))
         return package_models.verify()
 
-    def test_valid_alternative_keeps_both_models_and_rejects_tampering(self):
+    def test_every_model_is_verified_and_tampering_is_rejected(self):
         self.assertEqual(len(package_models.all_models(self.verify())), 2)
         (self.packages / 'tensor.mlpackage' / 'weights').write_bytes(b'changed')
         with self.assertRaisesRegex(ValueError, 'checksum mismatch'):
             self.verify()
 
-    def test_alternative_cannot_change_geometry_or_reference(self):
-        self.items[1]['width'] = 512
-        with self.assertRaisesRegex(ValueError, 'shipping geometry'):
-            self.verify()
-        self.items[1]['width'] = 256
-        self.items[1]['reference'] = 'missing'
-        with self.assertRaisesRegex(ValueError, 'shipping geometry'):
-            self.verify()
-
-    def test_alternative_cannot_overwrite_reference_package(self):
+    def test_duplicate_names_are_rejected(self):
         self.items[1]['name'] = 'image'
         with self.assertRaisesRegex(ValueError, 'Invalid model name'):
             self.verify()

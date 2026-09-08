@@ -26,14 +26,6 @@ def digest(package):
 def verify():
     manifest = json.loads(MANIFEST.read_text())
     names = set()
-    references = {item['name']: item for item in manifest['models'] + manifest.get('lab_models', [])}
-    for item in manifest.get('tensor_models', []):
-        reference = references.get(item['reference'])
-        if reference is None or any(item[k] != reference[k] for k in ('width', 'height', 'scale')):
-            raise ValueError('Tensor alternative must match an existing shipping geometry')
-    for item in manifest.get('lab_models', []):
-        if item['scale'] not in (2, 4) or item['name'].startswith(manifest['family'] + '_'):
-            raise ValueError('Lab model must have its own family stem and a 2x or 4x scale')
     for item in all_models(manifest):
         name = item['name']
         if not re.fullmatch(r'[A-Za-z0-9_]+', name) or name in names:
@@ -46,9 +38,7 @@ def verify():
 
 
 def all_models(manifest):
-    # lab_models are candidate families the lab page can switch to; they are
-    # verified and compiled like everything else but never chosen at launch.
-    return manifest['models'] + manifest.get('tensor_models', []) + manifest.get('lab_models', [])
+    return manifest['models']
 
 
 def package(destination):
@@ -79,6 +69,13 @@ def package(destination):
                 shutil.rmtree(target)
             staged.rename(target)
         prior[name] = identity
+    # The bundle carries exactly the ladder in the manifest: anything else
+    # left over from an earlier build (a former family, a lab candidate) goes.
+    wanted = {x['name'] + '.mlmodelc' for x in all_models(manifest)}
+    for stale in destination.glob('*.mlmodelc'):
+        if stale.name not in wanted:
+            shutil.rmtree(stale)
+            prior.pop(stale.name[:-len('.mlmodelc')], None)
     # Only write the receipt once the complete ladder has compiled successfully.
     receipt_path.write_text(json.dumps({x['name']: prior[x['name']] for x in all_models(manifest)}, indent=2) + '\n')
     print(f"Verified {len(all_models(manifest))} packaged SR models")

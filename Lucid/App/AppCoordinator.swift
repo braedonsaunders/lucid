@@ -208,12 +208,6 @@ final class AppCoordinator {
             appState.enabled = enabled
             if !enabled { stopSession(reason: "Paused") } else { evaluate() }
         }
-        if let stem = control.model, !stem.isEmpty, stem != LearnedUpscaler.currentStem,
-           LearnedUpscaler.bundledStems().contains(stem) {
-            LearnedUpscaler.stemOverride = stem
-            print("   🧠 model → \(stem)")
-            session?.reloadModel()
-        }
         if let changes = control.tuning, !changes.isEmpty {
             var t = EnhancementSession.tuning
             for (key, value) in changes {
@@ -294,8 +288,6 @@ final class AppCoordinator {
             engine: engine.rawValue,
             engines: (EngineKind.comparisonPathEnabled ? EngineKind.allCases : EngineKind.shipping).map(\.rawValue),
             engineLabels: (EngineKind.comparisonPathEnabled ? EngineKind.allCases : EngineKind.shipping).map(\.label),
-            model: LearnedUpscaler.currentStem,
-            models: LearnedUpscaler.bundledStems(),
             tuning: EnhancementSession.tuningDictionary,
             status: appState.statusLine,
             stats: appState.statsLine,
@@ -651,7 +643,7 @@ final class EnhancementSession {
         var cdefPrimary: Float = 4
         var cdefSecondary: Float = 2
         var debandThreshold: Float = 0.008
-        var debandGuard: Float = 0
+        var debandGuard: Float = 0.005
         var grain: Float = 0.010
         // Frozen grain is the default. Animated phase never changes amplitude.
         var grainPhase: Float = 0.0
@@ -980,13 +972,13 @@ final class EnhancementSession {
         return { width, height in
             let compositor = try MetalTileCompositor()
             let kind = engine
-            let learned: (any FrameReconstructor)?
+            let learned: LearnedUpscaler?
             var upscaler: TiledVideoToolboxUpscaler?
             var built = 1
             if kind.usesLearned {
                 // Not `try?`: a session only starts for sizes the table covers,
                 // so a missing model is an error, not a silent downgrade.
-                learned = try LearnedUpscaler.makeReconstructor(width: width, height: height)
+                learned = try LearnedUpscaler(width: width, height: height)
             } else {
                 guard EngineKind.comparisonPathEnabled else {
                     throw EnhancementSession.Failure.comparisonEngineDisabled
@@ -1114,11 +1106,6 @@ final class EnhancementSession {
     func setOverlayHidden(_ hidden: Bool) { controller.setForcedHidden(hidden) }
 
     /// Rebuilds the stages with the currently selected model; the capture stream stays up.
-    func reloadModel() {
-        Task { await pipeline.reconfigure(Self.makeFactory(engine: engine, report: report)) }
-        scheduleResize()
-    }
-
     /// Switches engine without touching the capture stream.
     func setEngine(_ kind: EngineKind) {
         guard kind != engine else { return }

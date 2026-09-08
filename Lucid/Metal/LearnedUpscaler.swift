@@ -215,37 +215,10 @@ final class LearnedUpscaler: @unchecked Sendable {
     static let tensorFamilyStem = "SPAN_x4_ch32utc_"
     /// Set from the lab page to swap the reconstruction model without a
     /// relaunch. nil means the launch-time choice (LUCID_MODEL_STEM or shipping).
-    nonisolated(unsafe) static var stemOverride: String?
+    /// `LUCID_MODEL_STEM` lets the measurement harness run a candidate ladder
+    /// through the real pipeline; the product has exactly one model family.
     static var currentStem: String {
-        stemOverride ?? ProcessInfo.processInfo.environment["LUCID_MODEL_STEM"] ?? shippingStem
-    }
-    /// Every model family bundled with the app, identified by the stem of its
-    /// 640x360 package. Tensor-output variants are internal and not listed.
-    nonisolated(unsafe) private static var stemCache: [String]?
-    static func bundledStems() -> [String] {
-        if let stemCache { return stemCache }
-        var stems: Set<String> = []
-        if let root = Bundle.main.resourceURL,
-           let names = try? FileManager.default.contentsOfDirectory(atPath: root.path) {
-            for name in names {
-                for suffix in ["640x360.mlmodelc", "640x360.mlpackage"] where name.hasSuffix(suffix) {
-                    let stem = String(name.dropLast(suffix.count))
-                    if !stem.isEmpty, !stem.contains("_tensor_") { stems.insert(stem) }
-                }
-            }
-        }
-        var sorted = stems.sorted { a, b in
-            if a == shippingStem { return true }
-            if b == shippingStem { return false }
-            return a < b
-        }
-        // Apple's temporal scaler is offered as a pseudo-model so the lab can
-        // put it on the same footage; it needs no package.
-        if let device = MTLCreateSystemDefaultDevice(), MetalFXTemporalUpscaler.supports(device) {
-            sorted.append(MetalFXTemporalUpscaler.stem)
-        }
-        stemCache = sorted
-        return sorted
+        ProcessInfo.processInfo.environment["LUCID_MODEL_STEM"] ?? shippingStem
     }
 
     private static func model(width: Int, height: Int) -> URL? {
