@@ -916,3 +916,31 @@ The next untested interaction earlier in the ranked list is joint training of
 the clean-LR supervised pre-cleaner and SR backbone: r30 demonstrated modest
 clean-LR improvement with SR frozen, without an SR-quality gain. Joint training
 has not yet been implemented or launched; it is a hypothesis, not a result.
+
+## Joint pre-cleaner and SR follow-up
+
+r49 implements joint learning with the existing 3,203-parameter identity-initialized
+RGB pre-cleaner and a trainable fused SR graph. Checkpoints explicitly preserve
+fusion and cleaner-enabled policies, while older frozen-cleaner checkpoints keep
+their original defaults. Seventy-three relevant tests pass locally, including
+SR-loss gradients reaching both networks, exact cleaner-disabled control behavior,
+and fused checkpoint round trips with policy consistency checks.
+
+Two fresh 2k arms start from shipping big2k: joint cleaner/SR and an SR-only
+control with the same instantiated but disabled cleaner. Both use the original
+bank, seed 20260914, batch four, crop96, three-frame native input proxies, final
+frame reference reconstruction and paired critic weight .0075. Neural SR/cleaner
+forward is FP32; critic forward is BF16. AdamW cosine learning rates are 1e-3
+for the cleaner and 2e-5 for SR, without weight decay. The joint arm adds clean-LR
+L1 plus .2 Sobel at weight one; the control disables that term. Clean targets use
+the already verified full-chroma RGB8 Lanczos3 downsample, derived from HR with
+four LR border pixels excluded. The older FFmpeg cleaner cache is not reused
+because its conversion also subsamples chroma. Consequently this is a new
+joint-supervision recipe, not a claim to isolate joint learning against r30 alone.
+
+Both arms receive identical 72-sequence full16-frame source-stage-proxy validation,
+three spatially scored frames per sequence, temporal-error summaries and clean-LR
+MSE for all frames. Compare the candidate with the fresh control, unchanged
+initial SR and its own trained SR without cleaning. Initial hashes must match.
+Cleaner MSE alone cannot establish final SR quality. Native deployment and the
+single-model 60fps target still require separate validation if results warrant it.

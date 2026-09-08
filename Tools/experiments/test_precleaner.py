@@ -66,6 +66,51 @@ class PrecleanerTest(unittest.TestCase):
         after = cleaner_loss(model(source), target)
         self.assertLess(float(after.detach()), float(before.detach()))
 
+    def test_joint_sr_loss_reaches_cleaner_and_backbone(self):
+        model = PrecleanedSPAN(Unshuffled(4, scale=2), 4,
+                              train_backbone=True, fused_sr=True).train()
+        x = torch.rand(1, 3, 16, 24)
+        before = model.sr.core.conv_1.weight.detach().clone()
+        optimizer = torch.optim.SGD(model.parameters(), lr=.01)
+        model(x).square().mean().backward()
+        self.assertGreater(float(model.sr.core.conv_1.weight.grad.abs().sum()), 0)
+        self.assertGreater(float(model.cleaner.head.weight.grad.abs().sum()), 0)
+        optimizer.step()
+        self.assertFalse(torch.equal(before, model.sr.core.conv_1.weight))
+
+    def test_disabled_cleaner_is_exact_and_receives_no_gradients(self):
+        model = PrecleanedSPAN(Unshuffled(4, scale=2), 4, train_backbone=True,
+                              fused_sr=True, use_cleaner=False).train()
+        with torch.no_grad():
+            model.cleaner.head.bias.fill_(10)
+        x = torch.rand(1, 3, 16, 24)
+        torch.testing.assert_close(model(x), model.sr(x), rtol=0, atol=0)
+        model(x).square().mean().backward()
+        self.assertTrue(all(p.grad is None for p in model.cleaner.parameters()))
+        self.assertGreater(float(model.sr.core.conv_1.weight.grad.abs().sum()), 0)
+
+    def test_fused_checkpoint_roundtrip_and_policy_binding(self):
+        for enabled in (True, False):
+            model = PrecleanedSPAN(Unshuffled(4, scale=2), 4, train_backbone=True,
+                                  fused_sr=True, use_cleaner=enabled).eval()
+            with torch.no_grad():
+                model.cleaner.head.bias.fill_(.2)
+            x = torch.rand(1, 3, 16, 24)
+            state = {'architecture': 'precleaned_span2x', 'model': model.state_dict(),
+                     'channels': 4, 'cleaner_channels': 4, 'scale': 2, 'frames': 1,
+                     'version': model.version, 'fused_sr': True, 'use_cleaner': enabled,
+                     'experiment': {'fused_sr': True, 'use_cleaner': enabled}}
+            with tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / 'model.pth'
+                torch.save(state, path)
+                restored, _, _ = load(path, 'cpu')
+                self.assertEqual(restored.use_cleaner, enabled)
+                torch.testing.assert_close(restored(x), model(x), rtol=0, atol=0)
+                state['experiment']['use_cleaner'] = not enabled
+                torch.save(state, path)
+                with self.assertRaises(ValueError):
+                    load(path, 'cpu')
+
 
 class CleanTargetTest(unittest.TestCase):
     def test_lanczos_crop_matches_full_frame_interior(self):

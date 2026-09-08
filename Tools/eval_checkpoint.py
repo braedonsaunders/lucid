@@ -121,7 +121,14 @@ def load(path, device):
         if scale != 2 or frames != 1:
             raise ValueError('pre-cleaner requires single-frame 2x geometry')
         from architectures.precleaner import PrecleanedSPAN
-        model = PrecleanedSPAN(model, state['cleaner_channels'])
+        fused = state.get('fused_sr', False)
+        cleaner = state.get('use_cleaner', True)
+        experiment = state.get('experiment', {})
+        if (experiment.get('fused_sr', fused) != fused or
+                experiment.get('use_cleaner', cleaner) != cleaner):
+            raise ValueError('pre-cleaner checkpoint policies differ from training declaration')
+        model = PrecleanedSPAN(model, state['cleaner_channels'], fused_sr=fused,
+                              use_cleaner=cleaner)
     if state.get('architecture') == 'degradation_conditioned_span2x':
         if scale != 2 or frames != 1 or state['conditioning_mode'] == 'oracle':
             raise ValueError('deployable single-frame 2x degradation condition required; oracle is diagnostic only')

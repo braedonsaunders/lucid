@@ -25,10 +25,21 @@ class Precleaner(nn.Module):
 
 
 class PrecleanedSPAN(nn.Module):
-    def __init__(self, sr, cleaner_channels=16):
+    def __init__(self, sr, cleaner_channels=16, *, train_backbone=False,
+                 fused_sr=False, use_cleaner=True):
         super().__init__()
-        self.sr = sr.eval().requires_grad_(False)
+        if not isinstance(fused_sr, bool) or not isinstance(use_cleaner, bool):
+            raise ValueError('explicit boolean cleaner and fusion policies required')
+        if train_backbone and not fused_sr:
+            raise ValueError('joint training requires a differentiable fused SR graph')
+        if fused_sr:
+            from .subspace_adapter import fuse_convolutions
+            fuse_convolutions(sr)
+        self.fused_sr = fused_sr
+        self.use_cleaner = use_cleaner
+        self.sr = sr.eval().requires_grad_(train_backbone)
         self.cleaner = Precleaner(cleaner_channels)
+        self.cleaner.requires_grad_(use_cleaner)
 
     @property
     def core(self):
@@ -44,4 +55,4 @@ class PrecleanedSPAN(nn.Module):
         return self
 
     def forward(self, image):
-        return self.sr(self.cleaner(image))
+        return self.sr(self.cleaner(image) if self.use_cleaner else image)
