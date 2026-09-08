@@ -1,0 +1,96 @@
+{
+  "complete": true,
+  "scope": "r44 equal-source shipping-initialized critic, raw development versus shipping",
+  "frames": 48,
+  "report_sha256": "2d7f670efedcc88f35dac2ced208411b8fed36579e4552773381afbe9923504a",
+  "baseline_report_sha256": "2d7f670efedcc88f35dac2ced208411b8fed36579e4552773381afbe9923504a",
+  "checkpoint_sha256": {
+    "balanced_shipping_critic_2k": "a647ea95b4dfa1907807c02f33fd10f1fea14856de98dda073247772fa2db1ef",
+    "big2k": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c"
+  },
+  "candidate": {
+    "sources": {
+      "crowd_run": {
+        "lpips": 0.32465088926255703,
+        "dists": 0.12587647512555122,
+        "psnr_y": 22.62446130137131,
+        "detail_energy": 0.6342324263898313,
+        "fine_correlation": 0.35168854273639333
+      },
+      "four_people": {
+        "lpips": 0.186588604003191,
+        "dists": 0.07815252989530563,
+        "psnr_y": 29.733060659443804,
+        "detail_energy": 0.9116635192053484,
+        "fine_correlation": 0.6286443418119545
+      },
+      "johnny": {
+        "lpips": 0.22812286391854286,
+        "dists": 0.10032569244503975,
+        "psnr_y": 32.075276180039786,
+        "detail_energy": 0.8786691824518406,
+        "fine_correlation": 0.5856588677653065
+      }
+    },
+    "source_balanced": {
+      "lpips": 0.2464541190614303,
+      "dists": 0.10145156582196553,
+      "psnr_y": 28.144266046951632,
+      "detail_energy": 0.8081883760156735,
+      "fine_correlation": 0.5219972507712182
+    }
+  },
+  "baseline": {
+    "sources": {
+      "crowd_run": {
+        "lpips": 0.3721195003017783,
+        "dists": 0.14530577883124352,
+        "psnr_y": 22.91190850882616,
+        "detail_energy": 0.5407269949499434,
+        "fine_correlation": 0.37103815306596843
+      },
+      "four_people": {
+        "lpips": 0.18353398656472564,
+        "dists": 0.08112714812159538,
+        "psnr_y": 30.401090535276968,
+        "detail_energy": 0.7847135357451609,
+        "fine_correlation": 0.6546615049385422
+      },
+      "johnny": {
+        "lpips": 0.23010058421641588,
+        "dists": 0.10234687849879265,
+        "psnr_y": 32.81692662735379,
+        "detail_energy": 0.7613219434099778,
+        "fine_correlation": 0.6278546288579218
+      }
+    },
+    "source_balanced": {
+      "lpips": 0.2619180236943066,
+      "dists": 0.10959326848387718,
+      "psnr_y": 28.70997522381897,
+      "detail_energy": 0.6955874913683607,
+      "fine_correlation": 0.5511847622874776
+    }
+  },
+  "percent_change": {
+    "source_balanced": {
+      "lpips": -5.904100991127192,
+      "dists": -7.429017105288194
+    },
+    "sources": {
+      "crowd_run": {
+        "lpips": -12.756281517288294,
+        "dists": -13.371322091915738
+      },
+      "four_people": {
+        "lpips": 1.6643333998458631,
+        "dists": -3.66661258920542
+      },
+      "johnny": {
+        "lpips": -0.8595025104381815,
+        "dists": -1.9748389822917156
+      }
+    }
+  },
+  "interpretation": "Negative LPIPS/DISTS change is better; these measurements supplement visual review and do not establish release admission."
+}

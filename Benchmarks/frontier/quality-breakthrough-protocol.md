@@ -658,3 +658,12 @@ and DISTS 2.959% versus shipping, and REDS720 11.573%/10.601%. Both held-out RED
 sources improve. Development talking heads still regress slightly; the large
 natural-footage gain remains insufficient to infer native artifact control.
 Native evaluation and the matched shipping-initialized arm are in progress.
+
+r44's expanded-base native result is complete: LPIPS worsens 10.826% and DISTS
+19.584% against shipping. ParkJoy and InToTree retain substantial gains, but
+Sunflower and RushHour still show conspicuous speckling. Source balance reduces
+the r43 artifact problem without resolving it. The shipping-initialized arm
+improves raw development 5.904%/7.429% and REDS720 10.886%/6.507%; its native run
+is active. Both arms have matching code, bank, sampler, discriminator initial
+state, first decoded sample and first training batch; their starting SR weights
+differ as intended. `balanced-critic-training-parity.json` records these checks.
