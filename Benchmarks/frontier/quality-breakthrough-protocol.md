@@ -554,3 +554,30 @@ geometry and materializer. r39 has started from the same pretrained checkpoint
 and immutable training code as r38b. Matching 40k steps tests the bank change
 at fixed training compute; it does not give the 10× larger bank equal epochs.
 Longer training would be a separate compute-and-data experiment.
+
+r38b's native control improves aggregate LPIPS 1.179% but worsens DISTS 3.413%
+against shipping. Sunflower worsens LPIPS 41.30% / DISTS 29.12%, and RushHour
+19.55% / 11.22%. Crop review shows somewhat crisper architecture but rougher
+outlines on the bee and small cars, without recovered fine structure.
+`base-control-native-comparison.json` preserves the complete comparison. The
+expanded arm must beat shipping in useful delivered quality, not merely improve
+this control's weaker result.
+
+## Combined perceptual fidelity follow-up
+
+The pinned [AESOP RRDB recipe](https://github.com/2minkyulee/AESOP-SR/blob/3d6fe1d95a0a2fbaf2365861b0ce9f725985c498/AESOP/options/train/AESOP/train_Synthetic_AESOP_RRDB.yml)
+also uses multi-layer pre-ReLU VGG19 feature L1, artifact loss and EMA. r36
+isolated the autoencoder replacement within Lucid's existing objective; it did
+not reproduce that complete recipe. Earlier VGG work used weight 0.025 with a
+different training route, before the current paired-critic and AESOP trials.
+
+r42 prepares three fixed 1,000-step arms from `big2k`: VGG weight 1 + LDL weight 1;
+the same with AESOP replacing pixel L1; and that combination with both native
+stage proxies. All use the three-frame sampler and existing paired DINO critic
+weight 0.0075. VGG construction preserves the critic RNG and has no inference
+cost. Its frozen feature-state hash, layer weights and source are recorded.
+This remains a local adaptation: SPAN, codec degradation, Sobel/FFT terms, 1.1
+AESOP coefficient, critic, step budget and optional stages differ from the paper.
+The three arms are prepared separately from the running immutable r39 snapshot.
+Eight fidelity tests now include teacher freezing, prediction gradients, disabled
+behavior and RNG preservation; 29 relevant tests pass together.

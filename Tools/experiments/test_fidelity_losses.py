@@ -2,6 +2,7 @@
 import shutil
 import subprocess
 import unittest
+from unittest import mock
 
 import numpy as np
 import torch
@@ -10,7 +11,7 @@ from torch.nn import functional as F
 
 from aesop_fidelity import AutoencodedFidelity
 from clean_lr_targets import differentiable_clean_lr, clean_lr_consistency
-from train_presented_detail import reconstruction_objective
+from train_presented_detail import reconstruction_objective, make_perceptual_loss
 from reconstruction_loss import sobel_loss
 from train_span import fft_loss
 
@@ -27,6 +28,36 @@ class FidelityLossTests(unittest.TestCase):
             expected = (F.l1_loss(output, intended) + .2 * sobel_loss(output, detail)
                         + .05 * fft_loss(output, detail) + .1 * F.l1_loss(output, reference))
             self.assertTrue(torch.equal(expected, reconstruction_objective(output, reference, intended, mode)))
+
+    def test_perceptual_teacher_preserves_rng_and_prediction_gradients(self):
+        class TinyFeatures(nn.Module):
+            def __init__(self, device):
+                super().__init__()
+                self.features = nn.Conv2d(3, 4, 1).to(device)
+            def forward(self, output, target):
+                return F.l1_loss(self.features(output), self.features(target))
+        before = torch.get_rng_state().clone()
+        with mock.patch('reconstruction_loss.VGGFeatures', TinyFeatures):
+            teacher = make_perceptual_loss(1, 'cpu')
+        self.assertTrue(torch.equal(before, torch.get_rng_state()))
+        self.assertFalse(teacher.training)
+        self.assertTrue(all(not p.requires_grad for p in teacher.parameters()))
+        output = torch.rand(1, 3, 16, 16, requires_grad=True)
+        reference = torch.rand_like(output, requires_grad=True)
+        teacher(output, reference.detach()).backward()
+        self.assertTrue(torch.isfinite(output.grad).all())
+        self.assertGreater(float(output.grad.abs().sum()), 0)
+        self.assertIsNone(reference.grad)
+        self.assertTrue(all(p.grad is None for p in teacher.parameters()))
+
+    def test_disabled_perceptual_loss_constructs_nothing(self):
+        before = torch.get_rng_state().clone()
+        with mock.patch('reconstruction_loss.VGGFeatures', side_effect=RuntimeError('must stay disabled')):
+            self.assertIsNone(make_perceptual_loss(0, 'cpu'))
+        self.assertTrue(torch.equal(before, torch.get_rng_state()))
+        for bad in (-1, float('nan'), float('inf')):
+            with self.assertRaises(ValueError):
+                make_perceptual_loss(bad, 'cpu')
 
     def test_aesop_frozen_teacher_and_detached_target(self):
         teacher = nn.Conv2d(3, 3, 1, bias=False)

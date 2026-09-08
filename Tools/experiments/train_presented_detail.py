@@ -26,6 +26,17 @@ from reconstruction_loss import sobel_loss
 from train_span import fft_loss
 
 
+def make_perceptual_loss(weight, device):
+    """Keep teacher construction from changing the matched critic RNG stream."""
+    if not math.isfinite(weight) or weight < 0:
+        raise ValueError('nonnegative finite perceptual weight required')
+    if not weight:
+        return None
+    from reconstruction_loss import VGGFeatures
+    with torch.random.fork_rng(devices=[]):
+        return VGGFeatures(device).eval().requires_grad_(False)
+
+
 def reconstruction_objective(output, reference, intended, detail_target='mixture', fidelity=None):
     if detail_target not in ('mixture', 'reference'):
         raise ValueError('unknown detail supervision target')
@@ -201,6 +212,8 @@ def main():
         help='Pinned published AESOP autoencoder; replaces both pixel L1 terms')
     ap.add_argument('--clean-lr-weight', type=float, default=0,
         help='Clean full-chroma RGB Lanczos LR consistency against downsampled HR')
+    ap.add_argument('--perceptual-weight', type=float, default=0,
+        help='Frozen ImageNet VGG19 multiscale pre-ReLU feature L1 to HR; training only')
     ap.add_argument('--training-frames', type=int, choices=[1, 2, 3], default=1,
         help='Minimum sequence length; use 3 for the matched native-input control')
     ap.add_argument('--temporal', type=float, default=0,
@@ -235,6 +248,8 @@ def main():
         ap.error('nonnegative finite LDL weight required')
     if not math.isfinite(args.clean_lr_weight) or args.clean_lr_weight < 0:
         ap.error('nonnegative finite clean LR weight required')
+    if not math.isfinite(args.perceptual_weight) or args.perceptual_weight < 0:
+        ap.error('nonnegative finite perceptual weight required')
     if args.aesop_checkpoint and (args.intended != 'reference' or args.detail_target != 'reference' or args.teacher_mix):
         ap.error('AESOP replacement requires reference intended/detail targets and no teacher mixture')
     if not math.isfinite(args.gan_head_ratio_cap) or args.gan_head_ratio_cap < 0 or (args.gan_head_ratio_cap and not args.dino_gan_weight):
@@ -311,6 +326,7 @@ def main():
         fidelity = load_aesop_loss(args.aesop_checkpoint, 'cuda')
     if args.clean_lr_weight:
         from clean_lr_targets import differentiable_clean_lr, clean_lr_consistency
+    perceptual = make_perceptual_loss(args.perceptual_weight, 'cuda')
     rng = np.random.default_rng(args.seed)
     adversary = None
     if args.dino_gan_weight:
@@ -346,6 +362,15 @@ def main():
         experiment['aesop'] = fidelity.metadata
         experiment['source_hashes']['aesop_fidelity.py'] = digest(Path(__file__).with_name('aesop_fidelity.py'))
         experiment['loss'] = '1.1 AESOP decoded-image L1 + 0.2 signed Sobel + 0.05 FFT to HR; 8 output-pixel border excluded'
+    if perceptual is not None:
+        experiment['perceptual'] = {
+            'weight': args.perceptual_weight, 'teacher': 'torchvision ImageNet VGG19 IMAGENET1K_V1',
+            'layers': {'conv1_2': .1, 'conv2_2': .1, 'conv3_4': 1., 'conv4_4': 1., 'conv5_4': 1.},
+            'criterion': 'pre-ReLU feature L1; ImageNet input normalization; detached HR target; frozen FP32 teacher',
+            'teacher_state_sha256': state_digest(perceptual.state_dict()),
+            'inference_cost': 'none'}
+        experiment['source_hashes']['reconstruction_loss.py'] = digest(Path(__file__).resolve().parents[1]/'reconstruction_loss.py')
+        experiment['loss'] += f' + {args.perceptual_weight} multiscale VGG19 feature L1 to HR'
     if args.clean_lr_weight:
         experiment['source_hashes']['clean_lr_targets.py'] = digest(Path(__file__).with_name('clean_lr_targets.py'))
         experiment['clean_lr'] = {
@@ -441,6 +466,8 @@ def main():
             clean_loss = clean_lr_consistency(output, clean_target)
         output, reference, intended = (v.float()[:, :, 8:-8, 8:-8] for v in (output, reference, intended))
         loss = reconstruction_objective(output, reference, intended, args.detail_target, fidelity)
+        if perceptual is not None:
+            loss = loss + args.perceptual_weight * perceptual(output, reference.detach())
         if args.clean_lr_weight:
             loss = loss + args.clean_lr_weight * clean_loss
         if args.ldl_weight:
