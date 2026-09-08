@@ -193,6 +193,8 @@ def main():
     ap.add_argument('--seed', type=int, default=20260914)
     ap.add_argument('--sr-precision', choices=['bf16', 'fp32'], default='bf16',
         help='SR forward arithmetic only; the critic remains BF16 and optimizer states FP32')
+    ap.add_argument('--source-balanced', action='store_true',
+        help='Sample sources equally, then their sequences equally; default remains uniform sequences')
     ap.add_argument('--architecture', choices=['coupled', 'anchored_detail', 'anchored_lowpass',
                     'subspace_full', 'subspace_protected'], default='coupled')
     ap.add_argument('--detail-channels', type=int, default=32)
@@ -264,6 +266,12 @@ def main():
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
     manifest, data = load_bank(args.bank)
+    sampling_metadata = None
+    if args.source_balanced:
+        from source_sampling import SourceBalancedSequences
+        data['train'] = SourceBalancedSequences(data['train'],
+            [row for row in manifest['sequences'] if row['split'] == 'train'])
+        sampling_metadata = data['train'].metadata
     mapped = manifest.get('storage') == 'mmap-pairs-v1'
     if mapped and (args.intended != 'reference' or str(args.pixrestore_cache) != 'none' or str(args.shipping_cache) != 'none'):
         ap.error('mapped banks currently require reference supervision and no teacher caches')
@@ -358,6 +366,9 @@ def main():
     if mapped:
         experiment['source_hashes']['mmap_training_bank.py'] = digest(Path(__file__).with_name('mmap_training_bank.py'))
         experiment['bank_storage'] = 'checked read-only memory maps; only sampled crops copied; HR target aliases sampled reference'
+    if sampling_metadata is not None:
+        experiment['sampling'] = sampling_metadata
+        experiment['source_hashes']['source_sampling.py'] = digest(Path(__file__).with_name('source_sampling.py'))
     if fidelity is not None:
         experiment['aesop'] = fidelity.metadata
         experiment['source_hashes']['aesop_fidelity.py'] = digest(Path(__file__).with_name('aesop_fidelity.py'))

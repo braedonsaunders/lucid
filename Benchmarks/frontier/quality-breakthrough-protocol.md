@@ -610,3 +610,34 @@ the stage-trained arm; its native run remains active. The VGG term dominates the
 initial head gradient at this coefficient, so this probes a substantially
 different objective rather than establishing an optimum loss balance.
 `combined-fidelity-development.json` records the full results and teacher hashes.
+
+r42's stage-trained combination is now measured natively. It worsens aggregate
+LPIPS 8.665% and DISTS 6.460% against shipping. Direct crops show softened
+architectural structure; the small LPIPS gains on RushHour and Sunflower do not
+establish better overall delivered quality. No promotion;
+`combined-fidelity-native-comparison.json` records every source.
+
+r43's expanded-bank critic improves raw REDS LPIPS 15.871% and DISTS 12.398%
+against shipping, while fine correlation falls 8.288%. Development LPIPS improves
+6.560% and DISTS 0.976%, with fine correlation down 8.649%. Raw crops show stronger
+palm and chair structure alongside extra texture. Native evaluation remains
+active; the correlation change is a diagnostic to investigate visually, not an
+automatic veto. The starting base weights, training code and discriminator
+initialization match r39's original-bank critic exactly.
+
+The composed bank has 36 sequences per original training source and 180 per REDS
+source. Uniform sequence sampling therefore gives each REDS source five times
+the weight of an original source. `--source-balanced` instead samples all 90
+training sources equally, then their own sequences equally, without copying
+image arrays. An exact bounded virtual index retains one RNG draw per example;
+its 16,200 sampling bins are not additional training data. Three tests verify
+uniform probabilities, unchanged batches/RNG for already balanced inputs, and
+split/identity/order rejection. Together with the affected training tests, 27
+tests pass. The earlier full relevant suite passed 65 tests before this addition.
+
+r44 fixes two source-balanced 2k critic continuations with the existing recipe:
+one from the r39 reconstruction base and one from current `big2k`. These test
+data balance and whether the longer pixel-base stage was needed. Model geometry
+and inference operations remain unchanged. The pending optional 60-versus-30fps
+preference does not affect these same-architecture experiments; the current
+performance target remains in force.
