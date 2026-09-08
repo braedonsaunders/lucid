@@ -1,10 +1,30 @@
-# Lucid
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/lucid-logo-dark.svg">
+    <img src=".github/assets/lucid-logo.svg" alt="Lucid — sharper browser video on Apple silicon" width="320">
+  </picture>
+</p>
 
-Native video super resolution for Apple silicon. Lucid takes decoded browser
-frames, reconstructs them with Core ML, restores detail with Metal, and returns
-the result to the video player. Processing stays on your Mac.
+<p align="center">
+  <a href="#build-and-browser-companion"><img alt="macOS 26+" src="https://img.shields.io/badge/macOS-26%2B-0b0e14?style=flat-square"></a>
+  <a href="#build-and-browser-companion"><img alt="Apple silicon" src="https://img.shields.io/badge/Apple%20silicon-required-5b8cff?style=flat-square"></a>
+  <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-8b5cf6?style=flat-square"></a>
+</p>
 
-<img src="Benchmarks/2026-09-04/control-panel.png" width="360" alt="Lucid's native control panel, with quality presets and hold-to-compare">
+**Video super-resolution for Apple silicon — what RTX Video Super Resolution
+does for NVIDIA cards, for Macs.**
+
+Lucid makes low-bitrate video in your browser look better, and it does it where the
+video already is. There is no separate window, no player to switch to and nothing
+pasted over the top of the page: the enhanced picture is drawn into the page's own
+video box, so it scrolls, clips and stacks exactly like the video did.
+
+It is built for the ordinary case that makes streaming look bad — a 144p to 720p
+stream stretched across a large Retina window — and it runs a trained
+super-resolution network plus a small Metal pipeline, at source frame rate, entirely
+on your Mac.
+
+---
 
 ## What ships
 
