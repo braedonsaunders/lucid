@@ -983,3 +983,24 @@ four-pixel low-error match survives while a weak one-pixel match remains rejecte
 and the baseline reproduces the current field exactly. Six policy/native-stage
 tests pass locally before the GPU replay. Broad proxy and native quality/runtime
 results remain required before changing shipping behavior.
+
+r50 completes all three policies after six GPU tests pass. All baseline metric
+rows exactly reproduce r49's unchanged initial model, and every first-frame row
+is identical across policies. Removing only the low-error veto improves overall
+LPIPS/DISTS by 0.221%/0.254% and fine correlation by 0.136%; removing both
+overrides improves them by 0.298%/0.345% and 0.165%. The larger gain on the
+original patch is localized: source-average Sintel LPIPS improves 0.896%/1.197%
+under the two alternatives. REDS changes are small and mixed. The gain-only
+policy keeps aggregate temporal residual change effectively unchanged; removing
+both overrides increases it 0.072%. `taa-motion-proxy-comparison.json` retains
+all source summaries, temporal measurements, exact baseline checks and hashes.
+
+These are modest broad proxy gains with a larger effect in particular low-contrast
+moving detail, not a broad native breakthrough. A native quality/cost test remains
+justified before discarding or promoting the policy. Inspection of the actual
+Metal kernel shows that the low-error condition returns before its search loop:
+removing that shortcut increases work in affected blocks, unlike the Torch
+emulator which already computes the full search. Native performance therefore
+must be measured. A gain-only native implementation must also retain the old
+low-error confidence floor to match this diagnostic's stationary weak-match
+behavior. No Metal source, shipping model or runtime default has changed yet.

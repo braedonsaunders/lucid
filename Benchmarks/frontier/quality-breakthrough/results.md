@@ -71,3 +71,9 @@ only 0.063%/0.063% versus its matched SR-only control, with small visual changes
 [Joint cleaner evidence](joint-precleaner-comparison.json). A separate TAA motion
 policy probe gives a stronger improvement on one fixed low-contrast patch;
 broader comparison is required before interpreting it as a quality breakthrough.
+
+The full TAA replay gives modest overall gains: preserving the match-gain guard
+improves LPIPS/DISTS by 0.221%/0.254%; retaining all integer matches improves
+them by 0.298%/0.345%. Baseline rows reproduce exactly. The larger fixed-patch
+gain is localized; native quality and timing remain untested.
+[TAA policy comparison](taa-motion-proxy-comparison.json).
