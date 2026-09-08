@@ -1,6 +1,6 @@
 # Paired-critic ladder — fixed before results, 2026-09-05
 
-The completed paired-critic run (`paired-critic-protocol.md`) is the first candidate to pass the perceptual promotion gate on both development sets and the frozen gate on the bank set. Its raw checkpoint gains 10.05% LPIPS / 17.98% DISTS on the 48 development pairs; the NVIDIA VFX SDK gains 25.00% / 22.22% on the same pairs. That run used adversarial weight 0.005 and 8,000 steps at learning rate 0.00002, small values chosen when the critic was unproven. Two prespecified ladders test whether the remaining gap is training strength rather than architecture. No inference operation changes; the student remains the folded ch32u 2× graph whose native cost is recorded in `paired-native-profile`.
+The completed paired-critic run (`paired-critic-protocol.md`) is the first candidate to pass the perceptual promotion gate on both development sets and the frozen gate on the bank set. Its raw checkpoint gains 10.05% LPIPS / 17.98% DISTS on the 48 development pairs; the commercial reference measured on the same pairs remains well ahead (its numbers are withheld under its licence). That run used adversarial weight 0.005 and 8,000 steps at learning rate 0.00002, small values chosen when the critic was unproven. Two prespecified ladders test whether the remaining gap is training strength rather than architecture. No inference operation changes; the student remains the folded ch32u 2× graph whose native cost is recorded in `paired-native-profile`.
 
 ## Ladder r1 — `C:\lucid\paired-ladder-20260905-r1`
 
@@ -24,7 +24,7 @@ No weight blend other than 0.8, no step other than the final, and no arm is chos
 
 ## Results, r1 and r2 (receipts in `paired-ladder/`)
 
-Source-balanced LPIPS / DISTS improvement over shipping. "pass" is the recalibrated perceptual gate (`perceptual-gate-protocol.md`); the frozen fine-correlation gate is not applied to ladder arms because it rejects the NVIDIA target.
+Source-balanced LPIPS / DISTS improvement over shipping. "pass" is the recalibrated perceptual gate (`perceptual-gate-protocol.md`); the frozen fine-correlation gate is not applied to ladder arms because it rejects the commercial reference.
 
 | Arm | Target | Weight | Steps | 48 dev raw | 48 dev 80% | 96 bank raw | 96 bank 80% |
 |---|---|---:|---:|---|---|---|---|
@@ -41,13 +41,12 @@ Two findings. **Longer schedules hurt**: every 24,000-step raw checkpoint scores
 
 | Candidate | LPIPS | DISTS | Perceptual gate |
 |---|---:|---:|---|
-| NVIDIA VFX ULTRA (`nvvfx-ultra-holdout960.json`) | **+21.60%** | **+21.02%** | pass (below anchor on 4 sources, aggregate above) |
 | `w010_s8k` 80% | +7.92% | +12.25% | Sunflower −4.1% LPIPS / −6.6% DISTS |
 | `w005_s24k` 80% | +6.47% | +10.90% | Sunflower regresses |
 | paired (r2) 80% | +6.10% | +11.92% | pass |
 | paired (r2) raw | +6.27% | +14.92% | RushHour, Sunflower regress; energy 1.10 |
 
-NVIDIA gains most exactly where every Lucid candidate loses: RushHour (+45.9% LPIPS) and Sunflower (+22.1%), the grainy 1080p masters. Our stronger candidates amplify grain and codec noise into speckle (RushHour fine energy 1.09 for the doubled-weight blend); NVIDIA reconstructs clean structure there. That is the remaining gap, not aggregate sharpness.
+The commercial reference gains most exactly where every Lucid candidate loses: RushHour and Sunflower, the grainy 1080p masters. Our stronger candidates amplify grain and codec noise into speckle (RushHour fine energy 1.09 for the doubled-weight blend); the reference reconstructs clean structure there. That is the remaining gap, not aggregate sharpness.
 
 ## Ladders r3 and r4, prespecified
 
@@ -77,7 +76,7 @@ The adversarial weight is flat between 0.005 and 0.01 on the development set and
 
 ### Native delivery holdout, 4,000-step blend (`paired-ladder/native-ref4k-s02/`)
 
-Same Release app, frozen inputs and configuration as the 8,000-step blend run (sharpness 0.2, radius 2). Source-balanced LPIPS 0.3288 → 0.2986 (**+9.16%**), DISTS 0.1345 → 0.1156 (**+14.05%**). **Every one of the eight sources improves on both metrics** through the real pipeline, including RushHour (+2.6% / +24.5%) and Sunflower (+2.7% / +11.3%); six sources gain 7–25%. Remaining flags: RushHour fine energy 1.19 (the native detail stage still adds energy on grain; the torch-level blend was at 1.01), and the aggregate correlation floor, which compares native output against a torch-level Lanczos anchor that even native shipping (0.4895) sits below, so it is not informative for native reports. The frozen native gate fails its shipping-relative correlation guard on four sources, as it does for NVIDIA. This is the strongest native result recorded: the earlier best was +7.20% / +10.46% with three sources regressing.
+Same Release app, frozen inputs and configuration as the 8,000-step blend run (sharpness 0.2, radius 2). Source-balanced LPIPS 0.3288 → 0.2986 (**+9.16%**), DISTS 0.1345 → 0.1156 (**+14.05%**). **Every one of the eight sources improves on both metrics** through the real pipeline, including RushHour (+2.6% / +24.5%) and Sunflower (+2.7% / +11.3%); six sources gain 7–25%. Remaining flags: RushHour fine energy 1.19 (the native detail stage still adds energy on grain; the torch-level blend was at 1.01), and the aggregate correlation floor, which compares native output against a torch-level Lanczos anchor that even native shipping (0.4895) sits below, so it is not informative for native reports. The frozen native gate fails its shipping-relative correlation guard on four sources, as it does for the commercial reference. This is the strongest native result recorded: the earlier best was +7.20% / +10.46% with three sources regressing.
 
 Native graph cost is unchanged from the folded shipping graph (`profile.json`): 5.6 ms at 640×360, 9.9 ms at 864×480 on CPU+GPU.
 
@@ -221,7 +220,7 @@ Both trained models now beat every interpolation on both metrics at 720p; `lucid
 | `w48_4k` | +12.15 / +15.54 | +16.38 / +10.36 | — |
 | `big_2k` (ch32, same recipe) | +13.39 / +14.60 | +17.38 / +9.37 | **+11.47 / +14.34** |
 
-Fifty percent more channels, twice the native cost (11.2 vs 5.6 ms at 640×360), and no gain anywhere. Together with r11 this closes the capacity question for now: at this data scale the ch32 student is not capacity-limited. The levers that moved the holdout this session were the training target (reference instead of mixture), the schedule (2,000 steps) and the data (full-frame codec context). What remains is data that is *different*: new live-action masters from the Xiph collection are being fetched (`derf-train`), and the NVIDIA teacher remains the largest untried lever pending its SDK licence.
+Fifty percent more channels, twice the native cost (11.2 vs 5.6 ms at 640×360), and no gain anywhere. Together with r11 this closes the capacity question for now: at this data scale the ch32 student is not capacity-limited. The levers that moved the holdout this session were the training target (reference instead of mixture), the schedule (2,000 steps) and the data (full-frame codec context). What remains is data that is *different*: new live-action masters from the Xiph collection are being fetched (`derf-train`), and a commercial teacher remains untried pending its SDK licence.
 
 ## Results, r14: seed soup (receipts `paired-ladder/big_2k_seed*`, `soup3-*`)
 
@@ -310,7 +309,7 @@ Native delivery holdout of `v4_w0075_smooth005` (`paired-ladder/native-sm005-s02
 
 ### Where the campaign stands, 2026-09-07 08:00
 
-Through the real pipeline on the eight-source holdout, against the original SPAN ch32utc family: shipping `lucidbig2k_` +11.8% LPIPS / +16.0% DISTS, every source up, at ~40% lower graph cost, plus 720p admitted. NVIDIA VFX ULTRA on the same frames (torch level, no Lucid post-processing) is +21.6% / +21.0%. Levers measured and closed this session: training target (reference wins), schedule (2,000 steps), adversarial weight (0.005–0.0075), blend, seeds, crop, pre-fine-tune, capacity from scratch and by widening, three data expansions, input-noise and smooth-region negatives, and native presentation sharpness/grain/temporal settings. The open levers are (1) the torch-to-native gap on grainy sources for the texture-richer checkpoints, which needs the app's NV12→RGB path reproduced in training or evaluation, (2) more *different* training content, and (3) NVIDIA's own output as a teacher, pending its SDK licence.
+Through the real pipeline on the eight-source holdout, against the original SPAN ch32utc family: shipping `lucidbig2k_` +11.8% LPIPS / +16.0% DISTS, every source up, at ~40% lower graph cost, plus 720p admitted. The commercial reference on the same frames (torch level, no Lucid post-processing) is well ahead (numbers withheld under its licence). Levers measured and closed this session: training target (reference wins), schedule (2,000 steps), adversarial weight (0.005–0.0075), blend, seeds, crop, pre-fine-tune, capacity from scratch and by widening, three data expansions, input-noise and smooth-region negatives, and native presentation sharpness/grain/temporal settings. The open levers are (1) the torch-to-native gap on grainy sources for the texture-richer checkpoints, which needs the app's NV12→RGB path reproduced in training or evaluation, (2) more *different* training content, and (3) a commercial reference's own output as a teacher, pending its SDK licence.
 
 ## Native-gap investigation, 2026-09-07 (receipts `paired-ladder/native-v4-2k-s0{0,1,2}`, `native-v4-2k-{g0,notaa}`; probes in `Tools/frontier_eval/`)
 
@@ -328,9 +327,9 @@ Single-frame probes on the same frames: Core ML output equals torch within one R
 
 Temporal probe (`paired-ladder/temporal-probe-holdout-subset.json`; 12 holdout streams × 48 consecutive frames, reference-static flicker): the 33-source checkpoint flickers more than the shipping one where the reference is still, +3% on Sunflower (2.19 vs 2.12) and +10% on RushHour (1.59 vs 1.45), with slightly higher temporal residuals. Modest per frame, but it is the only measured axis on which the two families differ in the direction of the native loss, and the temporal stage blends against history every frame. The trainer now has a reference-static temporal consistency term (`--temporal`, two consecutive frames per crop, no inference cost); the 2026-09-04 measurement of the same term on the earlier model gave −6% flicker and better LPIPS at weight 4. It is the next arm on the 33-source bank.
 
-## NVIDIA teacher: stopped on licence grounds, 2026-09-07
+## Commercial teacher: stopped on licence grounds, 2026-09-07
 
-The wheel ships two agreements (`nvidia_vfx-0.1.0.1.dist-info/licenses/packaging/`). The NVIDIA Open Model License covering the weights is permissive about outputs (outputs are not Derivative Models; NVIDIA claims no ownership of them). The NVIDIA Software License Agreement covering the SDK is not: §8.12 forbids using the Software "for the purpose of developing competing products or technologies", which is exactly what distilling Lucid from its outputs would be, and §8.9 forbids distributing or disclosing benchmarking or competitive-analysis results relating to the Software without written permission. Teacher-frame generation was stopped after 52 frames and those frames deleted; no Lucid weights were ever trained on SDK output. The distillation tooling (`nvidia_teacher_frames.py`, `build_teacher_cache.py`, `--intended teacher`) stays in the tree unused. §8.9 also bears on this evidence folder's NVIDIA comparison numbers and the gallery's NVIDIA frames; that disclosure question is the owner's decision.
+The vendor's SDK ships two agreements. The open model licence covering the weights is permissive about outputs. The software licence agreement covering the SDK is not: §8.12 forbids using the Software "for the purpose of developing competing products or technologies", which is exactly what distilling Lucid from its outputs would be, and §8.9 forbids distributing or disclosing benchmarking or competitive-analysis results relating to the Software without written permission. Teacher-frame generation was stopped after 52 frames and those frames deleted; no Lucid weights were ever trained on SDK output. The distillation tooling is kept out of the public tree. §8.9 also bears on this evidence folder's the commercial reference comparison numbers and the gallery's the commercial reference frames; that disclosure question is the owner's decision.
 
 Ladder r22b (`C:\lucid\paired-ladder-20260905-r22`) is now the pure data lever on bank v5 (21 original + 24 Wikimedia Commons CC0/CC-BY sources, 1,620 sequences; `training-sources-v5.json`, `commons-sources/sources.json`): reference target at weights 0.005 and 0.0075, 2,000 steps. Ladder r23 runs the new temporal consistency term at weights 1.5 and 4 on the 33-source bank at adversarial weight 0.0075.
 

@@ -18,4 +18,4 @@ The quantized 2× presentation shortcut subsequently failed the wide regression 
 
 [Ultra Flash, June 8](https://arxiv.org/html/2606.09150v1), reports approximately 30 fps at 960×1664 on B200 in its main results. Its pipeline generates video from a Wan-based latent model; it is not a drop-in restoration model accepting Lucid's decoded frames. The appendix also labels a 30.2 fps table as H200 despite the main text distinguishing about 17 fps on H200. Treat those hardware/throughput claims as unresolved author-reported figures, not a reproducible competitive baseline. No model download or training was started from this inspection.
 
-These checks supplement the measured NVIDIA VFX baseline and existing 2026 model experiments. Recency alone does not authorize replacing a measured model, weakening a gate, or describing an adaptation as novel.
+These checks supplement the measured commercial baseline and existing 2026 model experiments. Recency alone does not authorize replacing a measured model, weakening a gate, or describing an adaptation as novel.

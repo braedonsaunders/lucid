@@ -1,6 +1,6 @@
 # Perceptual promotion gate — 2026-09-05
 
-Every reconstruction candidate trained this month improved source-balanced LPIPS and DISTS, several by 5–18%, and every one was rejected by the frozen development gate's requirement that no source lose more than 0.01 fine-band correlation against shipping. The measured NVIDIA VFX SDK output, the competitive target, improves LPIPS/DISTS by 23–25% / 18–22% on the identical 48 pairs and fails the same guard on CrowdRun and Johnny. A guard that rejects the target is not measuring the goal.
+Every reconstruction candidate trained this month improved source-balanced LPIPS and DISTS, several by 5–18%, and every one was rejected by the frozen development gate's requirement that no source lose more than 0.01 fine-band correlation against shipping. The measured commercial reference, the competitive target, improves both metrics by far more on the identical 48 pairs and fails the same guard on CrowdRun and Johnny (its numbers are withheld under its SDK licence). A guard that rejects the target is not measuring the goal.
 
 Fine correlation is scale-invariant. It measures whether fine structure is real and cannot reward synthesized detail by construction, so a gate anchored to shipping's correlation admits only models that synthesize nothing. `gate_perceptual.py` keeps the perceptual minimums (≥3% source-balanced LPIPS and DISTS gain, ≤2% per-source perceptual regression) and replaces the shipping-relative correlation guard with two guards a good synthesizer passes and a bad one fails:
 
@@ -11,9 +11,8 @@ Applied to the retained reports without changing any pixels:
 
 | Candidate | Set | LPIPS | DISTS | Frozen gate | Perceptual gate |
 |---|---|---:|---:|---|---|
-| NVIDIA VFX HIGH | 48 dev | +23.14% | +17.86% | fails (2 sources) | **passes** |
-| NVIDIA VFX ULTRA | 48 dev | +25.00% | +22.22% | fails (2 sources) | **passes** |
-| NVIDIA VFX BICUBIC | 48 dev | −11.23% | −3.33% | fails | fails (10 reasons) |
+| commercial reference, two AI modes | 48 dev | withheld | withheld | fails (2 sources) | **passes** |
+| commercial reference, bicubic mode | 48 dev | withheld | withheld | fails | fails (10 reasons) |
 | paired critic raw | 48 dev | +10.05% | +17.98% | fails (2 sources) | **passes** |
 | paired critic 80% | 48 dev | +7.85% | +11.81% | fails (Johnny) | **passes** |
 | paired critic raw | 96 bank | +8.98% | +10.89% | fails | fails (Sintel LPIPS −5.7%, below anchor) |
@@ -21,7 +20,7 @@ Applied to the retained reports without changing any pixels:
 
 The perceptual gate separates the SDK's AI modes from its bicubic mode by a wide margin and rejects the raw checkpoint on the animation source where it genuinely regresses. It is a development screen only: the native delivery holdout, temporal stability and fresh-source evidence remain required before any weights ship.
 
-Receipts: `paired-critic-*-perceptual-gate.json`, `nvidia-vfx-rgb48-perceptual-gate.json`; tests in `test_gate_perceptual.py`.
+Receipts: `paired-critic-*-perceptual-gate.json`; tests in `test_gate_perceptual.py`.
 
 ## Teacher finding
 
