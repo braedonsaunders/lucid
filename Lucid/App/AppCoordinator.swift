@@ -238,6 +238,7 @@ final class AppCoordinator {
                 case "grain": t.grain = value
                 case "grainPhase": t.grainPhase = value
                 case "debandThreshold": t.debandThreshold = value
+                case "debandGuard": t.debandGuard = value
                 case "cdefSecondary": t.cdefSecondary = value
                 case "cdefPrimary": t.cdefPrimary = value
                 case "loopFilterQuant": t.loopFilterQuant = value
@@ -650,6 +651,7 @@ final class EnhancementSession {
         var cdefPrimary: Float = 4
         var cdefSecondary: Float = 2
         var debandThreshold: Float = 0.008
+        var debandGuard: Float = 0
         var grain: Float = 0.010
         // Frozen grain is the default. Animated phase never changes amplitude.
         var grainPhase: Float = 0.0
@@ -690,6 +692,7 @@ final class EnhancementSession {
             grain = try f(.grain, grain)
             grainPhase = try f(.grainPhase, grainPhase)
             debandThreshold = try f(.debandThreshold, debandThreshold)
+            debandGuard = try f(.debandGuard, debandGuard)
             cdefSecondary = try f(.cdefSecondary, cdefSecondary)
             cdefPrimary = try f(.cdefPrimary, cdefPrimary)
             loopFilterQuant = try f(.loopFilterQuant, loopFilterQuant)
@@ -803,6 +806,7 @@ final class EnhancementSession {
                 cdefPrimary: t.cdefPrimary,
                 cdefSecondary: t.cdefSecondary,
                 debandThreshold: t.debandThreshold,
+                debandGuard: t.debandGuard,
                 grain: t.grain,
                 grainPhase: t.grainPhase,
                 taaGamma: t.taaGamma,
@@ -839,6 +843,7 @@ final class EnhancementSession {
             t.grain = f("LUCID_GRAIN", t.grain)
             t.grainPhase = f("LUCID_GRAINPHASE", t.grainPhase)
             t.debandThreshold = f("LUCID_DEBANDTHRESHOLD", t.debandThreshold)
+            t.debandGuard = f("LUCID_DEBANDGUARD", t.debandGuard)
             t.cdefSecondary = f("LUCID_CDEFSECONDARY", t.cdefSecondary)
             t.cdefPrimary = f("LUCID_CDEFPRIMARY", t.cdefPrimary)
             t.loopFilterQuant = f("LUCID_LOOPFILTERQUANT", t.loopFilterQuant)
@@ -867,7 +872,7 @@ final class EnhancementSession {
                 "stageSiting": t.stageSiting, "stageDeband": t.stageDeband, "stageOklab": t.stageOklab,
                 "stageMotion": t.stageMotion, "stageLoopFilter": t.stageLoopFilter, "stageTaa": t.stageTaa, "stageCdef": t.stageCdef,
                 "loopFilterQuant": t.loopFilterQuant, "cdefPrimary": t.cdefPrimary, "cdefSecondary": t.cdefSecondary,
-                "debandThreshold": t.debandThreshold, "grain": t.grain, "grainPhase": t.grainPhase, "taaGamma": t.taaGamma,
+                "debandThreshold": t.debandThreshold, "debandGuard": t.debandGuard, "grain": t.grain, "grainPhase": t.grainPhase, "taaGamma": t.taaGamma,
                 "taaFeedback": t.taaFeedback, "skinProtect": t.skinProtect]
     }
 
@@ -975,13 +980,13 @@ final class EnhancementSession {
         return { width, height in
             let compositor = try MetalTileCompositor()
             let kind = engine
-            let learned: LearnedUpscaler?
+            let learned: (any FrameReconstructor)?
             var upscaler: TiledVideoToolboxUpscaler?
             var built = 1
             if kind.usesLearned {
                 // Not `try?`: a session only starts for sizes the table covers,
                 // so a missing model is an error, not a silent downgrade.
-                learned = try LearnedUpscaler(width: width, height: height)
+                learned = try LearnedUpscaler.makeReconstructor(width: width, height: height)
             } else {
                 guard EngineKind.comparisonPathEnabled else {
                     throw EnhancementSession.Failure.comparisonEngineDisabled

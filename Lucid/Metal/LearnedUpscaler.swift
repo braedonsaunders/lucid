@@ -234,10 +234,15 @@ final class LearnedUpscaler: @unchecked Sendable {
                 }
             }
         }
-        let sorted = stems.sorted { a, b in
+        var sorted = stems.sorted { a, b in
             if a == shippingStem { return true }
             if b == shippingStem { return false }
             return a < b
+        }
+        // Apple's temporal scaler is offered as a pseudo-model so the lab can
+        // put it on the same footage; it needs no package.
+        if let device = MTLCreateSystemDefaultDevice(), MetalFXTemporalUpscaler.supports(device) {
+            sorted.append(MetalFXTemporalUpscaler.stem)
         }
         stemCache = sorted
         return sorted

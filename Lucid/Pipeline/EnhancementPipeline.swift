@@ -26,7 +26,7 @@ struct PipelineStages: @unchecked Sendable {
     let upscaler: TiledVideoToolboxUpscaler?
     /// Preferred when it exists: it is the only upscaler measured that beats a
     /// plain Lanczos anchor on correlation with the truth.
-    let learned: LearnedUpscaler?
+    let learned: (any FrameReconstructor)?
     let detail: DetailEnhancer?
     let inputWidth: Int
     let inputHeight: Int

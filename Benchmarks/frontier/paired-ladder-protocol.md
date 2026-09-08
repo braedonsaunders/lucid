@@ -446,3 +446,25 @@ Single stages on, everything else off, absolute change against torch for the sam
 The temporal stage is close to neutral on LPIPS and helps RushHour; its cost is DISTS on the structured sources. Debanding is the transfer: it buys old_town_cross and in_to_tree, and it flattens Sunflower, Tractor, pedestrian_area and RushHour, every source that carries film grain or fine texture the reference keeps, with DISTS +9 to +26%. Summed over the eight sources it is net negative on both metrics. The deband threshold (0.008, about two 8-bit levels) sits exactly at the amplitude of compressed film grain, so the stage cannot tell a banding step from grain the reference has.
 
 Fix candidates, in order: debanding off (shipping configuration otherwise; running now on `v4_2k` and on shipping `big2k`), then debanding moved ahead of the model where the banding actually lives, then a texture guard on the stage. r26 (`v6_w005_2k`): 960 holdout +9.42 / +15.83, Tractor −1.0; the union bank inherits the Commons Tractor weakness and is not the lever.
+
+### Debanding off, shipping configuration otherwise (receipts `paired-ladder/native-{v4-2k,big2k}-nodeband-*`)
+
+Absolute change for the candidate arm, debanding on → off:
+
+| Source | `v4_2k` LPIPS / DISTS | shipping `big2k` LPIPS / DISTS |
+|---|---|---|
+| old_town_cross | +16.0% / −2.6% | +17.0% / +0.4% |
+| in_to_tree | +6.7% / −1.9% | +6.5% / −0.4% |
+| pedestrian_area | −2.1% / −11.9% | +2.4% / −9.5% |
+| rush_hour | −4.0% / −15.5% | +3.7% / −4.2% |
+| sunflower | −9.7% / −6.7% | −6.0% / −4.8% |
+| tractor | −3.6% / −6.0% | −3.3% / −6.1% |
+| mean of eight | +0.6% / −5.5% | +2.8% / −3.1% |
+
+Switching the stage off is a trade, not a fix: the grainy sources recover 3 to 10% and DISTS improves nearly everywhere, but the two low-bitrate structured sources lose 16 to 17% LPIPS, because on them the stage is doing what it was built for, flattening 8-bit plateaus and codec blocks before the model sees them. Relative to the SPAN comparator with the stage off in both arms: `v4_2k` +10.78 / +16.62, `big2k` +9.89 / +15.18.
+
+The fix is therefore a guard, not a switch. `deband_plane` now takes a plateau guard (`debandGuard`, default 0 = the unguarded stage): a pixel with any immediate neighbour further away than the guard is grain or texture, not a quantisation plateau, and is left alone; the far-sample averaging runs only on true plateaus. Running now at 0.005 (about 1.3 levels: plateaus with 0 or 1 level steps qualify, anything with a 2-level neighbour does not) on both checkpoints.
+
+## Apple MetalFX temporal, video-fed (2026-09-08)
+
+`MetalFXTemporalUpscaler.swift`: Apple's temporal scaler at 2× with a synthesized contract, the same idea the community uses to feed DLSS with plain video: motion vectors from the app's bounded block correspondence (blocks the estimator does not trust are declared stationary), a constant depth plane, zero jitter. It is a pseudo-model on the lab's Model row (`metalfx_`) and a harness arm (`--candidate-metalfx`), so it runs through identical stages. Without sub-pixel jitter it cannot recover detail it was never shown; it is Apple's accumulator and resolve, measured on the delivery holdout for reference. Cost through the pipeline: about 2 ms per 640×360 frame.

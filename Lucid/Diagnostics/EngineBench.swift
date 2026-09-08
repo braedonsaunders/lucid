@@ -111,7 +111,7 @@ enum EngineBench {
         // less over one that already invented texture. So an ablation is only
         // meaningful against the upscaler that actually ships, and this points
         // the bench at it.
-        var learned: LearnedUpscaler?
+        var learned: (any FrameReconstructor)?
         let useLearned = ProcessInfo.processInfo.environment["LUCID_LEARNED"] == "1"
         var lowLatency: TiledVideoToolboxUpscaler?
         var processor: VTFrameProcessor?
@@ -186,7 +186,7 @@ enum EngineBench {
             let lowLatencyOutput: CVPixelBuffer
             if useLearned {
                 if learned == nil {
-                    learned = try LearnedUpscaler(width: width, height: height)
+                    learned = try LearnedUpscaler.makeReconstructor(width: width, height: height)
                     print("bench upscaler: SPAN 4× on \(LearnedUpscaler.computeUnitsLabel), \(width)x\(height)")
                 }
                 lowLatencyOutput = try learned!.upscale(cleaned)

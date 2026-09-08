@@ -71,6 +71,8 @@ struct DetailSettings: Equatable, Sendable {
     var cdefPrimary: Float = 4
     var cdefSecondary: Float = 2
     var debandThreshold: Float = 0.008
+    /// Plateau guard for debanding; 0 keeps the unguarded stage.
+    var debandGuard: Float = 0
     var debandRadius: Float = 16
     var debandIterations: Float = 2
     var grain: Float = 0.010
@@ -628,6 +630,9 @@ struct DebandParams {
     float radius;       // search distance in pixels
     float iterations;
     float frame;        // decorrelates the sampling pattern over time
+    float guard;        // 0 = off; otherwise the largest immediate-neighbour
+                        // difference a pixel may have and still count as a
+                        // quantisation plateau rather than grain or texture
 };
 
 // Stochastic debanding. Each iteration samples four points on a rotated square
@@ -643,6 +648,27 @@ kernel void deband_plane(texture2d<float, access::read>  source      [[texture(0
     if (int(gid.x) >= width || int(gid.y) >= height) { return; }
     float4 centre = source.read(gid);
     float2 result = centre.rg;
+
+    // Banding is a plateau: every immediate neighbour sits within a level of
+    // the centre. Film grain and fine texture are not, even though their
+    // amplitude also sits under the far-sample threshold, and averaging them
+    // away is exactly the loss the delivery holdout measured on every grainy
+    // source. So a pixel with any neighbour beyond the guard is left alone.
+    if (params.guard > 0.0f) {
+        float largest = 0.0f;
+        for (int dy = -1; dy <= 1; ++dy) {
+            for (int dx = -1; dx <= 1; ++dx) {
+                if (dx == 0 && dy == 0) { continue; }
+                const uint2 at = uint2(uint(clamp(int(gid.x) + dx, 0, width - 1)), uint(clamp(int(gid.y) + dy, 0, height - 1)));
+                const float2 v = source.read(at).rg;
+                largest = max(largest, max(abs(v.r - centre.r), abs(v.g - centre.g)));
+            }
+        }
+        if (largest > params.guard) {
+            destination.write(centre, gid);
+            return;
+        }
+    }
 
     uint h = (gid.x * 73856093u) ^ (gid.y * 19349663u) ^ (uint(params.frame) * 83492791u);
     const int iterations = max(1, int(params.iterations));
@@ -956,7 +982,7 @@ private struct DeblockParams {
 
 private struct LoopFilterParams { var alpha: Float; var beta: Float; var tc0: Float; var vertical: Int32 }
 private struct CdefParams { var primary: Float; var secondary: Float; var damping: Float }
-private struct DebandParams2 { var threshold: Float; var radius: Float; var iterations: Float; var frame: Float }
+private struct DebandParams2 { var threshold: Float; var radius: Float; var iterations: Float; var frame: Float; var guardLevel: Float }
 private struct TaaParams { var feedbackMin: Float; var feedbackMax: Float; var gamma: Float; var valid: Float; var motion: Float }
 private struct OklabParams { var saturation: Float; var skinProtect: Float }
 
@@ -1224,12 +1250,12 @@ final class DetailEnhancer: @unchecked Sendable {
 
         if settings.stageDeband {
             let threshold = settings.debandThreshold, radius = settings.debandRadius
-            let iterations = settings.debandIterations, frame = frameIndex
+            let iterations = settings.debandIterations, frame = frameIndex, guardLevel = settings.debandGuard
             passes.append { src, dst in
                 guard let e = commandBuffer.makeComputeCommandEncoder() else { return }
                 e.setComputePipelineState(self.debandPipeline)
                 e.setTexture(src, index: 0); e.setTexture(dst, index: 1)
-                var p = DebandParams2(threshold: threshold, radius: radius, iterations: iterations, frame: frame)
+                var p = DebandParams2(threshold: threshold, radius: radius, iterations: iterations, frame: frame, guardLevel: guardLevel)
                 e.setBytes(&p, length: MemoryLayout<DebandParams2>.stride, index: 0)
                 e.dispatchThreadgroups(grid(width, height), threadsPerThreadgroup: threads)
                 e.endEncoding()
@@ -1319,7 +1345,8 @@ final class DetailEnhancer: @unchecked Sendable {
                     e.setTexture(sPlane, index: 0); e.setTexture(dPlane, index: 1)
                     var p = DebandParams2(threshold: settings.debandThreshold * 1.5,
                                           radius: settings.debandRadius * 0.5,
-                                          iterations: settings.debandIterations, frame: frameIndex)
+                                          iterations: settings.debandIterations, frame: frameIndex,
+                                          guardLevel: settings.debandGuard * 1.5)
                     e.setBytes(&p, length: MemoryLayout<DebandParams2>.stride, index: 0)
                     e.dispatchThreadgroups(grid(sPlane.width, sPlane.height), threadsPerThreadgroup: threads)
                     e.endEncoding()

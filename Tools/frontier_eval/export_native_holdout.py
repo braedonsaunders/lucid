@@ -30,6 +30,7 @@ def main():
                     help='Use the fixed 48-pair development screen for the quantized shipping presentation')
     ap.add_argument('--presentation-corpus', choices=['development48', 'regression960'], default='development48',
                     help='Previously used, fixed source sets; neither is a fresh holdout')
+    ap.add_argument('--candidate-metalfx', action='store_true', help='Candidate arm is the MetalFX temporal pseudo-model (no package); shipping arm unchanged')
     ap.add_argument('--tensor-output', action='store_true', help='Fixed FP32 full-4x output-storage regression; Standard radius4 in both arms')
     ap.add_argument('--preserve-display-gain', action='store_true',
                     help='Diagnostic: keep nominal gain when the presentation candidate changes output scale')
@@ -64,7 +65,10 @@ def main():
               'candidate':args.models/('tensor4x_fp32.mlpackage' if args.tensor_output else ('quantized_bicubic2x_640x360.mlpackage' if development else 'direct2x_trained_640x360.mlpackage'))}
     expected={'shipping4x':'fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65',
               'candidate':config['candidate_sha256']}
+    if args.candidate_metalfx:
+        packages['candidate']=args.out/'metalfx-temporal'
     for label,package in packages.items():
+        if args.candidate_metalfx and label=='candidate':continue
         model=ct.models.MLModel(str(package),skip_model_load=True)
         if model.user_defined_metadata.get('lucid.checkpoint_sha256')!=expected[label]:
             raise ValueError('Core ML package does not identify frozen checkpoint')
