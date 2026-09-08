@@ -228,6 +228,7 @@ final class AppCoordinator {
                 case "adaptive": t.adaptive = value
                 case "skinProtect": t.skinProtect = value
                 case "taaFeedback": t.taaFeedback = value
+                case "taaGrainKeep": t.taaGrainKeep = value
                 case "taaGamma": t.taaGamma = value
                 case "grain": t.grain = value
                 case "grainPhase": t.grainPhase = value
@@ -651,6 +652,7 @@ final class EnhancementSession {
         // The gentlest setting the control offers: enough to steady the image
         // without the history dominating it.
         var taaFeedback: Float = 0.50
+        var taaGrainKeep: Float = 0
         var skinProtect: Float = 1.0
 
         init() {}
@@ -680,6 +682,7 @@ final class EnhancementSession {
             adaptive = try f(.adaptive, adaptive)
             skinProtect = try f(.skinProtect, skinProtect)
             taaFeedback = try f(.taaFeedback, taaFeedback)
+            taaGrainKeep = try f(.taaGrainKeep, taaGrainKeep)
             taaGamma = try f(.taaGamma, taaGamma)
             grain = try f(.grain, grain)
             grainPhase = try f(.grainPhase, grainPhase)
@@ -803,6 +806,7 @@ final class EnhancementSession {
                 grainPhase: t.grainPhase,
                 taaGamma: t.taaGamma,
                 taaFeedback: t.taaFeedback,
+                taaGrainKeep: t.taaGrainKeep,
                 skinProtect: t.skinProtect,
                 frame: frame
             )
@@ -831,6 +835,7 @@ final class EnhancementSession {
             t.adaptive = f("LUCID_ADAPTIVE", t.adaptive)
             t.skinProtect = f("LUCID_SKINPROTECT", t.skinProtect)
             t.taaFeedback = f("LUCID_TAAFEEDBACK", t.taaFeedback)
+            t.taaGrainKeep = f("LUCID_TAAGRAINKEEP", t.taaGrainKeep)
             t.taaGamma = f("LUCID_TAAGAMMA", t.taaGamma)
             t.grain = f("LUCID_GRAIN", t.grain)
             t.grainPhase = f("LUCID_GRAINPHASE", t.grainPhase)
@@ -865,7 +870,7 @@ final class EnhancementSession {
                 "stageMotion": t.stageMotion, "stageLoopFilter": t.stageLoopFilter, "stageTaa": t.stageTaa, "stageCdef": t.stageCdef,
                 "loopFilterQuant": t.loopFilterQuant, "cdefPrimary": t.cdefPrimary, "cdefSecondary": t.cdefSecondary,
                 "debandThreshold": t.debandThreshold, "debandGuard": t.debandGuard, "grain": t.grain, "grainPhase": t.grainPhase, "taaGamma": t.taaGamma,
-                "taaFeedback": t.taaFeedback, "skinProtect": t.skinProtect]
+                "taaFeedback": t.taaFeedback, "taaGrainKeep": t.taaGrainKeep, "skinProtect": t.skinProtect]
     }
 
     /// Advances every rebuild so the stochastic stages do not stand still.

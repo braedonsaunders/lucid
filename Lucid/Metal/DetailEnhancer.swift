@@ -84,6 +84,11 @@ struct DetailSettings: Equatable, Sendable {
     var grainPhase: Float = 0.0
     var taaGamma: Float = 1.25
     var taaFeedback: Float = 0.90
+    /// Fraction of the current frame's grain restored after temporal
+    /// accumulation (0 = grain is accumulated with everything else).
+    var taaGrainKeep: Float = 0
+    /// Neighbourhood sigma below which a fine residual counts as grain.
+    var taaGrainBand: Float = 0.012
     var skinProtect: Float = 1.0
     /// Frame counter, so stochastic stages do not stand still.
     var frame: Float = 0
@@ -762,6 +767,10 @@ struct TaaParams {
     float gamma;        // how many standard deviations the history may sit from the mean
     float valid;        // 0 on the first frame after a reset
     float motion;
+    float grainKeep;    // 0 = grain rides through the accumulator as before;
+                        // 1 = the current frame's grain is restored in full
+                        // and kept out of the history
+    float grainBand;    // neighbourhood sigma below which a residual is grain
 };
 
 // Reproject accumulated luma using source-frame correspondence, then clip
@@ -814,9 +823,22 @@ kernel void taa_luma(texture2d<float, access::read>  source      [[texture(0)]],
     // Where the clipped history still disagrees in luma, trust it less.
     const float difference = abs(centre - clipped) / max(max(centre, clipped), 0.2f);
     const float keep = mix(params.feedbackMin, params.feedbackMax, (1.0f - difference) * (1.0f - difference));
-    const float result = mix(centre, clipped, keep * confidence);
+    const float taken = keep * confidence;
+    const float result = mix(centre, clipped, taken);
 
-    destination.write(float4(result, 0, 0, 1), gid);
+    // Grain is not history. Averaging it across frames turns film grain into
+    // a soft, wrong texture the reference never had (measured: DISTS +24% on
+    // Sunflower from this stage alone). The accumulator keeps structure; the
+    // current frame's fine residual in flat neighbourhoods is put back on top
+    // and never written into the history, so it stays fresh every frame.
+    float presented = result;
+    if (params.grainKeep > 0.0f) {
+        const float fine = centre - mean;
+        const float flat = 1.0f - smoothstep(params.grainBand, params.grainBand * 3.0f, sigma);
+        presented = clamp(result + fine * taken * params.grainKeep * flat, 0.0f, 1.0f);
+    }
+
+    destination.write(float4(presented, 0, 0, 1), gid);
     historyOut.write(float4(result, 0, 0, 1), gid);
 }
 
@@ -986,7 +1008,7 @@ private struct DeblockParams {
 private struct LoopFilterParams { var alpha: Float; var beta: Float; var tc0: Float; var vertical: Int32 }
 private struct CdefParams { var primary: Float; var secondary: Float; var damping: Float }
 private struct DebandParams2 { var threshold: Float; var radius: Float; var iterations: Float; var frame: Float; var guardLevel: Float }
-private struct TaaParams { var feedbackMin: Float; var feedbackMax: Float; var gamma: Float; var valid: Float; var motion: Float }
+private struct TaaParams { var feedbackMin: Float; var feedbackMax: Float; var gamma: Float; var valid: Float; var motion: Float; var grainKeep: Float; var grainBand: Float }
 private struct OklabParams { var saturation: Float; var skinProtect: Float }
 
 private struct DetailParams {
@@ -1311,7 +1333,8 @@ final class DetailEnhancer: @unchecked Sendable {
                 e.setTexture(self.motionField, index: 4)
                 e.setTexture(self.rawHistory, index: 5)
                 e.setTexture(inLuma, index: 6)
-                var p = TaaParams(feedbackMin: max(0, feedback - 0.05), feedbackMax: feedback, gamma: gamma, valid: valid, motion: self.settings.stageMotion ? 1 : 0)
+                var p = TaaParams(feedbackMin: max(0, feedback - 0.05), feedbackMax: feedback, gamma: gamma, valid: valid, motion: self.settings.stageMotion ? 1 : 0,
+                                  grainKeep: self.settings.taaGrainKeep, grainBand: self.settings.taaGrainBand)
                 e.setBytes(&p, length: MemoryLayout<TaaParams>.stride, index: 0)
                 e.dispatchThreadgroups(grid(width, height), threadsPerThreadgroup: threads)
                 e.endEncoding()
