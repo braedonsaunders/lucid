@@ -96,67 +96,19 @@ final class LearnedUpscaler: @unchecked Sendable {
         Variant(width: 480, height: 270, milliseconds: 6.8),
         Variant(width: 640, height: 360, milliseconds: 10.7),
         Variant(width: 864, height: 480, milliseconds: 17.8),   // covers 854x480
-        // 720p, admitted 2026-09-06 with the direct-2x lucid2k_ family: 21.0 ms
-        // measured at 1280x720 -> 2560x1440 on this M4 Pro (CPU+GPU), and the
-        // frozen 720p screen has the trained 2x models beating Lanczos, bicubic
-        // and bilinear on both perceptual metrics (Benchmarks/frontier/
-        // paired-ladder-protocol.md, "720p coverage screen"). 60 fps 720p
-        // material will not keep cadence at this cost; 30 fps does.
+        // 1280x720 -> 2560x1440 at 21.0 ms on an M4 Pro (CPU+GPU); the 2x
+        // model beats every interpolation on the frozen 720p screen
+        // (Benchmarks/frontier/paired-ladder-protocol.md). Holds 30 fps, not 60.
         Variant(width: 1280, height: 720, milliseconds: 21.0),
     ]
 
-    /// 720p remains outside the supported ladder. The 2026-09-05 full-4x
-    /// tensor boundary now measures 23.45 ms on M4 Pro, but the preserved
-    /// coverage evaluation fails the joint perceptual-quality gates versus
-    /// Lanczos and bicubic. A faster boundary alone does not admit that tier.
-    /// See Benchmarks/frontier/tensor-output-720 for both results.
-
-    /// The target window is Microsoft Edge's: enabled below 720p. Edge arrived
-    /// at that independently, from inside a browser compositor, which is worth
-    /// something - it is the range where a source is short of what the display
-    /// shows, and above it there is progressively less to recover.
+    /// A 30 fps frame is 33.3 ms. Every rung above leaves room inside it for
+    /// the pre- and post-stages and for returning the result to the page; the
+    /// 720p rung is the tightest and holds cadence at 30 fps, not 60.
     ///
-    /// That needs the 854x480 tier, which ch28 could not carry (48.2 ms).
-    /// The trained ch32u does it in 23.5 ms, but 480p is 3456x1920 out - 1.8x
-    /// the pixels of 360p - so the colour conversions cost 4.2 ms and the
-    /// detail stage scales with them. The total lands at 32.7 ms against a
-    /// 33.3 ms frame: it fits, with no room to spare. If the ablation finds
-    /// detail stages that are not earning their milliseconds, cutting them is
-    /// what turns that from marginal into comfortable.
-    ///
-    /// Where the next speed comes from, measured 2026-09-03 so it is not
-    /// re-derived: this trunk is activation-bandwidth bound, not MAC bound.
-    /// Latency scales with channels rather than channels squared (ch16 0.63x,
-    /// ch20 0.75x, ch24 0.90x against ch28), and int8 weight quantisation moved
-    /// 30.6ms to 29.3ms - nothing, because weights are not the traffic.
-    ///
-    /// So the lever is pixels, not channels. PixelUnshuffle(2) at the input
-    /// puts the 18 trunk convs at quarter area with the head doing x8 instead
-    /// of x4, and at 640x360 that is 27.9ms -> 12.6ms at *more* capacity than
-    /// ships today (1.06M parameters against 1.03M). Its ladder also brings
-    /// 864x480 to 24.7ms, back inside this budget.
-    ///
-    /// It had no pretrained weights, so it was trained from scratch on 1800
-    /// pairs of real codec degradation - x264 and VP9 at 90 kbps to 1.5 Mbps,
-    /// GOP 30 to 250, 64% live action and 35% animation across 21 sources.
-    /// That is what ships now.
-    ///
-    /// A 30fps frame is 33.3 ms. This leaves 3 ms of it for the detail pass and
-    /// for getting the result back to the page. Low-resolution streaming video
-    /// runs at 24-30fps; 60fps material is published at 720p and above, which
-    /// is outside the window Lucid works in anyway.
-    ///
-    /// Every rung now has room. 864x480 sits at 17.8 ms of a 33.3 ms frame and
-    /// 640x360 at 10.7, where before the move to the GPU 480p was at 32.7 with
-    /// nothing to spare. That headroom is the budget for detail stages coming
-    /// back, and for a larger model: at 360p the model itself is 9.2 ms of a
-    /// 33.3 ms frame, so there is room for one roughly three times its cost.
-    ///
-    /// A source with no variant under this budget is not enhanced at all.
-    /// There is no second engine to fall back to: Apple's scaler measured
-    /// *worse* than leaving the frame alone, so running it would be a
-    /// disservice. Lucid declines instead, the same way RTX Video Super
-    /// Resolution declines outside its own window.
+    /// A source with no rung under this budget is not enhanced at all. There
+    /// is no second engine to fall back to: Apple's scalers measured worse
+    /// than leaving the frame alone, so Lucid declines instead.
     static let budgetMilliseconds = 33.0
 
     /// Whether this size is inside the window Lucid works in. Deliberately a
