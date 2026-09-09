@@ -1343,3 +1343,39 @@ trained control. Historical r54 scores are not substituted for that control,
 and beating a regressing control alone does not justify promotion. Fixed crops
 and source-level metrics are reviewed together when deciding whether native
 evaluation is justified; no improvement is asserted before the run completes.
+
+r57 completes all three 2,000-step arms with 40 CPU tests, CUDA identity/gradient
+checks and an actual paired-critic gradient/update smoke passing. All 271
+snapshot files match remotely; initialization rows, initial discriminator,
+training inputs, source hashes and checkpoint/report hashes pass the matched
+comparison. The remote trainers and recovered launch process chain have exited.
+
+Versus initialization, LPIPS/DISTS change -0.841%/-1.808% for the control,
++0.412%/+0.629% for frozen state, and -1.649%/-1.618% for joint training.
+Joint versus the trained control is mixed (-0.816%/+0.193%). Enabling memory
+on the joint model itself worsens both distances (+0.008%/+0.123%) and fine
+correlation (-0.110%); its advantage over initialization cannot be credited to
+using memory at inference. The three fixed crops show modest changes and no
+broad recovery of reference detail. No stateful model is promoted. The simpler
+control is being prepared for native evaluation with unchanged full-search
+settings. See `quality-breakthrough/selective-state-paired-critic-comparison.json`.
+
+A separate raw-feature prototype tests whether generating and rounding RGB before
+encoding memory discards useful temporal evidence. `RawFeatureSPAN` independently
+copies the pretrained first-layer encoder and feeds it decoded LR, while the
+reconstruction backbone still receives the declared source-preprocessed input.
+Aligned features are accumulated with a learned per-channel decay and projected
+back into the reconstruction trunk. A zero-initialized projection preserves the
+original SR function at initialization. Zero-confidence resets discard past
+features but retain the fresh decoded observation.
+
+The planned r58 control trains the same raw encoder and projection without
+carrying history. Both current-only and memory arms are crossed with frozen and
+trainable SR backbones. This separates temporal information from added capacity
+and access to unprocessed current pixels. After learning, a first frame must
+match the same model's current-only branch, rather than the original backbone.
+Validation reports original backbone, current-only branch, memory output and
+unchanged initialization on the same frames. The recipe reuses r57's paired
+critic, loss function and data selection. No raw-feature quality result is yet
+available. The prototype reuses correspondence that also computes an unused RGB
+warp; native state handling and total runtime remain unverified.
