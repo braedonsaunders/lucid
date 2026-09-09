@@ -1,0 +1,434 @@
+{
+  "complete": true,
+  "scope": "r57 trained no-scan control; unchanged full-search native pipeline, 960 fixed regression frames across eight sources; no browser cadence claim",
+  "percent_convention": "100*(candidate/baseline-1); negative LPIPS/DISTS is better",
+  "summary": {
+    "sources": {
+      "ducks_take_off": {
+        "lpips": 0.43255663849413395,
+        "dists": 0.1778963918487231,
+        "psnr_y": 21.449450587502906,
+        "detail_energy": 0.5288736751769375,
+        "fine_correlation": 0.28894836745146013
+      },
+      "old_town_cross": {
+        "lpips": 0.29007216667135555,
+        "dists": 0.07988964319229126,
+        "psnr_y": 27.682422280245095,
+        "detail_energy": 0.7600490090319879,
+        "fine_correlation": 0.5266983694531847
+      },
+      "park_joy": {
+        "lpips": 0.48175405176977315,
+        "dists": 0.18989122956991195,
+        "psnr_y": 20.648532482949616,
+        "detail_energy": 0.4720254596904861,
+        "fine_correlation": 0.265698952100077
+      },
+      "in_to_tree": {
+        "lpips": 0.36729429562886556,
+        "dists": 0.09256006081899007,
+        "psnr_y": 27.76689367603425,
+        "detail_energy": 0.6413504659481808,
+        "fine_correlation": 0.4336308227219139
+      },
+      "pedestrian_area": {
+        "lpips": 0.18332124029596647,
+        "dists": 0.08381079435348511,
+        "psnr_y": 30.83665159774246,
+        "detail_energy": 0.979072021783974,
+        "fine_correlation": 0.5933086570441818
+      },
+      "rush_hour": {
+        "lpips": 0.1758426919579506,
+        "dists": 0.06336919963359833,
+        "psnr_y": 30.884330946542093,
+        "detail_energy": 1.322084668957132,
+        "fine_correlation": 0.5020477500295526
+      },
+      "sunflower": {
+        "lpips": 0.11335765675952038,
+        "dists": 0.08184462785720825,
+        "psnr_y": 30.558249301901387,
+        "detail_energy": 1.176010026958422,
+        "fine_correlation": 0.6197543815935731
+      },
+      "tractor": {
+        "lpips": 0.23773132724066576,
+        "dists": 0.08096154977877935,
+        "psnr_y": 28.109601719960363,
+        "detail_energy": 0.9336481959466361,
+        "fine_correlation": 0.45524286583377555
+      }
+    },
+    "source_balanced": {
+      "lpips": 0.2852412586022789,
+      "dists": 0.10627793713162342,
+      "psnr_y": 27.24201657410977,
+      "detail_energy": 0.8516391904367194,
+      "fine_correlation": 0.46066627077846484
+    }
+  },
+  "vs_current_default_percent": {
+    "lpips": -0.055535287367547426,
+    "dists": -1.4917296325917762,
+    "psnr_y": -0.5664448334788852,
+    "detail_energy": 8.05575281060329,
+    "fine_correlation": -3.1228255866195265
+  },
+  "vs_current_default_sources_percent": {
+    "ducks_take_off": {
+      "lpips": -0.3269755286089193,
+      "dists": 0.7495611485122566,
+      "psnr_y": -0.070157602738663,
+      "detail_energy": 1.3331678456477647,
+      "fine_correlation": 0.2715977905188627
+    },
+    "old_town_cross": {
+      "lpips": -1.2513127944164815,
+      "dists": -6.487885351410016,
+      "psnr_y": -0.8512994093996751,
+      "detail_energy": 7.028466240283393,
+      "fine_correlation": -1.194767930010976
+    },
+    "park_joy": {
+      "lpips": -4.7324757521147065,
+      "dists": -3.5744803614255027,
+      "psnr_y": -0.3150899045037403,
+      "detail_energy": 4.995665473476318,
+      "fine_correlation": -0.8184739864115387
+    },
+    "in_to_tree": {
+      "lpips": -6.74555377220285,
+      "dists": -10.244621340230031,
+      "psnr_y": -0.5043518186319207,
+      "detail_energy": 7.9549103946712885,
+      "fine_correlation": -3.151996776458166
+    },
+    "pedestrian_area": {
+      "lpips": 2.8714608761714056,
+      "dists": 3.6965947613894823,
+      "psnr_y": -0.6835873324564035,
+      "detail_energy": 9.111635750219737,
+      "fine_correlation": -1.884134500330481
+    },
+    "rush_hour": {
+      "lpips": 13.021156620118713,
+      "dists": 4.635060120211798,
+      "psnr_y": -0.975101080523777,
+      "detail_energy": 13.214084927232062,
+      "fine_correlation": -7.294278016568933
+    },
+    "sunflower": {
+      "lpips": 15.979254324101477,
+      "dists": 4.2813673369088034,
+      "psnr_y": -0.2499696771860016,
+      "detail_energy": 6.792441020660167,
+      "fine_correlation": -3.663978595624129
+    },
+    "tractor": {
+      "lpips": 5.941395748455824,
+      "dists": -0.25487103972964276,
+      "psnr_y": -0.6707381108327026,
+      "detail_energy": 8.164316341686174,
+      "fine_correlation": -4.697199783032446
+    }
+  },
+  "checkpoint_sha256": {
+    "candidate": "e0e1a681f724ecff3f886e46cf2616dcf385d077c353cfb48183a1a63d85fb12"
+  },
+  "report_sha256": "4e6ebc9efee7c206327a38ee875028210bc0ec5016e7475792833204e88cf014",
+  "baseline_report_sha256": "afde960f1aac5a342bae134bfc977dad570815196dedfad48a743a40e3b4dea1",
+  "verification": {
+    "complete": true,
+    "scope": "Native r57 control with unchanged full-search settings; all960 candidate RGB/reference and packet identities verified; all artifacts retained",
+    "arms": {
+      "control": {
+        "rgb_manifest_sha256": "33caf5a0b8b5baa142bcfbde9d7f5f9c0544da93a3cc096c299d891cde90f3ed",
+        "score_sha256": "4e6ebc9efee7c206327a38ee875028210bc0ec5016e7475792833204e88cf014",
+        "packet_manifest_sha256": "49e7bb697626cc95954bd1c036e6f24717f3ef898765200ad8a62f645f776527",
+        "rows_verified": 960,
+        "input_nv12_hashes_match_full_search_baseline": true,
+        "reference_hashes_match_full_search_baseline": true,
+        "bytes": 1327290544
+      }
+    },
+    "executable_context": {
+      "candidate": "admitted rebuilt default7b1f9d",
+      "baseline": "r51 policy probe2fa8ad",
+      "parity_receipt": "Benchmarks/frontier/quality-breakthrough/taa-motion-default-admission.json",
+      "parity_receipt_sha256": "856b2df6b9b5d64bdebd5ed16f5f747046a672b2b656ebc2e7cbc05bef692e37"
+    }
+  },
+  "visual_review": {
+    "predefined_three_crops": {
+      "selection": "Fixed frame100, h264350kbps, three source crops; original output pixels without scaling",
+      "candidate_sha256": {
+        "candidate": "e0e1a681f724ecff3f886e46cf2616dcf385d077c353cfb48183a1a63d85fb12"
+      },
+      "rows": [
+        {
+          "source": "sunflower",
+          "box": [
+            440,
+            275,
+            760,
+            495
+          ],
+          "files": [
+            ".build/quality-holdout-frames/reference/sunflower-h264-350000-011.png",
+            ".build/quality-breakthrough-r51/search-native-rgb/sunflower-h264-350000-candidate/011.png",
+            ".build/quality-breakthrough-r57/control-native-rgb/sunflower-h264-350000-candidate/011.png"
+          ],
+          "sha256": [
+            "346508c17b6b3fbbd43c95cc4fde53fb6fbe085a857bc7b2facf653991e9ba0a",
+            "3b100b53984b1292383aada564a63b09d8101d471cc8877d96b351a80fd71ba6",
+            "ce8fcd9b445fbb23c2c4def0abb7c5f5487d70d662ce77a90de7b2fdfdfed07f"
+          ]
+        },
+        {
+          "source": "old_town_cross",
+          "box": [
+            480,
+            230,
+            800,
+            450
+          ],
+          "files": [
+            ".build/quality-holdout-frames/reference/old_town_cross-h264-350000-011.png",
+            ".build/quality-breakthrough-r51/search-native-rgb/old_town_cross-h264-350000-candidate/011.png",
+            ".build/quality-breakthrough-r57/control-native-rgb/old_town_cross-h264-350000-candidate/011.png"
+          ],
+          "sha256": [
+            "a10f5ce524cf62417ee557ab22b576fcf9b7828c7f624ed7d23d8336cd8eb861",
+            "5ffd16a439d47510076b59642312029d63c0628f523e4e8e737c465422f57731",
+            "11710c124787e4663c965fbc85bd94bc289bb92039b9e55804c7e5617988c2ba"
+          ]
+        },
+        {
+          "source": "rush_hour",
+          "box": [
+            420,
+            280,
+            740,
+            500
+          ],
+          "files": [
+            ".build/quality-holdout-frames/reference/rush_hour-h264-350000-011.png",
+            ".build/quality-breakthrough-r51/search-native-rgb/rush_hour-h264-350000-candidate/011.png",
+            ".build/quality-breakthrough-r57/control-native-rgb/rush_hour-h264-350000-candidate/011.png"
+          ],
+          "sha256": [
+            "e9510d5d67c8c947f481029a19cd14881d6c5cdc85f7f16b77d2e8ff9c8452f7",
+            "010cf87a73129278d9e058eb62b5eff9907978bb69313979e5b4f9616c792fec",
+            "c3b8538cf63c832b0cb680b25300c98b9118a910f3a569483852382f753791dd"
+          ]
+        }
+      ]
+    },
+    "post_score_sources": {
+      "selection": "Post-score source review: tree/park improve and pedestrian regresses; fixed frame100 h264350kbps, central crops; original pixels",
+      "candidate_sha256": {
+        "candidate": "e0e1a681f724ecff3f886e46cf2616dcf385d077c353cfb48183a1a63d85fb12"
+      },
+      "rows": [
+        {
+          "source": "in_to_tree",
+          "box": [
+            400,
+            230,
+            720,
+            450
+          ],
+          "files": [
+            ".build/quality-holdout-frames/reference/in_to_tree-h264-350000-011.png",
+            ".build/quality-breakthrough-r51/search-native-rgb/in_to_tree-h264-350000-candidate/011.png",
+            ".build/quality-breakthrough-r57/control-native-rgb/in_to_tree-h264-350000-candidate/011.png"
+          ],
+          "sha256": [
+            "7141ea59e3f4bba5dd508f334128e596d1635f27d4ecdefeb6f8c77dda948089",
+            "a59aa3df829fddaa8b91ac493d5e366b993d7e23318b0b8e642a1bf79aa3a8fe",
+            "15bcac4d8c1acc96311a40658cb54b265853b522dfe59102555123c01320ba80"
+          ]
+        },
+        {
+          "source": "park_joy",
+          "box": [
+            400,
+            230,
+            720,
+            450
+          ],
+          "files": [
+            ".build/quality-holdout-frames/reference/park_joy-h264-350000-011.png",
+            ".build/quality-breakthrough-r51/search-native-rgb/park_joy-h264-350000-candidate/011.png",
+            ".build/quality-breakthrough-r57/control-native-rgb/park_joy-h264-350000-candidate/011.png"
+          ],
+          "sha256": [
+            "eaccc28a0d0115c815a021e27a04e5213b508a7121accbc0e8e057cf038e5e28",
+            "2f93ec6c0265665a536616ad960014c59b312d4c9d15515dc7940ef2aaa3d835",
+            "2c0ff43f8615973e2397c17a0dbf8e7afc75e0f54d3d2ab58d20e0c91520c924"
+          ]
+        },
+        {
+          "source": "pedestrian_area",
+          "box": [
+            400,
+            230,
+            720,
+            450
+          ],
+          "files": [
+            ".build/quality-holdout-frames/reference/pedestrian_area-h264-350000-011.png",
+            ".build/quality-breakthrough-r51/search-native-rgb/pedestrian_area-h264-350000-candidate/011.png",
+            ".build/quality-breakthrough-r57/control-native-rgb/pedestrian_area-h264-350000-candidate/011.png"
+          ],
+          "sha256": [
+            "6e928881c3867259723cd3e85833967be2426bae50d98af6bc6f5ecc3804c5c5",
+            "720796cbab1e66500583f46376dadcb07dc6175174ca25d40fc7b03c7cb0979f",
+            "eb3b1994e6f9ef3303cfa08d06a4013b1e8ec8a4f96a5a93a45ecac72412486c"
+          ]
+        }
+      ]
+    },
+    "assessment": "Foliage texture changes, but missing fine reference detail persists. Rougher structures in city/vehicle/bee examples accompany source regressions. No broad quality breakthrough."
+  },
+  "conversion": {
+    "purpose": "native graph comparison at different output scales; no playback claim",
+    "checkpoint_sha256": "fde6c7c9866f55a24f8b2923420344758e7c2684930ba239c974b4682ceb6e65",
+    "profiler_sha256": "88215aaad2a116b5cfeb329bfb70e235f4d961247ff3b5a693d39844f376a43e",
+    "direct_checkpoint_sha256": "e0e1a681f724ecff3f886e46cf2616dcf385d077c353cfb48183a1a63d85fb12",
+    "fold_sha256": "750795d69cce54883e601440b64344e25cd137b90c05e0e0d990d3bcf205d01e",
+    "precision_policy": "mul-fp32",
+    "torch": "2.14.0",
+    "coremltools": "9.0",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "samples": 20,
+    "excludes": "capture, network, presentation; 4x output downsampling is not timed",
+    "quality": "trained checkpoint requires independent quality evaluation",
+    "rows": [
+      {
+        "input_size": "640x360",
+        "compute_units": "CPU_AND_GPU",
+        "correctness": {
+          "shipping4x": {
+            "max_rgb": 0.9501495361328125,
+            "mean_rgb": 0.2536201477050781,
+            "output_shape": [
+              1440,
+              2560,
+              3
+            ]
+          },
+          "direct2x_trained": {
+            "max_rgb": 0.879669189453125,
+            "mean_rgb": 0.25207820534706116,
+            "output_shape": [
+              720,
+              1280,
+              3
+            ]
+          }
+        },
+        "output_hashes": {
+          "shipping4x": "8a7e8e434eb55f80308be6b621219af237eb57420060a625c4437931cfc1dee0",
+          "direct2x_trained": "35fc5092fbf9f2a1dc56085454d10c2400470b4498cc091be71dca49a74c0a35"
+        },
+        "timings": {
+          "shipping4x": {
+            "mean_ms": 11.721806252171518,
+            "p95_ms": 13.555346147040837,
+            "samples_ms": [
+              10.446790998685174,
+              12.72179200896062,
+              10.79683301213663,
+              12.864333999459632,
+              11.42749999416992,
+              10.62025000283029,
+              11.26549999753479,
+              13.072332993033342,
+              10.769708009320311,
+              11.504750000312924,
+              12.671792006585747,
+              13.772499994956888,
+              11.175083011039533,
+              11.565084001631476,
+              12.496041003032587,
+              13.543916997150518,
+              11.283167012152262,
+              12.103917004424147,
+              9.957999995094724,
+              10.37683300091885
+            ]
+          },
+          "direct2x_trained": {
+            "mean_ms": 7.02437704676413,
+            "p95_ms": 8.335938939126208,
+            "samples_ms": [
+              6.481959004304372,
+              6.209499988472089,
+              7.883124999352731,
+              7.688207988394424,
+              6.973083000048064,
+              6.413708993932232,
+              8.333665988175198,
+              6.816541004809551,
+              7.45249999454245,
+              6.628582996199839,
+              6.862499998533167,
+              6.198000002768822,
+              7.5897500064456835,
+              6.791291001718491,
+              6.528458994580433,
+              6.0025419952580705,
+              8.26970799244009,
+              8.379125007195398,
+              6.550541991600767,
+              6.434749986510724
+            ]
+          }
+        }
+      }
+    ],
+    "complete": true,
+    "direct_architecture": "Unshuffled",
+    "direct_model_sources": {
+      "eval_checkpoint.py": "e4f86581b21751184adb4a08f68183e1ed517dcc190ec9119e129351f2c10d5b",
+      "train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+      "architectures/span_arch.py": "0fd7c3c6bddcf6fd9c547793a58e9ded66a99e75c106fa20aa3e1cd059f6a806",
+      "architectures/subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+      "architectures/activation_control.py": "a7cc35057ff019da90e60037a02b04b590110d65515d0cccaa5be566a48a4e12",
+      "architectures/spatial_activation_control.py": "88d008819876d920713c38b805e5994f1399986052512ed77059d9645061e697",
+      "architectures/precleaner.py": "0b9449ed25ace29f8d0013f306727acfac8d836e0dff4041b1223ed41ed4d5ab",
+      "architectures/degradation_conditioning.py": "e72baf3c689bf816219307a5e14215dd4750e391290dce549f9426c2cbf7340b"
+    }
+  },
+  "extraction": {
+    "complete": true,
+    "checkpoint_sha256": "e0e1a681f724ecff3f886e46cf2616dcf385d077c353cfb48183a1a63d85fb12",
+    "source_checkpoint_sha256": "4115b507080a7dfefa9836b65a8c13980db4a90798d1ec110aa930cfe9f36436",
+    "validation_checkpoint_sha256": "4115b507080a7dfefa9836b65a8c13980db4a90798d1ec110aa930cfe9f36436",
+    "no_scan": true,
+    "zero_disabled_scan_encode_verified": true,
+    "exact_parity_random_shapes": [
+      [
+        1,
+        3,
+        32,
+        48
+      ],
+      [
+        1,
+        3,
+        128,
+        128
+      ]
+    ],
+    "exact_parity_fixed_real_preprocessed_search_inputs": [
+      "sintel-stream-000-00",
+      "reds_154-stream-000-00",
+      "reds_073-stream-000-00"
+    ]
+  },
+  "decision": "Not promoted: small aggregate distance gains coexist with large Rush Hour/Sunflower regressions and lower fine correlation. Evaluate a declared matched global-sharpening ablation separately; current app defaults remain unchanged."
+}

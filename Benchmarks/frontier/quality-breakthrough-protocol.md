@@ -1379,3 +1379,21 @@ unchanged initialization on the same frames. The recipe reuses r57's paired
 critic, loss function and data selection. No raw-feature quality result is yet
 available. The prototype reuses correspondence that also computes an unused RGB
 warp; native state handling and total runtime remain unverified.
+
+The r57 no-scan control was extracted with exact backbone parity, converted to
+Core ML, and evaluated on all 960 native regression frames under unchanged
+full-search tuning. Model-only 640x360 timing was 7.024ms mean / 8.336ms p95;
+this excludes playback costs. All RGB/reference/packet hashes and input stream
+identities pass. The candidate uses the admitted rebuilt executable; the r51
+baseline probe has a different executable hash, with r52's exact RGB parity
+receipt retained explicitly.
+
+Native LPIPS/DISTS change -0.056%/-1.492% versus the current full-search default,
+but fine correlation declines 3.123%. Tree/Park improve both distances, while
+Rush Hour worsens 13.021%/4.635% and Sunflower 15.979%/4.281%. The fixed three
+crops and an additional post-score tree/park/pedestrian review show texture
+changes rather than broad detail recovery. No weights are promoted. A matched
+sharpness0.1 probe on both old and control weights will test whether global
+post-sharpening contributes to the observed roughness; it is a combined pipeline
+comparison, not a claim that weight quality alone improves. See
+`quality-breakthrough/paired-state-control-native-comparison.json`.
