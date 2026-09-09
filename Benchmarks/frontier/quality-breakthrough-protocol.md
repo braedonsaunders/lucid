@@ -1506,3 +1506,35 @@ bypasses debanding; the matched within-policy pair isolates memory, but a
 cross-policy difference would not isolate TAA alone. Prior r54/r55 raw tests
 used generated-RGB history or single-frame models, not observation features.
 No r61 quality result or native admission is implied by this preparation.
+
+
+r61 completes both raw-input 2,000-step arms, all 68 tests and the actual CUDA
+critic smoke, with 21 closed-file hashes independently verified. Memory versus
+its trained current-only control changes LPIPS/DISTS -0.066%/-0.077%; within
+the same model, enabling history changes +0.029%/-0.033%. At frame 15 only
+12/72 sequences improve both distances over their own current-only output.
+The fixed three-source gallery remains nearly unchanged. Mean gates stay at
+0.484–0.492 and history changes RGB by 0.000071–0.000305 mean absolute value.
+Removing source preprocessing did not unlock a useful memory contribution in
+this recipe. No model is promoted; this line of minor retention/policy changes
+is closed without a quality breakthrough.
+
+The raw-versus-search comparison verifies common decoded inputs, initial
+backbone/branch/discriminator weights and source hashes. Raw memory versus
+search balanced memory changes LPIPS/DISTS -0.401%/-0.152%, but this is a
+cross-policy development comparison: raw removes both debanding and TAA, and
+is not native evidence. Mean PSNR is unusually sensitive to one near-perfect
+Sintel frame: current 138.13 dB versus memory 95.74 dB at frame 0. The scorer
+uses a 1e-9 MSE floor; the large dB difference is not a proportional increase
+in image error. All original rows are retained. See
+`quality-breakthrough/raw-source-feature-memory-comparison.json` and its gate
+diagnostic. All training, collection and diagnostic processes have exited.
+
+An inventory of recorded training initializations finds folded pretrained 4x,
+random-init direct 2x, and widening, but no fine-tuning arm initialized from the
+stock pretrained 2x SPAN already on disk. Its strict CPU load succeeds and a
+zero-shot gallery compares it with big2k on the same three fixed search-input
+patches. Different foliage/edge rendering is visible; the large missing-detail
+gap remains. The stock model uses a full-LR trunk, so it is not a weight swap
+for the current unshuffled graph. No quality advantage or native runtime has
+been established by this gallery. See `quality-breakthrough/stock-pretrained2x-gallery.json`.

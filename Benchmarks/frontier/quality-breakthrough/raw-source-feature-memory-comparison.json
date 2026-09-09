@@ -1,0 +1,900 @@
+{
+  "scope": "r61 matched raw-policy feature memory: current-only vs memory (bias 0); joint backbone; 2000 steps; 72 source-disjoint sequences; no native admission",
+  "percent_convention": "100*(candidate/baseline-1); negative LPIPS/DISTS is better; PSNR changes are also reported as percent of dB values, not linear fidelity gains",
+  "shared_hashes": {
+    "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+    "reds_bank_sha256": "bf641e3c99628e4ce6a1a75f59ffe9f70ab8f4bd790cd8f5946de83e461db7fb",
+    "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+    "frozen_backbone_sha256": "2de8c2017b3856bb4f84933b6d8315412e997f5aa7e0c611f866d8973a90f341",
+    "discriminator_initial_sha256": "b61bc6ec71b0c85c1e4954c35cbedb9182fbbd5547cf7250a85016e9e1ae701a",
+    "first_decoded_sequence_sha256": "1cb6fc7da87f8c2653639c18098591a079458b2502ab315555ead5a33731db6d",
+    "first_input_sha256": "dfe5a55274ebba33245c6e8ed752a8f4d67ac87e6fa1241fedd3f77bf99ff3e6",
+    "first_output_sha256": "1474ece44df8c45a3f4a22fd73c7ec108bca4dfe57b3edf9c1fe562eec5d91a3",
+    "source_hashes": {
+      "Tools/architectures/full_lr_feature_span.py": "f57027e68ca81e66a9aa4fdd6ecfef72e74cbc741ae3aa795538b1f71c616a40",
+      "Tools/experiments/full_lr_frame_feeding.py": "537797be5893170a60d0c8c60b3e4128656adbd75861386756f8203aac025f48",
+      "Tools/experiments/train_full_lr_feature_span.py": "1ccb37da0535d5001c776793943a76dd104bc8591a2393313926f27bfbd22617",
+      "Tools/architectures/subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+      "Tools/experiments/recurrent_frame_feeding.py": "96736370ecdc7568e359d4b4a9d5c2a0cd0afdbb498dd680dccffce9bb31a433",
+      "Tools/experiments/native_stages.py": "8ed2e8c6ea5270c855d880bf20e5b14fa6f5948e2a921b389d8115c464938b86",
+      "Tools/experiments/train_causal_detail.py": "51b3b776485caa5ccaec4a7c58eec5d3b6060d22ad1c311c0561d2abb994ee7a",
+      "Tools/experiments/replay_recurrent_motion.py": "c2b1bbaded47c5e453a12b92bf862e0726241dcaf56c4df90d21b428996ebe3d",
+      "Tools/experiments/mmap_training_bank.py": "de1a78931b3a8a26ce1980d4b1a92ea887aeab7e70e26cd546e59ce534153b94",
+      "Tools/experiments/build_causal_bank.py": "ac9d0b9bc5385903658577ddd28f8f8fe5edf5f3c356aa7daff9a89a1bd87597",
+      "Tools/experiments/train_presented_detail.py": "76aa0cf85a567fbfe0db3f2fa5ff23a9a190ca42ede35fa576b9604d881cc743",
+      "Tools/experiments/train_ssm_span.py": "d0aeeaa414b09aff0266ba9278f9410dab877d29a5a78168366dfae00d1072ec",
+      "Tools/train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+      "Tools/frontier_eval/evaluate_sequences.py": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75",
+      "Tools/eval_checkpoint.py": "06140f64cccb178983681569629669eee2ad2a77a86d1e49dfba72f4b7b9b1fa",
+      "Tools/experiments/paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb",
+      "Tools/experiments/dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+      "Tools/experiments/dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a"
+    }
+  },
+  "initial_shared_branch_sha256": "95fa494cbb441ed1b715d5ddaea3dadda9b55ddd388795634f4fe27e5a9ebfe5",
+  "initial_branch_sha256": {
+    "current": "b7bb599960e09812a395312ba4f4476a4b8c90d153abf52ba3adbc7123020813",
+    "memory": "b7bb599960e09812a395312ba4f4476a4b8c90d153abf52ba3adbc7123020813"
+  },
+  "expected_decay_bias": {
+    "current": 0.0,
+    "memory": 0.0
+  },
+  "rows_per_arm": 864,
+  "rows_per_variant": 216,
+  "arms": {
+    "current": {
+      "checkpoint_sha256": "998ed10bda46c4d72cd9078aa4c566711e6407cbd7d88139db902d67716e672b",
+      "experiment_sha256": "a2dbc0697900c8e10ae23e1db9d84a112c1ee08ae5e60245f7c7295fa781e17b",
+      "validation_sha256": "6a3a56f72e92a9bc09c8abf2077af037c0b197901c0656d27e1024533a8843f8",
+      "complete": {
+        "complete": true,
+        "backbone_unchanged": false,
+        "steps": 2000,
+        "minutes": 2.217966666666689
+      },
+      "exit": {
+        "step": "current",
+        "utc": "2026-09-09T04:18:51.2121355Z",
+        "exit_code": 0
+      },
+      "input_output_hashes": {
+        "first_input_sha256": "dfe5a55274ebba33245c6e8ed752a8f4d67ac87e6fa1241fedd3f77bf99ff3e6",
+        "first_output_sha256": "1474ece44df8c45a3f4a22fd73c7ec108bca4dfe57b3edf9c1fe562eec5d91a3"
+      },
+      "summary": {
+        "base": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21311653880197642,
+              "dists": 0.19151943425337473,
+              "psnr_y": 30.069977831517487,
+              "detail_energy": 0.6958211047466444,
+              "fine_correlation": 0.49851054112251214
+            },
+            "reds_154": {
+              "lpips": 0.2853118324721301,
+              "dists": 0.24512921880792687,
+              "psnr_y": 25.080058482636964,
+              "detail_energy": 0.5401309179653688,
+              "fine_correlation": 0.37179906548438263
+            },
+            "reds_073": {
+              "lpips": 0.3499218647678693,
+              "dists": 0.25539361547540734,
+              "psnr_y": 22.68265533067368,
+              "detail_energy": 0.4746747274865794,
+              "fine_correlation": 0.2614981471578815
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.282783412013992,
+            "dists": 0.23068075617890296,
+            "psnr_y": 25.944230548276042,
+            "detail_energy": 0.5702089167328642,
+            "fine_correlation": 0.3772692512549254
+          }
+        },
+        "current_only": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21333062468167757,
+              "dists": 0.19155895599612482,
+              "psnr_y": 30.06809699335022,
+              "detail_energy": 0.696657220869764,
+              "fine_correlation": 0.49856770375375503
+            },
+            "reds_154": {
+              "lpips": 0.2853686438390502,
+              "dists": 0.24502909625018085,
+              "psnr_y": 25.079984651154305,
+              "detail_energy": 0.540761196784615,
+              "fine_correlation": 0.37170172991189954
+            },
+            "reds_073": {
+              "lpips": 0.35014071839827077,
+              "dists": 0.25524712602297467,
+              "psnr_y": 22.68211421383633,
+              "detail_energy": 0.47527218185829373,
+              "fine_correlation": 0.2616823029216588
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28294666230633286,
+            "dists": 0.23061172608976013,
+            "psnr_y": 25.943398619446953,
+            "detail_energy": 0.5708968665042242,
+            "fine_correlation": 0.37731724552910445
+          }
+        },
+        "full_lr_features": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21333062468167757,
+              "dists": 0.19155895599612482,
+              "psnr_y": 30.06809699335022,
+              "detail_energy": 0.696657220869764,
+              "fine_correlation": 0.49856770375375503
+            },
+            "reds_154": {
+              "lpips": 0.2853686438390502,
+              "dists": 0.24502909625018085,
+              "psnr_y": 25.079984651154305,
+              "detail_energy": 0.540761196784615,
+              "fine_correlation": 0.37170172991189954
+            },
+            "reds_073": {
+              "lpips": 0.35014071839827077,
+              "dists": 0.25524712602297467,
+              "psnr_y": 22.68211421383633,
+              "detail_energy": 0.47527218185829373,
+              "fine_correlation": 0.2616823029216588
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28294666230633286,
+            "dists": 0.23061172608976013,
+            "psnr_y": 25.943398619446953,
+            "detail_energy": 0.5708968665042242,
+            "fine_correlation": 0.37731724552910445
+          }
+        },
+        "initial": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2111937522174601,
+              "dists": 0.19213305082586077,
+              "psnr_y": 28.85276335876215,
+              "detail_energy": 0.6544681586938526,
+              "fine_correlation": 0.5115553920405832
+            },
+            "reds_154": {
+              "lpips": 0.2943323384280558,
+              "dists": 0.24986867551450376,
+              "psnr_y": 25.162434789642152,
+              "detail_energy": 0.5098580955932973,
+              "fine_correlation": 0.3787241306267788
+            },
+            "reds_073": {
+              "lpips": 0.3566113423418116,
+              "dists": 0.2588607370853424,
+              "psnr_y": 22.728738614803234,
+              "detail_energy": 0.4512703184668316,
+              "fine_correlation": 0.2660598961857389
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28737914432910916,
+            "dists": 0.2336208211419023,
+            "psnr_y": 25.58131225440251,
+            "detail_energy": 0.5385321909179939,
+            "fine_correlation": 0.3854464729510336
+          }
+        }
+      },
+      "vs_own_current_only_percent": {
+        "lpips": 0.0,
+        "dists": 0.0,
+        "psnr_y": 0.0,
+        "detail_energy": 0.0,
+        "fine_correlation": 0.0
+      },
+      "vs_initial_percent": {
+        "lpips": -1.5423812445137575,
+        "dists": -1.288025201450016,
+        "psnr_y": 1.415433115563225,
+        "detail_energy": 6.009794053547823,
+        "fine_correlation": -2.109041849492266
+      },
+      "temporal": {
+        "base": {
+          "residual_change_l1": 0.05528208427298864,
+          "mean_rgb_mse": 0.005268080390509213,
+          "last_rgb_mse": 0.005286106598816787
+        },
+        "current_only": {
+          "residual_change_l1": 0.05528245967359643,
+          "mean_rgb_mse": 0.005268176607368484,
+          "last_rgb_mse": 0.005285915172212046
+        },
+        "full_lr_features": {
+          "residual_change_l1": 0.05528245967359643,
+          "mean_rgb_mse": 0.005268176607368484,
+          "last_rgb_mse": 0.005285915172212046
+        },
+        "initial": {
+          "residual_change_l1": 0.05481464360335685,
+          "mean_rgb_mse": 0.005136088570882041,
+          "last_rgb_mse": 0.00515465194484932
+        }
+      },
+      "vs_initial_sources_percent": {
+        "sintel": {
+          "lpips": 1.0118066665235403,
+          "dists": -0.29880066301360975,
+          "psnr_y": 4.2121914614427824,
+          "detail_energy": 6.446312416498579,
+          "fine_correlation": -2.538862553089427
+        },
+        "reds_154": {
+          "lpips": -3.0454331443422467,
+          "dists": -1.9368491285903455,
+          "psnr_y": -0.3276715436209998,
+          "detail_energy": 6.0611180754827965,
+          "fine_correlation": -1.854225845936286
+        },
+        "reds_073": {
+          "lpips": -1.8144750812044363,
+          "dists": -1.395967230509887,
+          "psnr_y": -0.20513413329739105,
+          "detail_energy": 5.318733009741772,
+          "fine_correlation": -1.6453412659471534
+        }
+      },
+      "vs_own_current_only_sources_percent": {
+        "sintel": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        },
+        "reds_154": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        },
+        "reds_073": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        }
+      }
+    },
+    "memory": {
+      "checkpoint_sha256": "65613082b7e20c6c6640f4e338d01032ebbf712e535640b30391ce1200a91cd4",
+      "experiment_sha256": "a68e9cb7f7950912f0f45abb2b078847cc034cdc062789d76b9a47bd0e316edb",
+      "validation_sha256": "dd2ee1cec1ff70f9317ed5f66cb707a0c46024339a0dc8f275dae13f5bb967a6",
+      "complete": {
+        "complete": true,
+        "backbone_unchanged": false,
+        "steps": 2000,
+        "minutes": 3.9546999999999874
+      },
+      "exit": {
+        "step": "memory",
+        "utc": "2026-09-09T04:23:07.4519590Z",
+        "exit_code": 0
+      },
+      "input_output_hashes": {
+        "first_input_sha256": "dfe5a55274ebba33245c6e8ed752a8f4d67ac87e6fa1241fedd3f77bf99ff3e6",
+        "first_output_sha256": "1474ece44df8c45a3f4a22fd73c7ec108bca4dfe57b3edf9c1fe562eec5d91a3"
+      },
+      "summary": {
+        "base": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21274594343062578,
+              "dists": 0.19164573318428463,
+              "psnr_y": 29.64745079015773,
+              "detail_energy": 0.696413410521057,
+              "fine_correlation": 0.49805452990521765
+            },
+            "reds_154": {
+              "lpips": 0.2851908444254487,
+              "dists": 0.24494754274686178,
+              "psnr_y": 25.081891118282247,
+              "detail_energy": 0.5410412625128667,
+              "fine_correlation": 0.3713713280187942
+            },
+            "reds_073": {
+              "lpips": 0.34980093632583265,
+              "dists": 0.25540426152723805,
+              "psnr_y": 22.684980408462508,
+              "detail_energy": 0.4751302471067792,
+              "fine_correlation": 0.2611430310592148
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.282579241393969,
+            "dists": 0.23066584581946148,
+            "psnr_y": 25.804774105634163,
+            "detail_energy": 0.570861640046901,
+            "fine_correlation": 0.3768562963277422
+          }
+        },
+        "current_only": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2129719314748568,
+              "dists": 0.19156123808136694,
+              "psnr_y": 29.647506910527888,
+              "detail_energy": 0.6970287195017039,
+              "fine_correlation": 0.49844342753270926
+            },
+            "reds_154": {
+              "lpips": 0.285072911116812,
+              "dists": 0.24479954110251534,
+              "psnr_y": 25.079435549111547,
+              "detail_energy": 0.5417913927971161,
+              "fine_correlation": 0.3714750587905332
+            },
+            "reds_073": {
+              "lpips": 0.34998440383761015,
+              "dists": 0.25516855495947377,
+              "psnr_y": 22.682537657272633,
+              "detail_energy": 0.47586148426474445,
+              "fine_correlation": 0.2613726966543344
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.2826764154764263,
+            "dists": 0.23050977804778536,
+            "psnr_y": 25.803160038970688,
+            "detail_energy": 0.5715605321878549,
+            "fine_correlation": 0.37709706099252566
+          }
+        },
+        "full_lr_features": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.21308377214019722,
+              "dists": 0.19150826279763822,
+              "psnr_y": 29.64756216979901,
+              "detail_energy": 0.6972470795517594,
+              "fine_correlation": 0.4985569111213402
+            },
+            "reds_154": {
+              "lpips": 0.2851040330198076,
+              "dists": 0.24468595231020893,
+              "psnr_y": 25.079013122060022,
+              "detail_energy": 0.541838470336602,
+              "fine_correlation": 0.3714677315176089
+            },
+            "reds_073": {
+              "lpips": 0.3500893941080129,
+              "dists": 0.25510543805581554,
+              "psnr_y": 22.681913216479263,
+              "detail_energy": 0.4759472422988743,
+              "fine_correlation": 0.2614632377394282
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28275906642267257,
+            "dists": 0.2304332177212209,
+            "psnr_y": 25.80282950277943,
+            "detail_energy": 0.5716775973957452,
+            "fine_correlation": 0.3771626267927924
+          }
+        },
+        "initial": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2111937522174601,
+              "dists": 0.19213305082586077,
+              "psnr_y": 28.85276335876215,
+              "detail_energy": 0.6544681586938526,
+              "fine_correlation": 0.5115553920405832
+            },
+            "reds_154": {
+              "lpips": 0.2943323384280558,
+              "dists": 0.24986867551450376,
+              "psnr_y": 25.162434789642152,
+              "detail_energy": 0.5098580955932973,
+              "fine_correlation": 0.3787241306267788
+            },
+            "reds_073": {
+              "lpips": 0.3566113423418116,
+              "dists": 0.2588607370853424,
+              "psnr_y": 22.728738614803234,
+              "detail_energy": 0.4512703184668316,
+              "fine_correlation": 0.2660598961857389
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28737914432910916,
+            "dists": 0.2336208211419023,
+            "psnr_y": 25.58131225440251,
+            "detail_energy": 0.5385321909179939,
+            "fine_correlation": 0.3854464729510336
+          }
+        }
+      },
+      "vs_own_current_only_percent": {
+        "lpips": 0.029238713143775463,
+        "dists": -0.03321348326862372,
+        "psnr_y": -0.0012809911296041143,
+        "detail_energy": 0.020481681518891293,
+        "fine_correlation": 0.01738698256998905
+      },
+      "vs_initial_percent": {
+        "lpips": -1.6076594274863742,
+        "dists": -1.3644346446095357,
+        "psnr_y": 0.8659338745955036,
+        "detail_energy": 6.154767911134695,
+        "fine_correlation": -2.1491560409981014
+      },
+      "temporal": {
+        "base": {
+          "residual_change_l1": 0.05530234850696855,
+          "mean_rgb_mse": 0.005265546192257868,
+          "last_rgb_mse": 0.005284340045559727
+        },
+        "current_only": {
+          "residual_change_l1": 0.05530067125968685,
+          "mean_rgb_mse": 0.005267136213944923,
+          "last_rgb_mse": 0.005285239002047446
+        },
+        "full_lr_features": {
+          "residual_change_l1": 0.055296790813634464,
+          "mean_rgb_mse": 0.0052682100126036045,
+          "last_rgb_mse": 0.005285767830167111
+        },
+        "initial": {
+          "residual_change_l1": 0.05481464360335685,
+          "mean_rgb_mse": 0.005136088570882041,
+          "last_rgb_mse": 0.00515465194484932
+        }
+      },
+      "vs_initial_sources_percent": {
+        "sintel": {
+          "lpips": 0.894922270612919,
+          "dists": -0.3251850868640105,
+          "psnr_y": 2.7546713677097046,
+          "detail_energy": 6.536440358425133,
+          "fine_correlation": -2.540972321177637
+        },
+        "reds_154": {
+          "lpips": -3.135335198821143,
+          "dists": -2.0741788435957864,
+          "psnr_y": -0.33153257337588116,
+          "detail_energy": 6.272406973569922,
+          "fine_correlation": -1.9160118203085497
+        },
+        "reds_073": {
+          "lpips": -1.8288673015754542,
+          "dists": -1.4507024401652746,
+          "psnr_y": -0.20601846462994233,
+          "detail_energy": 5.468324155659365,
+          "fine_correlation": -1.7276780575384842
+        }
+      },
+      "vs_own_current_only_sources_percent": {
+        "sintel": {
+          "lpips": 0.052514274799464467,
+          "dists": -0.027654490156414635,
+          "psnr_y": 0.00018638758154665425,
+          "detail_energy": 0.03132726729131452,
+          "fine_correlation": 0.022767596554085223
+        },
+        "reds_154": {
+          "lpips": 0.01091717303958184,
+          "dists": -0.04640073743391593,
+          "psnr_y": -0.0016843562954171887,
+          "detail_energy": 0.00868923724368642,
+          "fine_correlation": -0.0019724804535048435
+        },
+        "reds_073": {
+          "lpips": 0.02999855686467434,
+          "dists": -0.02473537684463123,
+          "psnr_y": -0.0027529582571683697,
+          "detail_energy": 0.018021638011389562,
+          "fine_correlation": 0.03464060563815874
+        }
+      },
+      "vs_matched_current_percent": {
+        "lpips": -0.06630079398398658,
+        "dists": -0.07740645784409805,
+        "psnr_y": -0.5418299997215881,
+        "detail_energy": 0.13675515444699915,
+        "fine_correlation": -0.04097844403990747
+      },
+      "vs_matched_current_sources_percent": {
+        "sintel": {
+          "lpips": -0.11571359801186842,
+          "dists": -0.02646349695476502,
+          "psnr_y": -1.3986080450791971,
+          "detail_energy": 0.08466985833561758,
+          "fine_correlation": -0.002164727545239664
+        },
+        "reds_154": {
+          "lpips": -0.09272596164835445,
+          "dists": -0.14004211957814316,
+          "psnr_y": -0.003873722842318017,
+          "detail_energy": 0.19921428504718897,
+          "fine_correlation": -0.06295327017877828
+        },
+        "reds_073": {
+          "lpips": -0.014658189568095281,
+          "dists": -0.05551011263742467,
+          "psnr_y": -0.000886149126888558,
+          "detail_energy": 0.1420365984689198,
+          "fine_correlation": -0.08371417546572113
+        }
+      },
+      "temporal_vs_matched_current_percent": {
+        "residual_change_l1": 0.025923484813539233,
+        "mean_rgb_mse": 0.0006340948227601118,
+        "last_rgb_mse": -0.0027874462630417263
+      }
+    }
+  },
+  "run_exit": {
+    "complete": true,
+    "utc": "2026-09-09T04:23:07.4519590Z",
+    "exit_code": 0
+  },
+  "memory_vs_current_percent": {
+    "lpips": -0.06630079398398658,
+    "dists": -0.07740645784409805,
+    "psnr_y": -0.5418299997215881,
+    "detail_energy": 0.13675515444699915,
+    "fine_correlation": -0.04097844403990747
+  },
+  "memory_vs_current_sources_percent": {
+    "sintel": {
+      "lpips": -0.11571359801186842,
+      "dists": -0.02646349695476502,
+      "psnr_y": -1.3986080450791971,
+      "detail_energy": 0.08466985833561758,
+      "fine_correlation": -0.002164727545239664
+    },
+    "reds_154": {
+      "lpips": -0.09272596164835445,
+      "dists": -0.14004211957814316,
+      "psnr_y": -0.003873722842318017,
+      "detail_energy": 0.19921428504718897,
+      "fine_correlation": -0.06295327017877828
+    },
+    "reds_073": {
+      "lpips": -0.014658189568095281,
+      "dists": -0.05551011263742467,
+      "psnr_y": -0.000886149126888558,
+      "detail_energy": 0.1420365984689198,
+      "fine_correlation": -0.08371417546572113
+    }
+  },
+  "memory_attribution": {
+    "scope": "Matched raw-policy memory attribution at scored frames; source-disjoint patch diagnostic, no native claim",
+    "conventions": "100*(candidate/baseline-1); negative perceptual distances better. Sequence counts descriptive, not significance. PSNR percent is a percent of dB values.",
+    "frames": {
+      "0": {
+        "memory": {
+          "memory_vs_own_current": {
+            "source_balanced_percent": {
+              "lpips": 0.0,
+              "dists": 0.0,
+              "fine_correlation": 0.0,
+              "psnr_y": 0.0
+            },
+            "sequences_both_distances_lower": 0,
+            "sequences": 72
+          },
+          "memory_vs_trained_current_control": {
+            "source_balanced_percent": {
+              "lpips": -0.1072275478483764,
+              "dists": -0.07618758325602659,
+              "fine_correlation": -0.06122101012865366,
+              "psnr_y": -1.5057847345116837
+            },
+            "sequences_both_distances_lower": 29,
+            "sequences": 72
+          },
+          "current_branch_training_shift": {
+            "source_balanced_percent": {
+              "lpips": -0.1072275478483764,
+              "dists": -0.07618758325602659,
+              "fine_correlation": -0.06122101012865366,
+              "psnr_y": -1.5057847345116837
+            },
+            "sequences_both_distances_lower": 29,
+            "sequences": 72
+          }
+        }
+      },
+      "8": {
+        "memory": {
+          "memory_vs_own_current": {
+            "source_balanced_percent": {
+              "lpips": 0.046783001753825104,
+              "dists": -0.027193819762938443,
+              "fine_correlation": 0.018959926666495264,
+              "psnr_y": -0.001965178652074684
+            },
+            "sequences_both_distances_lower": 15,
+            "sequences": 72
+          },
+          "memory_vs_trained_current_control": {
+            "source_balanced_percent": {
+              "lpips": -0.011399493100361369,
+              "dists": -0.021640563937619373,
+              "fine_correlation": -0.031251717054736616,
+              "psnr_y": -0.11063022048605209
+            },
+            "sequences_both_distances_lower": 21,
+            "sequences": 72
+          },
+          "current_branch_training_shift": {
+            "source_balanced_percent": {
+              "lpips": -0.058155288064742905,
+              "dists": 0.005554766378468301,
+              "fine_correlation": -0.05020212543506153,
+              "psnr_y": -0.1086671773381509
+            },
+            "sequences_both_distances_lower": 21,
+            "sequences": 72
+          }
+        }
+      },
+      "15": {
+        "memory": {
+          "memory_vs_own_current": {
+            "source_balanced_percent": {
+              "lpips": 0.04154781330933943,
+              "dists": -0.07128317975341192,
+              "fine_correlation": 0.03340822189277226,
+              "psnr_y": -0.001865235540376986
+            },
+            "sequences_both_distances_lower": 12,
+            "sequences": 72
+          },
+          "memory_vs_trained_current_control": {
+            "source_balanced_percent": {
+              "lpips": -0.07896710418715536,
+              "dists": -0.13329244901405524,
+              "fine_correlation": -0.03009454999109984,
+              "psnr_y": -0.004289195184437045
+            },
+            "sequences_both_distances_lower": 33,
+            "sequences": 72
+          },
+          "current_branch_training_shift": {
+            "source_balanced_percent": {
+              "lpips": -0.1204648669784758,
+              "dists": -0.06205350297070478,
+              "fine_correlation": -0.0634815638221764,
+              "psnr_y": -0.0024240048574597495
+            },
+            "sequences_both_distances_lower": 33,
+            "sequences": 72
+          }
+        }
+      }
+    },
+    "comparison_sha256": "1aa3f2e010bf87f2bac6431c10cd7a138cca40954b0d150c9b33162bd731740e",
+    "complete": true
+  },
+  "source_policy_context": {
+    "complete": true,
+    "scope": "Same source-disjoint development patches and matched decoded inputs, full-LR architecture/recipe. Raw disables both deband and source TAA; cross-policy differences do not identify TAA alone. No native claim.",
+    "control_note": "Search current has bias-2 and raw current bias0; decay is unused with no-history. Shared branch except this unused bias is hash-identical at initialization.",
+    "raw_current_vs_search_current_percent": {
+      "lpips": -0.2572286073920793,
+      "dists": -0.05233213808928383,
+      "psnr_y": 0.19976457911798917,
+      "detail_energy": 0.5728612227271279,
+      "fine_correlation": 0.41591984155786577
+    },
+    "raw_memory_vs_search_balanced_memory_percent": {
+      "lpips": -0.40109361846508707,
+      "dists": -0.15193029333901986,
+      "psnr_y": -0.33226649939271935,
+      "detail_energy": 0.6185278245651737,
+      "fine_correlation": 0.5359085567826716
+    },
+    "raw_memory_vs_search_initial_percent": {
+      "lpips": -1.4199420812968322,
+      "dists": -2.0444958683204284,
+      "psnr_y": 1.081433059647341,
+      "detail_energy": 7.165962881969601,
+      "fine_correlation": -1.5367295648798796
+    },
+    "raw_initial_vs_search_initial_percent": {
+      "lpips": 0.19078451137279906,
+      "dists": -0.6894685717677929,
+      "psnr_y": 0.2136491249064898,
+      "detail_energy": 0.9525667011786032,
+      "fine_correlation": 0.6258775615413326
+    },
+    "raw_within_policy_memory_vs_control_percent": {
+      "lpips": -0.06630079398398658,
+      "dists": -0.07740645784409805,
+      "psnr_y": -0.5418299997215881,
+      "detail_energy": 0.13675515444699915,
+      "fine_correlation": -0.04097844403990747
+    },
+    "search_within_policy_memory_vs_control_percent": {
+      "lpips": 0.07804780646918363,
+      "dists": 0.022266034711893035,
+      "psnr_y": -0.0109175810938833,
+      "detail_energy": 0.09130720936314507,
+      "fine_correlation": -0.16027864974555994
+    },
+    "comparison_sha256": {
+      ".build/quality-breakthrough-r61": "1aa3f2e010bf87f2bac6431c10cd7a138cca40954b0d150c9b33162bd731740e",
+      ".build/quality-breakthrough-r60b": "bc1e0fe424aab62d95eddba00b874ce3ced4568de0d0981634df54abcfaa4572"
+    }
+  },
+  "gate_summary": {
+    "memory": {
+      "sintel-stream-000-00": {
+        "gate_mean": 0.49179995656013487,
+        "carry_relative_fresh": 0.7820043465638506,
+        "output_meanabs": 7.092517528993388e-05
+      },
+      "reds_154-stream-000-00": {
+        "gate_mean": 0.48364087343215945,
+        "carry_relative_fresh": 0.5991480016282633,
+        "output_meanabs": 0.0003053856111364439
+      },
+      "reds_073-stream-000-00": {
+        "gate_mean": 0.4868974486986796,
+        "carry_relative_fresh": 0.5531124270162205,
+        "output_meanabs": 0.0002119528115144931
+      }
+    }
+  },
+  "psnr_outlier": {
+    "scope": "Explanation of mean-PSNR sensitivity; no change to scoring/rows",
+    "source_id": "sintel",
+    "sequence_id": "sintel-stream-000-01",
+    "frame": 0,
+    "current_psnr_y_db": 138.13080360867912,
+    "memory_psnr_y_db": 95.73502844291122,
+    "difference_db": -42.3957751657679,
+    "note": "One near-perfect frame accounts for most of aggregate mean-dB drop. This does not imply a proportional pixel-error change. All reported metric rows are retained unchanged."
+  },
+  "remote_completion": {
+    "complete": true,
+    "utc": "2026-09-09T04:24:46.0061739Z",
+    "files": [
+      {
+        "path": "run.exit.json",
+        "sha256": "7e35c4fa3489943d5e34b212aacaf05b2659ecef4cae0e93c1cef5489ee5b370",
+        "bytes": 96
+      },
+      {
+        "path": "current.exit.json",
+        "sha256": "95fbe396d044ef6dc97ecafd1b6d70828f6ddcfa44a26bb1f47004f0f45b4ef2",
+        "bytes": 97
+      },
+      {
+        "path": "current.stdout.log",
+        "sha256": "d1475f1abcc72c1fbffc4855e2e1b488cb8d5f71e9f21715082c6c7bb2d8be50",
+        "bytes": 1884
+      },
+      {
+        "path": "current.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "current_2k/step002000.pth",
+        "sha256": "998ed10bda46c4d72cd9078aa4c566711e6407cbd7d88139db902d67716e672b",
+        "bytes": 818338
+      },
+      {
+        "path": "current_2k/validation.json",
+        "sha256": "6a3a56f72e92a9bc09c8abf2077af037c0b197901c0656d27e1024533a8843f8",
+        "bytes": 400047
+      },
+      {
+        "path": "current_2k/experiment.json",
+        "sha256": "a2dbc0697900c8e10ae23e1db9d84a112c1ee08ae5e60245f7c7295fa781e17b",
+        "bytes": 6451
+      },
+      {
+        "path": "current_2k/complete.json",
+        "sha256": "2e57542d41b08924b145d2cefca155c84342734c807244ffc4b08fd51b53331e",
+        "bytes": 94
+      },
+      {
+        "path": "memory.exit.json",
+        "sha256": "536f65e7092246aed0e1ae765e9a7c4aa96492290c6a9361d1b7be2d85d8bbce",
+        "bytes": 96
+      },
+      {
+        "path": "memory.stdout.log",
+        "sha256": "f1fa0c85ce3658803cf3fc7754e35a177678c71510d49bc7382c306c47a0306a",
+        "bytes": 1869
+      },
+      {
+        "path": "memory.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "memory_2k/step002000.pth",
+        "sha256": "65613082b7e20c6c6640f4e338d01032ebbf712e535640b30391ce1200a91cd4",
+        "bytes": 818338
+      },
+      {
+        "path": "memory_2k/validation.json",
+        "sha256": "dd2ee1cec1ff70f9317ed5f66cb707a0c46024339a0dc8f275dae13f5bb967a6",
+        "bytes": 400084
+      },
+      {
+        "path": "memory_2k/experiment.json",
+        "sha256": "a68e9cb7f7950912f0f45abb2b078847cc034cdc062789d76b9a47bd0e316edb",
+        "bytes": 6450
+      },
+      {
+        "path": "memory_2k/complete.json",
+        "sha256": "493ccacfb4a313e23bcb66875c157a2de559786a93aa442f4fce5b6eae5093bb",
+        "bytes": 95
+      },
+      {
+        "path": "tests.exit.json",
+        "sha256": "aba8bf36b1b699aa53c04002d804bbf6e5054f6c7f0a6e5f64412f5c87f76de7",
+        "bytes": 95
+      },
+      {
+        "path": "tests.stdout.log",
+        "sha256": "b0e428bcd40f9674ae8649ada3fc4f13b33dc0b6dcdb74cda03930ad80d6d192",
+        "bytes": 1244
+      },
+      {
+        "path": "tests.stderr.log",
+        "sha256": "eeb0f34478f078cf1b11da25e787afddadb2d38a42ab2c1c41ca04b34a8d0f9d",
+        "bytes": 563
+      },
+      {
+        "path": "raw-retention-smoke.exit.json",
+        "sha256": "0e39eb964cddec6b991f92c8747af11d1160445405d4ab112634ffe0b1bf2ff2",
+        "bytes": 109
+      },
+      {
+        "path": "raw-retention-smoke.stdout.log",
+        "sha256": "55759a65231e32a28a31535a48bb6a2dfafd782fad158e217a7df5c4a71cef0f",
+        "bytes": 588
+      },
+      {
+        "path": "raw-retention-smoke.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    ],
+    "python_process_ids": [],
+    "experiment_plan": {
+      "source_commit": "cbc158a",
+      "question": "Does observation-feature memory help with raw input that contains no source TAA history?",
+      "arms": [
+        "current",
+        "memory"
+      ],
+      "initial_retention": 0.5,
+      "policy": "raw",
+      "caution": "Raw bypasses both TAA and deband. Within-raw matched history effect is isolated; cross-policy effects do not isolate TAA alone. Source-disjoint repeated-development patches, not native admission."
+    }
+  },
+  "visual_review": {
+    "gallery_sha256": "0262c1bf27ffe31c0afc8d21b72e204a729eff2ef7c779b929d18f6b85268592",
+    "scope": "same fixed three r41 patches, frame15 after16",
+    "finding": "Parent viewed: variants nearly identical, no broad recovery of missing reference detail."
+  },
+  "decision": "No promotion. Removing source TAA/deband does not establish useful within-model memory under this recipe; small between-training gains mostly reflect current-branch training changes."
+}

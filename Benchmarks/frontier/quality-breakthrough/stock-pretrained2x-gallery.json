@@ -1,0 +1,128 @@
+{
+  "scope": "zero-shot 3-patch diagnostic only; no quality-gain, timing, or stronger-model claim",
+  "columns": [
+    "reference",
+    "big2k+search",
+    "stock2x+search"
+  ],
+  "rows": [
+    "sintel-stream-000-00",
+    "reds_154-stream-000-00",
+    "reds_073-stream-000-00"
+  ],
+  "frame": "15 (index 15) after all 16 frames; preprocess_sequence(motion_policy='search') applied to the full 16-frame sequence, SAME input tensor to both models",
+  "device": "cpu",
+  "threads": {
+    "torch_num_threads": 2,
+    "torch_num_interop_threads": 2
+  },
+  "input_hashes": {
+    "sintel-stream-000-00": "efb2d3e031f034340d2764338cdf31a35213a343df0171ce18eb8e62d01970d7",
+    "reds_154-stream-000-00": "4bb6c237cc0e507470fbfc18af15594275f5c5507816b406dcc9c57b8478ea7b",
+    "reds_073-stream-000-00": "8c6d38cb8e167ad5ce2b3744313ef8a6501dc5ecdf6395afb6c6a0869b341a65"
+  },
+  "stock2x": {
+    "file": "Model/SPAN/weights/spanx2_ch48.pth",
+    "sha256": "561fd5cf419a23d4de1231ce258180f61aee4aa8caa1aaaa783769c7301847bc",
+    "container_keys": [
+      "params",
+      "params_ema"
+    ],
+    "params_key_used": "params",
+    "n_keys": 204,
+    "strict": true,
+    "missing_keys": [],
+    "unexpected_keys": [],
+    "architecture": "SPAN(num_in_ch=3, num_out_ch=3, feature_channels=48, upscale=2)",
+    "parameters": 2221140,
+    "fusion": "eval()+warmup forward from file's own unfused branches, then per-instance update_params freeze on 20 Conv3XC modules (no class patch)",
+    "has_unfused_branches": true
+  },
+  "big2k": {
+    "file": ".build/paired-ladder-r10/big_2k_raw.pth",
+    "sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+    "loader": "Tools/eval_checkpoint.load",
+    "architecture": "shipping_direct2x_area",
+    "channels": 32,
+    "frames": 1,
+    "scale": 2,
+    "step": 2000
+  },
+  "output_stats_rgb8": {
+    "sintel-stream-000-00": {
+      "big2k_search": {
+        "min": 0,
+        "max": 136,
+        "mean": 13.714065551757812
+      },
+      "stock2x_search": {
+        "min": 0,
+        "max": 126,
+        "mean": 12.539632161458334
+      },
+      "reference": {
+        "min": 0,
+        "max": 134,
+        "mean": 13.537246704101562
+      }
+    },
+    "reds_154-stream-000-00": {
+      "big2k_search": {
+        "min": 0,
+        "max": 255,
+        "mean": 101.65371704101562
+      },
+      "stock2x_search": {
+        "min": 0,
+        "max": 255,
+        "mean": 100.22585042317708
+      },
+      "reference": {
+        "min": 0,
+        "max": 255,
+        "mean": 100.7893575032552
+      }
+    },
+    "reds_073-stream-000-00": {
+      "big2k_search": {
+        "min": 0,
+        "max": 249,
+        "mean": 81.27956644694011
+      },
+      "stock2x_search": {
+        "min": 0,
+        "max": 247,
+        "mean": 80.44491068522136
+      },
+      "reference": {
+        "min": 0,
+        "max": 251,
+        "mean": 81.61555480957031
+      }
+    }
+  },
+  "gallery": {
+    "file": ".build/quality-breakthrough-r62-stock/r62-stock-gallery.png",
+    "sha256": "2e6aab2370c3323f0156e69ded6b2931610535287b5795d2f62e1f1fb457e91e",
+    "size": [
+      768,
+      768
+    ]
+  },
+  "constraints": [
+    "no training",
+    "no scoring (no LPIPS/DISTS)",
+    "no native export",
+    "no network",
+    "no GPU",
+    "no agents",
+    "no tracked edits"
+  ],
+  "parent_review": {
+    "hashes_verified": true,
+    "script_reviewed": true,
+    "finding": "Stock2x shows some different foliage/edge rendering; all three source crops still miss substantial reference detail. Zero-shot three-crop view does not establish quality superiority or native feasibility.",
+    "provider_note": "Worker finished gallery/manifest before unsupported retained-media error on image read; parent verified artifacts and stopped/archived the fulfilled slice. No GPU job affected."
+  },
+  "script_sha256": "2712767a6e90ce0f65a08d3613ec78a7ae594b6df7d2fd6c6c210989e32c1bf6"
+}
