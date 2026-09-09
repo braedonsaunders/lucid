@@ -1397,3 +1397,14 @@ sharpness0.1 probe on both old and control weights will test whether global
 post-sharpening contributes to the observed roughness; it is a combined pipeline
 comparison, not a claim that weight quality alone improves. See
 `quality-breakthrough/paired-state-control-native-comparison.json`.
+
+The matched sharpness0.1 probe completes 960 native frames on each weight set.
+Unchanged big2k at lower gain changes LPIPS/DISTS +1.006%/+0.291% versus the
+current default, while fine correlation improves 1.156%. The r57 control at
+lower gain changes +0.690%/-1.521%, with fine correlation down 1.856%. Comparing
+weights at the same lower gain still gives Rush Hour +12.299%/+3.551% and
+Sunflower +14.091%/+3.511%; reducing global sharpening does not eliminate the
+weight-dependent regressions. All 1,920 RGB/reference/packet identities pass;
+the same fixed native crops show no broad recovery of reference detail. Neither
+weights nor sharpness are promoted. See
+`quality-breakthrough/paired-state-native-gain-comparison.json`.
