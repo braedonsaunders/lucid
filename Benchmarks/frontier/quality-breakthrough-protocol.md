@@ -1301,3 +1301,27 @@ equal its backbone. Frozen-backbone hashes must remain unchanged. Quality is
 compared against both the fresh trained control and the common initialization,
 with source-level metrics, temporal residual diagnostics and fixed crops examined
 together. These proxy results cannot establish native playback performance.
+
+r56 completes all three 2,000-step arms. The 269-file source snapshot matches
+locally and remotely; 32 CPU tests and the actual RTX4080 identity/gradient smoke
+pass. Initial metric rows agree across all arms and exactly reproduce r54's
+216 full-search initial rows. Every downloaded checkpoint matches its remote
+hash and score receipt; frozen-backbone identity and first-frame/control checks
+pass. All GPU and recovered launch processes have exited.
+
+Against unchanged initialization, LPIPS/DISTS worsen18.836%/7.969% for the trained
+control,3.656%/1.116% for frozen-backbone state, and18.795%/8.013% for joint
+training. Joint state changes distances−0.034%/+0.041% versus the independently
+trained control; its small improvement over its own backbone does not establish
+an improvement over initialization. Frozen state beats the regressing trained
+control but remains worse than its unchanged backbone. The fixed three-patch
+gallery shows visibly softer texture/edges in the control and joint arms; the
+frozen arm stays closer to initialization without broad reference-detail recovery.
+No weights or settings are promoted.
+
+The initialization checkpoint records paired-DINO training at weight0.005,
+whereas this declared reconstruction-only probe omits that adversarial term.
+The base HR reconstruction objective is shared. This recipe difference motivates
+retaining perceptual training in any follow-up; it does not isolate the cause of
+every regression or establish that the feature-state architecture cannot work.
+See `quality-breakthrough/selective-state-reconstruction-comparison.json`.

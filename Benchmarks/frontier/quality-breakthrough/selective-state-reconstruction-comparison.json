@@ -1,0 +1,654 @@
+{
+  "scope": "r56 scan-ablation crossed with backbone training; three matched 2000-step arms (control/frozen/joint); 72 source-disjoint sequences, 216 scored frames/variant; source-proxy reconstruction, not native admission",
+  "percent_convention": "100*(candidate/baseline-1). Negative is better for perceptual distances, residual-change L1 and MSE. Positive is better for fine correlation and PSNR. Detail energy has no monotone quality interpretation.",
+  "schema_assumptions": "A1 source_motion_policy search; A2 explicit decoded/input/output hashes; scan initialization hash; no discriminator; A3 initial rows in all arms; A4 base/ssm/initial summaries; A5 local complete/exit receipts; no remote receipt supplied so no remote claim",
+  "shared_hashes": {
+    "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+    "reds_bank_sha256": "bf641e3c99628e4ce6a1a75f59ffe9f70ab8f4bd790cd8f5946de83e461db7fb",
+    "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+    "frozen_backbone_sha256": "2de8c2017b3856bb4f84933b6d8315412e997f5aa7e0c611f866d8973a90f341",
+    "initial_scan_sha256": "1ef7f106532b5a038b7536029d90dae3f2aec347604c908290f8020d5de8a30e",
+    "first_decoded_sequence_sha256": "1cb6fc7da87f8c2653639c18098591a079458b2502ab315555ead5a33731db6d",
+    "source_hashes": {
+      "Tools/architectures/ssm_recurrent_span.py": "095f181e3231e4ab37a5ef969aa82a4c93526e0ec6504278934d92555aed1f6a",
+      "Tools/architectures/subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+      "Tools/experiments/recurrent_frame_feeding.py": "96736370ecdc7568e359d4b4a9d5c2a0cd0afdbb498dd680dccffce9bb31a433",
+      "Tools/experiments/native_stages.py": "8ed2e8c6ea5270c855d880bf20e5b14fa6f5948e2a921b389d8115c464938b86",
+      "Tools/experiments/train_causal_detail.py": "51b3b776485caa5ccaec4a7c58eec5d3b6060d22ad1c311c0561d2abb994ee7a",
+      "Tools/experiments/replay_recurrent_motion.py": "c2b1bbaded47c5e453a12b92bf862e0726241dcaf56c4df90d21b428996ebe3d",
+      "Tools/experiments/mmap_training_bank.py": "de1a78931b3a8a26ce1980d4b1a92ea887aeab7e70e26cd546e59ce534153b94",
+      "Tools/experiments/build_causal_bank.py": "ac9d0b9bc5385903658577ddd28f8f8fe5edf5f3c356aa7daff9a89a1bd87597",
+      "Tools/experiments/train_presented_detail.py": "76aa0cf85a567fbfe0db3f2fa5ff23a9a190ca42ede35fa576b9604d881cc743",
+      "Tools/experiments/train_ssm_span.py": "4652bcc02fbd90b3d3aac52caa7aa81d4fbc95e6c34f96aceed9b4388ddbc390",
+      "Tools/train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+      "Tools/frontier_eval/evaluate_sequences.py": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75",
+      "Tools/eval_checkpoint.py": "203563fa664b9d05705bd8f3a0fb2cb0759623c6eea22aca4395bd2bceac5947"
+    }
+  },
+  "initial_rows_per_arm": 216,
+  "arms": {
+    "control": {
+      "checkpoint_sha256": "23afe9134da467fbb1a053c738ec8190769184f72b1ac564a3e5c24d7261cbe4",
+      "experiment_sha256": "b1aae24ef88420df81b389e950e45e3169c6172fe096e63ad855170ee29eb094",
+      "validation_sha256": "8bfb39cd82795e99521b736ae550de31a3ea377ecfab145fd4f4306fdf731c33",
+      "complete": {
+        "complete": true,
+        "backbone_unchanged": false,
+        "steps": 2000,
+        "minutes": 3.090883333333962
+      },
+      "exit": {
+        "step": "control",
+        "utc": "2026-09-09T01:04:52.5673814Z",
+        "exit_code": 0
+      },
+      "input_output_hashes": {
+        "first_input_sha256": "afb9498dbe746d8472a704eda245e506e9ffed45e4145564df45ab828a1fc1c3",
+        "first_output_sha256": "dfb98b2f51f2e096dfaab76b94fb74c16714b6d000586d10f5bdd51ada45a4aa"
+      },
+      "summary": {
+        "base": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2461111420540234,
+              "dists": 0.20570427896799864,
+              "psnr_y": 29.918868492056244,
+              "detail_energy": 0.5556952014650288,
+              "fine_correlation": 0.526875972117509
+            },
+            "reds_154": {
+              "lpips": 0.3542224375738038,
+              "dists": 0.2734686290776288,
+              "psnr_y": 25.30526170808958,
+              "detail_energy": 0.4435925923574273,
+              "fine_correlation": 0.39896261239329767
+            },
+            "reds_073": {
+              "lpips": 0.42224839688451205,
+              "dists": 0.28279625596823516,
+              "psnr_y": 22.83701829145393,
+              "detail_energy": 0.3763478055784972,
+              "fine_correlation": 0.28274633634357255
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.3408606588374464,
+            "dists": 0.2539897213379542,
+            "psnr_y": 26.02038283053325,
+            "detail_energy": 0.45854519980031777,
+            "fine_correlation": 0.4028616402847931
+          }
+        },
+        "ssm": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2461111420540234,
+              "dists": 0.20570427896799864,
+              "psnr_y": 29.918868492056244,
+              "detail_energy": 0.5556952014650288,
+              "fine_correlation": 0.526875972117509
+            },
+            "reds_154": {
+              "lpips": 0.3542224375738038,
+              "dists": 0.2734686290776288,
+              "psnr_y": 25.30526170808958,
+              "detail_energy": 0.4435925923574273,
+              "fine_correlation": 0.39896261239329767
+            },
+            "reds_073": {
+              "lpips": 0.42224839688451205,
+              "dists": 0.28279625596823516,
+              "psnr_y": 22.83701829145393,
+              "detail_energy": 0.3763478055784972,
+              "fine_correlation": 0.28274633634357255
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.3408606588374464,
+            "dists": 0.2539897213379542,
+            "psnr_y": 26.02038283053325,
+            "detail_energy": 0.45854519980031777,
+            "fine_correlation": 0.4028616402847931
+          }
+        },
+        "initial": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2137711979976976,
+              "dists": 0.19477422645798437,
+              "psnr_y": 28.677276227811983,
+              "detail_energy": 0.6415185516656143,
+              "fine_correlation": 0.5036951956226896
+            },
+            "reds_154": {
+              "lpips": 0.29054888765569087,
+              "dists": 0.24941719461370399,
+              "psnr_y": 25.163160260919515,
+              "detail_energy": 0.5087248457153069,
+              "fine_correlation": 0.37924668110685517
+            },
+            "reds_073": {
+              "lpips": 0.35617565474024526,
+              "dists": 0.2615368167559306,
+              "psnr_y": 22.7398870833138,
+              "detail_energy": 0.450108753680454,
+              "fine_correlation": 0.2662052878712313
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28683191346454456,
+            "dists": 0.23524274594253966,
+            "psnr_y": 25.5267745240151,
+            "detail_energy": 0.5334507170204584,
+            "fine_correlation": 0.38304905486692536
+          }
+        }
+      },
+      "vs_control_percent": {
+        "lpips": 0.0,
+        "dists": 0.0,
+        "psnr_y": 0.0,
+        "detail_energy": 0.0,
+        "fine_correlation": 0.0
+      },
+      "vs_own_base_percent": {
+        "lpips": 0.0,
+        "dists": 0.0,
+        "psnr_y": 0.0,
+        "detail_energy": 0.0,
+        "fine_correlation": 0.0
+      },
+      "vs_initial_percent": {
+        "lpips": 18.836378672201114,
+        "dists": 7.969204457421908,
+        "psnr_y": 1.9336885122473113,
+        "detail_energy": -14.04169398037719,
+        "fine_correlation": 5.172336327719385
+      },
+      "vs_control_sources_percent": {
+        "sintel": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        },
+        "reds_154": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        },
+        "reds_073": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        }
+      },
+      "temporal": {
+        "ssm": {
+          "residual_change_l1": 0.05376821589668642,
+          "mean_rgb_mse": 0.005061274695543084,
+          "last_rgb_mse": 0.00506129703410036
+        },
+        "base": {
+          "residual_change_l1": 0.05376821589668642,
+          "mean_rgb_mse": 0.005061274695543084,
+          "last_rgb_mse": 0.00506129703410036
+        },
+        "initial": {
+          "residual_change_l1": 0.054908704285945,
+          "mean_rgb_mse": 0.005164905433225108,
+          "last_rgb_mse": 0.005168550302844071
+        }
+      },
+      "temporal_vs_control_percent": {
+        "residual_change_l1": 0.0,
+        "mean_rgb_mse": 0.0,
+        "last_rgb_mse": 0.0
+      }
+    },
+    "frozen": {
+      "checkpoint_sha256": "0d3202715289215cd1262aa849d2dfae014319e9ad293e7934a4efa38e4349c2",
+      "experiment_sha256": "4d62c7d5b3f4127c7e62de0c715147622590e2a628adb54fd46ccc7c8aafb62f",
+      "validation_sha256": "bb0effd6a80c23f07ec86635328ee188cf6b0f2424162d19e35b7744fcca84a4",
+      "complete": {
+        "complete": true,
+        "backbone_unchanged": true,
+        "steps": 2000,
+        "minutes": 5.077599999999317
+      },
+      "exit": {
+        "step": "frozen",
+        "utc": "2026-09-09T01:10:17.1949592Z",
+        "exit_code": 0
+      },
+      "input_output_hashes": {
+        "first_input_sha256": "afb9498dbe746d8472a704eda245e506e9ffed45e4145564df45ab828a1fc1c3",
+        "first_output_sha256": "dfb98b2f51f2e096dfaab76b94fb74c16714b6d000586d10f5bdd51ada45a4aa"
+      },
+      "summary": {
+        "base": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2137711979976976,
+              "dists": 0.19477422645798437,
+              "psnr_y": 28.677276227811983,
+              "detail_energy": 0.6415185516656143,
+              "fine_correlation": 0.5036951956226896
+            },
+            "reds_154": {
+              "lpips": 0.29054888765569087,
+              "dists": 0.24941719461370399,
+              "psnr_y": 25.163160260919515,
+              "detail_energy": 0.5087248457153069,
+              "fine_correlation": 0.37924668110685517
+            },
+            "reds_073": {
+              "lpips": 0.35617565474024526,
+              "dists": 0.2615368167559306,
+              "psnr_y": 22.7398870833138,
+              "detail_energy": 0.450108753680454,
+              "fine_correlation": 0.2662052878712313
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28683191346454456,
+            "dists": 0.23524274594253966,
+            "psnr_y": 25.5267745240151,
+            "detail_energy": 0.5334507170204584,
+            "fine_correlation": 0.38304905486692536
+          }
+        },
+        "ssm": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2180537946750755,
+              "dists": 0.19545337833740092,
+              "psnr_y": 28.734172226823596,
+              "detail_energy": 0.6226165343110236,
+              "fine_correlation": 0.5051881458808589
+            },
+            "reds_154": {
+              "lpips": 0.30492665342710634,
+              "dists": 0.2536501873422552,
+              "psnr_y": 25.1808310331299,
+              "detail_energy": 0.5003338342159281,
+              "fine_correlation": 0.38007277085031343
+            },
+            "reds_073": {
+              "lpips": 0.3689754889519126,
+              "dists": 0.2644975483417511,
+              "psnr_y": 22.75312704255741,
+              "detail_energy": 0.44021593372374673,
+              "fine_correlation": 0.2668782081505208
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.2973186456846981,
+            "dists": 0.23786703800713574,
+            "psnr_y": 25.556043434170302,
+            "detail_energy": 0.5210554340835661,
+            "fine_correlation": 0.38404637496056443
+          }
+        },
+        "initial": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2137711979976976,
+              "dists": 0.19477422645798437,
+              "psnr_y": 28.677276227811983,
+              "detail_energy": 0.6415185516656143,
+              "fine_correlation": 0.5036951956226896
+            },
+            "reds_154": {
+              "lpips": 0.29054888765569087,
+              "dists": 0.24941719461370399,
+              "psnr_y": 25.163160260919515,
+              "detail_energy": 0.5087248457153069,
+              "fine_correlation": 0.37924668110685517
+            },
+            "reds_073": {
+              "lpips": 0.35617565474024526,
+              "dists": 0.2615368167559306,
+              "psnr_y": 22.7398870833138,
+              "detail_energy": 0.450108753680454,
+              "fine_correlation": 0.2662052878712313
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28683191346454456,
+            "dists": 0.23524274594253966,
+            "psnr_y": 25.5267745240151,
+            "detail_energy": 0.5334507170204584,
+            "fine_correlation": 0.38304905486692536
+          }
+        }
+      },
+      "vs_control_percent": {
+        "lpips": -12.774138646934041,
+        "dists": -6.347769998678777,
+        "psnr_y": -1.784521770440961,
+        "detail_energy": 13.632294986507244,
+        "fine_correlation": -4.670403791963828
+      },
+      "vs_own_base_percent": {
+        "lpips": 3.656054897618577,
+        "dists": 1.1155676890615362,
+        "psnr_y": 0.11465964933277117,
+        "detail_energy": -2.3236041383775885,
+        "fine_correlation": 0.2603635437726126
+      },
+      "vs_initial_percent": {
+        "lpips": 3.656054897618577,
+        "dists": 1.1155676890615362,
+        "psnr_y": 0.11465964933277117,
+        "detail_energy": -2.3236041383775885,
+        "fine_correlation": 0.2603635437726126
+      },
+      "vs_control_sources_percent": {
+        "sintel": {
+          "lpips": -11.400275154055839,
+          "dists": -4.983319103533301,
+          "psnr_y": -3.959696087929254,
+          "detail_energy": 12.042812799096358,
+          "fine_correlation": -4.116305807130849
+        },
+        "reds_154": {
+          "lpips": -13.916618180469287,
+          "dists": -7.247062232409773,
+          "psnr_y": -0.49171858562484516,
+          "detail_energy": 12.791296075742675,
+          "fine_correlation": -4.7347397866852265
+        },
+        "reds_073": {
+          "lpips": -12.616485539238164,
+          "dists": -6.470632916915086,
+          "psnr_y": -0.3673476450641311,
+          "detail_energy": 16.970506323818114,
+          "fine_correlation": -5.612142812619836
+        }
+      },
+      "temporal": {
+        "ssm": {
+          "residual_change_l1": 0.054671323503624886,
+          "mean_rgb_mse": 0.005137656241522058,
+          "last_rgb_mse": 0.005139507926489589
+        },
+        "base": {
+          "residual_change_l1": 0.054908704285945,
+          "mean_rgb_mse": 0.005164905433225108,
+          "last_rgb_mse": 0.005168550302844071
+        },
+        "initial": {
+          "residual_change_l1": 0.054908704285945,
+          "mean_rgb_mse": 0.005164905433225108,
+          "last_rgb_mse": 0.005168550302844071
+        }
+      },
+      "temporal_vs_control_percent": {
+        "residual_change_l1": 1.6796309713414281,
+        "mean_rgb_mse": 1.5091365431367576,
+        "last_rgb_mse": 1.5452737087407575
+      }
+    },
+    "joint": {
+      "checkpoint_sha256": "a8f5da77bd32ab9f0a48992e5c58bbedbd308c7a7dcd4288bb27e423f76b2d8a",
+      "experiment_sha256": "e380674c8c44f528ce5981e3722950954af865df21cce386436579aade670b93",
+      "validation_sha256": "730cfe2be64202fe3da4a13a9287f5d8870401a4995f11a75314c451bc435702",
+      "complete": {
+        "complete": true,
+        "backbone_unchanged": false,
+        "steps": 2000,
+        "minutes": 5.363283333332705
+      },
+      "exit": {
+        "step": "joint",
+        "utc": "2026-09-09T01:15:58.1955662Z",
+        "exit_code": 0
+      },
+      "input_output_hashes": {
+        "first_input_sha256": "afb9498dbe746d8472a704eda245e506e9ffed45e4145564df45ab828a1fc1c3",
+        "first_output_sha256": "dfb98b2f51f2e096dfaab76b94fb74c16714b6d000586d10f5bdd51ada45a4aa"
+      },
+      "summary": {
+        "base": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.24672491405982766,
+              "dists": 0.20578081629894399,
+              "psnr_y": 29.983591920405942,
+              "detail_energy": 0.5501955723183634,
+              "fine_correlation": 0.5257417693949745
+            },
+            "reds_154": {
+              "lpips": 0.3562144910295804,
+              "dists": 0.2742767874841337,
+              "psnr_y": 25.285730257925625,
+              "detail_energy": 0.4375010325243696,
+              "fine_correlation": 0.39705478536837147
+            },
+            "reds_073": {
+              "lpips": 0.4227775685765125,
+              "dists": 0.2840079157440751,
+              "psnr_y": 22.831436709008244,
+              "detail_energy": 0.3721226635377029,
+              "fine_correlation": 0.2819105652193839
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.3419056578886402,
+            "dists": 0.25468850650905095,
+            "psnr_y": 26.033586295779937,
+            "detail_energy": 0.4532730894601453,
+            "fine_correlation": 0.4015690399942433
+          }
+        },
+        "ssm": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.24600156054010666,
+              "dists": 0.2054575659610607,
+              "psnr_y": 29.984754410545147,
+              "detail_energy": 0.5539261481771501,
+              "fine_correlation": 0.5259417594325803
+            },
+            "reds_154": {
+              "lpips": 0.35442692869239384,
+              "dists": 0.2736569874816471,
+              "psnr_y": 25.29677403008007,
+              "detail_energy": 0.4398575842340914,
+              "fine_correlation": 0.39750837217748985
+            },
+            "reds_073": {
+              "lpips": 0.4218015629384253,
+              "dists": 0.2831662076490897,
+              "psnr_y": 22.83919188823443,
+              "detail_energy": 0.37412552231177976,
+              "fine_correlation": 0.2819966944618792
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.3407433507236419,
+            "dists": 0.25409358703059914,
+            "psnr_y": 26.040240109619884,
+            "detail_energy": 0.45596975157434044,
+            "fine_correlation": 0.40181560869064975
+          }
+        },
+        "initial": {
+          "sources": {
+            "sintel": {
+              "lpips": 0.2137711979976976,
+              "dists": 0.19477422645798437,
+              "psnr_y": 28.677276227811983,
+              "detail_energy": 0.6415185516656143,
+              "fine_correlation": 0.5036951956226896
+            },
+            "reds_154": {
+              "lpips": 0.29054888765569087,
+              "dists": 0.24941719461370399,
+              "psnr_y": 25.163160260919515,
+              "detail_energy": 0.5087248457153069,
+              "fine_correlation": 0.37924668110685517
+            },
+            "reds_073": {
+              "lpips": 0.35617565474024526,
+              "dists": 0.2615368167559306,
+              "psnr_y": 22.7398870833138,
+              "detail_energy": 0.450108753680454,
+              "fine_correlation": 0.2662052878712313
+            }
+          },
+          "source_balanced": {
+            "lpips": 0.28683191346454456,
+            "dists": 0.23524274594253966,
+            "psnr_y": 25.5267745240151,
+            "detail_energy": 0.5334507170204584,
+            "fine_correlation": 0.38304905486692536
+          }
+        }
+      },
+      "vs_control_percent": {
+        "lpips": -0.0344152693374844,
+        "dists": 0.04089365982913318,
+        "psnr_y": 0.07631432333627952,
+        "detail_energy": -0.561656348621431,
+        "fine_correlation": -0.25965033389723224
+      },
+      "vs_own_base_percent": {
+        "lpips": -0.33994967271844256,
+        "dists": -0.23358709295767666,
+        "psnr_y": 0.025558575619766266,
+        "detail_energy": 0.5949309978686257,
+        "fine_correlation": 0.061401321279630494
+      },
+      "vs_initial_percent": {
+        "lpips": 18.795480812410158,
+        "dists": 8.013357016612943,
+        "psnr_y": 2.011478516887144,
+        "detail_energy": -14.524484263303838,
+        "fine_correlation": 4.899256005276942
+      },
+      "vs_control_sources_percent": {
+        "sintel": {
+          "lpips": -0.044525214503565724,
+          "dists": -0.1199357680723323,
+          "psnr_y": 0.22021527487376957,
+          "detail_energy": -0.3183495706305828,
+          "fine_correlation": -0.1773116889681181
+        },
+        "reds_154": {
+          "lpips": 0.057729578055720765,
+          "dists": 0.06887751792721275,
+          "psnr_y": -0.033541158781214,
+          "detail_energy": -0.8419906435963243,
+          "fine_correlation": -0.3645053873805648
+        },
+        "reds_073": {
+          "lpips": -0.10582253227806593,
+          "dists": 0.13081915797925614,
+          "psnr_y": 0.009517865917341162,
+          "detail_energy": -0.5904865748589838,
+          "fine_correlation": -0.2651287692663318
+        }
+      },
+      "temporal": {
+        "ssm": {
+          "residual_change_l1": 0.05379113073851411,
+          "mean_rgb_mse": 0.0050628281770362564,
+          "last_rgb_mse": 0.005062045547207263
+        },
+        "base": {
+          "residual_change_l1": 0.053789575657052384,
+          "mean_rgb_mse": 0.005067552497469781,
+          "last_rgb_mse": 0.0050656222747862654
+        },
+        "initial": {
+          "residual_change_l1": 0.054908704285945,
+          "mean_rgb_mse": 0.005164905433225108,
+          "last_rgb_mse": 0.005168550302844071
+        }
+      },
+      "temporal_vs_control_percent": {
+        "residual_change_l1": 0.042617820668855444,
+        "mean_rgb_mse": 0.030693483097055108,
+        "last_rgb_mse": 0.01478895828204152
+      }
+    }
+  },
+  "run_exit": {
+    "complete": true,
+    "utc": "2026-09-09T01:15:58.1965697Z",
+    "exit_code": 0
+  },
+  "initial_rows_exact_to_r54": true,
+  "remote_completion": {
+    "hashes": [
+      {
+        "arm": "control",
+        "checkpoint_sha256": "23afe9134da467fbb1a053c738ec8190769184f72b1ac564a3e5c24d7261cbe4"
+      },
+      {
+        "arm": "frozen",
+        "checkpoint_sha256": "0d3202715289215cd1262aa849d2dfae014319e9ad293e7934a4efa38e4349c2"
+      },
+      {
+        "arm": "joint",
+        "checkpoint_sha256": "a8f5da77bd32ab9f0a48992e5c58bbedbd308c7a7dcd4288bb27e423f76b2d8a"
+      }
+    ],
+    "owned_python_processes": [],
+    "remote": "lucid-gpu:C:\\lucid\\quality-breakthrough-20260908-r56",
+    "run_exit": {
+      "complete": true,
+      "exit_code": 0,
+      "utc": "2026-09-09T01:15:58.1965697Z"
+    },
+    "supervised_after_external_worker_sigkill": true,
+    "verified_hash_chain": "remoteSHA256==localSHA256==validation.checkpoint_sha256 for all three arms; run.exit complete+exit0; no remote python.exe/pythonw.exe processes remain"
+  },
+  "code_commit": "fcbc54c",
+  "verification": {
+    "cpu_tests": 32,
+    "cuda_tests": 32,
+    "actual_cuda_smoke": {
+      "complete": true,
+      "device": "cuda:0",
+      "gpu": "NVIDIA GeForce RTX 4080",
+      "identity_exact": true,
+      "finite_nonzero_backbone_encode_gradients": true,
+      "nonzero_gate_gradients_after_encode_learns": true,
+      "source_motion_policy": "search"
+    },
+    "source_snapshot_files": 269,
+    "source_snapshot_sha256": "8ac79650f05990202af01333fe0f17dc2538236e583f93f09f8458fa9584658e",
+    "source_manifest_sha256": "132d0a61ee6948f4daf5116370c443e10c69f994a483fcfa7966a4540fe22834",
+    "local_recovered_launch_pids_absent": [
+      74558,
+      74560,
+      74561
+    ]
+  },
+  "visual_review": {
+    "gallery_sha256": "f144214412564c12f6850e3c0272562b4c25337df6bd6269a5093f3b2d13fa2e",
+    "scope": "three previously fixed256px patches,frame15after16frames;reference,initial,control,frozen,joint",
+    "finding": "Control and joint lose visible texture and edge detail; frozen stays closer to initial but does not broadly recover missing reference detail."
+  },
+  "initialization_recipe": {
+    "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+    "reconstruction": "1.1L1 HR +0.2signedSobel HR +0.05FFT HR",
+    "paired_dino_gan_weight": 0.005,
+    "current_probe_paired_dino_gan_weight": 0,
+    "caution": "Removed adversarial term is a documented recipe difference, not isolated causal proof for all observed regression."
+  },
+  "decision": {
+    "promoted": false,
+    "new_shipped_weights": false,
+    "native_playback_evaluated": false,
+    "reason": "All arms worsen both perceptual distances versus unchanged initialization; fixed crops show no broad recovery. Frozen beats the regressing trained control but still loses to the actual initialization. Joint versus trained control is mixed and negligible. This reconstruction-only result does not settle the architecture under perceptual training."
+  }
+}
