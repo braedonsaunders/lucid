@@ -89,7 +89,7 @@ def score(output, reference, device):
 
 def load(path, device):
     state = torch.load(path, map_location="cpu", weights_only=False)
-    if state.get('architecture') in ('recurrent_span2x', 'ssm_recurrent_span2x'):
+    if state.get('architecture') in ('recurrent_span2x', 'ssm_recurrent_span2x', 'raw_feature_span2x'):
         raise ValueError('recurrent SR requires its explicit stateful loader and sequence evaluator')
     frames = state.get("frames", 1)
     scale = state.get("scale", 4)
