@@ -5,6 +5,7 @@ Eight channels at LR resolution hold the same number of state values as
 native playback or quality claim. A driver may deliberately warp packed state
 as a matched phase-alignment ablation; the model itself always consumes LR state.
 """
+import math
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -14,8 +15,10 @@ class FullLRFeatureSPAN(nn.Module):
     requires_feature_state = True
     state_representation = 'full_lr_observation_features_v1'
 
-    def __init__(self, sr, *, train_backbone=False, state_channels=8):
+    def __init__(self, sr, *, train_backbone=False, state_channels=8, initial_decay_bias=-2.):
         super().__init__()
+        if not math.isfinite(initial_decay_bias):
+            raise ValueError('finite initial decay bias required')
         if sr.frames != 1 or sr.core.upsampler[1].upscale_factor != 4:
             raise ValueError('single-frame 2x source model required')
         if sr.core.img_range != 1 or torch.count_nonzero(sr.core.mean):
@@ -36,7 +39,7 @@ class FullLRFeatureSPAN(nn.Module):
                 self.raw_encoder.weight[channel, channel, 1, 1] = 1
         self.decay = nn.Conv2d(3, state_channels, 1)
         nn.init.zeros_(self.decay.weight)
-        nn.init.constant_(self.decay.bias, -2.)
+        nn.init.constant_(self.decay.bias, initial_decay_bias)
         self.project = nn.Conv2d(state_channels * 4, sr.core.conv_1.out_channels, 1, bias=False)
         nn.init.zeros_(self.project.weight)
         self.history_source = 'full_lr_features'

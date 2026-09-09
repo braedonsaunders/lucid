@@ -77,6 +77,8 @@ def main():
     ap.add_argument('--source-motion-policy', choices=('raw', 'taa', 'search'), default='raw')
     ap.add_argument('--state-warp', choices=('full_lr', 'packed_half_lr'), default='full_lr')
     ap.add_argument('--state-channels', type=int, default=8)
+    ap.add_argument('--initial-decay-bias', type=float, default=-2.,
+                    help='Initial sigmoid retention logit; zero projection preserves initial SR for every finite value')
     ap.add_argument('--reds-bank', type=Path, help='Include fixed 16-frame held-out REDS validation')
     ap.add_argument('--joint', action='store_true', help='Optimize the fused SR backbone along with the raw feature branch')
     ap.add_argument('--no-history', action='store_true', help='Matched current-only control; identical raw branch capacity without carried history')
@@ -89,6 +91,8 @@ def main():
         ap.error('fresh output, positive steps/batch, frames >=3 and even crop >=32 required')
     if args.state_channels < 3:
         ap.error('at least three full-LR state channels required')
+    if not math.isfinite(args.initial_decay_bias):
+        ap.error('finite initial decay bias required')
     if not math.isfinite(args.dino_gan_weight) or args.dino_gan_weight < 0:
         ap.error('nonnegative finite critic weight required')
     if args.dino_gan_weight and not all((args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)):
@@ -105,7 +109,8 @@ def main():
     base, _, frames = load(args.init, 'cuda')
     if type(base) is not Unshuffled or frames != 1:
         ap.error('ordinary single-frame 2x SPAN initialization required')
-    model = FullLRFeatureSPAN(base, train_backbone=args.joint, state_channels=args.state_channels).cuda().train()
+    model = FullLRFeatureSPAN(base, train_backbone=args.joint, state_channels=args.state_channels,
+                             initial_decay_bias=args.initial_decay_bias).cuda().train()
     initial = copy.deepcopy(model.sr).eval().requires_grad_(False)
     frozen_hash = state_digest(model.sr.state_dict())
     groups = [{'params': list(model.branch_parameters()), 'lr': .0002, 'base_lr': .0002}]
@@ -137,6 +142,8 @@ def main():
         'bank_sha256': digest(args.bank / 'manifest.json'), 'checkpoint_sha256': digest(args.init),
         'frozen_backbone_sha256': frozen_hash, 'source_hashes': {p: digest(source_root / p) for p in files},
         'initial_branch_sha256': state_digest({k: v for k, v in model.state_dict().items() if not k.startswith('sr.')}),
+        'initial_shared_branch_sha256': state_digest({k: v for k, v in model.state_dict().items()
+            if not k.startswith('sr.') and k != 'decay.bias'}),
         'branch_parameters': sum(p.numel() for p in model.branch_parameters()),
         'recipe': 'final-frame HR reconstruction; FP32 fused SR; backpropagation through decoded feature state',
         'backbone_trainable': args.joint, 'use_history': not args.no_history,

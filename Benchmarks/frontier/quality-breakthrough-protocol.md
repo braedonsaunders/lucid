@@ -1459,3 +1459,12 @@ detail recovery. The geometric correction is valid, but this recipe still
 learns little useful memory. No model is promoted. All runs and processes close,
 and all 18 downloaded checkpoint/report/exit hashes match remotely. See
 `quality-breakthrough/full-lr-alignment-comparison.json`.
+
+The r60 follow-up isolates initial retention on the full-LR model: a new
+current-only control, memory initialized at sigmoid(-2)≈0.119, and memory
+initialized at sigmoid(0)=0.5. The architecture, three-frame training window,
+2,000-step schedule, data, losses and optimizers stay matched. The zero
+projection preserves identical initial RGB despite the deliberately different
+decay biases; an additional hash excludes only that bias to verify every other
+branch tensor matches. This tests whether low initial retention limits learned
+memory. It is an unproven hypothesis, not a planned release change.
