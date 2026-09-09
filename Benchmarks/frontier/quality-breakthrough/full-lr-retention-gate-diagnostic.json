@@ -1,0 +1,4444 @@
+{
+  "complete": true,
+  "device": "cpu",
+  "threads": 2,
+  "source_motion_policy": "search",
+  "state_warp": "full_lr",
+  "frames_per_source": 16,
+  "sources": 3,
+  "scope": "Fixed r41 validation patches; CPU mechanism diagnostic only. No perceptual metric, native playback, performance, or quality claim.",
+  "carry_definition": "sigmoid(decay(current)) * driver-aligned incoming state * confidence.clamp(0,1); L2 divided by raw_encoder fresh L2",
+  "frame_zero_gate": "null: decay is not called; no history, zero carry",
+  "selection": [
+    {
+      "id": "sintel-stream-000-00",
+      "file": "validation/sintel-stream-000-00.npz",
+      "sha256": "efb2d3e031f034340d2764338cdf31a35213a343df0171ce18eb8e62d01970d7",
+      "source_id": "sintel",
+      "family": "blender_sintel",
+      "source_sha256": "648178454637253705ea56bd8a02db0bf17134703fe82ec3d6a9a880a343bc08",
+      "split": "validation",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "24/1",
+      "start_seconds": 517.2646243716367,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1920,
+        816
+      ],
+      "lr_patch_xy": [
+        720,
+        169
+      ],
+      "reference_size": [
+        256,
+        256
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 940032,
+      "target_bits_per_pixel_frame": 0.1,
+      "gop": 60,
+      "encoded_sha256": "9dc6cf2839dc267819dfc3738974e28925021a7d2f0c084882d4bf30b030fcb6",
+      "encoded_container_bytes": 101512,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "517.2646243716367",
+        "-i",
+        "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/Sintel.2010.4k.mkv",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1920:816:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1920x816",
+        "-r",
+        "24/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=960:408:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "940032",
+        "-maxrate",
+        "940032",
+        "-bufsize",
+        "1880064",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-017oig5c/stream.mkv"
+      ],
+      "reference_std": 12.77340098621862,
+      "reference_temporal_change": 7.34506368637085
+    },
+    {
+      "id": "reds_154-stream-000-00",
+      "file": "validation\\reds_154-stream-000-00.npz",
+      "sha256": "4bb6c237cc0e507470fbfc18af15594275f5c5507816b406dcc9c57b8478ea7b",
+      "source_id": "reds_154",
+      "family": "reds_sequence_154",
+      "source_sha256": "fe5b5fd7d18b8726773fc1a62fba0afb9a26578ebe17350765635472ca5ebd1a",
+      "split": "validation",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "24/1",
+      "start_seconds": 0.21195283079911212,
+      "codec_warmup_frames": 24,
+      "full_reference_size": [
+        1280,
+        720
+      ],
+      "lr_patch_xy": [
+        459,
+        28
+      ],
+      "reference_size": [
+        256,
+        256
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 552960,
+      "target_bits_per_pixel_frame": 0.1,
+      "gop": 60,
+      "encoded_sha256": "b15aa025b97a9f1bca385b7c87a0181176d85436c33a25f878b350034bf5674e",
+      "encoded_container_bytes": 120796,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "0.21195283079911212",
+        "-i",
+        "D:\\lucid-quality-breakthrough-r37\\reds-masters\\reds_154.mkv",
+        "-an",
+        "-frames:v",
+        "40",
+        "-vf",
+        "scale=1280:720:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x720",
+        "-r",
+        "24/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "552960",
+        "-maxrate",
+        "552960",
+        "-bufsize",
+        "1105920",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-2w3n9f2f\\stream.mkv"
+      ],
+      "reference_std": 70.01338804664341,
+      "reference_temporal_change": 33.258033752441406,
+      "bank": "REDS"
+    },
+    {
+      "id": "reds_073-stream-000-00",
+      "file": "validation\\reds_073-stream-000-00.npz",
+      "sha256": "8c6d38cb8e167ad5ce2b3744313ef8a6501dc5ecdf6395afb6c6a0869b341a65",
+      "source_id": "reds_073",
+      "family": "reds_sequence_073",
+      "source_sha256": "66ac1fda6844c388683c5f38f9e8795e85896df4cded04bd76a44eedc11dc176",
+      "split": "validation",
+      "scale": 2,
+      "frames": 16,
+      "frame_rate": "24/1",
+      "start_seconds": 2.696626445378337,
+      "codec_warmup_frames": 8,
+      "full_reference_size": [
+        1280,
+        720
+      ],
+      "lr_patch_xy": [
+        387,
+        150
+      ],
+      "reference_size": [
+        256,
+        256
+      ],
+      "codec": "h264",
+      "rate_control": "constrained bitrate",
+      "target_bitrate": 110592,
+      "target_bits_per_pixel_frame": 0.02,
+      "gop": 60,
+      "encoded_sha256": "5c2e251869ed02da06271bf45b220e083134b20ec1b64b242e5cf048a97164ca",
+      "encoded_container_bytes": 20518,
+      "hr_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-ss",
+        "2.696626445378337",
+        "-i",
+        "D:\\lucid-quality-breakthrough-r37\\reds-masters\\reds_073.mkv",
+        "-an",
+        "-frames:v",
+        "24",
+        "-vf",
+        "scale=1280:720:flags=lanczos",
+        "-threads",
+        "2",
+        "-pix_fmt",
+        "rgb24",
+        "-f",
+        "rawvideo",
+        "-"
+      ],
+      "encode_command": [
+        "ffmpeg",
+        "-nostdin",
+        "-v",
+        "error",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        "1280x720",
+        "-r",
+        "24/1",
+        "-i",
+        "-",
+        "-vf",
+        "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-b:v",
+        "110592",
+        "-maxrate",
+        "110592",
+        "-bufsize",
+        "221184",
+        "-threads",
+        "2",
+        "-g",
+        "60",
+        "-pix_fmt",
+        "yuv420p",
+        "-colorspace",
+        "bt709",
+        "-color_primaries",
+        "bt709",
+        "-color_trc",
+        "bt709",
+        "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-3_x6pcr9\\stream.mkv"
+      ],
+      "reference_std": 58.69145498617113,
+      "reference_temporal_change": 44.47105026245117,
+      "bank": "REDS"
+    }
+  ],
+  "arms": {
+    "weak": {
+      "checkpoint_sha256": "87f37280f09766004345cbee508460b4818f54bd58e5f4723413e9a663d05cbb",
+      "initial_decay_bias": -2.0,
+      "final_decay_bias": {
+        "mean": -2.028388023376465,
+        "meanabs": 2.028388023376465,
+        "l2": 5.737162113189697,
+        "min": -2.0362017154693604,
+        "max": -2.0216667652130127
+      },
+      "final_decay_bias_values": [
+        -2.025242328643799,
+        -2.0265841484069824,
+        -2.0287704467773438,
+        -2.0362017154693604,
+        -2.0260205268859863,
+        -2.0216667652130127,
+        -2.034485101699829,
+        -2.0281341075897217
+      ],
+      "final_decay_weight": {
+        "mean": -0.02770417369902134,
+        "meanabs": 0.02770417369902134,
+        "l2": 0.13791172206401825,
+        "min": -0.03728877753019333,
+        "max": -0.02026980184018612
+      },
+      "final_project_weight": {
+        "mean": 0.00012653906014747918,
+        "meanabs": 0.002159272786229849,
+        "l2": 0.0983426496386528,
+        "min": -0.026753777638077736,
+        "max": 0.010532171465456486
+      },
+      "sources": {
+        "sintel-stream-000-00": {
+          "patch_sha256": "efb2d3e031f034340d2764338cdf31a35213a343df0171ce18eb8e62d01970d7",
+          "first_frame_exact": true,
+          "frames": [
+            {
+              "frame": 0,
+              "confidence": {
+                "mean": 0.0,
+                "meanabs": 0.0,
+                "l2": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              },
+              "fresh": {
+                "mean": 0.0026129717007279396,
+                "meanabs": 0.008188415318727493,
+                "l2": 5.6745829582214355,
+                "min": -0.10869333148002625,
+                "max": 0.19726800918579102
+              },
+              "state": {
+                "mean": 0.0026129717007279396,
+                "meanabs": 0.008188415318727493,
+                "l2": 5.6745829582214355,
+                "min": -0.10869333148002625,
+                "max": 0.19726800918579102
+              },
+              "history_present": false,
+              "learned_sigmoid_gate": null,
+              "gated_carry_l2": 0.0,
+              "gated_carry_relative_fresh_l2": 0.0,
+              "memory_vs_own_current_meanabs": 0.0
+            },
+            {
+              "frame": 1,
+              "confidence": {
+                "mean": 0.9836791157722473,
+                "meanabs": 0.9836791157722473,
+                "l2": 126.93696594238281,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.002599370665848255,
+                "meanabs": 0.008051873184740543,
+                "l2": 5.553595542907715,
+                "min": -0.09344234317541122,
+                "max": 0.14418800175189972
+              },
+              "state": {
+                "mean": 0.0028875404968857765,
+                "meanabs": 0.00889919139444828,
+                "l2": 6.1205573081970215,
+                "min": -0.10192151367664337,
+                "max": 0.15373492240905762
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11584123224020004,
+                "meanabs": 0.11584123224020004,
+                "l2": 41.93956756591797,
+                "min": 0.11251991242170334,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.6051714420318604,
+              "gated_carry_relative_fresh_l2": 0.10896930418433184,
+              "incoming_state": {
+                "mean": 0.0025382472667843103,
+                "meanabs": 0.007651143707334995,
+                "l2": 5.247342586517334,
+                "min": -0.08149336278438568,
+                "max": 0.16185225546360016
+              },
+              "memory_vs_own_current_meanabs": 1.152655022451654e-05
+            },
+            {
+              "frame": 2,
+              "confidence": {
+                "mean": 0.9854233264923096,
+                "meanabs": 0.9854233264923096,
+                "l2": 127.03760528564453,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0025943079963326454,
+                "meanabs": 0.008116164244711399,
+                "l2": 5.66429328918457,
+                "min": -0.09325988590717316,
+                "max": 0.2080310434103012
+              },
+              "state": {
+                "mean": 0.0029126901645213366,
+                "meanabs": 0.009050501510500908,
+                "l2": 6.2808756828308105,
+                "min": -0.10135342180728912,
+                "max": 0.2080310434103012
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11584220081567764,
+                "meanabs": 0.11584220081567764,
+                "l2": 41.93998336791992,
+                "min": 0.11204846948385239,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.6695849895477295,
+              "gated_carry_relative_fresh_l2": 0.118211567685988,
+              "incoming_state": {
+                "mean": 0.0027927232440561056,
+                "meanabs": 0.00847853533923626,
+                "l2": 5.801088333129883,
+                "min": -0.08910010755062103,
+                "max": 0.14071258902549744
+              },
+              "memory_vs_own_current_meanabs": 1.294474714086391e-05
+            },
+            {
+              "frame": 3,
+              "confidence": {
+                "mean": 0.9900915026664734,
+                "meanabs": 0.9900915026664734,
+                "l2": 127.35072326660156,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0026284800842404366,
+                "meanabs": 0.008165281265974045,
+                "l2": 5.6923651695251465,
+                "min": -0.10108057409524918,
+                "max": 0.24169868230819702
+              },
+              "state": {
+                "mean": 0.002955228555947542,
+                "meanabs": 0.009121028706431389,
+                "l2": 6.332446098327637,
+                "min": -0.10947760939598083,
+                "max": 0.24169868230819702
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11583860218524933,
+                "meanabs": 0.11583860218524933,
+                "l2": 41.938655853271484,
+                "min": 0.11147955060005188,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.6901062726974487,
+              "gated_carry_relative_fresh_l2": 0.12123366160555314,
+              "incoming_state": {
+                "mean": 0.002844730392098427,
+                "meanabs": 0.00863388366997242,
+                "l2": 5.972498893737793,
+                "min": -0.09310712665319443,
+                "max": 0.2075398713350296
+              },
+              "memory_vs_own_current_meanabs": 1.3403628145169932e-05
+            },
+            {
+              "frame": 4,
+              "confidence": {
+                "mean": 0.9893863201141357,
+                "meanabs": 0.9893863201141357,
+                "l2": 127.28478240966797,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.002564449328929186,
+                "meanabs": 0.008205913007259369,
+                "l2": 5.791492462158203,
+                "min": -0.10961486399173737,
+                "max": 0.2934105694293976
+              },
+              "state": {
+                "mean": 0.002896904945373535,
+                "meanabs": 0.009175103157758713,
+                "l2": 6.437924385070801,
+                "min": -0.12064030021429062,
+                "max": 0.2934105694293976
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11584262549877167,
+                "meanabs": 0.11584262549877167,
+                "l2": 41.940120697021484,
+                "min": 0.11039472371339798,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.7029611468315125,
+              "gated_carry_relative_fresh_l2": 0.12137823737571672,
+              "incoming_state": {
+                "mean": 0.002903042593970895,
+                "meanabs": 0.00880775973200798,
+                "l2": 6.096474647521973,
+                "min": -0.09505417943000793,
+                "max": 0.24169868230819702
+              },
+              "memory_vs_own_current_meanabs": 1.3717411093239207e-05
+            },
+            {
+              "frame": 5,
+              "confidence": {
+                "mean": 0.9842259287834167,
+                "meanabs": 0.9842259287834167,
+                "l2": 126.97704315185547,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0026244078762829304,
+                "meanabs": 0.008132862858474255,
+                "l2": 5.683344841003418,
+                "min": -0.12970159947872162,
+                "max": 0.23065704107284546
+              },
+              "state": {
+                "mean": 0.0029444601386785507,
+                "meanabs": 0.009103436022996902,
+                "l2": 6.331926345825195,
+                "min": -0.14068932831287384,
+                "max": 0.23065704107284546
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11583781987428665,
+                "meanabs": 0.11583781987428665,
+                "l2": 41.93840789794922,
+                "min": 0.11067650467157364,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.6957536339759827,
+              "gated_carry_relative_fresh_l2": 0.12241974637124861,
+              "incoming_state": {
+                "mean": 0.002839741762727499,
+                "meanabs": 0.008739801123738289,
+                "l2": 6.0551862716674805,
+                "min": -0.12064030021429062,
+                "max": 0.2334904968738556
+              },
+              "memory_vs_own_current_meanabs": 1.3693708751816303e-05
+            },
+            {
+              "frame": 6,
+              "confidence": {
+                "mean": 0.9859971404075623,
+                "meanabs": 0.9859971404075623,
+                "l2": 127.04351806640625,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.002621845342218876,
+                "meanabs": 0.008169291540980339,
+                "l2": 5.752979755401611,
+                "min": -0.13448603451251984,
+                "max": 0.19577161967754364
+              },
+              "state": {
+                "mean": 0.002950612222775817,
+                "meanabs": 0.009141216054558754,
+                "l2": 6.411037445068359,
+                "min": -0.14923633635044098,
+                "max": 0.2160957157611847
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11583550274372101,
+                "meanabs": 0.11583550274372101,
+                "l2": 41.9376220703125,
+                "min": 0.11067594587802887,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.7014435529708862,
+              "gated_carry_relative_fresh_l2": 0.12192699831983313,
+              "incoming_state": {
+                "mean": 0.0028915442526340485,
+                "meanabs": 0.008813722990453243,
+                "l2": 6.105121612548828,
+                "min": -0.14068932831287384,
+                "max": 0.23065704107284546
+              },
+              "memory_vs_own_current_meanabs": 1.3942360055807512e-05
+            },
+            {
+              "frame": 7,
+              "confidence": {
+                "mean": 0.9835723638534546,
+                "meanabs": 0.9835723638534546,
+                "l2": 126.92767333984375,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0026391535066068172,
+                "meanabs": 0.008186882361769676,
+                "l2": 5.736155986785889,
+                "min": -0.12979643046855927,
+                "max": 0.2068861871957779
+              },
+              "state": {
+                "mean": 0.002966666594147682,
+                "meanabs": 0.009147737175226212,
+                "l2": 6.386107444763184,
+                "min": -0.14712832868099213,
+                "max": 0.231231227517128
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11583489179611206,
+                "meanabs": 0.11583489179611206,
+                "l2": 41.9373664855957,
+                "min": 0.11054940521717072,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.6963499188423157,
+              "gated_carry_relative_fresh_l2": 0.12139661481425262,
+              "incoming_state": {
+                "mean": 0.00288535188883543,
+                "meanabs": 0.008689838461577892,
+                "l2": 6.051042079925537,
+                "min": -0.14923633635044098,
+                "max": 0.2160957157611847
+              },
+              "memory_vs_own_current_meanabs": 1.3728237718169112e-05
+            },
+            {
+              "frame": 8,
+              "confidence": {
+                "mean": 0.9836509227752686,
+                "meanabs": 0.9836509227752686,
+                "l2": 126.89374542236328,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0026050324086099863,
+                "meanabs": 0.00825963169336319,
+                "l2": 5.884825706481934,
+                "min": -0.13355058431625366,
+                "max": 0.2783944606781006
+              },
+              "state": {
+                "mean": 0.002931594615802169,
+                "meanabs": 0.009197423234581947,
+                "l2": 6.511775016784668,
+                "min": -0.13543155789375305,
+                "max": 0.2783944606781006
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11583736538887024,
+                "meanabs": 0.11583736538887024,
+                "l2": 41.93827819824219,
+                "min": 0.11074577271938324,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.6840023398399353,
+              "gated_carry_relative_fresh_l2": 0.1162315375095188,
+              "incoming_state": {
+                "mean": 0.0028686607256531715,
+                "meanabs": 0.008589035831391811,
+                "l2": 5.948812961578369,
+                "min": -0.11430749297142029,
+                "max": 0.183464914560318
+              },
+              "memory_vs_own_current_meanabs": 1.3176220818422735e-05
+            },
+            {
+              "frame": 9,
+              "confidence": {
+                "mean": 0.9825736880302429,
+                "meanabs": 0.9825736880302429,
+                "l2": 126.84278106689453,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0026403479278087616,
+                "meanabs": 0.008182138204574585,
+                "l2": 5.769018173217773,
+                "min": -0.11742262542247772,
+                "max": 0.20766416192054749
+              },
+              "state": {
+                "mean": 0.0029631415382027626,
+                "meanabs": 0.0091120395809412,
+                "l2": 6.390922546386719,
+                "min": -0.12842382490634918,
+                "max": 0.20766416192054749
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11583518236875534,
+                "meanabs": 0.11583518236875534,
+                "l2": 41.93748092651367,
+                "min": 0.1106763407588005,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.6768824458122253,
+              "gated_carry_relative_fresh_l2": 0.11733061423772254,
+              "incoming_state": {
+                "mean": 0.0028534657321870327,
+                "meanabs": 0.008481982164084911,
+                "l2": 5.894104957580566,
+                "min": -0.10567069053649902,
+                "max": 0.22879672050476074
+              },
+              "memory_vs_own_current_meanabs": 1.2930738193972502e-05
+            },
+            {
+              "frame": 10,
+              "confidence": {
+                "mean": 0.9830813407897949,
+                "meanabs": 0.9830813407897949,
+                "l2": 126.86685943603516,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.002647764515131712,
+                "meanabs": 0.00823499821126461,
+                "l2": 5.888195514678955,
+                "min": -0.11159883439540863,
+                "max": 0.25910937786102295
+              },
+              "state": {
+                "mean": 0.002971948590129614,
+                "meanabs": 0.009155052714049816,
+                "l2": 6.500802993774414,
+                "min": -0.12444449216127396,
+                "max": 0.25910937786102295
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11583556234836578,
+                "meanabs": 0.11583556234836578,
+                "l2": 41.937618255615234,
+                "min": 0.11081797629594803,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.6724181771278381,
+              "gated_carry_relative_fresh_l2": 0.11419766470925358,
+              "incoming_state": {
+                "mean": 0.0028619111981242895,
+                "meanabs": 0.00846200529485941,
+                "l2": 5.866097927093506,
+                "min": -0.11060746759176254,
+                "max": 0.20354250073432922
+              },
+              "memory_vs_own_current_meanabs": 1.3021592167206109e-05
+            },
+            {
+              "frame": 11,
+              "confidence": {
+                "mean": 0.9801977872848511,
+                "meanabs": 0.9801977872848511,
+                "l2": 126.6688003540039,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0026826481334865093,
+                "meanabs": 0.008164060302078724,
+                "l2": 5.836764335632324,
+                "min": -0.1268932968378067,
+                "max": 0.2381720244884491
+              },
+              "state": {
+                "mean": 0.003003607038408518,
+                "meanabs": 0.009081758558750153,
+                "l2": 6.450471878051758,
+                "min": -0.1391710788011551,
+                "max": 0.2381720244884491
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11583356559276581,
+                "meanabs": 0.11583356559276581,
+                "l2": 41.9369010925293,
+                "min": 0.11062034219503403,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.6791608929634094,
+              "gated_carry_relative_fresh_l2": 0.11635914248195062,
+              "incoming_state": {
+                "mean": 0.0028460382018238306,
+                "meanabs": 0.008455652743577957,
+                "l2": 5.923538684844971,
+                "min": -0.1058654934167862,
+                "max": 0.21983957290649414
+              },
+              "memory_vs_own_current_meanabs": 1.34961546791601e-05
+            },
+            {
+              "frame": 12,
+              "confidence": {
+                "mean": 0.9811583161354065,
+                "meanabs": 0.9811583161354065,
+                "l2": 126.71778869628906,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.002639884827658534,
+                "meanabs": 0.008344672620296478,
+                "l2": 6.051524639129639,
+                "min": -0.14003771543502808,
+                "max": 0.20741797983646393
+              },
+              "state": {
+                "mean": 0.0029665441252291203,
+                "meanabs": 0.00926144327968359,
+                "l2": 6.66878604888916,
+                "min": -0.1482282429933548,
+                "max": 0.22771476209163666
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11583612859249115,
+                "meanabs": 0.11583612859249115,
+                "l2": 41.9378662109375,
+                "min": 0.11070415377616882,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.685142457485199,
+              "gated_carry_relative_fresh_l2": 0.11321815548019312,
+              "incoming_state": {
+                "mean": 0.002883771900087595,
+                "meanabs": 0.008480647578835487,
+                "l2": 5.981339454650879,
+                "min": -0.11133776605129242,
+                "max": 0.1952778398990631
+              },
+              "memory_vs_own_current_meanabs": 1.339074060524581e-05
+            },
+            {
+              "frame": 13,
+              "confidence": {
+                "mean": 0.9755333662033081,
+                "meanabs": 0.9755333662033081,
+                "l2": 126.34974670410156,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.002665877342224121,
+                "meanabs": 0.008197966031730175,
+                "l2": 5.887458801269531,
+                "min": -0.1252851039171219,
+                "max": 0.2051132768392563
+              },
+              "state": {
+                "mean": 0.0029841898940503597,
+                "meanabs": 0.009134741500020027,
+                "l2": 6.528693675994873,
+                "min": -0.13575811684131622,
+                "max": 0.22570985555648804
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11583465337753296,
+                "meanabs": 0.11583465337753296,
+                "l2": 41.93730163574219,
+                "min": 0.11077561974525452,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.6973322033882141,
+              "gated_carry_relative_fresh_l2": 0.11844366592218805,
+              "incoming_state": {
+                "mean": 0.002828073687851429,
+                "meanabs": 0.00857821386307478,
+                "l2": 6.0869879722595215,
+                "min": -0.10564584285020828,
+                "max": 0.19796359539031982
+              },
+              "memory_vs_own_current_meanabs": 1.3841658073943108e-05
+            },
+            {
+              "frame": 14,
+              "confidence": {
+                "mean": 0.9814200401306152,
+                "meanabs": 0.9814200401306152,
+                "l2": 126.75224304199219,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0026568041648715734,
+                "meanabs": 0.008303500711917877,
+                "l2": 5.995209217071533,
+                "min": -0.1136065199971199,
+                "max": 0.23121683299541473
+              },
+              "state": {
+                "mean": 0.00298127718269825,
+                "meanabs": 0.009263556450605392,
+                "l2": 6.659915924072266,
+                "min": -0.1293569654226303,
+                "max": 0.23121683299541473
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11583513021469116,
+                "meanabs": 0.11583513021469116,
+                "l2": 41.937469482421875,
+                "min": 0.1108454018831253,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.7195760607719421,
+              "gated_carry_relative_fresh_l2": 0.12002517922526011,
+              "incoming_state": {
+                "mean": 0.0028484754730015993,
+                "meanabs": 0.008754849433898926,
+                "l2": 6.270260810852051,
+                "min": -0.13575811684131622,
+                "max": 0.21117694675922394
+              },
+              "memory_vs_own_current_meanabs": 1.4518547686748207e-05
+            },
+            {
+              "frame": 15,
+              "confidence": {
+                "mean": 0.9774026870727539,
+                "meanabs": 0.9774026870727539,
+                "l2": 126.48360443115234,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0026526032015681267,
+                "meanabs": 0.008196045644581318,
+                "l2": 5.927875995635986,
+                "min": -0.1355224847793579,
+                "max": 0.2706752121448517
+              },
+              "state": {
+                "mean": 0.0029746731743216515,
+                "meanabs": 0.009156879037618637,
+                "l2": 6.59409761428833,
+                "min": -0.14659495651721954,
+                "max": 0.2706752121448517
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11583498120307922,
+                "meanabs": 0.11583498120307922,
+                "l2": 41.93740463256836,
+                "min": 0.11097204685211182,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 0.7246717810630798,
+              "gated_carry_relative_fresh_l2": 0.12224813433961378,
+              "incoming_state": {
+                "mean": 0.0028499369509518147,
+                "meanabs": 0.008780292235314846,
+                "l2": 6.324586391448975,
+                "min": -0.1293569654226303,
+                "max": 0.2009386569261551
+              },
+              "memory_vs_own_current_meanabs": 1.4469927009486128e-05
+            }
+          ],
+          "memory_vs_own_current_meanabs": 1.2612639693543315e-05
+        },
+        "reds_154-stream-000-00": {
+          "patch_sha256": "4bb6c237cc0e507470fbfc18af15594275f5c5507816b406dcc9c57b8478ea7b",
+          "first_frame_exact": true,
+          "frames": [
+            {
+              "frame": 0,
+              "confidence": {
+                "mean": 0.0,
+                "meanabs": 0.0,
+                "l2": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              },
+              "fresh": {
+                "mean": 0.0318785198032856,
+                "meanabs": 0.03789566457271576,
+                "l2": 25.953224182128906,
+                "min": -0.27369749546051025,
+                "max": 0.5727344751358032
+              },
+              "state": {
+                "mean": 0.0318785198032856,
+                "meanabs": 0.03789566457271576,
+                "l2": 25.953224182128906,
+                "min": -0.27369749546051025,
+                "max": 0.5727344751358032
+              },
+              "history_present": false,
+              "learned_sigmoid_gate": null,
+              "gated_carry_l2": 0.0,
+              "gated_carry_relative_fresh_l2": 0.0,
+              "memory_vs_own_current_meanabs": 0.0
+            },
+            {
+              "frame": 1,
+              "confidence": {
+                "mean": 0.7636120915412903,
+                "meanabs": 0.7636120915412903,
+                "l2": 109.71001434326172,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.030979037284851074,
+                "meanabs": 0.038058243691921234,
+                "l2": 25.991512298583984,
+                "min": -0.26953792572021484,
+                "max": 0.5727879405021667
+              },
+              "state": {
+                "mean": 0.033623501658439636,
+                "meanabs": 0.04101341962814331,
+                "l2": 27.868539810180664,
+                "min": -0.28523629903793335,
+                "max": 0.5727879405021667
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11161307245492935,
+                "meanabs": 0.11161307245492935,
+                "l2": 40.41645812988281,
+                "min": 0.10487404465675354,
+                "max": 0.11693855375051498
+              },
+              "gated_carry_l2": 2.2892332077026367,
+              "gated_carry_relative_fresh_l2": 0.0880761835403996,
+              "incoming_state": {
+                "mean": 0.029124941676855087,
+                "meanabs": 0.03420118987560272,
+                "l2": 23.637065887451172,
+                "min": -0.2232368439435959,
+                "max": 0.470492422580719
+              },
+              "memory_vs_own_current_meanabs": 7.083811942720786e-05
+            },
+            {
+              "frame": 2,
+              "confidence": {
+                "mean": 0.7792823910713196,
+                "meanabs": 0.7792823910713196,
+                "l2": 110.10857391357422,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.030724987387657166,
+                "meanabs": 0.037231020629405975,
+                "l2": 25.503175735473633,
+                "min": -0.256022185087204,
+                "max": 0.5766942501068115
+              },
+              "state": {
+                "mean": 0.03364488109946251,
+                "meanabs": 0.04052721709012985,
+                "l2": 27.62892723083496,
+                "min": -0.2589649558067322,
+                "max": 0.6316179037094116
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11164987087249756,
+                "meanabs": 0.11164987087249756,
+                "l2": 40.42947769165039,
+                "min": 0.10490108281373978,
+                "max": 0.1169382855296135
+              },
+              "gated_carry_l2": 2.498042583465576,
+              "gated_carry_relative_fresh_l2": 0.09795025566133415,
+              "incoming_state": {
+                "mean": 0.030874883756041527,
+                "meanabs": 0.03651503846049309,
+                "l2": 25.363201141357422,
+                "min": -0.26953792572021484,
+                "max": 0.5727879405021667
+              },
+              "memory_vs_own_current_meanabs": 8.486997103318572e-05
+            },
+            {
+              "frame": 3,
+              "confidence": {
+                "mean": 0.7940194010734558,
+                "meanabs": 0.7940194010734558,
+                "l2": 111.33195495605469,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.030712444335222244,
+                "meanabs": 0.03717123717069626,
+                "l2": 25.506967544555664,
+                "min": -0.26124876737594604,
+                "max": 0.5914281010627747
+              },
+              "state": {
+                "mean": 0.03370580077171326,
+                "meanabs": 0.04051179811358452,
+                "l2": 27.635129928588867,
+                "min": -0.26124876737594604,
+                "max": 0.5914281010627747
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11165568977594376,
+                "meanabs": 0.11165568977594376,
+                "l2": 40.43155288696289,
+                "min": 0.1050773561000824,
+                "max": 0.11689751595258713
+              },
+              "gated_carry_l2": 2.513862371444702,
+              "gated_carry_relative_fresh_l2": 0.09855590897089112,
+              "incoming_state": {
+                "mean": 0.031426530331373215,
+                "meanabs": 0.03672444075345993,
+                "l2": 25.25446891784668,
+                "min": -0.256022185087204,
+                "max": 0.5476530194282532
+              },
+              "memory_vs_own_current_meanabs": 9.205159585690126e-05
+            },
+            {
+              "frame": 4,
+              "confidence": {
+                "mean": 0.8178538680076599,
+                "meanabs": 0.8178538680076599,
+                "l2": 114.09902954101562,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.030723318457603455,
+                "meanabs": 0.03797164559364319,
+                "l2": 26.027372360229492,
+                "min": -0.3255205452442169,
+                "max": 0.6288361549377441
+              },
+              "state": {
+                "mean": 0.03384757041931152,
+                "meanabs": 0.04149579256772995,
+                "l2": 28.2537841796875,
+                "min": -0.3255205452442169,
+                "max": 0.6288361549377441
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11165021359920502,
+                "meanabs": 0.11165021359920502,
+                "l2": 40.429725646972656,
+                "min": 0.10509657114744186,
+                "max": 0.11691255867481232
+              },
+              "gated_carry_l2": 2.637133836746216,
+              "gated_carry_relative_fresh_l2": 0.10132155487104896,
+              "incoming_state": {
+                "mean": 0.03193143382668495,
+                "meanabs": 0.03742814436554909,
+                "l2": 25.788490295410156,
+                "min": -0.24934624135494232,
+                "max": 0.5756991505622864
+              },
+              "memory_vs_own_current_meanabs": 9.497813880443573e-05
+            },
+            {
+              "frame": 5,
+              "confidence": {
+                "mean": 0.40020686388015747,
+                "meanabs": 0.40020686388015747,
+                "l2": 78.00618743896484,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.030639979988336563,
+                "meanabs": 0.03793543577194214,
+                "l2": 26.005828857421875,
+                "min": -0.2968887686729431,
+                "max": 0.5842965841293335
+              },
+              "state": {
+                "mean": 0.03253953158855438,
+                "meanabs": 0.03992548584938049,
+                "l2": 27.33078956604004,
+                "min": -0.2968887686729431,
+                "max": 0.5842965841293335
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11166154593229294,
+                "meanabs": 0.11166154593229294,
+                "l2": 40.434078216552734,
+                "min": 0.10496342182159424,
+                "max": 0.11692214012145996
+              },
+              "gated_carry_l2": 1.9898494482040405,
+              "gated_carry_relative_fresh_l2": 0.07651551731396371,
+              "incoming_state": {
+                "mean": 0.031972967088222504,
+                "meanabs": 0.03745480999350548,
+                "l2": 25.563302993774414,
+                "min": -0.2706754207611084,
+                "max": 0.6157745122909546
+              },
+              "memory_vs_own_current_meanabs": 4.738940697279759e-05
+            },
+            {
+              "frame": 6,
+              "confidence": {
+                "mean": 0.3667055368423462,
+                "meanabs": 0.3667055368423462,
+                "l2": 74.88642120361328,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.030581608414649963,
+                "meanabs": 0.037843961268663406,
+                "l2": 25.732799530029297,
+                "min": -0.26952967047691345,
+                "max": 0.6015278100967407
+              },
+              "state": {
+                "mean": 0.03230328485369682,
+                "meanabs": 0.03964592516422272,
+                "l2": 26.936025619506836,
+                "min": -0.26952967047691345,
+                "max": 0.6032556891441345
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11163617670536041,
+                "meanabs": 0.11163617670536041,
+                "l2": 40.42499923706055,
+                "min": 0.10503052920103073,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 1.840664267539978,
+              "gated_carry_relative_fresh_l2": 0.07152988797009768,
+              "incoming_state": {
+                "mean": 0.03056030347943306,
+                "meanabs": 0.03563125804066658,
+                "l2": 24.34813690185547,
+                "min": -0.26605990529060364,
+                "max": 0.4915091395378113
+              },
+              "memory_vs_own_current_meanabs": 3.844992897938937e-05
+            },
+            {
+              "frame": 7,
+              "confidence": {
+                "mean": 0.35209450125694275,
+                "meanabs": 0.35209450125694275,
+                "l2": 72.78606414794922,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.030038069933652878,
+                "meanabs": 0.036831870675086975,
+                "l2": 25.310073852539062,
+                "min": -0.2726903259754181,
+                "max": 0.6237860918045044
+              },
+              "state": {
+                "mean": 0.0316951721906662,
+                "meanabs": 0.0385715514421463,
+                "l2": 26.468019485473633,
+                "min": -0.2796344757080078,
+                "max": 0.6237860918045044
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11169843375682831,
+                "meanabs": 0.11169843375682831,
+                "l2": 40.44800567626953,
+                "min": 0.10493720322847366,
+                "max": 0.11690571904182434
+              },
+              "gated_carry_l2": 1.829657793045044,
+              "gated_carry_relative_fresh_l2": 0.0722897058185192,
+              "incoming_state": {
+                "mean": 0.029476262629032135,
+                "meanabs": 0.034160301089286804,
+                "l2": 23.951942443847656,
+                "min": -0.23658420145511627,
+                "max": 0.4952542185783386
+              },
+              "memory_vs_own_current_meanabs": 3.7978406908223405e-05
+            },
+            {
+              "frame": 8,
+              "confidence": {
+                "mean": 0.3482542335987091,
+                "meanabs": 0.3482542335987091,
+                "l2": 72.70494842529297,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.02747850865125656,
+                "meanabs": 0.03466733917593956,
+                "l2": 24.81104278564453,
+                "min": -0.31045326590538025,
+                "max": 0.605143666267395
+              },
+              "state": {
+                "mean": 0.029047563672065735,
+                "meanabs": 0.0363098606467247,
+                "l2": 26.012205123901367,
+                "min": -0.31045326590538025,
+                "max": 0.6530712842941284
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11209240555763245,
+                "meanabs": 0.11209240555763245,
+                "l2": 40.59198760986328,
+                "min": 0.1047646701335907,
+                "max": 0.11691061407327652
+              },
+              "gated_carry_l2": 1.8351871967315674,
+              "gated_carry_relative_fresh_l2": 0.07396654838680912,
+              "incoming_state": {
+                "mean": 0.02799876779317856,
+                "meanabs": 0.03274289146065712,
+                "l2": 23.311922073364258,
+                "min": -0.22856909036636353,
+                "max": 0.49231499433517456
+              },
+              "memory_vs_own_current_meanabs": 3.2784202630864456e-05
+            },
+            {
+              "frame": 9,
+              "confidence": {
+                "mean": 0.4257248044013977,
+                "meanabs": 0.4257248044013977,
+                "l2": 78.91973876953125,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.025236761197447777,
+                "meanabs": 0.03188781812787056,
+                "l2": 23.603544235229492,
+                "min": -0.27677488327026367,
+                "max": 0.6102293133735657
+              },
+              "state": {
+                "mean": 0.02673962153494358,
+                "meanabs": 0.03350704908370972,
+                "l2": 24.86847686767578,
+                "min": -0.27677488327026367,
+                "max": 0.6623632907867432
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11244361847639084,
+                "meanabs": 0.11244361847639084,
+                "l2": 40.719512939453125,
+                "min": 0.10517530143260956,
+                "max": 0.11689198017120361
+              },
+              "gated_carry_l2": 1.8644933700561523,
+              "gated_carry_relative_fresh_l2": 0.07899209336847392,
+              "incoming_state": {
+                "mean": 0.02562466822564602,
+                "meanabs": 0.030557626858353615,
+                "l2": 22.807924270629883,
+                "min": -0.1873263269662857,
+                "max": 0.5058119297027588
+              },
+              "memory_vs_own_current_meanabs": 3.253775867051445e-05
+            },
+            {
+              "frame": 10,
+              "confidence": {
+                "mean": 0.841185986995697,
+                "meanabs": 0.841185986995697,
+                "l2": 115.34355926513672,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.02406340464949608,
+                "meanabs": 0.03072972223162651,
+                "l2": 23.091136932373047,
+                "min": -0.25437480211257935,
+                "max": 0.610436201095581
+              },
+              "state": {
+                "mean": 0.02647082507610321,
+                "meanabs": 0.03352002799510956,
+                "l2": 25.135757446289062,
+                "min": -0.2699674367904663,
+                "max": 0.610436201095581
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11261538416147232,
+                "meanabs": 0.11261538416147232,
+                "l2": 40.781734466552734,
+                "min": 0.10521511733531952,
+                "max": 0.11691170185804367
+              },
+              "gated_carry_l2": 2.3231217861175537,
+              "gated_carry_relative_fresh_l2": 0.10060664370581988,
+              "incoming_state": {
+                "mean": 0.02428797259926796,
+                "meanabs": 0.02948863059282303,
+                "l2": 22.486915588378906,
+                "min": -0.1909107118844986,
+                "max": 0.48481935262680054
+              },
+              "memory_vs_own_current_meanabs": 6.323197885649279e-05
+            },
+            {
+              "frame": 11,
+              "confidence": {
+                "mean": 0.7844310998916626,
+                "meanabs": 0.7844310998916626,
+                "l2": 110.18888092041016,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0221785269677639,
+                "meanabs": 0.028481896966695786,
+                "l2": 21.781389236450195,
+                "min": -0.21447299420833588,
+                "max": 0.6076133251190186
+              },
+              "state": {
+                "mean": 0.024333838373422623,
+                "meanabs": 0.031010795384645462,
+                "l2": 23.706708908081055,
+                "min": -0.23050691187381744,
+                "max": 0.6076133251190186
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11290162801742554,
+                "meanabs": 0.11290162801742554,
+                "l2": 40.8849983215332,
+                "min": 0.10537571460008621,
+                "max": 0.11687920987606049
+              },
+              "gated_carry_l2": 2.2368860244750977,
+              "gated_carry_relative_fresh_l2": 0.10269712368629672,
+              "incoming_state": {
+                "mean": 0.023255212232470512,
+                "meanabs": 0.028773626312613487,
+                "l2": 22.459678649902344,
+                "min": -0.2260558009147644,
+                "max": 0.610436201095581
+              },
+              "memory_vs_own_current_meanabs": 5.816678094561212e-05
+            },
+            {
+              "frame": 12,
+              "confidence": {
+                "mean": 0.927433431148529,
+                "meanabs": 0.927433431148529,
+                "l2": 122.082275390625,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.021553348749876022,
+                "meanabs": 0.028082283213734627,
+                "l2": 21.553550720214844,
+                "min": -0.2358912080526352,
+                "max": 0.6029356718063354
+              },
+              "state": {
+                "mean": 0.023980481550097466,
+                "meanabs": 0.03105964884161949,
+                "l2": 23.77440643310547,
+                "min": -0.2358912080526352,
+                "max": 0.6029356718063354
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11299768835306168,
+                "meanabs": 0.11299768835306168,
+                "l2": 40.91975784301758,
+                "min": 0.10537571460008621,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 2.3904995918273926,
+              "gated_carry_relative_fresh_l2": 0.1109097810777585,
+              "incoming_state": {
+                "mean": 0.022983940318226814,
+                "meanabs": 0.028842773288488388,
+                "l2": 22.20423126220703,
+                "min": -0.22471769154071808,
+                "max": 0.6076133251190186
+              },
+              "memory_vs_own_current_meanabs": 6.805535667808726e-05
+            },
+            {
+              "frame": 13,
+              "confidence": {
+                "mean": 0.9176677465438843,
+                "meanabs": 0.9176677465438843,
+                "l2": 121.16973114013672,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0214383564889431,
+                "meanabs": 0.02806979790329933,
+                "l2": 21.53479766845703,
+                "min": -0.21774345636367798,
+                "max": 0.596196174621582
+              },
+              "state": {
+                "mean": 0.02386041358113289,
+                "meanabs": 0.031043237075209618,
+                "l2": 23.78315544128418,
+                "min": -0.23641645908355713,
+                "max": 0.6628501415252686
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11301745474338531,
+                "meanabs": 0.11301745474338531,
+                "l2": 40.926849365234375,
+                "min": 0.10541612654924393,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 2.4164772033691406,
+              "gated_carry_relative_fresh_l2": 0.11221267274355039,
+              "incoming_state": {
+                "mean": 0.02320265583693981,
+                "meanabs": 0.02928915061056614,
+                "l2": 22.70326805114746,
+                "min": -0.23186159133911133,
+                "max": 0.6029356718063354
+              },
+              "memory_vs_own_current_meanabs": 6.740573735442013e-05
+            },
+            {
+              "frame": 14,
+              "confidence": {
+                "mean": 0.8949435949325562,
+                "meanabs": 0.8949435949325562,
+                "l2": 119.8228530883789,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.021026024594902992,
+                "meanabs": 0.028396107256412506,
+                "l2": 21.717988967895508,
+                "min": -0.2895282506942749,
+                "max": 0.5865921378135681
+              },
+              "state": {
+                "mean": 0.023344118148088455,
+                "meanabs": 0.031228721141815186,
+                "l2": 23.84004783630371,
+                "min": -0.2895282506942749,
+                "max": 0.6512340903282166
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11308740079402924,
+                "meanabs": 0.11308740079402924,
+                "l2": 40.95192337036133,
+                "min": 0.10534047335386276,
+                "max": 0.1169298067688942
+              },
+              "gated_carry_l2": 2.3359198570251465,
+              "gated_carry_relative_fresh_l2": 0.10755691332554808,
+              "incoming_state": {
+                "mean": 0.022258033975958824,
+                "meanabs": 0.02814740315079689,
+                "l2": 21.97124671936035,
+                "min": -0.217558354139328,
+                "max": 0.5845780372619629
+              },
+              "memory_vs_own_current_meanabs": 6.665994442300871e-05
+            },
+            {
+              "frame": 15,
+              "confidence": {
+                "mean": 0.4327525794506073,
+                "meanabs": 0.4327525794506073,
+                "l2": 78.80860900878906,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.02195073291659355,
+                "meanabs": 0.029676485806703568,
+                "l2": 22.23914909362793,
+                "min": -0.24763888120651245,
+                "max": 0.5933551788330078
+              },
+              "state": {
+                "mean": 0.02316775918006897,
+                "meanabs": 0.03105974942445755,
+                "l2": 23.34758758544922,
+                "min": -0.24763888120651245,
+                "max": 0.6481754183769226
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11296267062425613,
+                "meanabs": 0.11296267062425613,
+                "l2": 40.90675354003906,
+                "min": 0.10504969209432602,
+                "max": 0.11693009734153748
+              },
+              "gated_carry_l2": 1.7061843872070312,
+              "gated_carry_relative_fresh_l2": 0.07671985920072345,
+              "incoming_state": {
+                "mean": 0.022390181198716164,
+                "meanabs": 0.028058039024472237,
+                "l2": 21.83499526977539,
+                "min": -0.1975172609090805,
+                "max": 0.4989178478717804
+              },
+              "memory_vs_own_current_meanabs": 3.15762372338213e-05
+            }
+          ],
+          "memory_vs_own_current_meanabs": 5.543585211853497e-05
+        },
+        "reds_073-stream-000-00": {
+          "patch_sha256": "8c6d38cb8e167ad5ce2b3744313ef8a6501dc5ecdf6395afb6c6a0869b341a65",
+          "first_frame_exact": true,
+          "frames": [
+            {
+              "frame": 0,
+              "confidence": {
+                "mean": 0.0,
+                "meanabs": 0.0,
+                "l2": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              },
+              "fresh": {
+                "mean": 0.016332484781742096,
+                "meanabs": 0.037191327661275864,
+                "l2": 28.934818267822266,
+                "min": -0.44946539402008057,
+                "max": 0.6838986873626709
+              },
+              "state": {
+                "mean": 0.016332484781742096,
+                "meanabs": 0.037191327661275864,
+                "l2": 28.934818267822266,
+                "min": -0.44946539402008057,
+                "max": 0.6838986873626709
+              },
+              "history_present": false,
+              "learned_sigmoid_gate": null,
+              "gated_carry_l2": 0.0,
+              "gated_carry_relative_fresh_l2": 0.0,
+              "memory_vs_own_current_meanabs": 0.0
+            },
+            {
+              "frame": 1,
+              "confidence": {
+                "mean": 0.9064955711364746,
+                "meanabs": 0.9064955711364746,
+                "l2": 120.3255844116211,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.016106365248560905,
+                "meanabs": 0.03531786799430847,
+                "l2": 27.63210105895996,
+                "min": -0.43832525610923767,
+                "max": 0.6737961769104004
+              },
+              "state": {
+                "mean": 0.017661821097135544,
+                "meanabs": 0.03890018165111542,
+                "l2": 30.4180850982666,
+                "min": -0.4873983860015869,
+                "max": 0.733173668384552
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11385192722082138,
+                "meanabs": 0.11385192722082138,
+                "l2": 41.223140716552734,
+                "min": 0.10745435208082199,
+                "max": 0.11693855375051498
+              },
+              "gated_carry_l2": 2.9695260524749756,
+              "gated_carry_relative_fresh_l2": 0.10746653126878601,
+              "incoming_state": {
+                "mean": 0.014859655871987343,
+                "meanabs": 0.034723881632089615,
+                "l2": 27.19346809387207,
+                "min": -0.43968167901039124,
+                "max": 0.5986292362213135
+              },
+              "memory_vs_own_current_meanabs": 9.045309707289562e-05
+            },
+            {
+              "frame": 2,
+              "confidence": {
+                "mean": 0.8271248936653137,
+                "meanabs": 0.8271248936653137,
+                "l2": 113.51213073730469,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.016402896493673325,
+                "meanabs": 0.03701471909880638,
+                "l2": 28.647449493408203,
+                "min": -0.39229637384414673,
+                "max": 0.6533268690109253
+              },
+              "state": {
+                "mean": 0.018008433282375336,
+                "meanabs": 0.04056473448872566,
+                "l2": 31.338071823120117,
+                "min": -0.43922439217567444,
+                "max": 0.6533268690109253
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11381183564662933,
+                "meanabs": 0.11381183564662933,
+                "l2": 41.20852279663086,
+                "min": 0.10762801021337509,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 3.068310499191284,
+              "gated_carry_relative_fresh_l2": 0.10710588738090993,
+              "incoming_state": {
+                "mean": 0.016719691455364227,
+                "meanabs": 0.03788546100258827,
+                "l2": 29.98296356201172,
+                "min": -0.4849480986595154,
+                "max": 0.733173668384552
+              },
+              "memory_vs_own_current_meanabs": 9.18347795959562e-05
+            },
+            {
+              "frame": 3,
+              "confidence": {
+                "mean": 0.8367566466331482,
+                "meanabs": 0.8367566466331482,
+                "l2": 114.58352661132812,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.016651958227157593,
+                "meanabs": 0.0383693166077137,
+                "l2": 29.26014518737793,
+                "min": -0.4158608019351959,
+                "max": 0.5918027758598328
+              },
+              "state": {
+                "mean": 0.01825174130499363,
+                "meanabs": 0.04202946275472641,
+                "l2": 31.980745315551758,
+                "min": -0.46326717734336853,
+                "max": 0.6052913069725037
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.1137656643986702,
+                "meanabs": 0.1137656643986702,
+                "l2": 41.19169235229492,
+                "min": 0.10732194036245346,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 3.1324422359466553,
+              "gated_carry_relative_fresh_l2": 0.10705491089968719,
+              "incoming_state": {
+                "mean": 0.016440095379948616,
+                "meanabs": 0.03892987594008446,
+                "l2": 30.561019897460938,
+                "min": -0.43718916177749634,
+                "max": 0.6499283909797668
+              },
+              "memory_vs_own_current_meanabs": 9.641719952924177e-05
+            },
+            {
+              "frame": 4,
+              "confidence": {
+                "mean": 0.815976619720459,
+                "meanabs": 0.815976619720459,
+                "l2": 113.37957000732422,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.016676578670740128,
+                "meanabs": 0.041284479200839996,
+                "l2": 30.923444747924805,
+                "min": -0.4420664310455322,
+                "max": 0.659042239189148
+              },
+              "state": {
+                "mean": 0.018268242478370667,
+                "meanabs": 0.04500005394220352,
+                "l2": 33.69419479370117,
+                "min": -0.49254339933395386,
+                "max": 0.6774643063545227
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11374466121196747,
+                "meanabs": 0.11374466121196747,
+                "l2": 41.18449783325195,
+                "min": 0.10678209364414215,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 3.196181535720825,
+              "gated_carry_relative_fresh_l2": 0.10335787496427974,
+              "incoming_state": {
+                "mean": 0.016612660139799118,
+                "meanabs": 0.03982904925942421,
+                "l2": 30.894378662109375,
+                "min": -0.46306711435317993,
+                "max": 0.6004723310470581
+              },
+              "memory_vs_own_current_meanabs": 9.68206804827787e-05
+            },
+            {
+              "frame": 5,
+              "confidence": {
+                "mean": 0.8061047792434692,
+                "meanabs": 0.8061047792434692,
+                "l2": 113.20613098144531,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.016884151846170425,
+                "meanabs": 0.041388094425201416,
+                "l2": 30.81658935546875,
+                "min": -0.42896217107772827,
+                "max": 0.6341009736061096
+              },
+              "state": {
+                "mean": 0.018496543169021606,
+                "meanabs": 0.04514949023723602,
+                "l2": 33.597076416015625,
+                "min": -0.48400193452835083,
+                "max": 0.6775424480438232
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11367840319871902,
+                "meanabs": 0.11367840319871902,
+                "l2": 41.16061782836914,
+                "min": 0.10651955753564835,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 3.353961706161499,
+              "gated_carry_relative_fresh_l2": 0.10883623971081345,
+              "incoming_state": {
+                "mean": 0.01685529761016369,
+                "meanabs": 0.042676858603954315,
+                "l2": 32.66685485839844,
+                "min": -0.49122607707977295,
+                "max": 0.6264312863349915
+              },
+              "memory_vs_own_current_meanabs": 9.682043310021982e-05
+            },
+            {
+              "frame": 6,
+              "confidence": {
+                "mean": 0.5353081226348877,
+                "meanabs": 0.5353081226348877,
+                "l2": 89.50657653808594,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.017479458823800087,
+                "meanabs": 0.04143556207418442,
+                "l2": 30.60988998413086,
+                "min": -0.4327270984649658,
+                "max": 0.6639961004257202
+              },
+              "state": {
+                "mean": 0.018606144934892654,
+                "meanabs": 0.04377515986561775,
+                "l2": 32.39140701293945,
+                "min": -0.4663042426109314,
+                "max": 0.6759228706359863
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11357437074184418,
+                "meanabs": 0.11357437074184418,
+                "l2": 41.12290573120117,
+                "min": 0.10632070153951645,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 2.6480047702789307,
+              "gated_carry_relative_fresh_l2": 0.0865081439904469,
+              "incoming_state": {
+                "mean": 0.017394667491316795,
+                "meanabs": 0.04352957010269165,
+                "l2": 33.24444580078125,
+                "min": -0.4800280034542084,
+                "max": 0.60240238904953
+              },
+              "memory_vs_own_current_meanabs": 6.5369822550565e-05
+            },
+            {
+              "frame": 7,
+              "confidence": {
+                "mean": 0.2895853817462921,
+                "meanabs": 0.2895853817462921,
+                "l2": 62.26298141479492,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.01788419857621193,
+                "meanabs": 0.03826387599110603,
+                "l2": 28.638669967651367,
+                "min": -0.4134489595890045,
+                "max": 0.5311128497123718
+              },
+              "state": {
+                "mean": 0.018511604517698288,
+                "meanabs": 0.03914143890142441,
+                "l2": 29.232524871826172,
+                "min": -0.4134489595890045,
+                "max": 0.5311128497123718
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11354680359363556,
+                "meanabs": 0.11354680359363556,
+                "l2": 41.11321258544922,
+                "min": 0.1063353642821312,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 1.7049490213394165,
+              "gated_carry_relative_fresh_l2": 0.05953310762214974,
+              "incoming_state": {
+                "mean": 0.018103471025824547,
+                "meanabs": 0.045852337032556534,
+                "l2": 34.12437438964844,
+                "min": -0.3837239742279053,
+                "max": 0.5892567038536072
+              },
+              "memory_vs_own_current_meanabs": 3.392703729332425e-05
+            },
+            {
+              "frame": 8,
+              "confidence": {
+                "mean": 0.9006307125091553,
+                "meanabs": 0.9006307125091553,
+                "l2": 120.75508117675781,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.017622821033000946,
+                "meanabs": 0.03774593770503998,
+                "l2": 28.60093116760254,
+                "min": -0.4158109426498413,
+                "max": 0.5319899320602417
+              },
+              "state": {
+                "mean": 0.01940751075744629,
+                "meanabs": 0.04159964621067047,
+                "l2": 31.546951293945312,
+                "min": -0.4622250199317932,
+                "max": 0.5633662343025208
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11357924342155457,
+                "meanabs": 0.11357924342155457,
+                "l2": 41.125152587890625,
+                "min": 0.10559525340795517,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 3.109558343887329,
+              "gated_carry_relative_fresh_l2": 0.10872227640649879,
+              "incoming_state": {
+                "mean": 0.01701255701482296,
+                "meanabs": 0.036435309797525406,
+                "l2": 28.23235511779785,
+                "min": -0.4134489595890045,
+                "max": 0.493071585893631
+              },
+              "memory_vs_own_current_meanabs": 9.316272917203605e-05
+            },
+            {
+              "frame": 9,
+              "confidence": {
+                "mean": 0.8800456523895264,
+                "meanabs": 0.8800456523895264,
+                "l2": 118.91969299316406,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.017723362892866135,
+                "meanabs": 0.036807265132665634,
+                "l2": 27.843719482421875,
+                "min": -0.4045252203941345,
+                "max": 0.5108016729354858
+              },
+              "state": {
+                "mean": 0.01960454322397709,
+                "meanabs": 0.040685344487428665,
+                "l2": 30.82573127746582,
+                "min": -0.4533637762069702,
+                "max": 0.5544779300689697
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.1135549545288086,
+                "meanabs": 0.1135549545288086,
+                "l2": 41.1163444519043,
+                "min": 0.10511025041341782,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 3.299098014831543,
+              "gated_carry_relative_fresh_l2": 0.11848625385391881,
+              "incoming_state": {
+                "mean": 0.01837811805307865,
+                "meanabs": 0.039730507880449295,
+                "l2": 30.86532974243164,
+                "min": -0.4553506374359131,
+                "max": 0.5419228076934814
+              },
+              "memory_vs_own_current_meanabs": 9.697366476757452e-05
+            },
+            {
+              "frame": 10,
+              "confidence": {
+                "mean": 0.26105543971061707,
+                "meanabs": 0.26105543971061707,
+                "l2": 59.01183319091797,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.01717297174036503,
+                "meanabs": 0.033202048391103745,
+                "l2": 25.67135238647461,
+                "min": -0.38753488659858704,
+                "max": 0.5309292078018188
+              },
+              "state": {
+                "mean": 0.01769001968204975,
+                "meanabs": 0.033834829926490784,
+                "l2": 26.086559295654297,
+                "min": -0.3879411220550537,
+                "max": 0.5493820905685425
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11362887918949127,
+                "meanabs": 0.11362887918949127,
+                "l2": 41.142913818359375,
+                "min": 0.10608424991369247,
+                "max": 0.1169467642903328
+              },
+              "gated_carry_l2": 1.6039835214614868,
+              "gated_carry_relative_fresh_l2": 0.06248145782559445,
+              "incoming_state": {
+                "mean": 0.017616763710975647,
+                "meanabs": 0.03740508854389191,
+                "l2": 29.184436798095703,
+                "min": -0.4119530916213989,
+                "max": 0.5049771070480347
+              },
+              "memory_vs_own_current_meanabs": 3.164656664012e-05
+            },
+            {
+              "frame": 11,
+              "confidence": {
+                "mean": 0.26767584681510925,
+                "meanabs": 0.26767584681510925,
+                "l2": 59.38943862915039,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.016802076250314713,
+                "meanabs": 0.02718641608953476,
+                "l2": 21.027315139770508,
+                "min": -0.3737700283527374,
+                "max": 0.5138781070709229
+              },
+              "state": {
+                "mean": 0.017248764634132385,
+                "meanabs": 0.02770533412694931,
+                "l2": 21.31815528869629,
+                "min": -0.4041566848754883,
+                "max": 0.5070909261703491
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11370164901018143,
+                "meanabs": 0.11370164901018143,
+                "l2": 41.1690788269043,
+                "min": 0.10612434148788452,
+                "max": 0.1169298067688942
+              },
+              "gated_carry_l2": 1.0941534042358398,
+              "gated_carry_relative_fresh_l2": 0.05203486022646738,
+              "incoming_state": {
+                "mean": 0.015689009800553322,
+                "meanabs": 0.029020259156823158,
+                "l2": 23.25094985961914,
+                "min": -0.35575830936431885,
+                "max": 0.5493820905685425
+              },
+              "memory_vs_own_current_meanabs": 2.4369772290810943e-05
+            },
+            {
+              "frame": 12,
+              "confidence": {
+                "mean": 0.5158348679542542,
+                "meanabs": 0.5158348679542542,
+                "l2": 85.61418151855469,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.016701940447092056,
+                "meanabs": 0.025820961222052574,
+                "l2": 20.26845932006836,
+                "min": -0.2759879529476166,
+                "max": 0.4729826748371124
+              },
+              "state": {
+                "mean": 0.017536964267492294,
+                "meanabs": 0.026933031156659126,
+                "l2": 21.031156539916992,
+                "min": -0.2759879529476166,
+                "max": 0.4729826748371124
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11372306942939758,
+                "meanabs": 0.11372306942939758,
+                "l2": 41.176849365234375,
+                "min": 0.10617944598197937,
+                "max": 0.11688239127397537
+              },
+              "gated_carry_l2": 1.2876161336898804,
+              "gated_carry_relative_fresh_l2": 0.06352807153995056,
+              "incoming_state": {
+                "mean": 0.015798429027199745,
+                "meanabs": 0.024918871000409126,
+                "l2": 19.438209533691406,
+                "min": -0.2984989881515503,
+                "max": 0.43430012464523315
+              },
+              "memory_vs_own_current_meanabs": 3.499047306831926e-05
+            },
+            {
+              "frame": 13,
+              "confidence": {
+                "mean": 0.9110548496246338,
+                "meanabs": 0.9110548496246338,
+                "l2": 121.29670715332031,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.01741056516766548,
+                "meanabs": 0.02563709393143654,
+                "l2": 20.02890968322754,
+                "min": -0.2255489081144333,
+                "max": 0.5041542053222656
+              },
+              "state": {
+                "mean": 0.01919132098555565,
+                "meanabs": 0.02826545387506485,
+                "l2": 22.0007266998291,
+                "min": -0.2322843372821808,
+                "max": 0.5116560459136963
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11364130675792694,
+                "meanabs": 0.11364130675792694,
+                "l2": 41.14710998535156,
+                "min": 0.10616503655910492,
+                "max": 0.11689171940088272
+              },
+              "gated_carry_l2": 2.1619081497192383,
+              "gated_carry_relative_fresh_l2": 0.10793938281771011,
+              "incoming_state": {
+                "mean": 0.01688467524945736,
+                "meanabs": 0.025460707023739815,
+                "l2": 20.118480682373047,
+                "min": -0.2759879529476166,
+                "max": 0.41833052039146423
+              },
+              "memory_vs_own_current_meanabs": 6.408150511560962e-05
+            },
+            {
+              "frame": 14,
+              "confidence": {
+                "mean": 0.9100477695465088,
+                "meanabs": 0.9100477695465088,
+                "l2": 120.52330017089844,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.017735695466399193,
+                "meanabs": 0.02566586807370186,
+                "l2": 20.155162811279297,
+                "min": -0.2072325497865677,
+                "max": 0.509547770023346
+              },
+              "state": {
+                "mean": 0.019608458504080772,
+                "meanabs": 0.028371352702379227,
+                "l2": 22.182220458984375,
+                "min": -0.2230769842863083,
+                "max": 0.5277426838874817
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11360688507556915,
+                "meanabs": 0.11360688507556915,
+                "l2": 41.134605407714844,
+                "min": 0.10626140981912613,
+                "max": 0.11683666706085205
+              },
+              "gated_carry_l2": 2.2296087741851807,
+              "gated_carry_relative_fresh_l2": 0.11062221600797191,
+              "incoming_state": {
+                "mean": 0.01821628026664257,
+                "meanabs": 0.026838988065719604,
+                "l2": 21.06212043762207,
+                "min": -0.2322843372821808,
+                "max": 0.47513091564178467
+              },
+              "memory_vs_own_current_meanabs": 6.799784750910476e-05
+            },
+            {
+              "frame": 15,
+              "confidence": {
+                "mean": 0.9517608284950256,
+                "meanabs": 0.9517608284950256,
+                "l2": 124.21458435058594,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.01776091568171978,
+                "meanabs": 0.02588338777422905,
+                "l2": 20.298234939575195,
+                "min": -0.21940645575523376,
+                "max": 0.5431238412857056
+              },
+              "state": {
+                "mean": 0.019799530506134033,
+                "meanabs": 0.028810447081923485,
+                "l2": 22.50147819519043,
+                "min": -0.23631152510643005,
+                "max": 0.5431238412857056
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.11359615623950958,
+                "meanabs": 0.11359615623950958,
+                "l2": 41.13078689575195,
+                "min": 0.10622014105319977,
+                "max": 0.11683834344148636
+              },
+              "gated_carry_l2": 2.36240291595459,
+              "gated_carry_relative_fresh_l2": 0.11638464738373112,
+              "incoming_state": {
+                "mean": 0.018819022923707962,
+                "meanabs": 0.02731735073029995,
+                "l2": 21.437149047851562,
+                "min": -0.2230769842863083,
+                "max": 0.5197567939758301
+              },
+              "memory_vs_own_current_meanabs": 7.308275235118344e-05
+            }
+          ],
+          "memory_vs_own_current_meanabs": 6.612177094211802e-05
+        }
+      }
+    },
+    "balanced": {
+      "checkpoint_sha256": "1e83fc33f89f7161d9503697b0e3ab3a11c360158de40ae30a837e4446db3f0c",
+      "initial_decay_bias": 0.0,
+      "final_decay_bias": {
+        "mean": -0.029808539897203445,
+        "meanabs": 0.029808539897203445,
+        "l2": 0.08498075604438782,
+        "min": -0.036162007600069046,
+        "max": -0.025637997314333916
+      },
+      "final_decay_bias_values": [
+        -0.02737552300095558,
+        -0.025637997314333916,
+        -0.029026810079813004,
+        -0.02945367805659771,
+        -0.025888899341225624,
+        -0.02934104949235916,
+        -0.036162007600069046,
+        -0.03558235988020897
+      ],
+      "final_decay_weight": {
+        "mean": -0.026280514895915985,
+        "meanabs": 0.026280514895915985,
+        "l2": 0.12945257127285004,
+        "min": -0.03249964490532875,
+        "max": -0.022426575422286987
+      },
+      "final_project_weight": {
+        "mean": 4.2057494283653796e-05,
+        "meanabs": 0.0019465466029942036,
+        "l2": 0.09023746848106384,
+        "min": -0.020461056381464005,
+        "max": 0.011156255379319191
+      },
+      "sources": {
+        "sintel-stream-000-00": {
+          "patch_sha256": "efb2d3e031f034340d2764338cdf31a35213a343df0171ce18eb8e62d01970d7",
+          "first_frame_exact": true,
+          "frames": [
+            {
+              "frame": 0,
+              "confidence": {
+                "mean": 0.0,
+                "meanabs": 0.0,
+                "l2": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              },
+              "fresh": {
+                "mean": 0.0019495117012411356,
+                "meanabs": 0.008530942723155022,
+                "l2": 5.891597747802734,
+                "min": -0.12365581095218658,
+                "max": 0.20183318853378296
+              },
+              "state": {
+                "mean": 0.0019495117012411356,
+                "meanabs": 0.008530942723155022,
+                "l2": 5.891597747802734,
+                "min": -0.12365581095218658,
+                "max": 0.20183318853378296
+              },
+              "history_present": false,
+              "learned_sigmoid_gate": null,
+              "gated_carry_l2": 0.0,
+              "gated_carry_relative_fresh_l2": 0.0,
+              "memory_vs_own_current_meanabs": 0.0
+            },
+            {
+              "frame": 1,
+              "confidence": {
+                "mean": 0.9836791157722473,
+                "meanabs": 0.9836791157722473,
+                "l2": 126.93696594238281,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0019398207077756524,
+                "meanabs": 0.008389327675104141,
+                "l2": 5.770167827606201,
+                "min": -0.10864733159542084,
+                "max": 0.14995941519737244
+              },
+              "state": {
+                "mean": 0.002844539936631918,
+                "meanabs": 0.012205014005303383,
+                "l2": 8.339595794677734,
+                "min": -0.15257976949214935,
+                "max": 0.2250470221042633
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4915922284126282,
+                "meanabs": 0.4915922284126282,
+                "l2": 177.97743225097656,
+                "min": 0.48458653688430786,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 2.6876637935638428,
+              "gated_carry_relative_fresh_l2": 0.46578606963652924,
+              "incoming_state": {
+                "mean": 0.0018804916180670261,
+                "meanabs": 0.008019129745662212,
+                "l2": 5.48516845703125,
+                "min": -0.09197227656841278,
+                "max": 0.16686835885047913
+              },
+              "memory_vs_own_current_meanabs": 5.03701412526425e-05
+            },
+            {
+              "frame": 2,
+              "confidence": {
+                "mean": 0.9854233264923096,
+                "meanabs": 0.9854233264923096,
+                "l2": 127.03760528564453,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0019354014657437801,
+                "meanabs": 0.008448503911495209,
+                "l2": 5.8710408210754395,
+                "min": -0.10661971569061279,
+                "max": 0.21487979590892792
+              },
+              "state": {
+                "mean": 0.003265880048274994,
+                "meanabs": 0.014031670987606049,
+                "l2": 9.588454246520996,
+                "min": -0.1647939532995224,
+                "max": 0.26063036918640137
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4915944039821625,
+                "meanabs": 0.4915944039821625,
+                "l2": 177.9783477783203,
+                "min": 0.4835503399372101,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 3.916475772857666,
+              "gated_carry_relative_fresh_l2": 0.667083723689773,
+              "incoming_state": {
+                "mean": 0.0027436029631644487,
+                "meanabs": 0.01172342337667942,
+                "l2": 7.983348369598389,
+                "min": -0.13508754968643188,
+                "max": 0.20952683687210083
+              },
+              "memory_vs_own_current_meanabs": 7.44872450013645e-05
+            },
+            {
+              "frame": 3,
+              "confidence": {
+                "mean": 0.9900915026664734,
+                "meanabs": 0.9900915026664734,
+                "l2": 127.35072326660156,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.001960966968908906,
+                "meanabs": 0.00849742442369461,
+                "l2": 5.898714065551758,
+                "min": -0.11391901969909668,
+                "max": 0.25004252791404724
+              },
+              "state": {
+                "mean": 0.0035214629024267197,
+                "meanabs": 0.01496603712439537,
+                "l2": 10.221858024597168,
+                "min": -0.18706224858760834,
+                "max": 0.2783234715461731
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4915860891342163,
+                "meanabs": 0.4915860891342163,
+                "l2": 177.9751739501953,
+                "min": 0.4822959899902344,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 4.5249104499816895,
+              "gated_carry_relative_fresh_l2": 0.7671011681015318,
+              "incoming_state": {
+                "mean": 0.0031904391944408417,
+                "meanabs": 0.013529215008020401,
+                "l2": 9.21359920501709,
+                "min": -0.1647939532995224,
+                "max": 0.2422003298997879
+              },
+              "memory_vs_own_current_meanabs": 8.544361480744556e-05
+            },
+            {
+              "frame": 4,
+              "confidence": {
+                "mean": 0.9893863201141357,
+                "meanabs": 0.9893863201141357,
+                "l2": 127.28478240966797,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0019126503029838204,
+                "meanabs": 0.008524298667907715,
+                "l2": 5.985368728637695,
+                "min": -0.12421214580535889,
+                "max": 0.3044430613517761
+              },
+              "state": {
+                "mean": 0.0036006132140755653,
+                "meanabs": 0.015444554388523102,
+                "l2": 10.604021072387695,
+                "min": -0.20590618252754211,
+                "max": 0.30446097254753113
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4915952682495117,
+                "meanabs": 0.4915952682495117,
+                "l2": 177.9786376953125,
+                "min": 0.4798797070980072,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 4.861705303192139,
+              "gated_carry_relative_fresh_l2": 0.8122649620449851,
+              "incoming_state": {
+                "mean": 0.0034622035454958677,
+                "meanabs": 0.014550364576280117,
+                "l2": 9.91474437713623,
+                "min": -0.16614070534706116,
+                "max": 0.2722477912902832
+              },
+              "memory_vs_own_current_meanabs": 9.223908273270354e-05
+            },
+            {
+              "frame": 5,
+              "confidence": {
+                "mean": 0.9842259287834167,
+                "meanabs": 0.9842259287834167,
+                "l2": 126.97704315185547,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0019540584180504084,
+                "meanabs": 0.008462859317660332,
+                "l2": 5.887805938720703,
+                "min": -0.14795690774917603,
+                "max": 0.24100664258003235
+              },
+              "state": {
+                "mean": 0.0036577649880200624,
+                "meanabs": 0.015593796968460083,
+                "l2": 10.655549049377441,
+                "min": -0.2182045876979828,
+                "max": 0.32833659648895264
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4915841817855835,
+                "meanabs": 0.4915841817855835,
+                "l2": 177.9747772216797,
+                "min": 0.48050692677497864,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 4.977335453033447,
+              "gated_carry_relative_fresh_l2": 0.8453633670736977,
+              "incoming_state": {
+                "mean": 0.003533212700858712,
+                "meanabs": 0.014897621236741543,
+                "l2": 10.15517807006836,
+                "min": -0.20590618252754211,
+                "max": 0.2855015695095062
+              },
+              "memory_vs_own_current_meanabs": 9.477105777477846e-05
+            },
+            {
+              "frame": 6,
+              "confidence": {
+                "mean": 0.9859971404075623,
+                "meanabs": 0.9859971404075623,
+                "l2": 127.04351806640625,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0019495508167892694,
+                "meanabs": 0.008487092331051826,
+                "l2": 5.949766159057617,
+                "min": -0.1517205685377121,
+                "max": 0.2126672863960266
+              },
+              "state": {
+                "mean": 0.0036858301609754562,
+                "meanabs": 0.015721935778856277,
+                "l2": 10.799671173095703,
+                "min": -0.24345451593399048,
+                "max": 0.3560752868652344
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4915788173675537,
+                "meanabs": 0.4915788173675537,
+                "l2": 177.97271728515625,
+                "min": 0.4805071949958801,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 5.060442924499512,
+              "gated_carry_relative_fresh_l2": 0.8505280357608264,
+              "incoming_state": {
+                "mean": 0.0035883875098079443,
+                "meanabs": 0.015199371613562107,
+                "l2": 10.344294548034668,
+                "min": -0.20644927024841309,
+                "max": 0.32833659648895264
+              },
+              "memory_vs_own_current_meanabs": 9.690369915915653e-05
+            },
+            {
+              "frame": 7,
+              "confidence": {
+                "mean": 0.9835723638534546,
+                "meanabs": 0.9835723638534546,
+                "l2": 126.92767333984375,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.001964507857337594,
+                "meanabs": 0.00851934589445591,
+                "l2": 5.941670894622803,
+                "min": -0.14627358317375183,
+                "max": 0.2231752872467041
+              },
+              "state": {
+                "mean": 0.0037098750472068787,
+                "meanabs": 0.015755221247673035,
+                "l2": 10.794561386108398,
+                "min": -0.26607245206832886,
+                "max": 0.3952553868293762
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4915773868560791,
+                "meanabs": 0.4915773868560791,
+                "l2": 177.9719696044922,
+                "min": 0.4802248477935791,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 5.068878650665283,
+              "gated_carry_relative_fresh_l2": 0.8531065992316413,
+              "incoming_state": {
+                "mean": 0.003606307553127408,
+                "meanabs": 0.015158714726567268,
+                "l2": 10.34630298614502,
+                "min": -0.24345451593399048,
+                "max": 0.3560752868652344
+              },
+              "memory_vs_own_current_meanabs": 9.685962140792981e-05
+            },
+            {
+              "frame": 8,
+              "confidence": {
+                "mean": 0.9836509227752686,
+                "meanabs": 0.9836509227752686,
+                "l2": 126.89374542236328,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0019411947578191757,
+                "meanabs": 0.008574078790843487,
+                "l2": 6.078361511230469,
+                "min": -0.15050223469734192,
+                "max": 0.2863231897354126
+              },
+              "state": {
+                "mean": 0.003679704386740923,
+                "meanabs": 0.01565612480044365,
+                "l2": 10.791966438293457,
+                "min": -0.22286748886108398,
+                "max": 0.3771498203277588
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.49158304929733276,
+                "meanabs": 0.49158304929733276,
+                "l2": 177.97430419921875,
+                "min": 0.48066389560699463,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 4.995988368988037,
+              "gated_carry_relative_fresh_l2": 0.8219301138567321,
+              "incoming_state": {
+                "mean": 0.0035839739721268415,
+                "meanabs": 0.015006004832684994,
+                "l2": 10.209402084350586,
+                "min": -0.21222953498363495,
+                "max": 0.32153865694999695
+              },
+              "memory_vs_own_current_meanabs": 9.518920705886558e-05
+            },
+            {
+              "frame": 9,
+              "confidence": {
+                "mean": 0.9825736880302429,
+                "meanabs": 0.9825736880302429,
+                "l2": 126.84278106689453,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0019683395512402058,
+                "meanabs": 0.008498366922140121,
+                "l2": 5.966278076171875,
+                "min": -0.1350659430027008,
+                "max": 0.2174522429704666
+              },
+              "state": {
+                "mean": 0.003696681000292301,
+                "meanabs": 0.015509828925132751,
+                "l2": 10.629283905029297,
+                "min": -0.21205107867717743,
+                "max": 0.3156244158744812
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.49157804250717163,
+                "meanabs": 0.49157804250717163,
+                "l2": 177.97219848632812,
+                "min": 0.48050642013549805,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 4.924354076385498,
+              "gated_carry_relative_fresh_l2": 0.8253644924886063,
+              "incoming_state": {
+                "mean": 0.003584000514820218,
+                "meanabs": 0.014818975701928139,
+                "l2": 10.066072463989258,
+                "min": -0.18749210238456726,
+                "max": 0.2874758541584015
+              },
+              "memory_vs_own_current_meanabs": 9.406389290234074e-05
+            },
+            {
+              "frame": 10,
+              "confidence": {
+                "mean": 0.9830813407897949,
+                "meanabs": 0.9830813407897949,
+                "l2": 126.86685943603516,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0019751067738980055,
+                "meanabs": 0.00853799469769001,
+                "l2": 6.076752185821533,
+                "min": -0.1254274994134903,
+                "max": 0.26572108268737793
+              },
+              "state": {
+                "mean": 0.003702552057802677,
+                "meanabs": 0.015472857281565666,
+                "l2": 10.674639701843262,
+                "min": -0.2182791531085968,
+                "max": 0.3112070560455322
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4915788471698761,
+                "meanabs": 0.4915788471698761,
+                "l2": 177.97251892089844,
+                "min": 0.4808194637298584,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 4.895511627197266,
+              "gated_carry_relative_fresh_l2": 0.8056131758375181,
+              "incoming_state": {
+                "mean": 0.0035729496739804745,
+                "meanabs": 0.014746333472430706,
+                "l2": 10.015372276306152,
+                "min": -0.18869277834892273,
+                "max": 0.2652413249015808
+              },
+              "memory_vs_own_current_meanabs": 9.332651825388893e-05
+            },
+            {
+              "frame": 11,
+              "confidence": {
+                "mean": 0.9801977872848511,
+                "meanabs": 0.9801977872848511,
+                "l2": 126.6688003540039,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.0020026681013405323,
+                "meanabs": 0.008477641269564629,
+                "l2": 6.030256271362305,
+                "min": -0.14294308423995972,
+                "max": 0.2449716478586197
+              },
+              "state": {
+                "mean": 0.003711526282131672,
+                "meanabs": 0.015388965606689453,
+                "l2": 10.621761322021484,
+                "min": -0.2122810184955597,
+                "max": 0.3503226339817047
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.491574227809906,
+                "meanabs": 0.491574227809906,
+                "l2": 177.97073364257812,
+                "min": 0.48038098216056824,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 4.896787643432617,
+              "gated_carry_relative_fresh_l2": 0.8120364082514152,
+              "incoming_state": {
+                "mean": 0.003548030275851488,
+                "meanabs": 0.014683540910482407,
+                "l2": 10.024680137634277,
+                "min": -0.16388922929763794,
+                "max": 0.2759435772895813
+              },
+              "memory_vs_own_current_meanabs": 9.378771210322157e-05
+            },
+            {
+              "frame": 12,
+              "confidence": {
+                "mean": 0.9811583161354065,
+                "meanabs": 0.9811583161354065,
+                "l2": 126.71778869628906,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.001973020611330867,
+                "meanabs": 0.008650198578834534,
+                "l2": 6.239434242248535,
+                "min": -0.15785714983940125,
+                "max": 0.22027462720870972
+              },
+              "state": {
+                "mean": 0.003695547115057707,
+                "meanabs": 0.015516454353928566,
+                "l2": 10.824029922485352,
+                "min": -0.21480809152126312,
+                "max": 0.3623051643371582
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.491580069065094,
+                "meanabs": 0.491580069065094,
+                "l2": 177.97323608398438,
+                "min": 0.4805695116519928,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 4.922965049743652,
+              "gated_carry_relative_fresh_l2": 0.7890082431527541,
+              "incoming_state": {
+                "mean": 0.0035660499706864357,
+                "meanabs": 0.014655261300504208,
+                "l2": 10.0819730758667,
+                "min": -0.18895991146564484,
+                "max": 0.2934918999671936
+              },
+              "memory_vs_own_current_meanabs": 9.324145503342152e-05
+            },
+            {
+              "frame": 13,
+              "confidence": {
+                "mean": 0.9755333662033081,
+                "meanabs": 0.9755333662033081,
+                "l2": 126.34974670410156,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.001987219788134098,
+                "meanabs": 0.008508802391588688,
+                "l2": 6.082524299621582,
+                "min": -0.14206106960773468,
+                "max": 0.2185925841331482
+              },
+              "state": {
+                "mean": 0.0036835353821516037,
+                "meanabs": 0.015455709770321846,
+                "l2": 10.791152954101562,
+                "min": -0.21860180795192719,
+                "max": 0.3550316393375397
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4915766716003418,
+                "meanabs": 0.4915766716003418,
+                "l2": 177.97207641601562,
+                "min": 0.4807271361351013,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 4.968835830688477,
+              "gated_carry_relative_fresh_l2": 0.8169035725837721,
+              "incoming_state": {
+                "mean": 0.003528282744809985,
+                "meanabs": 0.014681698754429817,
+                "l2": 10.174802780151367,
+                "min": -0.18087023496627808,
+                "max": 0.3131403923034668
+              },
+              "memory_vs_own_current_meanabs": 9.398366091772914e-05
+            },
+            {
+              "frame": 14,
+              "confidence": {
+                "mean": 0.9814200401306152,
+                "meanabs": 0.9814200401306152,
+                "l2": 126.75224304199219,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.001980684231966734,
+                "meanabs": 0.008605211973190308,
+                "l2": 6.183586120605469,
+                "min": -0.13026511669158936,
+                "max": 0.23528608679771423
+              },
+              "state": {
+                "mean": 0.0036944011226296425,
+                "meanabs": 0.015695903450250626,
+                "l2": 11.045611381530762,
+                "min": -0.23777011036872864,
+                "max": 0.34298914670944214
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.491577684879303,
+                "meanabs": 0.491577684879303,
+                "l2": 177.97251892089844,
+                "min": 0.48088338971138,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 5.1193413734436035,
+              "gated_carry_relative_fresh_l2": 0.8278919826772528,
+              "incoming_state": {
+                "mean": 0.003527882043272257,
+                "meanabs": 0.014950865879654884,
+                "l2": 10.470972061157227,
+                "min": -0.21860180795192719,
+                "max": 0.3550316393375397
+              },
+              "memory_vs_own_current_meanabs": 9.70190521911718e-05
+            },
+            {
+              "frame": 15,
+              "confidence": {
+                "mean": 0.9774026870727539,
+                "meanabs": 0.9774026870727539,
+                "l2": 126.48360443115234,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.001974894432350993,
+                "meanabs": 0.008506722748279572,
+                "l2": 6.12011194229126,
+                "min": -0.15329110622406006,
+                "max": 0.2762969732284546
+              },
+              "state": {
+                "mean": 0.0036854625213891268,
+                "meanabs": 0.015642831102013588,
+                "l2": 11.034017562866211,
+                "min": -0.24224215745925903,
+                "max": 0.3451993763446808
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4915773570537567,
+                "meanabs": 0.4915773570537567,
+                "l2": 177.9724884033203,
+                "min": 0.4811652600765228,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 5.185824394226074,
+              "gated_carry_relative_fresh_l2": 0.8473414282492021,
+              "incoming_state": {
+                "mean": 0.003546682419255376,
+                "meanabs": 0.015048874542117119,
+                "l2": 10.623116493225098,
+                "min": -0.23777011036872864,
+                "max": 0.34298914670944214
+              },
+              "memory_vs_own_current_meanabs": 9.702193347038701e-05
+            }
+          ],
+          "memory_vs_own_current_meanabs": 8.429423905909061e-05
+        },
+        "reds_154-stream-000-00": {
+          "patch_sha256": "4bb6c237cc0e507470fbfc18af15594275f5c5507816b406dcc9c57b8478ea7b",
+          "first_frame_exact": true,
+          "frames": [
+            {
+              "frame": 0,
+              "confidence": {
+                "mean": 0.0,
+                "meanabs": 0.0,
+                "l2": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              },
+              "fresh": {
+                "mean": 0.023602455854415894,
+                "meanabs": 0.03277863934636116,
+                "l2": 25.251543045043945,
+                "min": -0.29509252309799194,
+                "max": 0.5897282958030701
+              },
+              "state": {
+                "mean": 0.023602455854415894,
+                "meanabs": 0.03277863934636116,
+                "l2": 25.251543045043945,
+                "min": -0.29509252309799194,
+                "max": 0.5897282958030701
+              },
+              "history_present": false,
+              "learned_sigmoid_gate": null,
+              "gated_carry_l2": 0.0,
+              "gated_carry_relative_fresh_l2": 0.0,
+              "memory_vs_own_current_meanabs": 0.0
+            },
+            {
+              "frame": 1,
+              "confidence": {
+                "mean": 0.7636120915412903,
+                "meanabs": 0.7636120915412903,
+                "l2": 109.71001434326172,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.022946815937757492,
+                "meanabs": 0.03245876729488373,
+                "l2": 24.664234161376953,
+                "min": -0.32377490401268005,
+                "max": 0.588901937007904
+              },
+              "state": {
+                "mean": 0.03123852238059044,
+                "meanabs": 0.04326864331960678,
+                "l2": 33.08353805541992,
+                "min": -0.38942474126815796,
+                "max": 0.6878066658973694
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4816119074821472,
+                "meanabs": 0.4816119074821472,
+                "l2": 174.37135314941406,
+                "min": 0.46725112199783325,
+                "max": 0.49356719851493835
+              },
+              "gated_carry_l2": 9.744566917419434,
+              "gated_carry_relative_fresh_l2": 0.3950889718959518,
+              "incoming_state": {
+                "mean": 0.02136705070734024,
+                "meanabs": 0.029299216344952583,
+                "l2": 22.909517288208008,
+                "min": -0.2663023769855499,
+                "max": 0.4631931781768799
+              },
+              "memory_vs_own_current_meanabs": 0.00016941968351602554
+            },
+            {
+              "frame": 2,
+              "confidence": {
+                "mean": 0.7792823910713196,
+                "meanabs": 0.7792823910713196,
+                "l2": 110.10857391357422,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.022731028497219086,
+                "meanabs": 0.03127403184771538,
+                "l2": 23.708040237426758,
+                "min": -0.3096431791782379,
+                "max": 0.5921139717102051
+              },
+              "state": {
+                "mean": 0.034475792199373245,
+                "meanabs": 0.04636064171791077,
+                "l2": 35.64707565307617,
+                "min": -0.35221004486083984,
+                "max": 0.8654743432998657
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4817003607749939,
+                "meanabs": 0.4817003607749939,
+                "l2": 174.40269470214844,
+                "min": 0.4673137366771698,
+                "max": 0.49356669187545776
+              },
+              "gated_carry_l2": 13.357773780822754,
+              "gated_carry_relative_fresh_l2": 0.5634280036245033,
+              "incoming_state": {
+                "mean": 0.028562575578689575,
+                "meanabs": 0.03842245042324066,
+                "l2": 30.418689727783203,
+                "min": -0.35199418663978577,
+                "max": 0.6605260968208313
+              },
+              "memory_vs_own_current_meanabs": 0.00023974334180820733
+            },
+            {
+              "frame": 3,
+              "confidence": {
+                "mean": 0.7940194010734558,
+                "meanabs": 0.7940194010734558,
+                "l2": 111.33195495605469,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.022715535014867783,
+                "meanabs": 0.03096621111035347,
+                "l2": 23.462934494018555,
+                "min": -0.31548652052879333,
+                "max": 0.5772134065628052
+              },
+              "state": {
+                "mean": 0.03606422245502472,
+                "meanabs": 0.04752867668867111,
+                "l2": 36.373558044433594,
+                "min": -0.4440152049064636,
+                "max": 0.8156969547271729
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4817140996456146,
+                "meanabs": 0.4817140996456146,
+                "l2": 174.40786743164062,
+                "min": 0.46772053837776184,
+                "max": 0.4934489130973816
+              },
+              "gated_carry_l2": 14.553638458251953,
+              "gated_carry_relative_fresh_l2": 0.6202821075923873,
+              "incoming_state": {
+                "mean": 0.032046426087617874,
+                "meanabs": 0.04169560968875885,
+                "l2": 32.777931213378906,
+                "min": -0.3465881943702698,
+                "max": 0.7614662051200867
+              },
+              "memory_vs_own_current_meanabs": 0.00027336148195900023
+            },
+            {
+              "frame": 4,
+              "confidence": {
+                "mean": 0.8178538680076599,
+                "meanabs": 0.8178538680076599,
+                "l2": 114.09902954101562,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.022729739546775818,
+                "meanabs": 0.031906936317682266,
+                "l2": 24.21440315246582,
+                "min": -0.34604716300964355,
+                "max": 0.5808879733085632
+              },
+              "state": {
+                "mean": 0.03746795654296875,
+                "meanabs": 0.050111088901758194,
+                "l2": 38.215763092041016,
+                "min": -0.49108242988586426,
+                "max": 0.8242247104644775
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4817000925540924,
+                "meanabs": 0.4817000925540924,
+                "l2": 174.40335083007812,
+                "min": 0.4677887260913849,
+                "max": 0.4934968650341034
+              },
+              "gated_carry_l2": 15.792537689208984,
+              "gated_carry_relative_fresh_l2": 0.6521960334835173,
+              "incoming_state": {
+                "mean": 0.03449099138379097,
+                "meanabs": 0.0443970263004303,
+                "l2": 35.000648498535156,
+                "min": -0.4440152049064636,
+                "max": 0.7752388715744019
+              },
+              "memory_vs_own_current_meanabs": 0.00029785861261188984
+            },
+            {
+              "frame": 5,
+              "confidence": {
+                "mean": 0.40020686388015747,
+                "meanabs": 0.40020686388015747,
+                "l2": 78.00618743896484,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.02267087996006012,
+                "meanabs": 0.032208628952503204,
+                "l2": 24.49765968322754,
+                "min": -0.3156861364841461,
+                "max": 0.5997453927993774
+              },
+              "state": {
+                "mean": 0.03233370929956436,
+                "meanabs": 0.04318796470761299,
+                "l2": 35.094970703125,
+                "min": -0.4225887358188629,
+                "max": 0.8134374618530273
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.48172616958618164,
+                "meanabs": 0.48172616958618164,
+                "l2": 174.41282653808594,
+                "min": 0.4674747884273529,
+                "max": 0.4935198724269867
+              },
+              "gated_carry_l2": 13.55986499786377,
+              "gated_carry_relative_fresh_l2": 0.5535167511183775,
+              "incoming_state": {
+                "mean": 0.03573867306113243,
+                "meanabs": 0.04540710151195526,
+                "l2": 36.12459945678711,
+                "min": -0.4694432318210602,
+                "max": 0.754073977470398
+              },
+              "memory_vs_own_current_meanabs": 0.0001619392860447988
+            },
+            {
+              "frame": 6,
+              "confidence": {
+                "mean": 0.3667055368423462,
+                "meanabs": 0.3667055368423462,
+                "l2": 74.88642120361328,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.022566378116607666,
+                "meanabs": 0.03226107731461525,
+                "l2": 24.42104148864746,
+                "min": -0.2681604027748108,
+                "max": 0.6164069771766663
+              },
+              "state": {
+                "mean": 0.030909523367881775,
+                "meanabs": 0.0418396070599556,
+                "l2": 34.07375717163086,
+                "min": -0.35066545009613037,
+                "max": 0.7937716841697693
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.48166564106941223,
+                "meanabs": 0.48166564106941223,
+                "l2": 174.3905792236328,
+                "min": 0.46763262152671814,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 12.559247016906738,
+              "gated_carry_relative_fresh_l2": 0.5142797461256974,
+              "incoming_state": {
+                "mean": 0.030708521604537964,
+                "meanabs": 0.038689300417900085,
+                "l2": 33.04703903198242,
+                "min": -0.29247915744781494,
+                "max": 0.8134374618530273
+              },
+              "memory_vs_own_current_meanabs": 0.000126215789350681
+            },
+            {
+              "frame": 7,
+              "confidence": {
+                "mean": 0.35209450125694275,
+                "meanabs": 0.35209450125694275,
+                "l2": 72.78606414794922,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.022132642567157745,
+                "meanabs": 0.031618475914001465,
+                "l2": 24.182390213012695,
+                "min": -0.29146620631217957,
+                "max": 0.5764171481132507
+              },
+              "state": {
+                "mean": 0.0300110075622797,
+                "meanabs": 0.040737759321928024,
+                "l2": 33.46417236328125,
+                "min": -0.29146620631217957,
+                "max": 0.8311058282852173
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.48181217908859253,
+                "meanabs": 0.48181217908859253,
+                "l2": 174.4438018798828,
+                "min": 0.4674128592014313,
+                "max": 0.4934726059436798
+              },
+              "gated_carry_l2": 12.260705947875977,
+              "gated_carry_relative_fresh_l2": 0.5070096810065704,
+              "incoming_state": {
+                "mean": 0.028706079348921776,
+                "meanabs": 0.036317549645900726,
+                "l2": 31.837862014770508,
+                "min": -0.250192254781723,
+                "max": 0.790379524230957
+              },
+              "memory_vs_own_current_meanabs": 0.00012183318176539615
+            },
+            {
+              "frame": 8,
+              "confidence": {
+                "mean": 0.3482542335987091,
+                "meanabs": 0.3482542335987091,
+                "l2": 72.70494842529297,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.020282134413719177,
+                "meanabs": 0.031142977997660637,
+                "l2": 24.35908317565918,
+                "min": -0.2903243601322174,
+                "max": 0.6195200085639954
+              },
+              "state": {
+                "mean": 0.02768598310649395,
+                "meanabs": 0.03986385464668274,
+                "l2": 33.79185104370117,
+                "min": -0.2903243601322174,
+                "max": 0.8381528258323669
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4827447235584259,
+                "meanabs": 0.4827447235584259,
+                "l2": 174.78359985351562,
+                "min": 0.4670029580593109,
+                "max": 0.4934995472431183
+              },
+              "gated_carry_l2": 12.215211868286133,
+              "gated_carry_relative_fresh_l2": 0.5014643523403289,
+              "incoming_state": {
+                "mean": 0.026742590591311455,
+                "meanabs": 0.03495460003614426,
+                "l2": 30.87357521057129,
+                "min": -0.22179529070854187,
+                "max": 0.8311058282852173
+              },
+              "memory_vs_own_current_meanabs": 0.00011561442079255357
+            },
+            {
+              "frame": 9,
+              "confidence": {
+                "mean": 0.4257248044013977,
+                "meanabs": 0.4257248044013977,
+                "l2": 78.91973876953125,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.018671425059437752,
+                "meanabs": 0.02920738235116005,
+                "l2": 23.5985050201416,
+                "min": -0.25835201144218445,
+                "max": 0.6243906617164612
+              },
+              "state": {
+                "mean": 0.02572174370288849,
+                "meanabs": 0.038212403655052185,
+                "l2": 33.526371002197266,
+                "min": -0.25835201144218445,
+                "max": 0.9048061370849609
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4835769534111023,
+                "meanabs": 0.4835769534111023,
+                "l2": 175.08535766601562,
+                "min": 0.46797630190849304,
+                "max": 0.49345436692237854
+              },
+              "gated_carry_l2": 12.52616024017334,
+              "gated_carry_relative_fresh_l2": 0.5308031262777924,
+              "incoming_state": {
+                "mean": 0.024392345920205116,
+                "meanabs": 0.033799272030591965,
+                "l2": 30.915977478027344,
+                "min": -0.22968953847885132,
+                "max": 0.7027570605278015
+              },
+              "memory_vs_own_current_meanabs": 0.00012726988643407822
+            },
+            {
+              "frame": 10,
+              "confidence": {
+                "mean": 0.841185986995697,
+                "meanabs": 0.841185986995697,
+                "l2": 115.34355926513672,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.017802109941840172,
+                "meanabs": 0.028477009385824203,
+                "l2": 23.286230087280273,
+                "min": -0.30807554721832275,
+                "max": 0.6244156360626221
+              },
+              "state": {
+                "mean": 0.028003674000501633,
+                "meanabs": 0.042703576385974884,
+                "l2": 36.39619064331055,
+                "min": -0.39389273524284363,
+                "max": 0.7949298620223999
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4839840531349182,
+                "meanabs": 0.4839840531349182,
+                "l2": 175.2330322265625,
+                "min": 0.46807050704956055,
+                "max": 0.49349844455718994
+              },
+              "gated_carry_l2": 14.457625389099121,
+              "gated_carry_relative_fresh_l2": 0.6208658651447563,
+              "incoming_state": {
+                "mean": 0.023426640778779984,
+                "meanabs": 0.034060776233673096,
+                "l2": 31.47336196899414,
+                "min": -0.23542237281799316,
+                "max": 0.6626120805740356
+              },
+              "memory_vs_own_current_meanabs": 0.00021051087242085487
+            },
+            {
+              "frame": 11,
+              "confidence": {
+                "mean": 0.7844310998916626,
+                "meanabs": 0.7844310998916626,
+                "l2": 110.18888092041016,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.016408156603574753,
+                "meanabs": 0.026178620755672455,
+                "l2": 21.889328002929688,
+                "min": -0.2531073987483978,
+                "max": 0.6215376257896423
+              },
+              "state": {
+                "mean": 0.026433579623699188,
+                "meanabs": 0.040429625660181046,
+                "l2": 35.3042106628418,
+                "min": -0.3576246500015259,
+                "max": 0.8596179485321045
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4846629500389099,
+                "meanabs": 0.4846629500389099,
+                "l2": 175.47828674316406,
+                "min": 0.46844711899757385,
+                "max": 0.4934011995792389
+              },
+              "gated_carry_l2": 14.820929527282715,
+              "gated_carry_relative_fresh_l2": 0.6770847202481076,
+              "incoming_state": {
+                "mean": 0.02457159385085106,
+                "meanabs": 0.03671639785170555,
+                "l2": 33.265907287597656,
+                "min": -0.35498133301734924,
+                "max": 0.7949298620223999
+              },
+              "memory_vs_own_current_meanabs": 0.00022168851864989847
+            },
+            {
+              "frame": 12,
+              "confidence": {
+                "mean": 0.927433431148529,
+                "meanabs": 0.927433431148529,
+                "l2": 122.082275390625,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.015953214839100838,
+                "meanabs": 0.025849226862192154,
+                "l2": 21.621631622314453,
+                "min": -0.2734890878200531,
+                "max": 0.616712749004364
+              },
+              "state": {
+                "mean": 0.02736496552824974,
+                "meanabs": 0.04279284179210663,
+                "l2": 36.59267807006836,
+                "min": -0.41433417797088623,
+                "max": 0.8879048824310303
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4848906397819519,
+                "meanabs": 0.4848906397819519,
+                "l2": 175.56118774414062,
+                "min": 0.46844711899757385,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 15.847054481506348,
+              "gated_carry_relative_fresh_l2": 0.7329259307679401,
+              "incoming_state": {
+                "mean": 0.024923333898186684,
+                "meanabs": 0.0378287136554718,
+                "l2": 33.740272521972656,
+                "min": -0.3576246500015259,
+                "max": 0.8596179485321045
+              },
+              "memory_vs_own_current_meanabs": 0.0002617167483549565
+            },
+            {
+              "frame": 13,
+              "confidence": {
+                "mean": 0.9176677465438843,
+                "meanabs": 0.9176677465438843,
+                "l2": 121.16973114013672,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.015862684696912766,
+                "meanabs": 0.02582923322916031,
+                "l2": 21.572736740112305,
+                "min": -0.2697840929031372,
+                "max": 0.6099160313606262
+              },
+              "state": {
+                "mean": 0.027874551713466644,
+                "meanabs": 0.04377582669258118,
+                "l2": 37.317508697509766,
+                "min": -0.38831114768981934,
+                "max": 0.9043898582458496
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.48493731021881104,
+                "meanabs": 0.48493731021881104,
+                "l2": 175.57818603515625,
+                "min": 0.4685409963130951,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 16.510456085205078,
+              "gated_carry_relative_fresh_l2": 0.7653389685373376,
+              "incoming_state": {
+                "mean": 0.026548078283667564,
+                "meanabs": 0.04063231870532036,
+                "l2": 35.48492431640625,
+                "min": -0.3497886061668396,
+                "max": 0.8879048824310303
+              },
+              "memory_vs_own_current_meanabs": 0.0002789520367514342
+            },
+            {
+              "frame": 14,
+              "confidence": {
+                "mean": 0.8949435949325562,
+                "meanabs": 0.8949435949325562,
+                "l2": 119.8228530883789,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.015554241836071014,
+                "meanabs": 0.025933153927326202,
+                "l2": 21.46824836730957,
+                "min": -0.2794923186302185,
+                "max": 0.6002048850059509
+              },
+              "state": {
+                "mean": 0.027328569442033768,
+                "meanabs": 0.043357886373996735,
+                "l2": 36.79402160644531,
+                "min": -0.3477970361709595,
+                "max": 1.0167535543441772
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.48510295152664185,
+                "meanabs": 0.48510295152664185,
+                "l2": 175.6374053955078,
+                "min": 0.4683047831058502,
+                "max": 0.49354252219200134
+              },
+              "gated_carry_l2": 16.28083610534668,
+              "gated_carry_relative_fresh_l2": 0.7583681643136783,
+              "incoming_state": {
+                "mean": 0.02606518380343914,
+                "meanabs": 0.03976915776729584,
+                "l2": 35.01290512084961,
+                "min": -0.30905166268348694,
+                "max": 0.8852952122688293
+              },
+              "memory_vs_own_current_meanabs": 0.00027781756944023073
+            },
+            {
+              "frame": 15,
+              "confidence": {
+                "mean": 0.4327525794506073,
+                "meanabs": 0.4327525794506073,
+                "l2": 78.80860900878906,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.01623465307056904,
+                "meanabs": 0.02647968754172325,
+                "l2": 21.4954833984375,
+                "min": -0.2671588957309723,
+                "max": 0.607199490070343
+              },
+              "state": {
+                "mean": 0.022678911685943604,
+                "meanabs": 0.03580543398857117,
+                "l2": 31.751428604125977,
+                "min": -0.2671588957309723,
+                "max": 1.0233447551727295
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.48480749130249023,
+                "meanabs": 0.48480749130249023,
+                "l2": 175.53089904785156,
+                "min": 0.46765822172164917,
+                "max": 0.4935430586338043
+              },
+              "gated_carry_l2": 13.061716079711914,
+              "gated_carry_relative_fresh_l2": 0.6076493297499588,
+              "incoming_state": {
+                "mean": 0.026335958391427994,
+                "meanabs": 0.03943528234958649,
+                "l2": 35.121002197265625,
+                "min": -0.32211655378341675,
+                "max": 0.8873717784881592
+              },
+              "memory_vs_own_current_meanabs": 0.00016299803974106908
+            }
+          ],
+          "memory_vs_own_current_meanabs": 0.00019043371139559895
+        },
+        "reds_073-stream-000-00": {
+          "patch_sha256": "8c6d38cb8e167ad5ce2b3744313ef8a6501dc5ecdf6395afb6c6a0869b341a65",
+          "first_frame_exact": true,
+          "frames": [
+            {
+              "frame": 0,
+              "confidence": {
+                "mean": 0.0,
+                "meanabs": 0.0,
+                "l2": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              },
+              "fresh": {
+                "mean": 0.012166024185717106,
+                "meanabs": 0.03504083305597305,
+                "l2": 28.252180099487305,
+                "min": -0.4260193407535553,
+                "max": 0.6404169797897339
+              },
+              "state": {
+                "mean": 0.012166024185717106,
+                "meanabs": 0.03504083305597305,
+                "l2": 28.252180099487305,
+                "min": -0.4260193407535553,
+                "max": 0.6404169797897339
+              },
+              "history_present": false,
+              "learned_sigmoid_gate": null,
+              "gated_carry_l2": 0.0,
+              "gated_carry_relative_fresh_l2": 0.0,
+              "memory_vs_own_current_meanabs": 0.0
+            },
+            {
+              "frame": 1,
+              "confidence": {
+                "mean": 0.9064955711364746,
+                "meanabs": 0.9064955711364746,
+                "l2": 120.3255844116211,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.012003721669316292,
+                "meanabs": 0.03317343816161156,
+                "l2": 26.872392654418945,
+                "min": -0.4155707359313965,
+                "max": 0.6327723860740662
+              },
+              "state": {
+                "mean": 0.0168667733669281,
+                "meanabs": 0.04770921170711517,
+                "l2": 38.637664794921875,
+                "min": -0.6155200004577637,
+                "max": 0.8572968244552612
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4869349002838135,
+                "meanabs": 0.4869349002838135,
+                "l2": 176.29391479492188,
+                "min": 0.47331109642982483,
+                "max": 0.4935683012008667
+              },
+              "gated_carry_l2": 12.374454498291016,
+              "gated_carry_relative_fresh_l2": 0.460489494085155,
+              "incoming_state": {
+                "mean": 0.010900179855525494,
+                "meanabs": 0.032756268978118896,
+                "l2": 26.530241012573242,
+                "min": -0.4168439507484436,
+                "max": 0.549811601638794
+              },
+              "memory_vs_own_current_meanabs": 0.0003058429283555597
+            },
+            {
+              "frame": 2,
+              "confidence": {
+                "mean": 0.8271248936653137,
+                "meanabs": 0.8271248936653137,
+                "l2": 113.51213073730469,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.012239913456141949,
+                "meanabs": 0.03501630574464798,
+                "l2": 28.050844192504883,
+                "min": -0.37364667654037476,
+                "max": 0.6174015402793884
+              },
+              "state": {
+                "mean": 0.018833737820386887,
+                "meanabs": 0.05397903174161911,
+                "l2": 43.43976974487305,
+                "min": -0.6514129042625427,
+                "max": 0.8336582183837891
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.48684147000312805,
+                "meanabs": 0.48684147000312805,
+                "l2": 176.26007080078125,
+                "min": 0.4736851155757904,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 16.90690040588379,
+              "gated_carry_relative_fresh_l2": 0.6027234078894949,
+              "incoming_state": {
+                "mean": 0.01598455011844635,
+                "meanabs": 0.046931371092796326,
+                "l2": 38.3659553527832,
+                "min": -0.6133511066436768,
+                "max": 0.8572968244552612
+              },
+              "memory_vs_own_current_meanabs": 0.00041100280941464007
+            },
+            {
+              "frame": 3,
+              "confidence": {
+                "mean": 0.8367566466331482,
+                "meanabs": 0.8367566466331482,
+                "l2": 114.58352661132812,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.012406449764966965,
+                "meanabs": 0.036418572068214417,
+                "l2": 28.682626724243164,
+                "min": -0.39329251646995544,
+                "max": 0.6046757102012634
+              },
+              "state": {
+                "mean": 0.019584786146879196,
+                "meanabs": 0.057504571974277496,
+                "l2": 45.253543853759766,
+                "min": -0.7011758089065552,
+                "max": 0.8435125350952148
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.48673367500305176,
+                "meanabs": 0.48673367500305176,
+                "l2": 176.22073364257812,
+                "min": 0.4729593098163605,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 18.52865982055664,
+              "gated_carry_relative_fresh_l2": 0.6459889465038369,
+              "incoming_state": {
+                "mean": 0.01713607646524906,
+                "meanabs": 0.05211055651307106,
+                "l2": 42.51153564453125,
+                "min": -0.6462298035621643,
+                "max": 0.818832516670227
+              },
+              "memory_vs_own_current_meanabs": 0.00046790859778411686
+            },
+            {
+              "frame": 4,
+              "confidence": {
+                "mean": 0.815976619720459,
+                "meanabs": 0.815976619720459,
+                "l2": 113.37957000732422,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.012399332597851753,
+                "meanabs": 0.03952425718307495,
+                "l2": 30.46022605895996,
+                "min": -0.4188109040260315,
+                "max": 0.676356315612793
+              },
+              "state": {
+                "mean": 0.019860660657286644,
+                "meanabs": 0.061888210475444794,
+                "l2": 48.07810592651367,
+                "min": -0.7531498074531555,
+                "max": 0.8924040198326111
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4866824150085449,
+                "meanabs": 0.4866824150085449,
+                "l2": 176.202880859375,
+                "min": 0.4717439115047455,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 19.722679138183594,
+              "gated_carry_relative_fresh_l2": 0.64748958527122,
+              "incoming_state": {
+                "mean": 0.017939092591404915,
+                "meanabs": 0.05492030084133148,
+                "l2": 44.041934967041016,
+                "min": -0.6963770985603333,
+                "max": 0.8435125350952148
+              },
+              "memory_vs_own_current_meanabs": 0.0004892977885901928
+            },
+            {
+              "frame": 5,
+              "confidence": {
+                "mean": 0.8061047792434692,
+                "meanabs": 0.8061047792434692,
+                "l2": 113.20613098144531,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.012474529445171356,
+                "meanabs": 0.039442114531993866,
+                "l2": 30.25719451904297,
+                "min": -0.41193920373916626,
+                "max": 0.6491773128509521
+              },
+              "state": {
+                "mean": 0.02016296237707138,
+                "meanabs": 0.06274212151765823,
+                "l2": 48.85279083251953,
+                "min": -0.7665867805480957,
+                "max": 0.9004007577896118
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4865257740020752,
+                "meanabs": 0.4865257740020752,
+                "l2": 176.14593505859375,
+                "min": 0.47113701701164246,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 21.207242965698242,
+              "gated_carry_relative_fresh_l2": 0.7008991845675263,
+              "incoming_state": {
+                "mean": 0.01855849288403988,
+                "meanabs": 0.05979663133621216,
+                "l2": 47.77476119995117,
+                "min": -0.7491894960403442,
+                "max": 0.8912063837051392
+              },
+              "memory_vs_own_current_meanabs": 0.0005145806935615838
+            },
+            {
+              "frame": 6,
+              "confidence": {
+                "mean": 0.5353081226348877,
+                "meanabs": 0.5353081226348877,
+                "l2": 89.50657653808594,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.012877918779850006,
+                "meanabs": 0.03939063102006912,
+                "l2": 30.091930389404297,
+                "min": -0.40927866101264954,
+                "max": 0.6798443794250488
+              },
+              "state": {
+                "mean": 0.01843976229429245,
+                "meanabs": 0.054545819759368896,
+                "l2": 43.36091232299805,
+                "min": -0.707064151763916,
+                "max": 0.8579321503639221
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4862808585166931,
+                "meanabs": 0.4862808585166931,
+                "l2": 176.05723571777344,
+                "min": 0.47067347168922424,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 17.515079498291016,
+              "gated_carry_relative_fresh_l2": 0.5820523732322028,
+              "incoming_state": {
+                "mean": 0.01943044364452362,
+                "meanabs": 0.06229310855269432,
+                "l2": 50.051212310791016,
+                "min": -0.7571374773979187,
+                "max": 0.9004007577896118
+              },
+              "memory_vs_own_current_meanabs": 0.00035738476435653865
+            },
+            {
+              "frame": 7,
+              "confidence": {
+                "mean": 0.2895853817462921,
+                "meanabs": 0.2895853817462921,
+                "l2": 62.26298141479492,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.013232852332293987,
+                "meanabs": 0.03617645800113678,
+                "l2": 27.995807647705078,
+                "min": -0.39018508791923523,
+                "max": 0.5115649700164795
+              },
+              "state": {
+                "mean": 0.016241464763879776,
+                "meanabs": 0.0422898605465889,
+                "l2": 33.83314514160156,
+                "min": -0.6115657091140747,
+                "max": 0.6872308254241943
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4862140417098999,
+                "meanabs": 0.4862140417098999,
+                "l2": 176.0337677001953,
+                "min": 0.47063344717025757,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 11.783637046813965,
+              "gated_carry_relative_fresh_l2": 0.4209072013601977,
+              "incoming_state": {
+                "mean": 0.018451368436217308,
+                "meanabs": 0.05926796793937683,
+                "l2": 47.70230484008789,
+                "min": -0.616582989692688,
+                "max": 0.8579321503639221
+              },
+              "memory_vs_own_current_meanabs": 0.00017590615607332438
+            },
+            {
+              "frame": 8,
+              "confidence": {
+                "mean": 0.9006307125091553,
+                "meanabs": 0.9006307125091553,
+                "l2": 120.75508117675781,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.013024428859353065,
+                "meanabs": 0.03573033958673477,
+                "l2": 27.93027687072754,
+                "min": -0.3926231861114502,
+                "max": 0.5499817728996277
+              },
+              "state": {
+                "mean": 0.019672295078635216,
+                "meanabs": 0.05346326529979706,
+                "l2": 42.40158462524414,
+                "min": -0.6529022455215454,
+                "max": 0.7225424647331238
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.48628896474838257,
+                "meanabs": 0.48628896474838257,
+                "l2": 176.06105041503906,
+                "min": 0.46895092725753784,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 15.690313339233398,
+              "gated_carry_relative_fresh_l2": 0.5617671966466508,
+              "incoming_state": {
+                "mean": 0.0147402910515666,
+                "meanabs": 0.03946343809366226,
+                "l2": 33.037960052490234,
+                "min": -0.6013133525848389,
+                "max": 0.6872308254241943
+              },
+              "memory_vs_own_current_meanabs": 0.0003570157859940082
+            },
+            {
+              "frame": 9,
+              "confidence": {
+                "mean": 0.8800456523895264,
+                "meanabs": 0.8800456523895264,
+                "l2": 118.91969299316406,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.013077298179268837,
+                "meanabs": 0.03490807116031647,
+                "l2": 27.226633071899414,
+                "min": -0.40605366230010986,
+                "max": 0.5269866585731506
+              },
+              "state": {
+                "mean": 0.02126183547079563,
+                "meanabs": 0.056835610419511795,
+                "l2": 45.2161865234375,
+                "min": -0.6657475829124451,
+                "max": 0.8500508069992065
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4862321615219116,
+                "meanabs": 0.4862321615219116,
+                "l2": 176.04029846191406,
+                "min": 0.4678237736225128,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 19.408029556274414,
+              "gated_carry_relative_fresh_l2": 0.7128325233980336,
+              "incoming_state": {
+                "mean": 0.018599148839712143,
+                "meanabs": 0.05125482380390167,
+                "l2": 42.03905487060547,
+                "min": -0.6529022455215454,
+                "max": 0.7218799591064453
+              },
+              "memory_vs_own_current_meanabs": 0.00045139482244849205
+            },
+            {
+              "frame": 10,
+              "confidence": {
+                "mean": 0.26105543971061707,
+                "meanabs": 0.26105543971061707,
+                "l2": 59.01183319091797,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.012675140053033829,
+                "meanabs": 0.0318431593477726,
+                "l2": 25.280611038208008,
+                "min": -0.3650106191635132,
+                "max": 0.5480769276618958
+              },
+              "state": {
+                "mean": 0.015190869569778442,
+                "meanabs": 0.036339934915304184,
+                "l2": 29.711946487426758,
+                "min": -0.6259666085243225,
+                "max": 0.7171787619590759
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4864082336425781,
+                "meanabs": 0.4864082336425781,
+                "l2": 176.10382080078125,
+                "min": 0.4701145887374878,
+                "max": 0.4935908317565918
+              },
+              "gated_carry_l2": 10.899622917175293,
+              "gated_carry_relative_fresh_l2": 0.4311455486855947,
+              "incoming_state": {
+                "mean": 0.01942059025168419,
+                "meanabs": 0.053140025585889816,
+                "l2": 43.63639831542969,
+                "min": -0.6416158676147461,
+                "max": 0.7447071671485901
+              },
+              "memory_vs_own_current_meanabs": 0.000166160476510413
+            },
+            {
+              "frame": 11,
+              "confidence": {
+                "mean": 0.26767584681510925,
+                "meanabs": 0.26767584681510925,
+                "l2": 59.38943862915039,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.012511699460446835,
+                "meanabs": 0.026726949959993362,
+                "l2": 21.581806182861328,
+                "min": -0.42351865768432617,
+                "max": 0.5088700652122498
+              },
+              "state": {
+                "mean": 0.014278849586844444,
+                "meanabs": 0.02960311621427536,
+                "l2": 23.62837028503418,
+                "min": -0.6153306365013123,
+                "max": 0.6177189350128174
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4865843653678894,
+                "meanabs": 0.4865843653678894,
+                "l2": 176.1667938232422,
+                "min": 0.4702088236808777,
+                "max": 0.49354252219200134
+              },
+              "gated_carry_l2": 6.197082042694092,
+              "gated_carry_relative_fresh_l2": 0.2871438094748231,
+              "incoming_state": {
+                "mean": 0.01352829672396183,
+                "meanabs": 0.031918883323669434,
+                "l2": 27.682205200195312,
+                "min": -0.6223475337028503,
+                "max": 0.69101482629776
+              },
+              "memory_vs_own_current_meanabs": 9.255293844034895e-05
+            },
+            {
+              "frame": 12,
+              "confidence": {
+                "mean": 0.5158348679542542,
+                "meanabs": 0.5158348679542542,
+                "l2": 85.61418151855469,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.012467248365283012,
+                "meanabs": 0.025537434965372086,
+                "l2": 21.043861389160156,
+                "min": -0.3125891089439392,
+                "max": 0.48314368724823
+              },
+              "state": {
+                "mean": 0.015516404062509537,
+                "meanabs": 0.030861765146255493,
+                "l2": 25.002521514892578,
+                "min": -0.3648160994052887,
+                "max": 0.5517226457595825
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.48663556575775146,
+                "meanabs": 0.48663556575775146,
+                "l2": 176.18563842773438,
+                "min": 0.47033336758613586,
+                "max": 0.4934313893318176
+              },
+              "gated_carry_l2": 6.3675055503845215,
+              "gated_carry_relative_fresh_l2": 0.3025825647029052,
+              "incoming_state": {
+                "mean": 0.012780428864061832,
+                "meanabs": 0.026672739535570145,
+                "l2": 21.471784591674805,
+                "min": -0.41801291704177856,
+                "max": 0.504436731338501
+              },
+              "memory_vs_own_current_meanabs": 0.00012173460709163919
+            },
+            {
+              "frame": 13,
+              "confidence": {
+                "mean": 0.9110548496246338,
+                "meanabs": 0.9110548496246338,
+                "l2": 121.29670715332031,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.013030480593442917,
+                "meanabs": 0.02516426518559456,
+                "l2": 20.73452377319336,
+                "min": -0.2518380582332611,
+                "max": 0.5121486186981201
+              },
+              "state": {
+                "mean": 0.019862785935401917,
+                "meanabs": 0.0382494181394577,
+                "l2": 31.179290771484375,
+                "min": -0.33133548498153687,
+                "max": 0.6542984247207642
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4864441752433777,
+                "meanabs": 0.4864441752433777,
+                "l2": 176.116455078125,
+                "min": 0.4703027009963989,
+                "max": 0.4934539198875427
+              },
+              "gated_carry_l2": 11.315964698791504,
+              "gated_carry_relative_fresh_l2": 0.5457547432761082,
+              "incoming_state": {
+                "mean": 0.015088426880538464,
+                "meanabs": 0.029683519154787064,
+                "l2": 24.537548065185547,
+                "min": -0.3125891089439392,
+                "max": 0.5191434621810913
+              },
+              "memory_vs_own_current_meanabs": 0.00023756037990096956
+            },
+            {
+              "frame": 14,
+              "confidence": {
+                "mean": 0.9100477695465088,
+                "meanabs": 0.9100477695465088,
+                "l2": 120.52330017089844,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.013270242139697075,
+                "meanabs": 0.024872977286577225,
+                "l2": 20.729084014892578,
+                "min": -0.23303982615470886,
+                "max": 0.5179687142372131
+              },
+              "state": {
+                "mean": 0.021707791835069656,
+                "meanabs": 0.040941331535577774,
+                "l2": 33.736759185791016,
+                "min": -0.3600446283817291,
+                "max": 0.7303434014320374
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.4863632917404175,
+                "meanabs": 0.4863632917404175,
+                "l2": 176.08688354492188,
+                "min": 0.47052088379859924,
+                "max": 0.4933169484138489
+              },
+              "gated_carry_l2": 13.937506675720215,
+              "gated_carry_relative_fresh_l2": 0.6723648119572948,
+              "incoming_state": {
+                "mean": 0.019046425819396973,
+                "meanabs": 0.036996014416217804,
+                "l2": 30.58599281311035,
+                "min": -0.3287159204483032,
+                "max": 0.6086888313293457
+              },
+              "memory_vs_own_current_meanabs": 0.00029458143399097025
+            },
+            {
+              "frame": 15,
+              "confidence": {
+                "mean": 0.9517608284950256,
+                "meanabs": 0.9517608284950256,
+                "l2": 124.21458435058594,
+                "min": 0.0,
+                "max": 1.0
+              },
+              "fresh": {
+                "mean": 0.013289332389831543,
+                "meanabs": 0.024986596778035164,
+                "l2": 20.803955078125,
+                "min": -0.26411980390548706,
+                "max": 0.5589888095855713
+              },
+              "state": {
+                "mean": 0.023057598620653152,
+                "meanabs": 0.04348231852054596,
+                "l2": 35.86977767944336,
+                "min": -0.38607728481292725,
+                "max": 0.7004497051239014
+              },
+              "history_present": true,
+              "learned_sigmoid_gate": {
+                "mean": 0.48633766174316406,
+                "meanabs": 0.48633766174316406,
+                "l2": 176.0776824951172,
+                "min": 0.4704272449016571,
+                "max": 0.49331381916999817
+              },
+              "gated_carry_l2": 15.772570610046387,
+              "gated_carry_relative_fresh_l2": 0.7581525027724643,
+              "incoming_state": {
+                "mean": 0.02097967267036438,
+                "meanabs": 0.04000164568424225,
+                "l2": 33.2872428894043,
+                "min": -0.3438805639743805,
+                "max": 0.7218062877655029
+              },
+              "memory_vs_own_current_meanabs": 0.0003370261983945966
+            }
+          ],
+          "memory_vs_own_current_meanabs": 0.0002987468906212598
+        }
+      }
+    }
+  },
+  "artifact_sha256": {
+    ".build/quality-breakthrough-r60b/run.exit.json": "1042bbd6a6bda3a18804bc1e2cd9cab3097ec83e096591a0874c07ef2bc68cff",
+    ".build/quality-breakthrough-r60b/comparison.json": "bc1e0fe424aab62d95eddba00b874ce3ced4568de0d0981634df54abcfaa4572",
+    ".build/quality-breakthrough-r41/visual-selection.json": "f9f442e91464dc55783305b8a9953b5c434d27d500edb80f9f540c7ce012a38c",
+    ".build/quality-breakthrough-r60b/current_2k/validation.json": "181948c62e5bf0ea72a8d782759d7a6bef671ac171f8f3e8758dda1acecb28f2",
+    ".build/quality-breakthrough-r60b/current_2k/experiment.json": "b547c862990688aed58cd0a256d946615a0fc12df10effb3606c3f6d6d8a794a",
+    ".build/quality-breakthrough-r60b/current_2k/complete.json": "ac04bd2526aa4e76f476198d88c1f9431c522f8a3e56e1d55166865ed05e251f",
+    ".build/quality-breakthrough-r60b/current_2k/step002000.pth": "bacf7e4b9b1bacc7bf9177519b0b773f53e2e4ce3f3f28aaadb4b0cddbecd13b",
+    ".build/quality-breakthrough-r60b/weak_2k/validation.json": "f23930495f7e383dd8152007a10226a2751b4d8f732ee4ff2aa2669a234aadac",
+    ".build/quality-breakthrough-r60b/weak_2k/experiment.json": "fbad4ecbd225eb228d8368190ec86bf622d62b304afdd97a645020b5e07b800d",
+    ".build/quality-breakthrough-r60b/weak_2k/complete.json": "c80477dd82841a7f4fa711db17c4827950403748c8a2c163c2dd4cb6e6c08253",
+    ".build/quality-breakthrough-r60b/weak_2k/step002000.pth": "87f37280f09766004345cbee508460b4818f54bd58e5f4723413e9a663d05cbb",
+    ".build/quality-breakthrough-r60b/balanced_2k/validation.json": "b2f45e6e4dcde4146c8caf312810d0b6c98305a162e7249d738154a236578235",
+    ".build/quality-breakthrough-r60b/balanced_2k/experiment.json": "f7b643a5631025630dbc8f77d7abbbe9e4224e389ce78c3adca0d710a33eab93",
+    ".build/quality-breakthrough-r60b/balanced_2k/complete.json": "efdc5e1fd4f7964be99ccd842adc26cdc9b2f9fbc04ab4384b3666f2fcc7f83e",
+    ".build/quality-breakthrough-r60b/balanced_2k/step002000.pth": "1e83fc33f89f7161d9503697b0e3ab3a11c360158de40ae30a837e4446db3f0c",
+    ".build/quality-breakthrough-r60b/current.exit.json": "fd9063308abb3f54ae97457a843ddc2b6662bd6a0637d5008d20683a91883d90",
+    ".build/quality-breakthrough-r60b/weak.exit.json": "b2d83f557ff67331f90223692ff5e13e70ad0a3d979abc2599cdf4f7a3b10f0a",
+    ".build/quality-breakthrough-r60b/balanced.exit.json": "82aa8392d33b97b93d762454cfae95e9ef1db449355954c2749f88efc2b7bb88",
+    ".build/quality-breakthrough-r41/visual-inputs/validation/sintel-stream-000-00.npz": "efb2d3e031f034340d2764338cdf31a35213a343df0171ce18eb8e62d01970d7",
+    ".build/quality-breakthrough-r41/visual-inputs/validation/reds_154-stream-000-00.npz": "4bb6c237cc0e507470fbfc18af15594275f5c5507816b406dcc9c57b8478ea7b",
+    ".build/quality-breakthrough-r41/visual-inputs/validation/reds_073-stream-000-00.npz": "8c6d38cb8e167ad5ce2b3744313ef8a6501dc5ecdf6395afb6c6a0869b341a65",
+    "Tools/architectures/full_lr_feature_span.py": "f57027e68ca81e66a9aa4fdd6ecfef72e74cbc741ae3aa795538b1f71c616a40",
+    "Tools/experiments/full_lr_frame_feeding.py": "537797be5893170a60d0c8c60b3e4128656adbd75861386756f8203aac025f48",
+    "Tools/experiments/train_full_lr_feature_span.py": "1ccb37da0535d5001c776793943a76dd104bc8591a2393313926f27bfbd22617",
+    "Tools/architectures/subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+    "Tools/experiments/recurrent_frame_feeding.py": "96736370ecdc7568e359d4b4a9d5c2a0cd0afdbb498dd680dccffce9bb31a433",
+    "Tools/experiments/native_stages.py": "8ed2e8c6ea5270c855d880bf20e5b14fa6f5948e2a921b389d8115c464938b86",
+    "Tools/experiments/train_causal_detail.py": "51b3b776485caa5ccaec4a7c58eec5d3b6060d22ad1c311c0561d2abb994ee7a",
+    "Tools/experiments/replay_recurrent_motion.py": "c2b1bbaded47c5e453a12b92bf862e0726241dcaf56c4df90d21b428996ebe3d",
+    "Tools/experiments/mmap_training_bank.py": "de1a78931b3a8a26ce1980d4b1a92ea887aeab7e70e26cd546e59ce534153b94",
+    "Tools/experiments/build_causal_bank.py": "ac9d0b9bc5385903658577ddd28f8f8fe5edf5f3c356aa7daff9a89a1bd87597",
+    "Tools/experiments/train_presented_detail.py": "76aa0cf85a567fbfe0db3f2fa5ff23a9a190ca42ede35fa576b9604d881cc743",
+    "Tools/experiments/train_ssm_span.py": "d0aeeaa414b09aff0266ba9278f9410dab877d29a5a78168366dfae00d1072ec",
+    "Tools/train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+    "Tools/frontier_eval/evaluate_sequences.py": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75",
+    "Tools/eval_checkpoint.py": "06140f64cccb178983681569629669eee2ad2a77a86d1e49dfba72f4b7b9b1fa",
+    "Tools/experiments/paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb",
+    "Tools/experiments/dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+    "Tools/experiments/dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a",
+    ".build/quality-breakthrough-r60b/gate-diagnostic.py": "41fdbdcf6f61cabc3125800d4fa727bb78ff79b95d4c29e09d074b9f22ce2840"
+  },
+  "source_hashes": {
+    "Tools/architectures/full_lr_feature_span.py": "f57027e68ca81e66a9aa4fdd6ecfef72e74cbc741ae3aa795538b1f71c616a40",
+    "Tools/experiments/full_lr_frame_feeding.py": "537797be5893170a60d0c8c60b3e4128656adbd75861386756f8203aac025f48",
+    "Tools/experiments/train_full_lr_feature_span.py": "1ccb37da0535d5001c776793943a76dd104bc8591a2393313926f27bfbd22617",
+    "Tools/architectures/subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+    "Tools/experiments/recurrent_frame_feeding.py": "96736370ecdc7568e359d4b4a9d5c2a0cd0afdbb498dd680dccffce9bb31a433",
+    "Tools/experiments/native_stages.py": "8ed2e8c6ea5270c855d880bf20e5b14fa6f5948e2a921b389d8115c464938b86",
+    "Tools/experiments/train_causal_detail.py": "51b3b776485caa5ccaec4a7c58eec5d3b6060d22ad1c311c0561d2abb994ee7a",
+    "Tools/experiments/replay_recurrent_motion.py": "c2b1bbaded47c5e453a12b92bf862e0726241dcaf56c4df90d21b428996ebe3d",
+    "Tools/experiments/mmap_training_bank.py": "de1a78931b3a8a26ce1980d4b1a92ea887aeab7e70e26cd546e59ce534153b94",
+    "Tools/experiments/build_causal_bank.py": "ac9d0b9bc5385903658577ddd28f8f8fe5edf5f3c356aa7daff9a89a1bd87597",
+    "Tools/experiments/train_presented_detail.py": "76aa0cf85a567fbfe0db3f2fa5ff23a9a190ca42ede35fa576b9604d881cc743",
+    "Tools/experiments/train_ssm_span.py": "d0aeeaa414b09aff0266ba9278f9410dab877d29a5a78168366dfae00d1072ec",
+    "Tools/train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+    "Tools/frontier_eval/evaluate_sequences.py": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75",
+    "Tools/eval_checkpoint.py": "06140f64cccb178983681569629669eee2ad2a77a86d1e49dfba72f4b7b9b1fa",
+    "Tools/experiments/paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb",
+    "Tools/experiments/dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+    "Tools/experiments/dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a"
+  }
+}

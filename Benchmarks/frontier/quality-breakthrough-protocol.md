@@ -1468,3 +1468,41 @@ projection preserves identical initial RGB despite the deliberately different
 decay biases; an additional hash excludes only that bias to verify every other
 branch tensor matches. This tests whether low initial retention limits learned
 memory. It is an unproven hypothesis, not a planned release change.
+
+
+r60 closes through recovery r60b. The original current arm completed; the weak
+arm failed after step 1,200 because eight orphaned collector PowerShell probes
+exhausted host memory. Parent verified and stopped only those probes, retained
+the failure logs, and reused the closed current artifacts byte-for-byte in a
+fresh root. Weak restarted from initialization; balanced then completed. No
+training code, data, losses or schedule changed. All 29 closed recovery files
+hash-match remotely; tests and actual CUDA critic smoke pass again. The remote
+Python list and all owned local processes are empty after collection/diagnostics.
+
+Higher initial retention does not improve this recipe. Balanced versus the
+trained current-only control changes LPIPS/DISTS +0.078%/+0.022%; weak changes
+-0.016%/+0.010%. Within the same model, enabling balanced history changes only
+-0.009%/+0.006%; at frame 15 the changes are -0.028%/-0.016%, with 25/72 sequences
+improving both distances (descriptive only). The fixed three-source gallery
+shows no broad recovery of missing detail. No model is promoted.
+
+The mechanism did change: on the three fixed 16-frame patches, mean learned
+gates are 0.483–0.492 for balanced versus 0.112–0.116 for weak. Carried-feature
+L2 relative to fresh features rises from 0.091–0.118 to 0.555–0.787. Mean RGB
+history contribution rises from 0.000013–0.000071 to 0.000090–0.000319, but remains
+small. This rules against weak initial retention alone explaining the failure
+of this matched recipe; it does not rule out all temporal architectures.
+A repeated current-only training run with matching initialization/input hashes
+changes aggregate LPIPS/DISTS by -0.011%/-0.009%; one repeat pair does not
+establish a statistical confidence interval. See
+`quality-breakthrough/full-lr-retention-comparison.json` and
+`quality-breakthrough/full-lr-retention-gate-diagnostic.json`.
+
+A source-path audit identifies an untested comparison: all observation-feature
+memory training in r58–r60 uses source TAA, so the current input already contains
+prior-frame luma history. The prepared r61 pair uses raw decoded input, with
+identical current-only and memory models initialized at retention 0.5. Raw also
+bypasses debanding; the matched within-policy pair isolates memory, but a
+cross-policy difference would not isolate TAA alone. Prior r54/r55 raw tests
+used generated-RGB history or single-frame models, not observation features.
+No r61 quality result or native admission is implied by this preparation.
