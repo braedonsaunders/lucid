@@ -133,3 +133,12 @@ LPIPS/DISTS improve1.523%/2.007%, with both better on all three sources, althoug
 fine correlation falls1.670%. It proceeds to native comparison alongside an
 unchanged-weight raw-pipeline control; no new weights or settings are promoted
 from these proxy results. [Matched four-arm evidence](raw-filtered-recurrence-comparison.json).
+
+The raw-input native follow-up is now complete. Disabling deband/TAA and the
+associated output grain with unchanged big2k worsens LPIPS/DISTS by7.262%/4.793%
+versus the current full-search default. The trained raw-input control recovers
+0.994%/1.097% relative to that raw configuration, but remains6.196%/3.643% worse
+than the current default. Ducks, ParkJoy and InToTree improve on both distances;
+Sunflower worsens45.882%/25.887%. Six fixed native crops show small local changes
+without broad recovery of reference detail. Neither model nor settings are
+promoted. [Completed native evidence](raw-input-native-comparison.json).

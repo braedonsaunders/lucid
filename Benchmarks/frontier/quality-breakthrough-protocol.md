@@ -1239,3 +1239,20 @@ three-patch gallery shows small differences, with missing reference structure
 remaining in dark texture, palms and chair edges. No recurrent weights are
 promoted. The raw SR-only control continues to the separately declared native
 comparison. See `quality-breakthrough/raw-filtered-recurrence-comparison.json`.
+
+r55 completes both960-frame native arms. Unchanged big2k in the raw configuration
+worsens LPIPS/DISTS7.262%/4.793% versus the current full-search default. The trained
+raw-input control improves0.994%/1.097% versus unchanged raw big2k, but remains
+6.196%/3.643% worse than the admitted default. Its gains are concentrated in natural
+scenes; Sunflower worsens45.882%/25.887%, RushHour29.197%/17.945%, and PedestrianArea
+16.831%/15.462%. Both arms share exact input NV12 and reference hashes with the
+baseline. Candidate capture uses the admitted rebuilt executable; the frozen
+r51 baseline uses its earlier policy-probe executable, with default equivalence
+separately established by the existing r52 admission receipt.
+
+Six fixed native crops were inspected for each arm. Small local differences do
+not establish broad recovery of reference detail, and the source-level regressions
+are substantial. No weights or settings are promoted. Complete RGB/score/reference
+and packet hashes were verified before deleting only the1920 owned temporary LUCE
+packets; RGB images, manifests and metrics remain. The two training/control runs
+and all native processes have exited. See `quality-breakthrough/raw-input-native-comparison.json`.
