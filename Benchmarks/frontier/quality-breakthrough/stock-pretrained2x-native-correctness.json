@@ -1,0 +1,202 @@
+{
+  "status": "correctness_rejected_no_timing",
+  "scope": "640x360 fixed random input, stock pretrained2x; no quality or playback evidence",
+  "unchanged_gate": {
+    "max_rgb": 3,
+    "mean_rgb": 0.6
+  },
+  "selective_fp16_failure": {
+    "big2k_correctness": "not reached; gate tripped on stock first (dict order stock, big2k)",
+    "big2k_mlpackage": ".build/quality-breakthrough-r62-stock/runtime/big2k_direct2x_640x360.mlpackage",
+    "compute_units": "CPU_AND_GPU",
+    "correctness_gate": {
+      "mean_rgb_limit": 0.6,
+      "result": "REJECT",
+      "variant": "stock2x_ch48"
+    },
+    "error_quantiles": {
+      "p50": 0.0,
+      "p90": 82.16278305,
+      "p99": 255.0,
+      "p999": 255.0,
+      "p100": 255.0
+    },
+    "error_structure": {
+      "big_err_bbox_cols": [
+        0,
+        1279
+      ],
+      "big_err_bbox_rows": [
+        0,
+        719
+      ],
+      "big_err_pixel_frac_gt50": 0.25290147569444443,
+      "frac_gt10": 0.12897243923611112,
+      "frac_gt100": 0.09402886284722223,
+      "frac_gt3": 0.13224103009259258,
+      "frac_gt50": 0.11188440393518519,
+      "median_zero_but_tail_wild": "conversion breaks on a minority of pixels, not a global level shift"
+    },
+    "exit_status_note": "invocation piped through grep, masking the Python nonzero exit; recorded here as correctness failure, not exit0 success",
+    "input_size": "640x360",
+    "max_rgb": 255.0,
+    "mean_rgb": 22.65656280517578,
+    "native_mean_level": 140.2705535888672,
+    "native_range": [
+      0.0,
+      255.0
+    ],
+    "output_shape": [
+      720,
+      1280,
+      3
+    ],
+    "per_channel_maxerr_meanerr_nativemean_torchmean": {
+      "B": [
+        255.0,
+        23.107649,
+        139.72354,
+        139.67036
+      ],
+      "G": [
+        255.0,
+        22.451845,
+        140.77014,
+        140.80795
+      ],
+      "R": [
+        255.0,
+        22.410194,
+        140.31796,
+        140.36589
+      ]
+    },
+    "precision": "selective_fp16 mul-fp32 (ImageRange wrapper)",
+    "script_sha256": "8308c5105cc61c86becd1e200129ecc7644a8b33b2b774c2de68fd1b4354d888",
+    "script_source": "retained at .build/quality-breakthrough-r62-stock/runtime/r62_stock_profile.py (copied from /tmp, sha verified equal)",
+    "source_sha256": {
+      "architectures/span_arch.py": "0fd7c3c6bddcf6fd9c547793a58e9ded66a99e75c106fa20aa3e1cd059f6a806",
+      "convert_span.py": "0768c5dcc702218dba6563488d16de72b17ec38af20c9c477cbafe2cbd3b2fd7",
+      "eval_checkpoint.py": "06140f64cccb178983681569629669eee2ad2a77a86d1e49dfba72f4b7b9b1fa",
+      "train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e"
+    },
+    "status": "first invocation preserved; gate failure, no timings measured, no retries per parent",
+    "stock_checkpoint_sha256": "561fd5cf419a23d4de1231ce258180f61aee4aa8caa1aaaa783769c7301847bc",
+    "stock_mlpackage": ".build/quality-breakthrough-r62-stock/runtime/stock2x_ch48_640x360.mlpackage",
+    "torch_mean_level": 140.28140258789062,
+    "torch_out_finite": true,
+    "torch_out_range": [
+      0.0,
+      255.0
+    ],
+    "torch_trace_vs_eager": "max 0.0 / mean 0.0 (exact); failure is in native conversion, not tracing"
+  },
+  "fp32_diagnostic": {
+    "purpose": "stock pretrained2x SPAN native CoreML cost feasibility at 640x360; no quality or admission claim (stock three-patch LPIPS is worse15%)",
+    "stock_checkpoint_sha256": "561fd5cf419a23d4de1231ce258180f61aee4aa8caa1aaaa783769c7301847bc",
+    "big2k_checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+    "big2k_step": 2000,
+    "profiler_sha256": "f4917350a3b0e412915e168e4c231efd769cd6862bf697ea6428c2ed56c9c047",
+    "code_sha256": {
+      "convert_span.py": "0768c5dcc702218dba6563488d16de72b17ec38af20c9c477cbafe2cbd3b2fd7",
+      "eval_checkpoint.py": "06140f64cccb178983681569629669eee2ad2a77a86d1e49dfba72f4b7b9b1fa",
+      "train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+      "architectures/span_arch.py": "0fd7c3c6bddcf6fd9c547793a58e9ded66a99e75c106fa20aa3e1cd059f6a806"
+    },
+    "torch": "2.14.0",
+    "coremltools": "9.0",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "input_size": "640x360",
+    "samples": 20,
+    "warmup": 10,
+    "compute_units": "CPU_AND_GPU",
+    "precision": "full FP32 diagnostic (ImageRange wrapper)",
+    "excludes": "capture, network, presentation; no timing extrapolation",
+    "params": {
+      "stock2x_ch48": 2221140,
+      "big2k_direct2x": 1015240
+    },
+    "rows": [],
+    "complete": false,
+    "mlpackages": {
+      "stock2x_ch48": {
+        "path": ".build/quality-breakthrough-r62-stock/runtime-fp32/stock2x_ch48_640x360.mlpackage",
+        "sha256_of_torch_output": null
+      },
+      "big2k_direct2x": {
+        "path": ".build/quality-breakthrough-r62-stock/runtime-fp32/big2k_direct2x_640x360.mlpackage",
+        "sha256_of_torch_output": null
+      }
+    },
+    "rejected": {
+      "variant": "stock2x_ch48",
+      "errors": {
+        "max_rgb": 117.74324035644531,
+        "mean_rgb": 0.025951610878109932,
+        "output_shape": [
+          720,
+          1280,
+          3
+        ],
+        "native_mean_level": 140.2812042236328,
+        "torch_mean_level": 140.28140258789062
+      }
+    }
+  },
+  "fp32_backend_check": {
+    "complete": true,
+    "gate_unchanged": true,
+    "scope": "one fixed random640x360 RGB input; correctness only",
+    "rows": [
+      {
+        "compute_units": "CPU_ONLY",
+        "max": 117.74324035644531,
+        "mean": 0.025951610878109932,
+        "channels_over3": 2732,
+        "channels_total": 2764800,
+        "quantiles": [
+          0.0,
+          0.6226425933837874,
+          2.98454016113277,
+          10.982850253290493
+        ],
+        "worst_y_x_channel": [
+          663,
+          954,
+          1
+        ],
+        "expected_at_worst": 254.7432403564453,
+        "native_at_worst": 137.0
+      },
+      {
+        "compute_units": "CPU_AND_GPU",
+        "max": 117.74324035644531,
+        "mean": 0.025951610878109932,
+        "channels_over3": 2732,
+        "channels_total": 2764800,
+        "quantiles": [
+          0.0,
+          0.6226425933837874,
+          2.98454016113277,
+          10.982850253290493
+        ],
+        "worst_y_x_channel": [
+          663,
+          954,
+          1
+        ],
+        "expected_at_worst": 254.7432403564453,
+        "native_at_worst": 137.0
+      }
+    ]
+  },
+  "parent_review": {
+    "worker": "thr_k5w6ep9vap",
+    "archived": true,
+    "stock_weights_unchanged": true,
+    "timing_samples_measured": 0,
+    "note": "Worker frac_gt3 is the fraction of channel elements, not whole RGB pixels. The FP32 diagnostic also counts channel elements. Big2k native gate was not reached. Random-input correctness failure does not establish natural-video perceptual quality or native runtime. No tolerance was relaxed."
+  },
+  "owned_processes": "all local diagnostic sessions and worker closed",
+  "next_step": "If revisiting stock initialization, resolve conversion equivalence before native speed claims; a fine-tuning quality gain remains untested."
+}

@@ -1548,3 +1548,14 @@ does not establish a better initialization or exclude gains from fine-tuning.
 A matched 640x360 native graph timing check is the next feasibility gate before
 spending GPU time. No stock model is promoted. See
 `quality-breakthrough/stock-pretrained2x-three-patch-comparison.json`.
+
+The 640x360 stock native check fails the unchanged max3/mean0.6 RGB
+correctness gate before timing. Selective FP16 gives max255/mean22.657; a
+separate full-FP32 diagnostic gives max117.743/mean0.026. CPU_ONLY and
+CPU_AND_GPU reproduce the same FP32 outliers (2,732/2,764,800 channel values
+above3). Torch trace and eager outputs match in the worker probe. No timing
+samples were collected, and the big2k native gate was not reached; there is
+no measured cost comparison. These are fixed random-input conversion tests,
+not a verdict on natural-video quality. Both failures and exports are retained,
+all processes closed, and the worker stopped/archived. No promotion. See
+`quality-breakthrough/stock-pretrained2x-native-correctness.json`.
