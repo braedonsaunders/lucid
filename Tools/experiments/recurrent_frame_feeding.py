@@ -72,7 +72,8 @@ def subpixel_motion(current, previous, *, motion_seed='search'):
     return torch.cat((chosen, confidence[..., None], error[..., None]), -1).permute(0, 3, 1, 2)
 
 
-def warp_previous(current_rgb, previous_rgb, previous_output, *, subpixel=True, motion_seed='search'):
+def warp_previous(current_rgb, previous_rgb, previous_output, *, subpixel=True, motion_seed='search',
+                  return_state_grid=False):
     """Warp a 2x reconstruction with LR block motion; reject cuts and occlusions.
 
     No output/reference target participates in motion. Optional half-pixel
@@ -105,7 +106,18 @@ def warp_previous(current_rgb, previous_rgb, previous_output, *, subpixel=True, 
         hxx, hyy = hx[None] + motion_hr[:, 0] * 2, hy[None] + motion_hr[:, 1] * 2
         hr_grid = torch.stack(((hxx + .5) / width - 1, (hyy + .5) / height - 1), -1)
         valid_hr = confidence.repeat_interleave(2, -2).repeat_interleave(2, -1)
+        if return_state_grid:
+            # SPAN trunk coordinates are half LR resolution. Average the two
+            # LR samples per trunk cell, then convert displacement to trunk units.
+            sh, sw = height // 2, width // 2
+            state_motion = F.avg_pool2d(motion[:, :2], 2) / 2
+            sy, sx = torch.meshgrid(torch.arange(sh, device=current.device),
+                                    torch.arange(sw, device=current.device), indexing='ij')
+            state_grid = torch.stack(((sx[None] + state_motion[:, 0] + .5) * 2 / sw - 1,
+                                      (sy[None] + state_motion[:, 1] + .5) * 2 / sh - 1), -1)
     aligned = F.grid_sample(previous_output, hr_grid, padding_mode='border', align_corners=False)
+    if return_state_grid:
+        return aligned, valid_hr, cut, state_grid
     return aligned, valid_hr, cut
 
 
@@ -127,6 +139,8 @@ the history branch therefore retains one observed previous frame rather than
 recursively accumulated SR. Upstream native TAA can still carry earlier frames.
 Pass raw decoded RGB separately when the SR input has been preprocessed.
 """
+    if getattr(model, 'requires_feature_state', False):
+        raise ValueError('feature-state model requires an explicit feature-state sequence driver')
     if current.shape != raw_current.shape or current.ndim != 4 or current.shape[1] != 3 or any(s % 2 for s in current.shape[-2:]):
         raise ValueError('matched even BCHW RGB inputs required')
     discontinuity = (state is None or reset or not use_history or state.stream != stream or

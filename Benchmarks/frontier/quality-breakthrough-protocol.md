@@ -1256,3 +1256,48 @@ are substantial. No weights or settings are promoted. Complete RGB/score/referen
 and packet hashes were verified before deleting only the1920 owned temporary LUCE
 packets; RGB images, manifests and metrics remain. The two training/control runs
 and all native processes have exited. See `quality-breakthrough/raw-input-native-comparison.json`.
+
+## Motion-aligned selective feature state
+
+The next prototype carries a content-gated feature state in addition to the
+aligned previous RGB output. Before training, review found that its RGB history
+was warped but its accumulated features remained at old screen coordinates.
+The caller now derives a trunk-resolution grid from the same detached motion
+field and warps carried features with gradients preserved through their values.
+Correspondence remains decoded-input-only. Scene cuts suppress the carried state
+through confidence; first-frame and disabled-scan paths use zero confidence.
+Previous RGB is clamped and quantized to RGB8, matching the stated history format.
+
+This is a small gated recurrence, not an independently validated implementation
+of a published state-space architecture. The added encoder, gates and feature
+warp require separate native conversion and cost checks. A Torch trace showing
+elementwise gates does not establish Core ML support or ANE placement. Checkpoint
+loading requires the explicit aligned-feature state version and matching source
+preprocessing declarations; old unversioned prototypes are not silently reinterpreted.
+
+The proposed r56 comparison uses fresh reconstruction-only controls: scan disabled
+with a trainable SR backbone, scan enabled with a frozen backbone, and joint
+scan/backbone training. It does not attribute r54 paired-critic or r55 native
+results to this new recipe. Full-search source preprocessing is selected to match
+the current pipeline proxy. Muse Spark1.3 Contributor agents review temporal
+correctness and prepare broader validation; their work is reviewed before use.
+No training outcome or quality improvement is asserted by this setup.
+
+The bounded contributor review identified checkpoint metadata and an unsafe
+interface assumption. The trainer must write the versioned loader's declarations;
+the older RGB-only sequence driver now explicitly rejects feature-state models.
+The parent retained two intentional semantics after review: zero confidence marks
+first frames/resets (a missing latent state alone may initialize from valid RGB
+history), and confidence masks both source samples and destination cells around
+the spatial history encoder. Uniform partial confidence therefore attenuates fresh
+history quadratically. This conservative rule is not presented as a calibrated
+probability. Batch cuts must clear only the affected samples.
+
+Before interpreting r56, all arms must share initialization, training samples,
+source preprocessing, source hashes and the same 72 validation sequences. Their
+216 initial metric rows and first input/output hashes must agree; scan-disabled
+rows must equal that arm's backbone, and each scan arm's first-frame rows must
+equal its backbone. Frozen-backbone hashes must remain unchanged. Quality is
+compared against both the fresh trained control and the common initialization,
+with source-level metrics, temporal residual diagnostics and fixed crops examined
+together. These proxy results cannot establish native playback performance.
