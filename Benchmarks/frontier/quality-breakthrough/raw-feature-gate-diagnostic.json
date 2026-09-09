@@ -1,0 +1,109 @@
+{
+  "scope": "Three fixed 16-frame source patches; CPU mechanism diagnostic, no perceptual or native quality claim",
+  "script_sha256": "e64400a664cdbd62465c09aecc8df873f1cf9c474d68b47015d89a9fa9979e1a",
+  "raw_diagnostic_sha256": "1a357178d1209dfc94999286da0f7c9aa58f80995b8c880a141e9f0212c38af6",
+  "driver_equivalence": "Manual instrumented loop asserts quantized RGB equality to production research driver for all six runs",
+  "initial_gate": 0.11920291930437088,
+  "arms": {
+    "frozen_memory": {
+      "checkpoint_sha256": "3351cd1eed5d6c41c18660a34e297938fee7d86cebb1df80627913f55a8cfd48",
+      "checkpoint_report_hash_match": true,
+      "generic_loader_rejects": true,
+      "decay_bias": {
+        "mean": -2.009406805038452,
+        "l2": 11.367177963256836,
+        "meanabs": 2.009406805038452,
+        "min": -2.036888599395752,
+        "max": -1.9795423746109009
+      },
+      "decay_weight": {
+        "l2": 0.13206058740615845,
+        "meanabs": 0.019096344709396362,
+        "numel": 32
+      },
+      "project_weight": {
+        "l2": 0.2727923095226288,
+        "meanabs": 0.006124506704509258
+      },
+      "sources": {
+        "sintel-stream-000-00": {
+          "first_frame_output_difference": 0.0,
+          "gate_mean_frames1_15": 0.1181630468384924,
+          "history_output_meanabs_frames1_15": 0.00014461615840749193,
+          "confidence_mean_frames1_15": 0.9831595881729414,
+          "gated_over_fresh_l2_mean": 0.1241785705089569,
+          "all_gate_elements_below_0_15": true
+        },
+        "reds_154-stream-000-00": {
+          "first_frame_output_difference": 0.0,
+          "gate_mean_frames1_15": 0.11818655042945163,
+          "history_output_meanabs_frames1_15": 0.00021636968400950233,
+          "confidence_mean_frames1_15": 0.6564112096248998,
+          "gated_over_fresh_l2_mean": 0.09216076334317526,
+          "all_gate_elements_below_0_15": true
+        },
+        "reds_073-stream-000-00": {
+          "first_frame_output_difference": 0.0,
+          "gate_mean_frames1_15": 0.11817648111507424,
+          "history_output_meanabs_frames1_15": 0.0002568731812061742,
+          "confidence_mean_frames1_15": 0.707697211940147,
+          "gated_over_fresh_l2_mean": 0.09579572230577468,
+          "all_gate_elements_below_0_15": true
+        }
+      }
+    },
+    "joint_memory": {
+      "checkpoint_sha256": "9308697adbd5bb44ae978cb4350a131b6cac0e81cc545c933e7948d8a06cfe04",
+      "checkpoint_report_hash_match": true,
+      "generic_loader_rejects": true,
+      "decay_bias": {
+        "mean": -2.0234413146972656,
+        "l2": 11.446639060974121,
+        "meanabs": 2.0234413146972656,
+        "min": -2.04831600189209,
+        "max": -1.9816206693649292
+      },
+      "decay_weight": {
+        "l2": 0.09579271078109741,
+        "meanabs": 0.014749628491699696,
+        "numel": 32
+      },
+      "project_weight": {
+        "l2": 0.1882343292236328,
+        "meanabs": 0.0040623899549245834
+      },
+      "sources": {
+        "sintel-stream-000-00": {
+          "first_frame_output_difference": 0.0,
+          "gate_mean_frames1_15": 0.11669862338471072,
+          "history_output_meanabs_frames1_15": 0.00016412818513344973,
+          "confidence_mean_frames1_15": 0.9831595881729414,
+          "gated_over_fresh_l2_mean": 0.12234107106924057,
+          "all_gate_elements_below_0_15": true
+        },
+        "reds_154-stream-000-00": {
+          "first_frame_output_difference": 0.0,
+          "gate_mean_frames1_15": 0.11671918789525079,
+          "history_output_meanabs_frames1_15": 0.00010974878290047249,
+          "confidence_mean_frames1_15": 0.6564112096248998,
+          "gated_over_fresh_l2_mean": 0.07030771945913633,
+          "all_gate_elements_below_0_15": true
+        },
+        "reds_073-stream-000-00": {
+          "first_frame_output_difference": 0.0,
+          "gate_mean_frames1_15": 0.11671019113362036,
+          "history_output_meanabs_frames1_15": 0.00017108672376101215,
+          "confidence_mean_frames1_15": 0.707697211940147,
+          "gated_over_fresh_l2_mean": 0.09000725671648979,
+          "all_gate_elements_below_0_15": true
+        }
+      }
+    }
+  },
+  "limitations": [
+    "Three fixed patches only",
+    "Final checkpoints only; no training trajectory",
+    "No stronger-gate ablation or perceptual scoring",
+    "CPU inference; no native state runtime"
+  ]
+}

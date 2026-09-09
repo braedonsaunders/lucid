@@ -1,0 +1,1497 @@
+{
+  "scope": "Full-LR alignment source-disjoint patch diagnostic, no native admission",
+  "source_commit": "24cd59165e84e31492a86512912b7bc882c42653",
+  "comparison": {
+    "scope": "r59 same full-LR encoder/capacity with current-only, packed-half-LR alignment and full-LR alignment; joint backbone; 2000 steps; 72 source-disjoint sequences; no native admission",
+    "percent_convention": "100*(candidate/baseline-1); negative LPIPS/DISTS is better; PSNR changes are also reported as percent of dB values, not linear fidelity gains",
+    "shared_hashes": {
+      "bank_sha256": "253e2f87553ada9030338e92410a900800b0b8df5108adc05bbe25f42980aa76",
+      "reds_bank_sha256": "bf641e3c99628e4ce6a1a75f59ffe9f70ab8f4bd790cd8f5946de83e461db7fb",
+      "checkpoint_sha256": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+      "frozen_backbone_sha256": "2de8c2017b3856bb4f84933b6d8315412e997f5aa7e0c611f866d8973a90f341",
+      "initial_branch_sha256": "79eea3ab130db1780533d7845e0e7e67d730494b337353e181220c0c5ec4a761",
+      "discriminator_initial_sha256": "b61bc6ec71b0c85c1e4954c35cbedb9182fbbd5547cf7250a85016e9e1ae701a",
+      "first_decoded_sequence_sha256": "1cb6fc7da87f8c2653639c18098591a079458b2502ab315555ead5a33731db6d",
+      "first_input_sha256": "afb9498dbe746d8472a704eda245e506e9ffed45e4145564df45ab828a1fc1c3",
+      "first_output_sha256": "dfb98b2f51f2e096dfaab76b94fb74c16714b6d000586d10f5bdd51ada45a4aa",
+      "source_hashes": {
+        "Tools/architectures/full_lr_feature_span.py": "9843f5ee50e2e605d77c0394181b6405dffa437b520cc7a71864dbbf58fe1fbe",
+        "Tools/experiments/full_lr_frame_feeding.py": "537797be5893170a60d0c8c60b3e4128656adbd75861386756f8203aac025f48",
+        "Tools/experiments/train_full_lr_feature_span.py": "b1eeeefc8570ab233648a16bbfa1787fe702da8617808937de6aa31270ef3ea8",
+        "Tools/architectures/subspace_adapter.py": "1098e70a08e118f31e009dff2711fed1d70bee2e85e8cd1283bf1ebd107c8f99",
+        "Tools/experiments/recurrent_frame_feeding.py": "96736370ecdc7568e359d4b4a9d5c2a0cd0afdbb498dd680dccffce9bb31a433",
+        "Tools/experiments/native_stages.py": "8ed2e8c6ea5270c855d880bf20e5b14fa6f5948e2a921b389d8115c464938b86",
+        "Tools/experiments/train_causal_detail.py": "51b3b776485caa5ccaec4a7c58eec5d3b6060d22ad1c311c0561d2abb994ee7a",
+        "Tools/experiments/replay_recurrent_motion.py": "c2b1bbaded47c5e453a12b92bf862e0726241dcaf56c4df90d21b428996ebe3d",
+        "Tools/experiments/mmap_training_bank.py": "de1a78931b3a8a26ce1980d4b1a92ea887aeab7e70e26cd546e59ce534153b94",
+        "Tools/experiments/build_causal_bank.py": "ac9d0b9bc5385903658577ddd28f8f8fe5edf5f3c356aa7daff9a89a1bd87597",
+        "Tools/experiments/train_presented_detail.py": "76aa0cf85a567fbfe0db3f2fa5ff23a9a190ca42ede35fa576b9604d881cc743",
+        "Tools/experiments/train_ssm_span.py": "d0aeeaa414b09aff0266ba9278f9410dab877d29a5a78168366dfae00d1072ec",
+        "Tools/train_span.py": "df1c7e597614bbfe9034b1a52de5b89c918a9b73a9fb33b99fa740620920e65e",
+        "Tools/frontier_eval/evaluate_sequences.py": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75",
+        "Tools/eval_checkpoint.py": "06140f64cccb178983681569629669eee2ad2a77a86d1e49dfba72f4b7b9b1fa",
+        "Tools/experiments/paired_dino_adversary.py": "55efcf2fd1276e212805d45df940d7d59018fe10f08c42c41df5889dcf465acb",
+        "Tools/experiments/dino_adversary.py": "2e2c8430a956a457e87d2f0000bd8c7905742ca6a87052cc037b806e4846947e",
+        "Tools/experiments/dino_supervision.py": "f014ba8d5e59b48199e3b1a972a9ab68665913b5fc289b21343a1624e8f96a6a"
+      }
+    },
+    "rows_per_arm": 864,
+    "rows_per_variant": 216,
+    "arms": {
+      "current": {
+        "checkpoint_sha256": "32c923c5e713309c7e46eeb4245fd6782a55e828e3bb58e956b55170c34fc0ff",
+        "experiment_sha256": "a17d96900d35a48d7e71bd8cd1fda056d0dee354a509421afd766a4cd7ce83ca",
+        "validation_sha256": "fd19b3916e3e6e6444fbd7dbbf1e373d8f331e631a29eaa7de31475e672ffa58",
+        "complete": {
+          "complete": true,
+          "backbone_unchanged": false,
+          "steps": 2000,
+          "minutes": 4.838033333333336
+        },
+        "exit": {
+          "step": "current",
+          "utc": "2026-09-09T02:59:43.0762739Z",
+          "exit_code": 0
+        },
+        "input_output_hashes": {
+          "first_input_sha256": "afb9498dbe746d8472a704eda245e506e9ffed45e4145564df45ab828a1fc1c3",
+          "first_output_sha256": "dfb98b2f51f2e096dfaab76b94fb74c16714b6d000586d10f5bdd51ada45a4aa"
+        },
+        "summary": {
+          "base": {
+            "sources": {
+              "sintel": {
+                "lpips": 0.21847112106937588,
+                "dists": 0.19378750136605016,
+                "psnr_y": 29.922525630482557,
+                "detail_energy": 0.6853686794452533,
+                "fine_correlation": 0.4931708974470357
+              },
+              "reds_154": {
+                "lpips": 0.2826040050497762,
+                "dists": 0.24234097202618918,
+                "psnr_y": 25.071121292077002,
+                "detail_energy": 0.539571309786984,
+                "fine_correlation": 0.37223887199185896
+              },
+              "reds_073": {
+                "lpips": 0.35089764716448607,
+                "dists": 0.2563540284280424,
+                "psnr_y": 22.673959003599716,
+                "detail_energy": 0.4759941935640704,
+                "fine_correlation": 0.26020983062393305
+              }
+            },
+            "source_balanced": {
+              "lpips": 0.2839909244278794,
+              "dists": 0.2308275006067606,
+              "psnr_y": 25.889201975386428,
+              "detail_energy": 0.5669780609321026,
+              "fine_correlation": 0.37520653335427595
+            }
+          },
+          "current_only": {
+            "sources": {
+              "sintel": {
+                "lpips": 0.2183447782628247,
+                "dists": 0.19363788322166162,
+                "psnr_y": 29.92210610322527,
+                "detail_energy": 0.686790986315848,
+                "fine_correlation": 0.49355415693971877
+              },
+              "reds_154": {
+                "lpips": 0.28219600877276174,
+                "dists": 0.24249074856440225,
+                "psnr_y": 25.072284838223727,
+                "detail_energy": 0.5411893244223205,
+                "fine_correlation": 0.37237279346178065
+              },
+              "reds_073": {
+                "lpips": 0.35058211921541776,
+                "dists": 0.2561325121808935,
+                "psnr_y": 22.673746313774927,
+                "detail_energy": 0.4772046943526799,
+                "fine_correlation": 0.2604638390357794
+              }
+            },
+            "source_balanced": {
+              "lpips": 0.2837076354170014,
+              "dists": 0.23075371465565245,
+              "psnr_y": 25.88937908507464,
+              "detail_energy": 0.5683950016969496,
+              "fine_correlation": 0.37546359647909294
+            }
+          },
+          "full_lr_features": {
+            "sources": {
+              "sintel": {
+                "lpips": 0.2183447782628247,
+                "dists": 0.19363788322166162,
+                "psnr_y": 29.92210610322527,
+                "detail_energy": 0.686790986315848,
+                "fine_correlation": 0.49355415693971877
+              },
+              "reds_154": {
+                "lpips": 0.28219600877276174,
+                "dists": 0.24249074856440225,
+                "psnr_y": 25.072284838223727,
+                "detail_energy": 0.5411893244223205,
+                "fine_correlation": 0.37237279346178065
+              },
+              "reds_073": {
+                "lpips": 0.35058211921541776,
+                "dists": 0.2561325121808935,
+                "psnr_y": 22.673746313774927,
+                "detail_energy": 0.4772046943526799,
+                "fine_correlation": 0.2604638390357794
+              }
+            },
+            "source_balanced": {
+              "lpips": 0.2837076354170014,
+              "dists": 0.23075371465565245,
+              "psnr_y": 25.88937908507464,
+              "detail_energy": 0.5683950016969496,
+              "fine_correlation": 0.37546359647909294
+            }
+          },
+          "initial": {
+            "sources": {
+              "sintel": {
+                "lpips": 0.2137711979976976,
+                "dists": 0.19477422645798437,
+                "psnr_y": 28.677276227811983,
+                "detail_energy": 0.6415185516656143,
+                "fine_correlation": 0.5036951956226896
+              },
+              "reds_154": {
+                "lpips": 0.29054888765569087,
+                "dists": 0.24941719461370399,
+                "psnr_y": 25.163160260919515,
+                "detail_energy": 0.5087248457153069,
+                "fine_correlation": 0.37924668110685517
+              },
+              "reds_073": {
+                "lpips": 0.35617565474024526,
+                "dists": 0.2615368167559306,
+                "psnr_y": 22.7398870833138,
+                "detail_energy": 0.450108753680454,
+                "fine_correlation": 0.2662052878712313
+              }
+            },
+            "source_balanced": {
+              "lpips": 0.28683191346454456,
+              "dists": 0.23524274594253966,
+              "psnr_y": 25.5267745240151,
+              "detail_energy": 0.5334507170204584,
+              "fine_correlation": 0.38304905486692536
+            }
+          }
+        },
+        "vs_own_current_only_percent": {
+          "lpips": 0.0,
+          "dists": 0.0,
+          "psnr_y": 0.0,
+          "detail_energy": 0.0,
+          "fine_correlation": 0.0
+        },
+        "vs_initial_percent": {
+          "lpips": -1.0892365531457338,
+          "dists": -1.9082549257368853,
+          "psnr_y": 1.4204871857915746,
+          "detail_energy": 6.550611623819602,
+          "fine_correlation": -1.9802838021536595
+        },
+        "temporal": {
+          "base": {
+            "residual_change_l1": 0.055429823982860976,
+            "mean_rgb_mse": 0.005293329853341472,
+            "last_rgb_mse": 0.005295597868047884
+          },
+          "current_only": {
+            "residual_change_l1": 0.05543032684531113,
+            "mean_rgb_mse": 0.005295046896776512,
+            "last_rgb_mse": 0.005297087194321648
+          },
+          "full_lr_features": {
+            "residual_change_l1": 0.05543032684531113,
+            "mean_rgb_mse": 0.005295046896776512,
+            "last_rgb_mse": 0.005297087194321648
+          },
+          "initial": {
+            "residual_change_l1": 0.054908704285945,
+            "mean_rgb_mse": 0.005164905433225108,
+            "last_rgb_mse": 0.005168550302844071
+          }
+        },
+        "vs_initial_sources_percent": {
+          "sintel": {
+            "lpips": 2.139474497951954,
+            "dists": -0.5834156073867836,
+            "psnr_y": 4.340823255055226,
+            "detail_energy": 7.057073335243391,
+            "fine_correlation": -2.013328451631158
+          },
+          "reds_154": {
+            "lpips": -2.874861766061043,
+            "dists": -2.777052343977071,
+            "psnr_y": -0.3611447121644962,
+            "detail_energy": 6.381539840336692,
+            "fine_correlation": -1.812510955933122
+          },
+          "reds_073": {
+            "lpips": -1.57044296834572,
+            "dists": -2.0663647443871946,
+            "psnr_y": -0.2908579505982001,
+            "detail_energy": 6.019865299367666,
+            "fine_correlation": -2.156774901567382
+          }
+        },
+        "vs_own_current_only_sources_percent": {
+          "sintel": {
+            "lpips": 0.0,
+            "dists": 0.0,
+            "psnr_y": 0.0,
+            "detail_energy": 0.0,
+            "fine_correlation": 0.0
+          },
+          "reds_154": {
+            "lpips": 0.0,
+            "dists": 0.0,
+            "psnr_y": 0.0,
+            "detail_energy": 0.0,
+            "fine_correlation": 0.0
+          },
+          "reds_073": {
+            "lpips": 0.0,
+            "dists": 0.0,
+            "psnr_y": 0.0,
+            "detail_energy": 0.0,
+            "fine_correlation": 0.0
+          }
+        }
+      },
+      "packed": {
+        "checkpoint_sha256": "36e22074b3219922203aedbcd4499b238e8abdade763ca4999a676eb434288e4",
+        "experiment_sha256": "609f50996a312ed9ff349f08d4d34e88c10459afbab343464318534c2bea1706",
+        "validation_sha256": "7a57c3cfe49982dc120876e2448c35abbd57a9a06464c5913c8abe28fe7a89d5",
+        "complete": {
+          "complete": true,
+          "backbone_unchanged": false,
+          "steps": 2000,
+          "minutes": 6.782816666666667
+        },
+        "exit": {
+          "step": "packed",
+          "utc": "2026-09-09T03:06:49.3872436Z",
+          "exit_code": 0
+        },
+        "input_output_hashes": {
+          "first_input_sha256": "afb9498dbe746d8472a704eda245e506e9ffed45e4145564df45ab828a1fc1c3",
+          "first_output_sha256": "dfb98b2f51f2e096dfaab76b94fb74c16714b6d000586d10f5bdd51ada45a4aa"
+        },
+        "summary": {
+          "base": {
+            "sources": {
+              "sintel": {
+                "lpips": 0.21819395498918043,
+                "dists": 0.19412681846706956,
+                "psnr_y": 29.924270181885817,
+                "detail_energy": 0.6849903449137241,
+                "fine_correlation": 0.493215649945629
+              },
+              "reds_154": {
+                "lpips": 0.28283199281604204,
+                "dists": 0.24299348062939113,
+                "psnr_y": 25.07235407305621,
+                "detail_energy": 0.5382796731830216,
+                "fine_correlation": 0.37236628241652475
+              },
+              "reds_073": {
+                "lpips": 0.35088477518271516,
+                "dists": 0.25666174071806447,
+                "psnr_y": 22.674961403884055,
+                "detail_energy": 0.4754125061252612,
+                "fine_correlation": 0.26052837761560604
+              }
+            },
+            "source_balanced": {
+              "lpips": 0.28397024099597923,
+              "dists": 0.23126067993817503,
+              "psnr_y": 25.890528552942026,
+              "detail_energy": 0.5662275080740024,
+              "fine_correlation": 0.37537010332591997
+            }
+          },
+          "current_only": {
+            "sources": {
+              "sintel": {
+                "lpips": 0.2181353296128455,
+                "dists": 0.1939261511520103,
+                "psnr_y": 29.925738923602765,
+                "detail_energy": 0.6854889546113148,
+                "fine_correlation": 0.4936828057626253
+              },
+              "reds_154": {
+                "lpips": 0.2828975755859304,
+                "dists": 0.24263550617076732,
+                "psnr_y": 25.075055712487593,
+                "detail_energy": 0.5391844156699768,
+                "fine_correlation": 0.3726356488490715
+              },
+              "reds_073": {
+                "lpips": 0.3512251739976583,
+                "dists": 0.25632342806568853,
+                "psnr_y": 22.675159557373558,
+                "detail_energy": 0.47599218797065596,
+                "fine_correlation": 0.26066752328044074
+              }
+            },
+            "source_balanced": {
+              "lpips": 0.2840860263988114,
+              "dists": 0.23096169512948872,
+              "psnr_y": 25.89198473115464,
+              "detail_energy": 0.5668885194173158,
+              "fine_correlation": 0.37566199263071254
+            }
+          },
+          "full_lr_features": {
+            "sources": {
+              "sintel": {
+                "lpips": 0.21814794323883555,
+                "dists": 0.19389519757694668,
+                "psnr_y": 29.925801391765887,
+                "detail_energy": 0.6854335825558303,
+                "fine_correlation": 0.49373392152544293
+              },
+              "reds_154": {
+                "lpips": 0.2829316883451409,
+                "dists": 0.24257069053473296,
+                "psnr_y": 25.075208992606154,
+                "detail_energy": 0.5391690891641459,
+                "fine_correlation": 0.372597392474842
+              },
+              "reds_073": {
+                "lpips": 0.35124818953099074,
+                "dists": 0.2562887999746535,
+                "psnr_y": 22.6752966207321,
+                "detail_energy": 0.47595508068639913,
+                "fine_correlation": 0.26069095348631993
+              }
+            },
+            "source_balanced": {
+              "lpips": 0.28410927370498906,
+              "dists": 0.23091822936211104,
+              "psnr_y": 25.89210233503471,
+              "detail_energy": 0.5668525841354585,
+              "fine_correlation": 0.37567408916220163
+            }
+          },
+          "initial": {
+            "sources": {
+              "sintel": {
+                "lpips": 0.2137711979976976,
+                "dists": 0.19477422645798437,
+                "psnr_y": 28.677276227811983,
+                "detail_energy": 0.6415185516656143,
+                "fine_correlation": 0.5036951956226896
+              },
+              "reds_154": {
+                "lpips": 0.29054888765569087,
+                "dists": 0.24941719461370399,
+                "psnr_y": 25.163160260919515,
+                "detail_energy": 0.5087248457153069,
+                "fine_correlation": 0.37924668110685517
+              },
+              "reds_073": {
+                "lpips": 0.35617565474024526,
+                "dists": 0.2615368167559306,
+                "psnr_y": 22.7398870833138,
+                "detail_energy": 0.450108753680454,
+                "fine_correlation": 0.2662052878712313
+              }
+            },
+            "source_balanced": {
+              "lpips": 0.28683191346454456,
+              "dists": 0.23524274594253966,
+              "psnr_y": 25.5267745240151,
+              "detail_energy": 0.5334507170204584,
+              "fine_correlation": 0.38304905486692536
+            }
+          }
+        },
+        "vs_own_current_only_percent": {
+          "lpips": 0.008183192419686236,
+          "dists": -0.01881947019539698,
+          "psnr_y": 0.0004542095991988404,
+          "detail_energy": -0.006339038563396571,
+          "fine_correlation": 0.003220057319186509
+        },
+        "vs_initial_percent": {
+          "lpips": -0.94921089033283,
+          "dists": -1.838320906815516,
+          "psnr_y": 1.4311553959781342,
+          "detail_energy": 6.261471969062704,
+          "fine_correlation": -1.9253319153302306
+        },
+        "temporal": {
+          "base": {
+            "residual_change_l1": 0.05542412797518952,
+            "mean_rgb_mse": 0.005296312092329774,
+            "last_rgb_mse": 0.005299548648900377
+          },
+          "current_only": {
+            "residual_change_l1": 0.055411443542813764,
+            "mean_rgb_mse": 0.005295529776314349,
+            "last_rgb_mse": 0.005298583235028471
+          },
+          "full_lr_features": {
+            "residual_change_l1": 0.05540992383133256,
+            "mean_rgb_mse": 0.005295640905450859,
+            "last_rgb_mse": 0.005298666501087407
+          },
+          "initial": {
+            "residual_change_l1": 0.054908704285945,
+            "mean_rgb_mse": 0.005164905433225108,
+            "last_rgb_mse": 0.005168550302844071
+          }
+        },
+        "vs_initial_sources_percent": {
+          "sintel": {
+            "lpips": 2.047397068516732,
+            "dists": -0.4513065701879815,
+            "psnr_y": 4.353709027439123,
+            "detail_energy": 6.845481050578606,
+            "fine_correlation": -1.9776392913440688
+          },
+          "reds_154": {
+            "lpips": -2.6216583969774443,
+            "dists": -2.7450008366804335,
+            "psnr_y": -0.34952393658580494,
+            "detail_energy": 5.984422366089093,
+            "fine_correlation": -1.7532885489219718
+          },
+          "reds_073": {
+            "lpips": -1.3834368362004024,
+            "dists": -2.0066072709658433,
+            "psnr_y": -0.28404038395201114,
+            "detail_energy": 5.742240468465587,
+            "fine_correlation": -2.071459372204054
+          }
+        },
+        "vs_own_current_only_sources_percent": {
+          "sintel": {
+            "lpips": 0.005782477332960667,
+            "dists": -0.015961527045094126,
+            "psnr_y": 0.0002087439286979631,
+            "detail_energy": -0.00807774583557741,
+            "fine_correlation": 0.010353968625387289
+          },
+          "reds_154": {
+            "lpips": 0.012058342719911685,
+            "dists": -0.02671317032584275,
+            "psnr_y": 0.0006112852562134563,
+            "detail_energy": -0.002842535018721115,
+            "fine_correlation": -0.010266428976313247
+          },
+          "reds_073": {
+            "lpips": 0.006552928160163951,
+            "dists": -0.013509530243238643,
+            "psnr_y": 0.0006044648029890354,
+            "detail_energy": -0.007795775896035639,
+            "fine_correlation": 0.008988540491849939
+          }
+        },
+        "vs_matched_current_percent": {
+          "lpips": 0.14156766961781475,
+          "dists": 0.07129449972413937,
+          "psnr_y": 0.010518792092772955,
+          "detail_energy": -0.2713636743613468,
+          "fine_correlation": 0.0560620750140739
+        },
+        "vs_matched_current_sources_percent": {
+          "sintel": {
+            "lpips": -0.09014872054884382,
+            "dists": 0.13288430497377934,
+            "psnr_y": 0.012349693995017397,
+            "detail_energy": -0.1976443761003921,
+            "fine_correlation": 0.03642246412001171
+          },
+          "reds_154": {
+            "lpips": 0.26069807846629267,
+            "dists": 0.03296701866111196,
+            "psnr_y": 0.01166289550911248,
+            "detail_energy": -0.37329547480100533,
+            "fine_correlation": 0.06031563449451216
+          },
+          "reds_073": {
+            "lpips": 0.1899898138169709,
+            "dists": 0.061018334778828454,
+            "psnr_y": 0.0068374539245574795,
+            "detail_energy": -0.2618611428321871,
+            "fine_correlation": 0.0871961541307531
+          }
+        },
+        "temporal_vs_matched_current_percent": {
+          "residual_change_l1": -0.03680839558372062,
+          "mean_rgb_mse": 0.011218194775741708,
+          "last_rgb_mse": 0.029814626564061975
+        }
+      },
+      "full": {
+        "checkpoint_sha256": "9b56297302b4b273daff7d582585a9fd5038962e8abde3ad637722a17dfb5d51",
+        "experiment_sha256": "b0d9007b61212d71e23dec1ff06cdf62c7bb596c99dbaecd9aade44f68521a9e",
+        "validation_sha256": "28d18fc05ac29f271a7bc2e51d96dcd7d8da00cfae0e637f8bf6c83b4efd846e",
+        "complete": {
+          "complete": true,
+          "backbone_unchanged": false,
+          "steps": 2000,
+          "minutes": 6.844000000000006
+        },
+        "exit": {
+          "step": "full",
+          "utc": "2026-09-09T03:13:59.8062992Z",
+          "exit_code": 0
+        },
+        "input_output_hashes": {
+          "first_input_sha256": "afb9498dbe746d8472a704eda245e506e9ffed45e4145564df45ab828a1fc1c3",
+          "first_output_sha256": "dfb98b2f51f2e096dfaab76b94fb74c16714b6d000586d10f5bdd51ada45a4aa"
+        },
+        "summary": {
+          "base": {
+            "sources": {
+              "sintel": {
+                "lpips": 0.21830441773528475,
+                "dists": 0.1939576080551854,
+                "psnr_y": 29.92490578850398,
+                "detail_energy": 0.6850210436592467,
+                "fine_correlation": 0.49303034770749715
+              },
+              "reds_154": {
+                "lpips": 0.28209324926137924,
+                "dists": 0.24303797770429542,
+                "psnr_y": 25.070938823085047,
+                "detail_energy": 0.538696214631278,
+                "fine_correlation": 0.37242701004949935
+              },
+              "reds_073": {
+                "lpips": 0.35073588305601366,
+                "dists": 0.2565113438500298,
+                "psnr_y": 22.67543129032778,
+                "detail_energy": 0.4751201170432246,
+                "fine_correlation": 0.260477948268167
+              }
+            },
+            "source_balanced": {
+              "lpips": 0.28371118335089257,
+              "dists": 0.23116897653650356,
+              "psnr_y": 25.890425300638935,
+              "detail_energy": 0.5662791251112498,
+              "fine_correlation": 0.3753117686750545
+            }
+          },
+          "current_only": {
+            "sources": {
+              "sintel": {
+                "lpips": 0.2183490487136792,
+                "dists": 0.19375733976010923,
+                "psnr_y": 29.925537456808907,
+                "detail_energy": 0.6857832844688313,
+                "fine_correlation": 0.4934195295558546
+              },
+              "reds_154": {
+                "lpips": 0.28227207464752374,
+                "dists": 0.24244754181967842,
+                "psnr_y": 25.072950012658954,
+                "detail_energy": 0.5401277122410618,
+                "fine_correlation": 0.37246239700190364
+              },
+              "reds_073": {
+                "lpips": 0.35117058966446807,
+                "dists": 0.2561141075911345,
+                "psnr_y": 22.676254836999554,
+                "detail_energy": 0.47598795233156793,
+                "fine_correlation": 0.26059878042957024
+              }
+            },
+            "source_balanced": {
+              "lpips": 0.28393057100855695,
+              "dists": 0.23077299639030738,
+              "psnr_y": 25.891580768822468,
+              "detail_energy": 0.5672996496804871,
+              "fine_correlation": 0.37549356899577613
+            }
+          },
+          "full_lr_features": {
+            "sources": {
+              "sintel": {
+                "lpips": 0.21833425917322058,
+                "dists": 0.19377998621375472,
+                "psnr_y": 29.925655771382473,
+                "detail_energy": 0.6857909581292694,
+                "fine_correlation": 0.4934798739876004
+              },
+              "reds_154": {
+                "lpips": 0.2823462304141786,
+                "dists": 0.24240169922510782,
+                "psnr_y": 25.073110779464603,
+                "detail_energy": 0.5401421696781119,
+                "fine_correlation": 0.37241375403067134
+              },
+              "reds_073": {
+                "lpips": 0.351223579849358,
+                "dists": 0.2560722827911377,
+                "psnr_y": 22.676349553304295,
+                "detail_energy": 0.47599325670899023,
+                "fine_correlation": 0.2605857545172124
+              }
+            },
+            "source_balanced": {
+              "lpips": 0.2839680231455857,
+              "dists": 0.2307513227433334,
+              "psnr_y": 25.891705368050456,
+              "detail_energy": 0.5673087948387905,
+              "fine_correlation": 0.37549312751182806
+            }
+          },
+          "initial": {
+            "sources": {
+              "sintel": {
+                "lpips": 0.2137711979976976,
+                "dists": 0.19477422645798437,
+                "psnr_y": 28.677276227811983,
+                "detail_energy": 0.6415185516656143,
+                "fine_correlation": 0.5036951956226896
+              },
+              "reds_154": {
+                "lpips": 0.29054888765569087,
+                "dists": 0.24941719461370399,
+                "psnr_y": 25.163160260919515,
+                "detail_energy": 0.5087248457153069,
+                "fine_correlation": 0.37924668110685517
+              },
+              "reds_073": {
+                "lpips": 0.35617565474024526,
+                "dists": 0.2615368167559306,
+                "psnr_y": 22.7398870833138,
+                "detail_energy": 0.450108753680454,
+                "fine_correlation": 0.2662052878712313
+              }
+            },
+            "source_balanced": {
+              "lpips": 0.28683191346454456,
+              "dists": 0.23524274594253966,
+              "psnr_y": 25.5267745240151,
+              "detail_energy": 0.5334507170204584,
+              "fine_correlation": 0.38304905486692536
+            }
+          }
+        },
+        "vs_own_current_only_percent": {
+          "lpips": 0.013190596875745086,
+          "dists": -0.009391760436872065,
+          "psnr_y": 0.0004812345337334989,
+          "detail_energy": 0.001612050758104111,
+          "fine_correlation": -0.00011757430340431085
+        },
+        "vs_initial_percent": {
+          "lpips": -0.9984559543486204,
+          "dists": -1.909271710466831,
+          "psnr_y": 1.4296002955329845,
+          "detail_energy": 6.346992653312622,
+          "fine_correlation": -1.972574337175248
+        },
+        "temporal": {
+          "base": {
+            "residual_change_l1": 0.0554306931267187,
+            "mean_rgb_mse": 0.0052945680446959565,
+            "last_rgb_mse": 0.005296728360336702
+          },
+          "current_only": {
+            "residual_change_l1": 0.05541548157640679,
+            "mean_rgb_mse": 0.005292994980638671,
+            "last_rgb_mse": 0.005295189710548382
+          },
+          "full_lr_features": {
+            "residual_change_l1": 0.055413727210441896,
+            "mean_rgb_mse": 0.005293026350929924,
+            "last_rgb_mse": 0.005295200608316009
+          },
+          "initial": {
+            "residual_change_l1": 0.054908704285945,
+            "mean_rgb_mse": 0.005164905433225108,
+            "last_rgb_mse": 0.005168550302844071
+          }
+        },
+        "vs_initial_sources_percent": {
+          "sintel": {
+            "lpips": 2.134553774438852,
+            "dists": -0.5104578066154497,
+            "psnr_y": 4.353201237291082,
+            "detail_energy": 6.901188804081793,
+            "fine_correlation": -2.02807605152171
+          },
+          "reds_154": {
+            "lpips": -2.823159058599689,
+            "dists": -2.8127553112213155,
+            "psnr_y": -0.3578623691188998,
+            "detail_energy": 6.175700720618393,
+            "fine_correlation": -1.8017104477332513
+          },
+          "reds_073": {
+            "lpips": -1.3903462589263116,
+            "dists": -2.0893937735322665,
+            "psnr_y": -0.27941005061598023,
+            "detail_energy": 5.750721979273576,
+            "fine_correlation": -2.1109773584727654
+          }
+        },
+        "vs_own_current_only_sources_percent": {
+          "sintel": {
+            "lpips": -0.006773347786825923,
+            "dists": 0.011688049430036429,
+            "psnr_y": 0.0003953632369491089,
+            "detail_energy": 0.0011189628869479051,
+            "fine_correlation": 0.012229842584488004
+          },
+          "reds_154": {
+            "lpips": 0.026271024771928886,
+            "dists": -0.018908252988059093,
+            "psnr_y": 0.0006411962117258696,
+            "detail_energy": 0.002676670113843649,
+            "fine_correlation": -0.013059834126571968
+          },
+          "reds_073": {
+            "lpips": 0.015089585076166756,
+            "dists": -0.016330533444719464,
+            "psnr_y": 0.0004176893645846391,
+            "detail_energy": 0.0011143932102219978,
+            "fine_correlation": -0.004998454841720346
+          }
+        },
+        "vs_matched_current_percent": {
+          "lpips": 0.09178030341043808,
+          "dists": -0.0010365650332522236,
+          "psnr_y": 0.008985472259381844,
+          "detail_energy": -0.19110070548055136,
+          "fine_correlation": 0.007865218628921866
+        },
+        "vs_matched_current_sources_percent": {
+          "sintel": {
+            "lpips": -0.004817651096489239,
+            "dists": 0.07338594583294888,
+            "psnr_y": 0.01186302910949344,
+            "detail_energy": -0.14560881061399522,
+            "fine_correlation": -0.015050618270329164
+          },
+          "reds_154": {
+            "lpips": 0.053233085070969466,
+            "dists": -0.03672277801178847,
+            "psnr_y": 0.00329424001923595,
+            "detail_energy": -0.19349138960313983,
+            "fine_correlation": 0.010999882271178762
+          },
+          "reds_073": {
+            "lpips": 0.18297015129458138,
+            "dists": -0.02351493343932809,
+            "psnr_y": 0.011481294239357176,
+            "detail_energy": -0.2538612167956589,
+            "fine_correlation": 0.04680706614947905
+          }
+        },
+        "temporal_vs_matched_current_percent": {
+          "residual_change_l1": -0.02994684645385437,
+          "mean_rgb_mse": -0.038159168105156294,
+          "last_rgb_mse": -0.0356155361697974
+        }
+      }
+    },
+    "run_exit": {
+      "complete": true,
+      "utc": "2026-09-09T03:13:59.8062992Z",
+      "exit_code": 0
+    },
+    "full_vs_packed_percent": {
+      "lpips": -0.049716983033087914,
+      "dists": -0.07227953342562321,
+      "psnr_y": -0.001533158563638004,
+      "detail_energy": 0.08048136607294865,
+      "fine_correlation": -0.04816985136695262
+    },
+    "full_vs_packed_sources_percent": {
+      "sintel": {
+        "lpips": 0.0854080637290533,
+        "dists": -0.059419400084026464,
+        "psnr_y": -0.0004866047913165694,
+        "detail_energy": 0.05213861452577628,
+        "fine_correlation": -0.05145434145128469
+      },
+      "reds_154": {
+        "lpips": -0.20692554248221695,
+        "dists": -0.0696668295961933,
+        "psnr_y": -0.008367679576148923,
+        "detail_energy": 0.18047780066074992,
+        "fine_correlation": -0.049286025044603665
+      },
+      "reds_073": {
+        "lpips": -0.007006351168847846,
+        "dists": -0.08448171888010281,
+        "psnr_y": 0.004643522816061285,
+        "detail_energy": 0.008020929734797733,
+        "fine_correlation": -0.040353900931611175
+      }
+    }
+  },
+  "alignment_attribution": {
+    "scope": "Matched alignment attribution at scored frames; source-disjoint patch diagnostic, no native claim",
+    "conventions": "100*(candidate/baseline-1); negative perceptual distances better. Sequence counts descriptive, not significance. PSNR percent is a percent of dB values.",
+    "frames": {
+      "0": {
+        "full_vs_packed": {
+          "source_balanced_percent": {
+            "lpips": 0.008220251187318617,
+            "dists": -0.04515780241055589,
+            "fine_correlation": -0.041748296241472804,
+            "psnr_y": -0.001969390943989957
+          },
+          "sequences_both_distances_lower": 18,
+          "sequences": 72
+        },
+        "packed": {
+          "memory_vs_own_current": {
+            "source_balanced_percent": {
+              "lpips": 0.0,
+              "dists": 0.0,
+              "fine_correlation": 0.0,
+              "psnr_y": 0.0
+            },
+            "sequences_both_distances_lower": 0,
+            "sequences": 72
+          },
+          "memory_vs_trained_current_control": {
+            "source_balanced_percent": {
+              "lpips": 0.11362816171529566,
+              "dists": 0.036658115819721004,
+              "fine_correlation": 0.05699818948294855,
+              "psnr_y": 0.007904970081806795
+            },
+            "sequences_both_distances_lower": 12,
+            "sequences": 72
+          },
+          "current_branch_training_shift": {
+            "source_balanced_percent": {
+              "lpips": 0.11362816171529566,
+              "dists": 0.036658115819721004,
+              "fine_correlation": 0.05699818948294855,
+              "psnr_y": 0.007904970081806795
+            },
+            "sequences_both_distances_lower": 12,
+            "sequences": 72
+          }
+        },
+        "full": {
+          "memory_vs_own_current": {
+            "source_balanced_percent": {
+              "lpips": 0.0,
+              "dists": 0.0,
+              "fine_correlation": 0.0,
+              "psnr_y": 0.0
+            },
+            "sequences_both_distances_lower": 0,
+            "sequences": 72
+          },
+          "memory_vs_trained_current_control": {
+            "source_balanced_percent": {
+              "lpips": 0.12185775342290484,
+              "dists": -0.008516240590350499,
+              "fine_correlation": 0.015226097468468147,
+              "psnr_y": 0.005935423458058864
+            },
+            "sequences_both_distances_lower": 14,
+            "sequences": 72
+          },
+          "current_branch_training_shift": {
+            "source_balanced_percent": {
+              "lpips": 0.12185775342290484,
+              "dists": -0.008516240590350499,
+              "fine_correlation": 0.015226097468468147,
+              "psnr_y": 0.005935423458058864
+            },
+            "sequences_both_distances_lower": 14,
+            "sequences": 72
+          }
+        }
+      },
+      "8": {
+        "full_vs_packed": {
+          "source_balanced_percent": {
+            "lpips": -0.08340463970089029,
+            "dists": -0.11677048675835522,
+            "fine_correlation": -0.06458374780415888,
+            "psnr_y": -0.0009506136229187057
+          },
+          "sequences_both_distances_lower": 26,
+          "sequences": 72
+        },
+        "packed": {
+          "memory_vs_own_current": {
+            "source_balanced_percent": {
+              "lpips": 0.01748299576505019,
+              "dists": -0.02132680073146931,
+              "fine_correlation": -0.0005947543421536139,
+              "psnr_y": 0.0005792618961164564
+            },
+            "sequences_both_distances_lower": 17,
+            "sequences": 72
+          },
+          "memory_vs_trained_current_control": {
+            "source_balanced_percent": {
+              "lpips": 0.1752629673692052,
+              "dists": 0.03975894683438952,
+              "fine_correlation": 0.06635062602877717,
+              "psnr_y": 0.012224847845798692
+            },
+            "sequences_both_distances_lower": 13,
+            "sequences": 72
+          },
+          "current_branch_training_shift": {
+            "source_balanced_percent": {
+              "lpips": 0.15775239176016864,
+              "dists": 0.06109877798048391,
+              "fine_correlation": 0.06694577853383343,
+              "psnr_y": 0.011645518491643081
+            },
+            "sequences_both_distances_lower": 12,
+            "sequences": 72
+          }
+        },
+        "full": {
+          "memory_vs_own_current": {
+            "source_balanced_percent": {
+              "lpips": 0.027874315025844254,
+              "dists": -0.011830320820405138,
+              "fine_correlation": -0.004905524729914568,
+              "psnr_y": 0.000671247832451094
+            },
+            "sequences_both_distances_lower": 17,
+            "sequences": 72
+          },
+          "memory_vs_trained_current_control": {
+            "source_balanced_percent": {
+              "lpips": 0.09171215022185653,
+              "dists": -0.07705796663971531,
+              "fine_correlation": 0.001724026503624465,
+              "psnr_y": 0.01127411801180589
+            },
+            "sequences_both_distances_lower": 19,
+            "sequences": 72
+          },
+          "current_branch_training_shift": {
+            "source_balanced_percent": {
+              "lpips": 0.06382004579539302,
+              "dists": -0.0652353633720737,
+              "fine_correlation": 0.006629876463759565,
+              "psnr_y": 0.010602799008307962
+            },
+            "sequences_both_distances_lower": 17,
+            "sequences": 72
+          }
+        }
+      },
+      "15": {
+        "full_vs_packed": {
+          "source_balanced_percent": {
+            "lpips": -0.07550626527991211,
+            "dists": -0.05464465652763595,
+            "fine_correlation": -0.038569561833801114,
+            "psnr_y": -0.0016776666979190225
+          },
+          "sequences_both_distances_lower": 25,
+          "sequences": 72
+        },
+        "packed": {
+          "memory_vs_own_current": {
+            "source_balanced_percent": {
+              "lpips": 0.0073466566177238235,
+              "dists": -0.034383093092493766,
+              "fine_correlation": 0.010233917646118584,
+              "psnr_y": 0.0007864137982815933
+            },
+            "sequences_both_distances_lower": 15,
+            "sequences": 72
+          },
+          "memory_vs_trained_current_control": {
+            "source_balanced_percent": {
+              "lpips": 0.13680834148330767,
+              "dists": 0.1354504265148826,
+              "fine_correlation": 0.04501239194432127,
+              "psnr_y": 0.011441793299482583
+            },
+            "sequences_both_distances_lower": 13,
+            "sequences": 72
+          },
+          "current_branch_training_shift": {
+            "source_balanced_percent": {
+              "lpips": 0.12945217445885504,
+              "dists": 0.16989193370908762,
+              "fine_correlation": 0.03477491546199918,
+              "psnr_y": 0.010655295706474277
+            },
+            "sequences_both_distances_lower": 13,
+            "sequences": 72
+          }
+        },
+        "full": {
+          "memory_vs_own_current": {
+            "source_balanced_percent": {
+              "lpips": 0.012158637915193893,
+              "dists": -0.015998719896337388,
+              "fine_correlation": 0.004463498212059491,
+              "psnr_y": 0.0007755420318167339
+            },
+            "sequences_both_distances_lower": 16,
+            "sequences": 72
+          },
+          "memory_vs_trained_current_control": {
+            "source_balanced_percent": {
+              "lpips": 0.06119877733414825,
+              "dists": 0.08073175356690943,
+              "fine_correlation": 0.006425469028181752,
+              "psnr_y": 0.009763934646400685
+            },
+            "sequences_both_distances_lower": 15,
+            "sequences": 72
+          },
+          "current_branch_training_shift": {
+            "source_balanced_percent": {
+              "lpips": 0.049034177530860035,
+              "dists": 0.09674595157704857,
+              "fine_correlation": 0.0019618832475032377,
+              "psnr_y": 0.008988322906366975
+            },
+            "sequences_both_distances_lower": 15,
+            "sequences": 72
+          }
+        }
+      }
+    },
+    "comparison_sha256": "4c2a993cc2925134f16969d1018dd99a3b3978fdbad44a2943b27db156fd6212",
+    "complete": true
+  },
+  "artifact_verification": {
+    "scope": "r59 bounded collector receipt: 3 arms x 2000 steps + run gate",
+    "remote_root": "C:/lucid/quality-breakthrough-20260908-r59",
+    "local_mirror": ".build/quality-breakthrough-r59 (ignored)",
+    "source_head": "24cd59165e84e31492a86512912b7bc882c42653",
+    "compare": "compare.py run UNCHANGED, exit 0, comparison.json written",
+    "exit_states": {
+      "run": {
+        "complete": true,
+        "utc": "2026-09-09T03:13:59.8062992Z",
+        "exit_code": 0
+      },
+      "tests": {
+        "step": "tests",
+        "utc": "2026-09-09T02:54:29.7188045Z",
+        "exit_code": 0
+      },
+      "full-lr-smoke": {
+        "step": "full-lr-smoke",
+        "utc": "2026-09-09T02:54:33.7635391Z",
+        "exit_code": 0
+      },
+      "current": {
+        "step": "current",
+        "utc": "2026-09-09T02:59:43.0762739Z",
+        "exit_code": 0
+      },
+      "packed": {
+        "step": "packed",
+        "utc": "2026-09-09T03:06:49.3872436Z",
+        "exit_code": 0
+      },
+      "full": {
+        "step": "full",
+        "utc": "2026-09-09T03:13:59.8062992Z",
+        "exit_code": 0
+      }
+    },
+    "arm_complete": {
+      "current": {
+        "complete": true,
+        "backbone_unchanged": false,
+        "steps": 2000,
+        "minutes": 4.838033333333336
+      },
+      "packed": {
+        "complete": true,
+        "backbone_unchanged": false,
+        "steps": 2000,
+        "minutes": 6.782816666666667
+      },
+      "full": {
+        "complete": true,
+        "backbone_unchanged": false,
+        "steps": 2000,
+        "minutes": 6.844000000000006
+      }
+    },
+    "checkpoint_sha256": {
+      "current": "32c923c5e713309c7e46eeb4245fd6782a55e828e3bb58e956b55170c34fc0ff",
+      "packed": "36e22074b3219922203aedbcd4499b238e8abdade763ca4999a676eb434288e4",
+      "full": "9b56297302b4b273daff7d582585a9fd5038962e8abde3ad637722a17dfb5d51"
+    },
+    "remote_sha256": {
+      "current_2k/step002000.pth": "32C923C5E713309C7E46EEB4245FD6782A55E828E3BB58E956B55170C34FC0FF",
+      "packed_2k/step002000.pth": "36E22074B3219922203AEDBCD4499B238E8ABDADE763CA4999A676EB434288E4",
+      "full_2k/step002000.pth": "9B56297302B4B273DAFF7D582585A9FD5038962E8ABDE3AD637722A17DFB5D51",
+      "current_2k/validation.json": "FD19B3916E3E6E6444FBD7DBBF1E373D8F331E631A29EAA7DE31475E672FFA58",
+      "packed_2k/validation.json": "7A57C3CFE49982DC120876E2448C35ABBD57A9A06464C5913C8ABE28FE7A89D5",
+      "full_2k/validation.json": "28D18FC05AC29F271A7BC2E51D96DCD7D8DA00CFAE0E637F8BF6C83B4EFD846E",
+      "current_2k/experiment.json": "A17D96900D35A48D7E71BD8CD1FDA056D0DEE354A509421AFD766A4CD7CE83CA",
+      "packed_2k/experiment.json": "609F50996A312ED9FF349F08D4D34E88C10459AFBAB343464318534C2BEA1706",
+      "full_2k/experiment.json": "B0D9007B61212D71E23DEC1FF06CDF62C7BB596C99DBAECD9AADE44F68521A9E",
+      "current_2k/complete.json": "BE90265DEB2DAEE02739C91E7169A256C0C0476C8DC9A657A343429455821F07",
+      "packed_2k/complete.json": "1220B1290D30BB3E2AF5170282B06259A11EF6FE658A65EA929CC0FDD892F52B",
+      "full_2k/complete.json": "07085B2F4C0D4F0A1EDFDEBAA0B359880B90E51EB8A5AFEFDC7E00282B4F745C",
+      "run.exit.json": "5BD7EA57ACAB69D35FC9B8D45AED6777A091B69F8F95CBBECD3885D8527280E5",
+      "current.exit.json": "F166A4AD0D7E6BA421588E132FBDA2801B4A0E7790FFD060DA49D2A60761050A",
+      "packed.exit.json": "884A969BD896D57B78CE884E2B3238F8C0B3A9AE548F936545FD3D0189101D6E",
+      "full.exit.json": "7FFB1EFFD5D505400EE444C04CE268CFF86F12FF7F1DAB1CB67A3C2BA002BD16",
+      "tests.exit.json": "943760CC0A79377C4AD04964A190A853E8F3F2D83A21CA0F275724DC6AE3CFAB",
+      "full-lr-smoke.exit.json": "FAA92F93D6B71D201AFA45141CA39A4482A1EA180E63282509A913BCC79EBFD6"
+    },
+    "local_sha256": {
+      "current_2k/step002000.pth": "32c923c5e713309c7e46eeb4245fd6782a55e828e3bb58e956b55170c34fc0ff",
+      "packed_2k/step002000.pth": "36e22074b3219922203aedbcd4499b238e8abdade763ca4999a676eb434288e4",
+      "full_2k/step002000.pth": "9b56297302b4b273daff7d582585a9fd5038962e8abde3ad637722a17dfb5d51",
+      "current_2k/validation.json": "fd19b3916e3e6e6444fbd7dbbf1e373d8f331e631a29eaa7de31475e672ffa58",
+      "packed_2k/validation.json": "7a57c3cfe49982dc120876e2448c35abbd57a9a06464c5913c8abe28fe7a89d5",
+      "full_2k/validation.json": "28d18fc05ac29f271a7bc2e51d96dcd7d8da00cfae0e637f8bf6c83b4efd846e",
+      "current_2k/experiment.json": "a17d96900d35a48d7e71bd8cd1fda056d0dee354a509421afd766a4cd7ce83ca",
+      "packed_2k/experiment.json": "609f50996a312ed9ff349f08d4d34e88c10459afbab343464318534c2bea1706",
+      "full_2k/experiment.json": "b0d9007b61212d71e23dec1ff06cdf62c7bb596c99dbaecd9aade44f68521a9e",
+      "current_2k/complete.json": "be90265deb2daee02739c91e7169a256c0c0476c8dc9a657a343429455821f07",
+      "packed_2k/complete.json": "1220b1290d30bb3e2af5170282b06259a11ef6fe658a65ea929cc0fdd892f52b",
+      "full_2k/complete.json": "07085b2f4c0d4f0a1edfdebaa0b359880b90e51eb8a5afefdc7e00282b4f745c",
+      "run.exit.json": "5bd7ea57acab69d35fc9b8d45aed6777a091b69f8f95cbbecd3885d8527280e5",
+      "current.exit.json": "f166a4ad0d7e6ba421588e132fbda2801b4a0e7790ffd060da49d2a60761050a",
+      "packed.exit.json": "884a969bd896d57b78ce884e2b3238f8c0b3a9ae548f936545fd3d0189101d6e",
+      "full.exit.json": "7ffb1effd5d505400ee444c04ce268cff86f12ff7f1dab1cb67a3c2ba002bd16",
+      "tests.exit.json": "943760cc0a79377c4ad04964a190a853e8f3f2d83a21ca0f275724dc6ae3cfab",
+      "full-lr-smoke.exit.json": "faa92f93d6b71d201afa45141ca39a4482a1ea180e63282509a913bcc79ebfd6"
+    },
+    "hash_match_all_18": true,
+    "final_remote_python_processes": [],
+    "final_remote_python_utc": "2026-09-09T03:16:18.2006422Z",
+    "gate_receipts_logs": "tests/full-lr-smoke/current/packed/full .exit.json + .stdout.log + .stderr.log downloaded (closed)",
+    "parent_notes": "parent session59361 supervises launch; parent independently read run.exit complete0 and no remote python at 03:14:01Z, launcher closed 0"
+  },
+  "gallery": {
+    "scope": "Previously fixed three validation patches, frame15 after all16 frames; original256px pixels; full-search source-proxy; full-LR feature memory versus packed-phase alignment and current-only controls; paired DINO critic dino_gan_weight 0.0075; not native output",
+    "checkpoint_sha256": {
+      "current": "32c923c5e713309c7e46eeb4245fd6782a55e828e3bb58e956b55170c34fc0ff",
+      "packed": "36e22074b3219922203aedbcd4499b238e8abdade763ca4999a676eb434288e4",
+      "full": "9b56297302b4b273daff7d582585a9fd5038962e8abde3ad637722a17dfb5d51"
+    },
+    "rows": [
+      {
+        "id": "sintel-stream-000-00",
+        "file": "validation/sintel-stream-000-00.npz",
+        "sha256": "efb2d3e031f034340d2764338cdf31a35213a343df0171ce18eb8e62d01970d7",
+        "source_id": "sintel",
+        "family": "blender_sintel",
+        "source_sha256": "648178454637253705ea56bd8a02db0bf17134703fe82ec3d6a9a880a343bc08",
+        "split": "validation",
+        "scale": 2,
+        "frames": 16,
+        "frame_rate": "24/1",
+        "start_seconds": 517.2646243716367,
+        "codec_warmup_frames": 8,
+        "full_reference_size": [
+          1920,
+          816
+        ],
+        "lr_patch_xy": [
+          720,
+          169
+        ],
+        "reference_size": [
+          256,
+          256
+        ],
+        "codec": "h264",
+        "rate_control": "constrained bitrate",
+        "target_bitrate": 940032,
+        "target_bits_per_pixel_frame": 0.1,
+        "gop": 60,
+        "encoded_sha256": "9dc6cf2839dc267819dfc3738974e28925021a7d2f0c084882d4bf30b030fcb6",
+        "encoded_container_bytes": 101512,
+        "hr_command": [
+          "ffmpeg",
+          "-nostdin",
+          "-v",
+          "error",
+          "-ss",
+          "517.2646243716367",
+          "-i",
+          "/Users/braedonsaunders/Documents/Code/lucid/.build/corpus-sources/Sintel.2010.4k.mkv",
+          "-an",
+          "-frames:v",
+          "24",
+          "-vf",
+          "scale=1920:816:flags=lanczos",
+          "-threads",
+          "2",
+          "-pix_fmt",
+          "rgb24",
+          "-f",
+          "rawvideo",
+          "-"
+        ],
+        "encode_command": [
+          "ffmpeg",
+          "-nostdin",
+          "-v",
+          "error",
+          "-f",
+          "rawvideo",
+          "-pix_fmt",
+          "rgb24",
+          "-s",
+          "1920x816",
+          "-r",
+          "24/1",
+          "-i",
+          "-",
+          "-vf",
+          "scale=960:408:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+          "-c:v",
+          "libx264",
+          "-preset",
+          "medium",
+          "-b:v",
+          "940032",
+          "-maxrate",
+          "940032",
+          "-bufsize",
+          "1880064",
+          "-threads",
+          "2",
+          "-g",
+          "60",
+          "-pix_fmt",
+          "yuv420p",
+          "-colorspace",
+          "bt709",
+          "-color_primaries",
+          "bt709",
+          "-color_trc",
+          "bt709",
+          "/var/folders/lh/yk15kh416t9_hvgq230ybmmc0000gn/T/lucid-stream-bank-017oig5c/stream.mkv"
+        ],
+        "reference_std": 12.77340098621862,
+        "reference_temporal_change": 7.34506368637085
+      },
+      {
+        "id": "reds_154-stream-000-00",
+        "file": "validation\\reds_154-stream-000-00.npz",
+        "sha256": "4bb6c237cc0e507470fbfc18af15594275f5c5507816b406dcc9c57b8478ea7b",
+        "source_id": "reds_154",
+        "family": "reds_sequence_154",
+        "source_sha256": "fe5b5fd7d18b8726773fc1a62fba0afb9a26578ebe17350765635472ca5ebd1a",
+        "split": "validation",
+        "scale": 2,
+        "frames": 16,
+        "frame_rate": "24/1",
+        "start_seconds": 0.21195283079911212,
+        "codec_warmup_frames": 24,
+        "full_reference_size": [
+          1280,
+          720
+        ],
+        "lr_patch_xy": [
+          459,
+          28
+        ],
+        "reference_size": [
+          256,
+          256
+        ],
+        "codec": "h264",
+        "rate_control": "constrained bitrate",
+        "target_bitrate": 552960,
+        "target_bits_per_pixel_frame": 0.1,
+        "gop": 60,
+        "encoded_sha256": "b15aa025b97a9f1bca385b7c87a0181176d85436c33a25f878b350034bf5674e",
+        "encoded_container_bytes": 120796,
+        "hr_command": [
+          "ffmpeg",
+          "-nostdin",
+          "-v",
+          "error",
+          "-ss",
+          "0.21195283079911212",
+          "-i",
+          "D:\\lucid-quality-breakthrough-r37\\reds-masters\\reds_154.mkv",
+          "-an",
+          "-frames:v",
+          "40",
+          "-vf",
+          "scale=1280:720:flags=lanczos",
+          "-threads",
+          "2",
+          "-pix_fmt",
+          "rgb24",
+          "-f",
+          "rawvideo",
+          "-"
+        ],
+        "encode_command": [
+          "ffmpeg",
+          "-nostdin",
+          "-v",
+          "error",
+          "-f",
+          "rawvideo",
+          "-pix_fmt",
+          "rgb24",
+          "-s",
+          "1280x720",
+          "-r",
+          "24/1",
+          "-i",
+          "-",
+          "-vf",
+          "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+          "-c:v",
+          "libx264",
+          "-preset",
+          "medium",
+          "-b:v",
+          "552960",
+          "-maxrate",
+          "552960",
+          "-bufsize",
+          "1105920",
+          "-threads",
+          "2",
+          "-g",
+          "60",
+          "-pix_fmt",
+          "yuv420p",
+          "-colorspace",
+          "bt709",
+          "-color_primaries",
+          "bt709",
+          "-color_trc",
+          "bt709",
+          "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-2w3n9f2f\\stream.mkv"
+        ],
+        "reference_std": 70.01338804664341,
+        "reference_temporal_change": 33.258033752441406,
+        "bank": "REDS"
+      },
+      {
+        "id": "reds_073-stream-000-00",
+        "file": "validation\\reds_073-stream-000-00.npz",
+        "sha256": "8c6d38cb8e167ad5ce2b3744313ef8a6501dc5ecdf6395afb6c6a0869b341a65",
+        "source_id": "reds_073",
+        "family": "reds_sequence_073",
+        "source_sha256": "66ac1fda6844c388683c5f38f9e8795e85896df4cded04bd76a44eedc11dc176",
+        "split": "validation",
+        "scale": 2,
+        "frames": 16,
+        "frame_rate": "24/1",
+        "start_seconds": 2.696626445378337,
+        "codec_warmup_frames": 8,
+        "full_reference_size": [
+          1280,
+          720
+        ],
+        "lr_patch_xy": [
+          387,
+          150
+        ],
+        "reference_size": [
+          256,
+          256
+        ],
+        "codec": "h264",
+        "rate_control": "constrained bitrate",
+        "target_bitrate": 110592,
+        "target_bits_per_pixel_frame": 0.02,
+        "gop": 60,
+        "encoded_sha256": "5c2e251869ed02da06271bf45b220e083134b20ec1b64b242e5cf048a97164ca",
+        "encoded_container_bytes": 20518,
+        "hr_command": [
+          "ffmpeg",
+          "-nostdin",
+          "-v",
+          "error",
+          "-ss",
+          "2.696626445378337",
+          "-i",
+          "D:\\lucid-quality-breakthrough-r37\\reds-masters\\reds_073.mkv",
+          "-an",
+          "-frames:v",
+          "24",
+          "-vf",
+          "scale=1280:720:flags=lanczos",
+          "-threads",
+          "2",
+          "-pix_fmt",
+          "rgb24",
+          "-f",
+          "rawvideo",
+          "-"
+        ],
+        "encode_command": [
+          "ffmpeg",
+          "-nostdin",
+          "-v",
+          "error",
+          "-f",
+          "rawvideo",
+          "-pix_fmt",
+          "rgb24",
+          "-s",
+          "1280x720",
+          "-r",
+          "24/1",
+          "-i",
+          "-",
+          "-vf",
+          "scale=640:360:flags=lanczos:out_color_matrix=bt709:out_range=tv",
+          "-c:v",
+          "libx264",
+          "-preset",
+          "medium",
+          "-b:v",
+          "110592",
+          "-maxrate",
+          "110592",
+          "-bufsize",
+          "221184",
+          "-threads",
+          "2",
+          "-g",
+          "60",
+          "-pix_fmt",
+          "yuv420p",
+          "-colorspace",
+          "bt709",
+          "-color_primaries",
+          "bt709",
+          "-color_trc",
+          "bt709",
+          "C:\\Users\\bsaun\\AppData\\Local\\Temp\\lucid-stream-bank-3_x6pcr9\\stream.mkv"
+        ],
+        "reference_std": 58.69145498617113,
+        "reference_temporal_change": 44.47105026245117,
+        "bank": "REDS"
+      }
+    ]
+  },
+  "visual_review": "Three previously fixed patches inspected: small differences among current, packed and full; no broad recovery of reference detail.",
+  "decision": "No promotion. Full-LR geometry correctness did not produce a useful memory contribution in this matched recipe."
+}

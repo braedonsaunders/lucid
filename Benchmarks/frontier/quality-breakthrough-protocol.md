@@ -1435,3 +1435,27 @@ full-LR alignment. All three train the backbone jointly under the same paired
 critic recipe. The zero projection preserves the original SR function at
 initialization. Native integration and timing remain unverified; no r59 quality
 result is available before the matched experiment completes.
+
+A closed-checkpoint r58 gate diagnostic on the same three fixed 16-frame
+patches finds that learned retention stays near initialization: mean gate
+0.118 for frozen memory and 0.117 for joint memory, versus initial 0.119.
+All observed gate elements are below 0.15. Enabling history changes the RGB
+output by only 0.00011–0.00026 mean absolute value across frames1–15.
+Confidence remains high on Sintel, so low confidence alone does not explain
+the weak contribution. The instrumented loop matches the research driver's
+quantized RGB exactly on all six arm/source runs, and checkpoint hashes match
+the closed validation reports. This measures the final trained mechanism;
+it does not establish that stronger initial retention improves quality.
+See `quality-breakthrough/raw-feature-gate-diagnostic.json`.
+
+r59 completes all three joint 2,000-step arms with identical initial outputs,
+shared weights/data/discriminator hashes, 62 tests and the actual CUDA critic
+smoke passing. Full-LR alignment versus packed alignment changes LPIPS/DISTS
+-0.050%/-0.072%; versus the trained current-only control it changes
++0.092%/-0.001%. Enabling history within the full-LR model changes only
++0.013%/-0.009%. At frame15, 16/72 sequences improve both distances over their
+own current-only output, a descriptive count. Three fixed crops show no broad
+detail recovery. The geometric correction is valid, but this recipe still
+learns little useful memory. No model is promoted. All runs and processes close,
+and all 18 downloaded checkpoint/report/exit hashes match remotely. See
+`quality-breakthrough/full-lr-alignment-comparison.json`.
