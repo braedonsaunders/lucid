@@ -1408,3 +1408,30 @@ weight-dependent regressions. All 1,920 RGB/reference/packet identities pass;
 the same fixed native crops show no broad recovery of reference detail. Neither
 weights nor sharpness are promoted. See
 `quality-breakthrough/paired-state-native-gain-comparison.json`.
+
+The r58 raw-feature comparison completes four matched 2,000-step runs.
+Frozen memory versus its trained current-only control changes LPIPS/DISTS
++0.034%/+0.126%; joint memory changes -0.103%/+0.064%. Within the same model,
+enabling history changes frozen LPIPS/DISTS only -0.021%/-0.026%, and joint
++0.0004%/-0.0064%. At frame15, only 28/72 frozen and 26/72 joint sequences
+improve both distances over their own current-only output; these counts are
+descriptive, not a significance test. The fixed three-patch gallery shows
+minor changes and the same missing detail. No raw-feature model is promoted.
+
+A separate geometry diagnostic on the trained frozen-memory encoder finds
+that its half-LR feature representation aligns almost exactly for a two-LR-pixel
+translation but not a one-pixel translation, even with perfect known motion.
+Pixel-unshuffle packs different pixel phases into channels; warping those
+channels as ordinary half-resolution features cannot generally preserve the
+packed observations across odd shifts. This is a representation limitation,
+not evidence of a measured quality gain from any replacement.
+
+The next prototype keeps eight observation-feature channels at full LR and
+packs them only after alignment. That has the same state-value count as the
+previous 32-channel half-LR state, but a different encoder and initialization.
+To isolate alignment from those changes, r59 compares the identical new model
+with current-only input, a deliberate packed-half-LR alignment ablation, and
+full-LR alignment. All three train the backbone jointly under the same paired
+critic recipe. The zero projection preserves the original SR function at
+initialization. Native integration and timing remain unverified; no r59 quality
+result is available before the matched experiment completes.
