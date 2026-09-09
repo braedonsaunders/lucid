@@ -1,0 +1,120 @@
+{
+  "complete": true,
+  "scope": "Exactly three fixed patches/frame15,8pxborder excluded, CPU cached Scorer, zero-shot stock params; not full-bank or native admission",
+  "gallery_sha256": "2e6aab2370c3323f0156e69ded6b2931610535287b5795d2f62e1f1fb457e91e",
+  "weights": {
+    "big2k": "2ee4ecdc773a75bde6553db7b9c65ee6eb2c632bf332240fe70298489176fc5c",
+    "stock2x": "561fd5cf419a23d4de1231ce258180f61aee4aa8caa1aaaa783769c7301847bc"
+  },
+  "rows": [
+    {
+      "source": "sintel-stream-000-00",
+      "variant": "big2k",
+      "metrics": {
+        "lpips": 0.1643749177455902,
+        "dists": 0.16701924800872803,
+        "psnr_y": 35.4116820011182,
+        "detail_energy": 0.8031883057073675,
+        "fine_correlation": 0.577660601274418
+      }
+    },
+    {
+      "source": "sintel-stream-000-00",
+      "variant": "stock2x",
+      "metrics": {
+        "lpips": 0.15020751953125,
+        "dists": 0.1542656421661377,
+        "psnr_y": 36.00919123557658,
+        "detail_energy": 0.6619752155406221,
+        "fine_correlation": 0.644579477596936
+      }
+    },
+    {
+      "source": "reds_154-stream-000-00",
+      "variant": "big2k",
+      "metrics": {
+        "lpips": 0.2541952133178711,
+        "dists": 0.19345301389694214,
+        "psnr_y": 25.76905503742053,
+        "detail_energy": 0.6530889772514471,
+        "fine_correlation": 0.49481480071979383
+      }
+    },
+    {
+      "source": "reds_154-stream-000-00",
+      "variant": "stock2x",
+      "metrics": {
+        "lpips": 0.3206580579280853,
+        "dists": 0.20872974395751953,
+        "psnr_y": 25.61520840615313,
+        "detail_energy": 0.6472906555240969,
+        "fine_correlation": 0.4826312510168592
+      }
+    },
+    {
+      "source": "reds_073-stream-000-00",
+      "variant": "big2k",
+      "metrics": {
+        "lpips": 0.48342421650886536,
+        "dists": 0.3475056290626526,
+        "psnr_y": 19.154683304199338,
+        "detail_energy": 0.29531195221526163,
+        "fine_correlation": 0.11136609071198023
+      }
+    },
+    {
+      "source": "reds_073-stream-000-00",
+      "variant": "stock2x",
+      "metrics": {
+        "lpips": 0.5656791925430298,
+        "dists": 0.37020885944366455,
+        "psnr_y": 19.093759069754114,
+        "detail_energy": 0.2752333482795368,
+        "fine_correlation": 0.0921586131708523
+      }
+    }
+  ],
+  "means": {
+    "big2k": {
+      "lpips": 0.3006647825241089,
+      "dists": 0.23599263032277426,
+      "psnr_y": 26.778473447579355,
+      "detail_energy": 0.5838630783913588,
+      "fine_correlation": 0.39461383090206403
+    },
+    "stock2x": {
+      "lpips": 0.3455149233341217,
+      "dists": 0.24440141518910727,
+      "psnr_y": 26.90605290382794,
+      "detail_energy": 0.5281664064480853,
+      "fine_correlation": 0.40645644726154917
+    }
+  },
+  "stock_vs_big2k_percent": {
+    "lpips": 14.916991751907794,
+    "dists": 3.5631557031387207,
+    "psnr_y": 0.47642542618544503,
+    "detail_energy": -9.539337903798806,
+    "fine_correlation": 3.0010646946696307
+  },
+  "source_hashes": {
+    "Tools/frontier_eval/evaluate_sequences.py": "08e0e6c7b06f5f8125bfc8995c4f480c7460adbd47ff1c44325dfdcb30200f75",
+    "Tools/eval_checkpoint.py": "06140f64cccb178983681569629669eee2ad2a77a86d1e49dfba72f4b7b9b1fa",
+    ".build/quality-breakthrough-r62-stock/r62_gallery.py": "2712767a6e90ce0f65a08d3613ec78a7ae594b6df7d2fd6c6c210989e32c1bf6"
+  },
+  "interpretation": "Zero-shot stock is worse on aggregate LPIPS/DISTS across these three patches, with lower detail energy and higher fine correlation. Sintel improves both distances; both REDS patches worsen. Three patches do not establish full-bank quality or exclude a fine-tuning benefit. Native runtime not measured yet; no promotion.",
+  "psnr_y_difference_db": 0.12757945624858635,
+  "reproduction": {
+    "complete": true,
+    "rows_verified": 6,
+    "gallery_sha256": "2e6aab2370c3323f0156e69ded6b2931610535287b5795d2f62e1f1fb457e91e",
+    "prior_scores_sha256": "897b65a3e5e5ef9e77af4f1c445ba6b4371503a31c98d0d4d4cf6b05328d0ccb",
+    "script_sha256": "4a6a2bb32ef865e618919c71fdfeb60d2e893ceceacaa28e7c8c9b974443e0fc",
+    "device": "cpu",
+    "score_tolerance": {
+      "rtol": 1e-07,
+      "atol": 1e-09
+    },
+    "downloads_allowed": false
+  }
+}

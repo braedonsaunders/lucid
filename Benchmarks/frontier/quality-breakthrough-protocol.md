@@ -1538,3 +1538,13 @@ patches. Different foliage/edge rendering is visible; the large missing-detail
 gap remains. The stock model uses a full-LR trunk, so it is not a weight swap
 for the current unshuffled graph. No quality advantage or native runtime has
 been established by this gallery. See `quality-breakthrough/stock-pretrained2x-gallery.json`.
+
+The same retained zero-shot gallery was scored on CPU with cached LPIPS/DISTS
+weights, excluding the usual 8px border. Across exactly three fixed patches,
+stock versus big2k changes LPIPS +14.917%, DISTS +3.563%, detail energy -9.539%
+and fine correlation +3.001%; mean PSNR-Y changes +0.128 dB. Sintel improves
+both perceptual distances, while both REDS patches worsen. This small screen
+does not establish a better initialization or exclude gains from fine-tuning.
+A matched 640x360 native graph timing check is the next feasibility gate before
+spending GPU time. No stock model is promoted. See
+`quality-breakthrough/stock-pretrained2x-three-patch-comparison.json`.
