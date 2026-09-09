@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Train the selective-scan history branch with a matched SR backbone.
 
-This reconstruction-only recipe requires fresh matched controls. It does not
-match r54's paired-critic recipe or establish comparability with r55 native
+The default reconstruction-only recipe and optional paired-DINO critic each
+require fresh matched controls. Neither establishes comparability with native
 outputs. Two experimental arms:
 
   ssm_frozen  - scan module only, backbone frozen (history 2e-4)
@@ -84,6 +84,32 @@ def clip_optimizer_groups(optimizer):
         torch.nn.utils.clip_grad_norm_(group['params'], 1)
 
 
+def training_objective(output, reference, decoded_current, *, adversary=None, gan_weight=0):
+    """Cropped final-frame HR objective, optionally conditioned on raw decoded LR.
+
+    The paired critic sees the same bicubic observation condition as r54. Only
+    its neural feature/critic graph uses BF16; reconstruction stays FP32.
+    Returned fake features are detached by the adversary for its separate update.
+    """
+    if not math.isfinite(gan_weight) or gan_weight < 0:
+        raise ValueError('nonnegative finite critic weight required')
+    if gan_weight and adversary is None:
+        raise ValueError('positive critic weight requires an adversary')
+    reconstruction = reconstruction_objective(output, reference, reference, 'reference')
+    loss, fake = reconstruction, None
+    metrics = {'reconstruction': float(reconstruction.detach())}
+    if gan_weight:
+        condition = F.interpolate(decoded_current.detach(), scale_factor=2,
+            mode='bicubic', align_corners=False, antialias=True).clamp(0, 1)[..., 8:-8, 8:-8]
+        if condition.shape != output.shape:
+            raise ValueError('critic condition must match cropped 2x reconstruction')
+        with torch.autocast(output.device.type, dtype=torch.bfloat16, enabled=output.is_cuda):
+            gan, fake = adversary.generator_loss(output, condition)
+        loss = loss + gan_weight * gan
+        metrics['gan_unweighted'] = float(gan.detach())
+    return loss, fake, metrics
+
+
 @torch.inference_mode()
 def validate(model, data, source_ids, *, use_scan=True, baseline=None,
              source_motion_policy='raw'):
@@ -130,11 +156,19 @@ def main():
     ap.add_argument('--reds-bank', type=Path, help='Include fixed 16-frame held-out REDS validation')
     ap.add_argument('--joint', action='store_true', help='Optimize the fused SR backbone along with the scan module')
     ap.add_argument('--no-scan', action='store_true', help='Matched joint-training control; scan stays zero and disabled')
+    ap.add_argument('--dino-gan-weight', type=float, default=0)
+    ap.add_argument('--pixrestore-repository', type=Path)
+    ap.add_argument('--dino-repository', type=Path)
+    ap.add_argument('--dino-checkpoint', type=Path)
     args = ap.parse_args()
     if args.out.exists() or min(args.steps, args.batch) < 1 or args.frames < 3 or args.crop < 32 or args.crop % 2:
         ap.error('fresh output, positive steps/batch, frames >=3 and even crop >=32 required')
     if args.no_scan and not args.joint:
         ap.error('no-scan control requires a trainable backbone')
+    if not math.isfinite(args.dino_gan_weight) or args.dino_gan_weight < 0:
+        ap.error('nonnegative finite critic weight required')
+    if args.dino_gan_weight and not all((args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)):
+        ap.error('paired critic requires pinned source repositories and weights')
     if not torch.cuda.is_available():
         raise ValueError('authorized CUDA worker required')
     torch.set_num_threads(4)
@@ -159,6 +193,10 @@ def main():
     if args.joint:
         groups.append({'params': model.sr.parameters(), 'lr': .00002, 'base_lr': .00002})
     optimizer = torch.optim.AdamW(groups, lr=.0002, weight_decay=0)
+    adversary = None
+    if args.dino_gan_weight:
+        from paired_dino_adversary import PairedDinoAdversary
+        adversary = PairedDinoAdversary(args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)
     rng = np.random.default_rng(args.seed)
     args.out.mkdir(parents=True)
     source_root = Path(__file__).resolve().parents[2]
@@ -190,6 +228,13 @@ def main():
         'torch': str(torch.__version__), 'gpu': torch.cuda.get_device_name()}
     if args.reds_bank:
         experiment['reds_bank_sha256'] = digest(args.reds_bank / 'manifest.json')
+    if adversary is not None:
+        experiment['adversary'] = adversary.metadata
+        experiment['discriminator_initial_sha256'] = state_digest(adversary.discriminator.state_dict())
+        experiment['recipe'] += '; paired-DINO adversarial term, BF16 critic, raw decoded condition'
+        for name in ('paired_dino_adversary.py', 'dino_adversary.py', 'dino_supervision.py'):
+            path = 'Tools/experiments/' + name
+            experiment['source_hashes'][path] = digest(source_root / path)
     started = time.monotonic()
     for step in range(1, args.steps + 1):
         source, reference = batch(data['train'], rng, args.batch, args.frames, args.crop)
@@ -205,16 +250,20 @@ def main():
             experiment['first_input_sha256'] = state_digest({'inputs': inputs})
             (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
         a, b = output[:, -1, :, 8:-8, 8:-8], reference[..., 8:-8, 8:-8]
-        loss = reconstruction_objective(a, b, b, 'reference')
+        loss, fake_features, loss_metrics = training_objective(a, b, source[:, -1],
+            adversary=adversary, gan_weight=args.dino_gan_weight)
         if not torch.isfinite(loss):
             raise ValueError('nonfinite ssm objective')
         loss.backward()
         clip_optimizer_groups(optimizer)
         optimizer.step()
+        if adversary is not None:
+            with torch.autocast('cuda', dtype=torch.bfloat16):
+                loss_metrics['discriminator'] = adversary.update(b, fake_features)
         for group in optimizer.param_groups:
             group['lr'] = group['base_lr'] * (.1 + .9 * .5 * (1 + math.cos(math.pi * step / args.steps)))
         if step % 200 == 0 or step == args.steps:
-            print(json.dumps({'step': step, 'loss': float(loss.detach()),
+            print(json.dumps({'step': step, 'loss': float(loss.detach()), **loss_metrics,
                               'minutes': (time.monotonic() - started) / 60}), flush=True)
     backbone_unchanged = state_digest(model.sr.state_dict()) == frozen_hash
     if not args.joint and not backbone_unchanged:

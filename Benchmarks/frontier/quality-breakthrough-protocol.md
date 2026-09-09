@@ -1325,3 +1325,21 @@ The base HR reconstruction objective is shared. This recipe difference motivates
 retaining perceptual training in any follow-up; it does not isolate the cause of
 every regression or establish that the feature-state architecture cannot work.
 See `quality-breakthrough/selective-state-reconstruction-comparison.json`.
+
+The r57 follow-up retains the aligned feature-state architecture and restores a
+paired-DINO adversarial term at weight0.0075, the setting used by r54's corrected
+source-proxy control. All three arms are freshly trained: backbone-only control,
+frozen-backbone state, and joint state/backbone. The same initialization, batch
+sequence seed, source preprocessing, optimizer groups, clipping and 72-sequence
+validation selection are retained. The critic is conditioned on bicubic raw
+decoded LR, with gradients through generated RGB and detached fake features for
+its separate discriminator update. Only the critic/feature graph uses BF16;
+the SR and feature-state graph remain FP32. Critic sources, initial discriminator
+weights and input/output hashes are recorded. The default zero critic weight
+preserves the r56 reconstruction objective and gradients.
+
+This comparison is assessed against both unchanged initialization and its fresh
+trained control. Historical r54 scores are not substituted for that control,
+and beating a regressing control alone does not justify promotion. Fixed crops
+and source-level metrics are reviewed together when deciding whether native
+evaluation is justified; no improvement is asserted before the run completes.
