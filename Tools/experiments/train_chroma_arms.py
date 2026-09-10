@@ -50,11 +50,13 @@ from train_span import Unshuffled
 from widen_span import widen
 from chroma_inject import (ChromaInject, FullLRChromaInjectSPAN,
                            warm_start_chroma_inject, report_macs, RGB2YCC)
+from chroma_revive import ChromaReviveSPAN, FullLRChromaReviveSPAN
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'frontier_eval'))
 from evaluate_sequences import Scorer, summarize
 
 
-def build_backbone(arm, init_path, luma_channels, rgb_channels, seed):
+def build_backbone(arm, init_path, luma_channels, rgb_channels, seed,
+                   branch_channels=32, branch_depth=3):
     base, _, frames = load(init_path, 'cpu')
     if type(base) is not Unshuffled or frames != 1:
         raise ValueError('ordinary single-frame 2x SPAN initialization required')
@@ -62,6 +64,17 @@ def build_backbone(arm, init_path, luma_channels, rgb_channels, seed):
         raise ValueError('32-channel init checkpoint required')
     if arm == 'control_32':
         return base, {'backbone': 'rgb32', 'channels': 32}
+    if arm == 'chroma_revive':
+        # Wraps the UNMODIFIED 32ch checkpoint directly (r97, see
+        # chroma_revive.py) -- no widening, no warm start, bit-exact at
+        # construction. This is a cleaner ablation against control_32 than
+        # chroma40's own comparison against width_40: chroma_revive and
+        # control_32 share literally the same pretrained weights, so any
+        # arm gap is exactly the new branch's effect, with zero other
+        # confounds (not even a different init channel count).
+        revive = ChromaReviveSPAN(base, branch_channels=branch_channels, branch_depth=branch_depth)
+        return revive, {'backbone': 'chroma_revive', 'channels': 32,
+                        'branch_channels': branch_channels, 'branch_depth': branch_depth}
     wide = widen(base, 40, seed=seed)
     if arm == 'width_40':
         return wide, {'backbone': 'rgb40', 'channels': 40}
@@ -157,7 +170,9 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     for key in ('bank', 'init', 'out'):
         ap.add_argument('--' + key, type=Path, required=True)
-    ap.add_argument('--arm', choices=('control_32', 'width_40', 'chroma40'), required=True)
+    ap.add_argument('--arm', choices=('control_32', 'width_40', 'chroma40', 'chroma_revive'), required=True)
+    ap.add_argument('--branch-channels', type=int, default=32)
+    ap.add_argument('--branch-depth', type=int, default=3)
     ap.add_argument('--steps', type=int, default=2000)
     ap.add_argument('--batch', type=int, default=4)
     ap.add_argument('--crop', type=int, default=96)
@@ -201,15 +216,29 @@ def main():
     if manifest['frames'] < args.frames or any(min(lr.shape[1:3]) < args.crop for rows in data.values() for lr, _, _ in rows):
         ap.error('adequate bank sequence/crop geometry required')
     validation_data, validation_sources = select_validation(args.bank, args.reds_bank, manifest, data)
-    backbone, tag = build_backbone(args.arm, args.init, args.luma_channels, args.backbone_channels, args.seed)
-    wrapper = FullLRChromaInjectSPAN if args.arm == 'chroma40' else FullLRFeatureSPAN
+    backbone, tag = build_backbone(args.arm, args.init, args.luma_channels, args.backbone_channels, args.seed,
+                                   branch_channels=args.branch_channels, branch_depth=args.branch_depth)
+    if args.arm == 'chroma_revive':
+        wrapper = FullLRChromaReviveSPAN
+    elif args.arm == 'chroma40':
+        wrapper = FullLRChromaInjectSPAN
+    else:
+        wrapper = FullLRFeatureSPAN
     model = wrapper(backbone, train_backbone=args.joint, state_channels=args.state_channels,
                     initial_decay_bias=args.initial_decay_bias).cuda().train()
     initial = copy.deepcopy(model.sr).eval().requires_grad_(False)
     frozen_hash = state_digest(model.sr.state_dict())
     groups = [{'params': list(model.branch_parameters()), 'lr': .0002, 'base_lr': .0002}]
     if args.joint:
-        groups.append({'params': model.sr.parameters(), 'lr': .00002, 'base_lr': .00002})
+        # chroma_revive's branch_parameters() already includes the new
+        # chroma-revival branch (see FullLRChromaReviveSPAN's docstring for
+        # why it gets the fast branch rate rather than the slow joint rate);
+        # the joint group here must therefore be scoped to the PRETRAINED
+        # trunk only (backbone_parameters()), or its params would appear in
+        # both optimizer groups at once (AdamW rejects that outright).
+        joint_params = (list(model.backbone_parameters()) if hasattr(model, 'backbone_parameters')
+                        else list(model.sr.parameters()))
+        groups.append({'params': joint_params, 'lr': .00002, 'base_lr': .00002})
     optimizer = torch.optim.AdamW(groups, lr=.0002, weight_decay=0)
     adversary = None
     if args.dino_gan_weight:
@@ -220,6 +249,7 @@ def main():
     source_root = Path(__file__).resolve().parents[2]
     files = ['Tools/architectures/full_lr_feature_span.py',
              'Tools/experiments/chroma_inject.py',
+             'Tools/experiments/chroma_revive.py',
              'Tools/experiments/full_lr_frame_feeding.py',
              'Tools/experiments/train_chroma_arms.py',
              'Tools/experiments/widen_span.py',
@@ -238,14 +268,23 @@ def main():
         'initial_shared_branch_sha256': state_digest({k: v for k, v in model.state_dict().items()
             if not k.startswith('sr.') and k != 'decay.bias'}),
         'branch_parameters': sum(p.numel() for p in model.branch_parameters()),
-        'backbone_parameters': sum(p.numel() for p in model.sr.parameters()),
+        'backbone_parameters': sum(p.numel() for p in (model.backbone_parameters()
+                                                        if hasattr(model, 'backbone_parameters')
+                                                        else model.sr.parameters())),
         'backbone_trainable': args.joint, 'use_history': False,
-        'mac_report': report_macs(),
+        'mac_report': (report_macs() if args.arm != 'chroma_revive' else
+                       {'note': ('chroma_inject.report_macs() is a formula for the chroma40 '
+                                'reallocation design and does not apply to chroma_revive; see '
+                                '.build/quality-breakthrough-r97-chromarevival/report.json for the '
+                                'real forward-hook-measured added params/MACs on the shipping checkpoint')}),
         'recipe': 'final-frame HR reconstruction; FP32 fused SR; backpropagation through decoded feature state',
-        'widen_seed_note': 'width_40 and chroma40 both derive from the shared 32->40 function-preserving widening at the run seed',
+        'widen_seed_note': 'width_40 and chroma40 both derive from the shared 32->40 function-preserving widening at the run seed; chroma_revive wraps the unmodified 32ch init directly (no widening)',
         'warm_start_note': ('chroma40 luma trunk verbatim + luma-projected first/upsampler; '
                             'chroma branch zero-init (starts as bicubic-chroma); '
-                            'NOT function-preserving on color input; achromatic axis exact'),
+                            'NOT function-preserving on color input; achromatic axis exact. '
+                            'chroma_revive (r97) instead wraps the trained model directly and is '
+                            'bit-exact with the control on color input too (verified in torch and '
+                            'after Core ML conversion on real frames; see r97 README)'),
         'optimizer': 'AdamW/cosine; raw branch 2e-4, joint backbone 2e-5; no weight decay',
         'gradient_clipping': 'per optimizer group norm1',
         'source_motion_policy': args.source_motion_policy,
