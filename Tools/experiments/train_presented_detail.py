@@ -37,9 +37,13 @@ def make_perceptual_loss(weight, device):
         return VGGFeatures(device).eval().requires_grad_(False)
 
 
-def reconstruction_objective(output, reference, intended, detail_target='mixture', fidelity=None):
+def reconstruction_objective(output, reference, intended, detail_target='mixture', fidelity=None,
+                             edge_weight=.2, fft_weight=.05):
     if detail_target not in ('mixture', 'reference'):
         raise ValueError('unknown detail supervision target')
+    for name, value in (('edge', edge_weight), ('fft', fft_weight)):
+        if not math.isfinite(value) or value < 0:
+            raise ValueError(f'nonnegative finite {name} weight required')
     detail = reference if detail_target == 'reference' else intended
     if fidelity is not None:
         if detail_target != 'reference' or not torch.equal(reference, intended):
@@ -47,9 +51,9 @@ def reconstruction_objective(output, reference, intended, detail_target='mixture
         pixel = 1.1 * fidelity(output, reference)
     else:
         # Preserve the control's original floating-point operation order.
-        return (F.l1_loss(output, intended) + .2 * sobel_loss(output, detail)
-                + .05 * fft_loss(output, detail) + .1 * F.l1_loss(output, reference))
-    return pixel + .2 * sobel_loss(output, detail) + .05 * fft_loss(output, detail)
+        return (F.l1_loss(output, intended) + edge_weight * sobel_loss(output, detail)
+                + fft_weight * fft_loss(output, detail) + .1 * F.l1_loss(output, reference))
+    return pixel + edge_weight * sobel_loss(output, detail) + fft_weight * fft_loss(output, detail)
 
 
 def temporal_consistency(previous_output, output, previous_reference, reference, threshold=2 / 255):
@@ -196,7 +200,7 @@ def main():
     ap.add_argument('--source-balanced', action='store_true',
         help='Sample sources equally, then their sequences equally; default remains uniform sequences')
     ap.add_argument('--architecture', choices=['coupled', 'anchored_detail', 'anchored_lowpass',
-                    'subspace_full', 'subspace_protected'], default='coupled')
+                    'subspace_full', 'subspace_protected', 'nearpixel'], default='coupled')
     ap.add_argument('--detail-channels', type=int, default=32)
     ap.add_argument('--detail-blocks', type=int, default=4)
     ap.add_argument('--detail-target', choices=['mixture', 'reference'], default='mixture',
@@ -327,6 +331,9 @@ def main():
         with torch.random.fork_rng(devices=[torch.cuda.current_device()]):
             model = AnchoredDetail(model, args.detail_channels, args.detail_blocks,
                                    residual_lowpass=args.architecture == 'anchored_lowpass').cuda().train()
+    if args.architecture == 'nearpixel':
+        from architectures.nearpixel_span import NearPixelSPAN
+        model = NearPixelSPAN(model).cuda().train()
     optimizer = torch.optim.AdamW((p for p in model.parameters() if p.requires_grad), lr=args.lr, weight_decay=0)
     fidelity = None
     if args.aesop_checkpoint:
