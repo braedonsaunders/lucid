@@ -84,18 +84,25 @@ def clip_optimizer_groups(optimizer):
         torch.nn.utils.clip_grad_norm_(group['params'], 1)
 
 
-def training_objective(output, reference, decoded_current, *, adversary=None, gan_weight=0):
+def training_objective(output, reference, decoded_current, *, adversary=None, gan_weight=0,
+                         edge_weight=0.2, fft_weight=0.05):
     """Cropped final-frame HR objective, optionally conditioned on raw decoded LR.
 
     The paired critic sees the same bicubic observation condition as r54. Only
     its neural feature/critic graph uses BF16; reconstruction stays FP32.
     Returned fake features are detached by the adversary for its separate update.
+    edge_weight/fft_weight default to the train_presented_detail constants; pass
+    explicit values for a loss-weight sweep (everything else pinned).
     """
     if not math.isfinite(gan_weight) or gan_weight < 0:
         raise ValueError('nonnegative finite critic weight required')
     if gan_weight and adversary is None:
         raise ValueError('positive critic weight requires an adversary')
-    reconstruction = reconstruction_objective(output, reference, reference, 'reference')
+    for name, value in (('edge', edge_weight), ('fft', fft_weight)):
+        if not math.isfinite(value) or value < 0:
+            raise ValueError(f'nonnegative finite {name} weight required')
+    reconstruction = reconstruction_objective(output, reference, reference, 'reference',
+                                              edge_weight=edge_weight, fft_weight=fft_weight)
     loss, fake = reconstruction, None
     metrics = {'reconstruction': float(reconstruction.detach())}
     if gan_weight:
@@ -157,6 +164,10 @@ def main():
     ap.add_argument('--joint', action='store_true', help='Optimize the fused SR backbone along with the scan module')
     ap.add_argument('--no-scan', action='store_true', help='Matched joint-training control; scan stays zero and disabled')
     ap.add_argument('--dino-gan-weight', type=float, default=0)
+    ap.add_argument('--reconstruction-edge', type=float, default=0.2,
+        help='Sobel edge-term weight in the reconstruction objective (default preserves the control)')
+    ap.add_argument('--reconstruction-fft', type=float, default=0.05,
+        help='FFT spectral-term weight in the reconstruction objective (default preserves the control)')
     ap.add_argument('--pixrestore-repository', type=Path)
     ap.add_argument('--dino-repository', type=Path)
     ap.add_argument('--dino-checkpoint', type=Path)
@@ -167,6 +178,10 @@ def main():
         ap.error('no-scan control requires a trainable backbone')
     if not math.isfinite(args.dino_gan_weight) or args.dino_gan_weight < 0:
         ap.error('nonnegative finite critic weight required')
+    for name, value in (('reconstruction edge', args.reconstruction_edge),
+                        ('reconstruction fft', args.reconstruction_fft)):
+        if not math.isfinite(value) or value < 0:
+            ap.error(f'nonnegative finite {name} weight required')
     if args.dino_gan_weight and not all((args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)):
         ap.error('paired critic requires pinned source repositories and weights')
     if not torch.cuda.is_available():
@@ -251,7 +266,8 @@ def main():
             (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
         a, b = output[:, -1, :, 8:-8, 8:-8], reference[..., 8:-8, 8:-8]
         loss, fake_features, loss_metrics = training_objective(a, b, source[:, -1],
-            adversary=adversary, gan_weight=args.dino_gan_weight)
+            adversary=adversary, gan_weight=args.dino_gan_weight,
+            edge_weight=args.reconstruction_edge, fft_weight=args.reconstruction_fft)
         if not torch.isfinite(loss):
             raise ValueError('nonfinite ssm objective')
         loss.backward()

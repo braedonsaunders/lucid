@@ -26,6 +26,7 @@ from full_lr_frame_feeding import run_full_lr_sequence
 from train_ssm_span import select_validation, clip_optimizer_groups, training_objective
 from eval_checkpoint import load
 from train_span import Unshuffled
+from architectures.skip_residual_span import zero_trunk_head
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'frontier_eval'))
 from evaluate_sequences import Scorer, summarize
 
@@ -82,19 +83,32 @@ def main():
     ap.add_argument('--reds-bank', type=Path, help='Include fixed 16-frame held-out REDS validation')
     ap.add_argument('--joint', action='store_true', help='Optimize the fused SR backbone along with the raw feature branch')
     ap.add_argument('--no-history', action='store_true', help='Matched current-only control; identical raw branch capacity without carried history')
+    ap.add_argument('--sr-skip-residual', action='store_true', help='Fixed bilinear 2x bypass around the SR trunk, so the trunk learns only the residual; the control path is unchanged')
+    ap.add_argument('--validate-every', type=int, default=0,
+        help='Write a periodic validation snapshot every N steps for learning curves; 0 (default) validates only at the final step, exactly as before')
     ap.add_argument('--dino-gan-weight', type=float, default=0)
+    ap.add_argument('--reconstruction-edge', type=float, default=0.2,
+        help='Sobel edge-term weight in the reconstruction objective (default preserves the control)')
+    ap.add_argument('--reconstruction-fft', type=float, default=0.05,
+        help='FFT spectral-term weight in the reconstruction objective (default preserves the control)')
     ap.add_argument('--pixrestore-repository', type=Path)
     ap.add_argument('--dino-repository', type=Path)
     ap.add_argument('--dino-checkpoint', type=Path)
     args = ap.parse_args()
     if args.out.exists() or min(args.steps, args.batch) < 1 or args.frames < 3 or args.crop < 32 or args.crop % 2:
         ap.error('fresh output, positive steps/batch, frames >=3 and even crop >=32 required')
+    if args.validate_every < 0:
+        ap.error('nonnegative validation cadence required')
     if args.state_channels < 3:
         ap.error('at least three full-LR state channels required')
     if not math.isfinite(args.initial_decay_bias):
         ap.error('finite initial decay bias required')
     if not math.isfinite(args.dino_gan_weight) or args.dino_gan_weight < 0:
         ap.error('nonnegative finite critic weight required')
+    for name, value in (('reconstruction edge', args.reconstruction_edge),
+                        ('reconstruction fft', args.reconstruction_fft)):
+        if not math.isfinite(value) or value < 0:
+            ap.error(f'nonnegative finite {name} weight required')
     if args.dino_gan_weight and not all((args.pixrestore_repository, args.dino_repository, args.dino_checkpoint)):
         ap.error('paired critic requires pinned source repositories and weights')
     if not torch.cuda.is_available():
@@ -110,7 +124,12 @@ def main():
     if type(base) is not Unshuffled or frames != 1:
         ap.error('ordinary single-frame 2x SPAN initialization required')
     model = FullLRFeatureSPAN(base, train_backbone=args.joint, state_channels=args.state_channels,
-                             initial_decay_bias=args.initial_decay_bias).cuda().train()
+                             initial_decay_bias=args.initial_decay_bias,
+                             skip_residual=args.sr_skip_residual).cuda().train()
+    if args.sr_skip_residual:
+        # Near-identity start: the trunk contributes nothing and the bypass
+        # carries the picture, so the residual is learned from a no-op.
+        zero_trunk_head(model.sr)
     initial = copy.deepcopy(model.sr).eval().requires_grad_(False)
     frozen_hash = state_digest(model.sr.state_dict())
     groups = [{'params': list(model.branch_parameters()), 'lr': .0002, 'base_lr': .0002}]
@@ -124,7 +143,8 @@ def main():
     rng = np.random.default_rng(args.seed)
     args.out.mkdir(parents=True)
     source_root = Path(__file__).resolve().parents[2]
-    files = ['Tools/architectures/full_lr_feature_span.py',
+    files = ['Tools/architectures/skip_residual_span.py',
+             'Tools/architectures/full_lr_feature_span.py',
              'Tools/experiments/full_lr_frame_feeding.py',
              'Tools/experiments/train_full_lr_feature_span.py',
              'Tools/architectures/subspace_adapter.py',
@@ -181,7 +201,8 @@ def main():
             (args.out / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
         a, b = output[:, -1, :, 8:-8, 8:-8], reference[..., 8:-8, 8:-8]
         loss, fake_features, loss_metrics = training_objective(a, b, source[:, -1],
-            adversary=adversary, gan_weight=args.dino_gan_weight)
+            adversary=adversary, gan_weight=args.dino_gan_weight,
+            edge_weight=args.reconstruction_edge, fft_weight=args.reconstruction_fft)
         if not torch.isfinite(loss):
             raise ValueError('nonfinite raw feature objective')
         loss.backward()
@@ -195,6 +216,15 @@ def main():
         if step % 200 == 0 or step == args.steps:
             print(json.dumps({'step': step, 'loss': float(loss.detach()), **loss_metrics,
                               'minutes': (time.monotonic() - started) / 60}), flush=True)
+        if args.validate_every and step % args.validate_every == 0 and step != args.steps:
+            snapshot = validate(model, validation_data, validation_sources,
+                                use_history=not args.no_history, baseline=None,
+                                source_motion_policy=args.source_motion_policy,
+                                state_warp=args.state_warp)
+            with open(args.out / 'curve.jsonl', 'a') as fh:
+                fh.write(json.dumps({'step': step, 'minutes': (time.monotonic() - started) / 60,
+                                     'summary': snapshot['summary']}) + '\n')
+            model.train()
     backbone_unchanged = state_digest(model.sr.state_dict()) == frozen_hash
     if not args.joint and not backbone_unchanged:
         raise ValueError('frozen backbone changed')
@@ -202,6 +232,7 @@ def main():
                 'state_representation': 'full_lr_observation_features_v1',
                 'feature_source': 'decoded_rgb8',
                 'state_warp': args.state_warp, 'state_channels': args.state_channels,
+                'skip_residual': bool(args.sr_skip_residual),
                 'source_motion_policy': args.source_motion_policy,
                 'channels': model.sr.core.conv_1.out_channels, 'version': model.sr.version,
                 'step': args.steps, 'experiment': experiment}, args.out / f'step{args.steps:06d}.pth')

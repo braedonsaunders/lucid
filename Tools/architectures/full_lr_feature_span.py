@@ -15,10 +15,13 @@ class FullLRFeatureSPAN(nn.Module):
     requires_feature_state = True
     state_representation = 'full_lr_observation_features_v1'
 
-    def __init__(self, sr, *, train_backbone=False, state_channels=8, initial_decay_bias=-2.):
+    def __init__(self, sr, *, train_backbone=False, state_channels=8, initial_decay_bias=-2.,
+                 skip_residual=False):
         super().__init__()
         if not math.isfinite(initial_decay_bias):
             raise ValueError('finite initial decay bias required')
+        if skip_residual not in (True, False):
+            raise ValueError('skip residual must be a bool')
         if sr.frames != 1 or sr.core.upsampler[1].upscale_factor != 4:
             raise ValueError('single-frame 2x source model required')
         if sr.core.img_range != 1 or torch.count_nonzero(sr.core.mean):
@@ -29,6 +32,7 @@ class FullLRFeatureSPAN(nn.Module):
         fuse_convolutions(sr)
         self.sr = sr.eval().requires_grad_(train_backbone)
         self.state_channels = state_channels
+        self.skip_residual = skip_residual
         self.raw_encoder = nn.Conv2d(3, state_channels, 3, padding=1, bias=False)
         nn.init.normal_(self.raw_encoder.weight, std=.01)
         # Preserve raw observations explicitly; remaining nonzero filters can
@@ -77,6 +81,13 @@ class FullLRFeatureSPAN(nn.Module):
                 first = value
         value = core.conv_2(value)
         output = core.upsampler(core.conv_cat(torch.cat((features, value, first, auxiliary), 1)))
+        if self.skip_residual:
+            bypass = F.interpolate(current, scale_factor=2, mode="bilinear",
+                                   align_corners=False)
+            if bypass.shape != output.shape:
+                raise ValueError(f"skip bypass {tuple(bypass.shape)} disagrees with "
+                                 f"trunk {tuple(output.shape)}")
+            output = output + bypass
         return output, state
 
 
@@ -97,7 +108,11 @@ def load_full_lr_checkpoint(path, device='cpu'):
     if (type(channels) is not int or channels < 3
             or channels != args.get('state_channels')):
         raise ValueError('feature state channels differ from training declaration')
+    skip = checkpoint.get('skip_residual', False)
+    if skip not in (True, False) or skip != args.get('sr_skip_residual', False):
+        raise ValueError('skip residual differs from training declaration')
     model = FullLRFeatureSPAN(Unshuffled(checkpoint['channels'], scale=2, version=checkpoint['version']),
-                             state_channels=checkpoint['state_channels'])
+                             state_channels=checkpoint['state_channels'],
+                             skip_residual=skip)
     model.load_state_dict(checkpoint['model'])
     return model.eval().to(device), checkpoint

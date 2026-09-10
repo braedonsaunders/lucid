@@ -64,6 +64,32 @@ class PresentedObjectiveTest(unittest.TestCase):
                     + .05 * fft_loss(output, reference))
         torch.testing.assert_close(reconstruction_objective(output, reference, reference, 'reference'), expected)
 
+    def test_edge_weight_scales_only_sobel_term(self):
+        torch.manual_seed(44)
+        output = torch.rand(1, 3, 24, 24, requires_grad=True)
+        reference = torch.rand_like(output)
+        intended = torch.rand_like(output)
+        halved = reconstruction_objective(output, reference, intended, edge_weight=.1)
+        difference = (reconstruction_objective(output, reference, intended)
+                      - reconstruction_objective(output, reference, intended, edge_weight=.1))
+        torch.testing.assert_close(difference, .1 * sobel_loss(output, intended))
+        torch.testing.assert_close(
+            halved - reconstruction_objective(output, reference, intended, edge_weight=0),
+            .1 * sobel_loss(output, intended))
+        gradient = torch.autograd.grad(difference, output)[0]
+        self.assertTrue(torch.isfinite(gradient).all())
+        self.assertGreater(float(gradient.abs().sum()), 0)
+
+    def test_weight_validation_rejects_negative_or_nonfinite(self):
+        torch.manual_seed(45)
+        output = torch.rand(1, 3, 24, 24)
+        reference = torch.rand_like(output)
+        for bad in (-.1, float('nan'), float('inf')):
+            with self.assertRaises(ValueError):
+                reconstruction_objective(output, reference, reference, 'reference', edge_weight=bad)
+            with self.assertRaises(ValueError):
+                reconstruction_objective(output, reference, reference, 'reference', fft_weight=bad)
+
     def test_input_noise_is_identity_at_zero_and_bounded(self):
         torch.manual_seed(7)
         x = torch.rand(3, 3, 16, 16)
