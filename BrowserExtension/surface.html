@@ -15,11 +15,16 @@
 -->
 <style>
   html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
-  canvas { display: block; width: 100%; height: 100%; }
+  canvas { display: block; width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+  /* surfaceGL is shown instead of surface only while the WebGL2 final-stretch
+     path is actually active; see surface.js. Starts hidden so the 2D canvas
+     (today's shipping path) is what paints until/unless GL takes over. */
+  #surfaceGL { display: none; }
 </style>
 </head>
 <body>
 <canvas id="surface"></canvas>
+<canvas id="surfaceGL"></canvas>
 <script src="bridge-auth.js"></script>
 <script src="surface.js"></script>
 </body>

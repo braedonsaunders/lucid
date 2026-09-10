@@ -12,6 +12,16 @@
   const canvas = document.getElementById('surface');
   const context = canvas.getContext('2d', { alpha: true, desynchronized: true });
   let lastNV12 = null;
+  // WebGL2 final-stretch (r93, banking r87/r88/r89): the browser's own canvas
+  // magnification on this element is bilinear, measured to cost 5.86-9.85%
+  // LPIPS / 3.37-4.11% DISTS vs a Lanczos-quality stretch at 1.5x-3x display
+  // scale (see .build/quality-breakthrough-r89-realstretch/README.md). This
+  // module owns that final stretch with a WebGL2 separable Lanczos-3 pass
+  // instead of leaving it to the browser, and is a pure additive presentation
+  // layer: `canvas`/`context` above are drawn into exactly as before by
+  // paint(), unchanged, and remain what's on screen whenever WebGL2 is
+  // unavailable, disabled, or the target box isn't a magnification.
+  const gls = createGLStretch();
   let socket = null;
   let connecting = false;
   let backoff = 400;
@@ -20,6 +30,7 @@
   let enabled = false, comparing = false, scheduled = false, newest = null, lastSequence = -1;
   function clear() {
     context.clearRect(0, 0, canvas.width, canvas.height);
+    gls.clear();
     newest = null; lastNV12 = null; lastFrameAt = 0;
   }
   // Height, in device pixels, of the strip at the bottom left clear so the
@@ -163,6 +174,10 @@
       return false;
     }
     if (gap > 0) context.clearRect(0, height - Math.min(gap, height), width, Math.min(gap, height));
+    // Present through the WebGL2 final-stretch when it applies (pure
+    // magnification in both axes); otherwise this is a no-op and the 2D
+    // canvas above, with its existing CSS 100% stretch, is what's on screen.
+    gls.present(canvas, width, height);
     return true;
   }
 
@@ -183,8 +198,13 @@
     if (message?.lucid === 'compare') {
       comparing = message.active === true;
       canvas.style.visibility = comparing ? 'hidden' : 'visible';
+      gls.setVisibility(comparing ? 'hidden' : 'visible');
       return;
     }
+    // Testing switch: postMessage({lucid:'glStretch', enabled}) to the surface
+    // iframe's contentWindow toggles the WebGL2 path on/off live. Not wired
+    // to content.js by default (see also the ?gl=0 startup query param).
+    if (message?.lucid === 'glStretch') { gls.setEnabled(message.enabled !== false); paint(); return; }
     if (!message || message.lucid !== 'gap') return;
     const next = Math.max(0, Math.round(message.band || 0));
     if (next === gap) return;
@@ -201,6 +221,7 @@
   setInterval(() => {
     if (lastFrameAt && performance.now() - lastFrameAt > 400) {
       context.clearRect(0, 0, canvas.width, canvas.height);
+      gls.clear();
       lastNV12 = null;
       lastFrameAt = 0;
     }
@@ -220,6 +241,228 @@
     frozen = false;
     connect();
   });
+
+  // ---- WebGL2 final-stretch ------------------------------------------------
+  //
+  // Two-pass separable Lanczos-3 resample, ported from the r89 prototype
+  // (.build/quality-breakthrough-r89-realstretch/webgl_lanczos.html), run
+  // against a live source canvas every frame instead of a static image.
+  //
+  // The target size is this document's own layout viewport (innerWidth x
+  // innerHeight) times devicePixelRatio: content.js positions the surface
+  // iframe with `surface.style.width/height = content.w/h + 'px'`
+  // (content.js:329-330) and this document has no margin/border/scrollbar
+  // (surface.html sets margin:0, overflow:hidden on html/body), so the
+  // iframe's layout viewport is exactly that CSS box. That means the target
+  // device-pixel size can be read entirely inside this iframe, with no new
+  // message from content.js and no bridge/protocol change.
+  function createGLStretch() {
+    const glCanvas = document.getElementById('surfaceGL');
+    const disabledByQuery = new URLSearchParams(location.search).get('gl') === '0';
+    let userEnabled = !disabledByQuery;
+    let gl = null, prog = null, uSrc, uSrcSize, uDstSize, uAxis;
+    let srcTex = null, midTex = null, midFBO = null;
+    let srcW = 0, srcH = 0; // last-allocated source-texture size
+    let midTexW = 0, midTexH = 0; // last-allocated intermediate (pass-1 output) size
+    let active = false; // whether the GL canvas is the one currently visible
+    let compareHidden = false;
+
+    if (!userEnabled) return { present() {}, clear() {}, setEnabled, setVisibility: () => {} };
+
+    try { gl = init(); } catch (e) { gl = null; }
+    if (!gl) return { present() {}, clear() {}, setEnabled, setVisibility: () => {} };
+
+    function init() {
+      const g = glCanvas.getContext('webgl2', {
+        alpha: true, antialias: false, depth: false, stencil: false,
+        preserveDrawingBuffer: false, premultipliedAlpha: true,
+      });
+      if (!g) return null;
+      const VS = `#version 300 es
+        in vec2 aPos;
+        out vec2 vUv;
+        void main(){ vUv = aPos * 0.5 + 0.5; gl_Position = vec4(aPos, 0.0, 1.0); }
+      `;
+      const FS = `#version 300 es
+        precision highp float;
+        in vec2 vUv;
+        out vec4 outColor;
+        uniform sampler2D uSrc;
+        uniform vec2 uSrcSize;
+        uniform vec2 uDstSize;
+        uniform int uAxis;
+        const float PI = 3.14159265358979;
+        float sinc(float x) {
+          if (abs(x) < 1e-6) return 1.0;
+          float px = PI * x;
+          return sin(px) / px;
+        }
+        float lanczos3(float x) {
+          if (abs(x) >= 3.0) return 0.0;
+          return sinc(x) * sinc(x / 3.0);
+        }
+        void main() {
+          vec2 dstPixel = vUv * uDstSize;
+          float scale = (uAxis == 0) ? (uSrcSize.x / uDstSize.x) : (uSrcSize.y / uDstSize.y);
+          float dstCoord = (uAxis == 0) ? dstPixel.x : dstPixel.y;
+          float srcCoord = (dstCoord + 0.5) * scale - 0.5;
+          float base = floor(srcCoord);
+          vec4 sum = vec4(0.0);
+          float wsum = 0.0;
+          for (int i = -2; i <= 3; i++) {
+            float sampleCoord = base + float(i);
+            float w = lanczos3(srcCoord - sampleCoord);
+            if (w == 0.0) continue;
+            vec2 uv;
+            if (uAxis == 0) {
+              float sx = clamp((sampleCoord + 0.5) / uSrcSize.x, 0.0, 1.0);
+              uv = vec2(sx, vUv.y);
+            } else {
+              float sy = clamp((sampleCoord + 0.5) / uSrcSize.y, 0.0, 1.0);
+              uv = vec2(vUv.x, sy);
+            }
+            sum += texture(uSrc, uv) * w;
+            wsum += w;
+          }
+          outColor = sum / max(wsum, 1e-6);
+        }
+      `;
+      function compile(type, src) {
+        const s = g.createShader(type);
+        g.shaderSource(s, src);
+        g.compileShader(s);
+        if (!g.getShaderParameter(s, g.COMPILE_STATUS)) { const info = g.getShaderInfoLog(s); g.deleteShader(s); throw new Error(info); }
+        return s;
+      }
+      const vs = compile(g.VERTEX_SHADER, VS);
+      const fs = compile(g.FRAGMENT_SHADER, FS);
+      const p = g.createProgram();
+      g.attachShader(p, vs); g.attachShader(p, fs); g.linkProgram(p);
+      if (!g.getProgramParameter(p, g.LINK_STATUS)) { const info = g.getProgramInfoLog(p); g.deleteProgram(p); throw new Error(info); }
+      g.deleteShader(vs); g.deleteShader(fs);
+      prog = p;
+      g.useProgram(prog);
+      const quad = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+      const vbo = g.createBuffer();
+      g.bindBuffer(g.ARRAY_BUFFER, vbo);
+      g.bufferData(g.ARRAY_BUFFER, quad, g.STATIC_DRAW);
+      const aPos = g.getAttribLocation(prog, 'aPos');
+      g.enableVertexAttribArray(aPos);
+      g.vertexAttribPointer(aPos, 2, g.FLOAT, false, 0, 0);
+      uSrc = g.getUniformLocation(prog, 'uSrc');
+      uSrcSize = g.getUniformLocation(prog, 'uSrcSize');
+      uDstSize = g.getUniformLocation(prog, 'uDstSize');
+      uAxis = g.getUniformLocation(prog, 'uAxis');
+      srcTex = makeTexture(g);
+      midTex = makeTexture(g);
+      midFBO = g.createFramebuffer();
+      return g;
+    }
+
+    function makeTexture(g) {
+      const tex = g.createTexture();
+      g.bindTexture(g.TEXTURE_2D, tex);
+      g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MIN_FILTER, g.NEAREST);
+      g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MAG_FILTER, g.NEAREST);
+      g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_S, g.CLAMP_TO_EDGE);
+      g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_T, g.CLAMP_TO_EDGE);
+      return tex;
+    }
+
+    function targetDevicePixels() {
+      const dpr = self.devicePixelRatio || 1;
+      return {
+        w: Math.max(1, Math.round(innerWidth * dpr)),
+        h: Math.max(1, Math.round(innerHeight * dpr)),
+      };
+    }
+
+    function setEnabled(v) { userEnabled = v; if (!userEnabled) show(false); }
+    function setVisibility(v) { compareHidden = v === 'hidden'; glCanvas.style.visibility = v; }
+
+    function show(on) {
+      active = on;
+      glCanvas.style.display = on ? 'block' : 'none';
+      canvas.style.display = on ? 'none' : 'block';
+    }
+
+    function clear() {
+      if (!gl) return;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.viewport(0, 0, glCanvas.width || 1, glCanvas.height || 1);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+    }
+
+    // Only a pure magnification (target device-px size >= source size on
+    // BOTH axes) is in scope: r89 measured and shipped a magnification
+    // filter, and a non-widened Lanczos-3 kernel can alias on a downscaled
+    // axis, which was never tested. Any other case (no stretch, or a
+    // downscale on either axis) falls back to the untouched 2D/CSS path.
+    function shouldStretch(sw, sh, tw, th) {
+      return tw >= sw && th >= sh && (tw > sw || th > sh);
+    }
+
+    function present(srcCanvas, width, height) {
+      if (!gl || !userEnabled) { if (active) show(false); return; }
+      const target = targetDevicePixels();
+      if (!shouldStretch(width, height, target.w, target.h)) { if (active) show(false); return; }
+      try { run(srcCanvas, width, height, target.w, target.h); }
+      catch (e) { show(false); gl = null; return; } // fail safe to the 2D path for the rest of the session
+      show(true);
+      glCanvas.style.visibility = compareHidden ? 'hidden' : 'visible';
+    }
+
+    function run(srcCanvas, sw, sh, tw, th) {
+      if (sw !== srcW || sh !== srcH) {
+        gl.bindTexture(gl.TEXTURE_2D, srcTex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, sw, sh, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        srcW = sw; srcH = sh;
+      }
+      if (tw !== midTexW || sh !== midTexH) {
+        gl.bindTexture(gl.TEXTURE_2D, midTex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, tw, sh, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, midFBO);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, midTex, 0);
+        midTexW = tw; midTexH = sh;
+      }
+      if (glCanvas.width !== tw || glCanvas.height !== th) {
+        glCanvas.width = tw; glCanvas.height = th;
+      }
+
+      gl.useProgram(prog);
+      gl.bindTexture(gl.TEXTURE_2D, srcTex);
+      // Flip Y on upload: canvas-space row 0 is the top, WebGL texture row 0
+      // is conventionally sampled as the bottom, and the GL default
+      // framebuffer's row 0 likewise displays at the bottom of the canvas —
+      // flipping once on the way in keeps both passes' pure resample math
+      // (no per-pass flip) and lands right-side-up on screen.
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, sw, sh, gl.RGBA, gl.UNSIGNED_BYTE, srcCanvas);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+
+      // Pass 1: horizontal sw x sh -> tw x sh, into midTex.
+      gl.bindFramebuffer(gl.FRAMEBUFFER, midFBO);
+      gl.viewport(0, 0, tw, sh);
+      gl.bindTexture(gl.TEXTURE_2D, srcTex);
+      gl.uniform1i(uSrc, 0);
+      gl.uniform2f(uSrcSize, sw, sh);
+      gl.uniform2f(uDstSize, tw, sh);
+      gl.uniform1i(uAxis, 0);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+      // Pass 2: vertical tw x sh -> tw x th, into the default framebuffer.
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.viewport(0, 0, tw, th);
+      gl.bindTexture(gl.TEXTURE_2D, midTex);
+      gl.uniform2f(uSrcSize, tw, sh);
+      gl.uniform2f(uDstSize, tw, th);
+      gl.uniform1i(uAxis, 1);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    return { present, clear, setEnabled, setVisibility };
+  }
 
   connect();
 })();
