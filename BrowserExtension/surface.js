@@ -266,11 +266,45 @@
     let midTexW = 0, midTexH = 0; // last-allocated intermediate (pass-1 output) size
     let active = false; // whether the GL canvas is the one currently visible
     let compareHidden = false;
+    // WebGL context loss (GPU process reset, driver crash, or Chromium's
+    // per-tab/global context-count limit — plausible for an extension that
+    // opens one WebGL2 context per active tab) makes every GL call a silent
+    // no-op rather than throwing, so the try/catch in present() below can
+    // never see it. `lost` plus the isContextLost() checks are what actually
+    // detect it and drop to the 2D/CSS fallback instead of a blank canvas.
+    let lost = false;
 
     if (!userEnabled) return { present() {}, clear() {}, setEnabled, setVisibility: () => {} };
 
     try { gl = init(); } catch (e) { gl = null; }
     if (!gl) return { present() {}, clear() {}, setEnabled, setVisibility: () => {} };
+
+    // preventDefault() is required for the context to ever be eligible for
+    // restoration at all; without it the browser treats the loss as
+    // permanent. Fall back immediately rather than waiting for the next
+    // present() call to notice via isContextLost(), so a stalled/frozen
+    // video (no new frames driving present()) can't stay stuck on a blank
+    // GL canvas after a loss.
+    glCanvas.addEventListener('webglcontextlost', (event) => {
+      event.preventDefault();
+      lost = true;
+      show(false);
+    }, false);
+    // Restoration hands back the *same* context object with all resources
+    // (program, textures, framebuffer) gone, so re-run the same init() used
+    // at startup to recreate them. Only clear `lost` — re-enabling the GL
+    // path — if that fully succeeds; otherwise stay on the 2D fallback for
+    // the rest of the session, same fail-safe policy present() already uses
+    // for a run() exception.
+    glCanvas.addEventListener('webglcontextrestored', () => {
+      try {
+        gl = init();
+        if (!gl) throw new Error('reinit after context restore returned null');
+        lost = false;
+      } catch (e) {
+        gl = null;
+      }
+    }, false);
 
     function init() {
       const g = glCanvas.getContext('webgl2', {
@@ -356,6 +390,13 @@
       srcTex = makeTexture(g);
       midTex = makeTexture(g);
       midFBO = g.createFramebuffer();
+      // srcTex/midTex above are freshly created with no backing storage.
+      // run() only calls texImage2D to allocate it when the requested size
+      // differs from srcW/srcH/midTexW/midTexH, so those trackers must be
+      // reset here too (not just at first-load, when they're already 0) or
+      // a post-restore run() at an unchanged frame size would skip
+      // allocating storage on the new, empty texture objects entirely.
+      srcW = 0; srcH = 0; midTexW = 0; midTexH = 0;
       return g;
     }
 
@@ -404,7 +445,11 @@
     }
 
     function present(srcCanvas, width, height) {
-      if (!gl || !userEnabled) { if (active) show(false); return; }
+      // gl.isContextLost() is the belt to the `lost` flag's suspenders:
+      // webglcontextlost fires asynchronously, so there's a real window
+      // right after an actual loss where `lost` hasn't been set yet but the
+      // context already reports lost and every GL call on it is a no-op.
+      if (!gl || !userEnabled || lost || gl.isContextLost()) { if (active) show(false); return; }
       const target = targetDevicePixels();
       if (!shouldStretch(width, height, target.w, target.h)) { if (active) show(false); return; }
       try { run(srcCanvas, width, height, target.w, target.h); }
