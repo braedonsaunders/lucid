@@ -124,6 +124,7 @@ def chroma_trunk_replay(core, x):
       output:      the trunk's own final output, bit-exact with `core(x)`
                    (B, 3, H/2*factor, W/2*factor)
     """
+    core.mean = core.mean.type_as(x)
     xin = (x - core.mean) * core.img_range
     out_feature = core.conv_1(xin)
     out_b1, _, _ = core.block_1(out_feature)
@@ -387,6 +388,7 @@ class FullLRChromaReviveSPAN(nn.Module):
             state = observed + torch.sigmoid(self.decay(current)) * state * confidence.clamp(0, 1)
         core = self.sr.core
         unshuffled = self.sr.unshuffle(current)
+        core.mean = core.mean.type_as(unshuffled)
         xin = (unshuffled - core.mean) * core.img_range
         out_feature = core.conv_1(xin) + self.project(F.pixel_unshuffle(state, 2))
         out_b1, _, _ = core.block_1(out_feature)
@@ -453,19 +455,31 @@ def load_arm_checkpoint(path, device='cpu'):
     if checkpoint.get('scale') != 2:
         raise ValueError('2x arm checkpoint required')
     backbone = checkpoint.get('backbone')
-    args = checkpoint.get('experiment', {}).get('args', {})
+    # NOTE on the channel checks below: `train_chroma_arms.py`'s
+    # `build_backbone` bakes 'channels' into the saved tag as a LITERAL (32
+    # for control_32, 40 for width_40/widen(base, 40, ...), the unmodified
+    # 32ch init for chroma_revive) -- it is never derived from
+    # `args.backbone_channels`/`args.luma_channels` for ANY arm this
+    # function handles (those argparse fields default to 40 regardless of
+    # arm and are genuinely used only by the separate `chroma40` arm, which
+    # this function does not reconstruct at all). Cross-checking 'channels'
+    # against `args['backbone_channels']` is therefore wrong in general, not
+    # just for chroma_revive: it silently happened to pass for width_40
+    # (40 == the unrelated default) and fail for every control_32 checkpoint
+    # (32 != 40) -- caught only once a real trained control_32 checkpoint
+    # was loaded post-training on this slice.
     if backbone == 'chroma_revive':
         channels = checkpoint.get('channels')
-        if type(channels) is not int or channels != args.get('backbone_channels'):
-            raise ValueError('backbone channels differ from training declaration')
+        if type(channels) is not int or channels <= 0:
+            raise ValueError('positive integer backbone channel count required')
         base = Unshuffled(channels, scale=2, version=checkpoint.get('version', 1))
         sr = ChromaReviveSPAN(base, branch_channels=checkpoint.get('branch_channels', 32),
                               branch_depth=checkpoint.get('branch_depth', 3))
         model = FullLRChromaReviveSPAN(sr, state_channels=checkpoint.get('state_channels', 8))
     elif backbone in ('rgb32', 'rgb40'):
         channels = checkpoint.get('channels')
-        if type(channels) is not int or channels != args.get('backbone_channels'):
-            raise ValueError('backbone channels differ from training declaration')
+        if type(channels) is not int or channels <= 0:
+            raise ValueError('positive integer backbone channel count required')
         sr = Unshuffled(channels, scale=2, version=checkpoint.get('version', 1))
         model = FullLRFeatureSPAN(sr, state_channels=checkpoint.get('state_channels', 8),
                                   skip_residual=False)

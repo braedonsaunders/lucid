@@ -34,6 +34,28 @@ class ChromaTrunkReplayTests(unittest.TestCase):
             feats = R.chroma_trunk_replay(model.core, model.unshuffle(x))
         self.assertLess(float((feats['output'] - want).abs().max()), 1e-5)
 
+    def test_trunk_replay_self_heals_mean_dtype_device(self):
+        """Regression guard for a real bug caught only once this ran on GPU:
+        `span_arch.SPAN.mean` is a plain tensor attribute (not a registered
+        buffer), and the real `SPAN.forward` self-heals it every call via
+        `self.mean = self.mean.type_as(x)` (span_arch.py). The first version
+        of `chroma_trunk_replay` (and the duplicated inline replay in
+        `FullLRChromaReviveSPAN.forward`) omitted that self-heal line, so
+        `core.mean` never moved off CPU when `.cuda()` was called on the
+        wrapping module -- invisible on CPU-only tests (mean already matches
+        x's device there) and only surfaced as a live
+        'Expected all tensors to be on the same device' RuntimeError during
+        GPU training. dtype mismatch is used here as a CPU-testable proxy
+        for the same self-heal path (`type_as` fixes both device and dtype
+        identically), since this suite has no CUDA device to reproduce the
+        device case directly."""
+        model = _tiny_model(8).eval()
+        model.core.mean = model.core.mean.double()
+        x = torch.rand(1, 3, 24, 32)
+        feats = R.chroma_trunk_replay(model.core, model.unshuffle(x))
+        self.assertEqual(feats['output'].dtype, torch.float32)
+        self.assertEqual(model.core.mean.dtype, torch.float32)
+
     def test_trunk_replay_shapes(self):
         model = _tiny_model(8).eval()
         x = torch.rand(1, 3, 24, 32)
@@ -286,6 +308,24 @@ class FullLRChromaReviveSPANTests(unittest.TestCase):
             wrapped_out, _ = wrapper(current, current, confidence, None)
         self.assertLess(float((wrapped_out - plain).abs().max()), 1e-4)
 
+    def test_forward_self_heals_mean_dtype_device(self):
+        """Same regression as
+        `ChromaTrunkReplayTests.test_trunk_replay_self_heals_mean_dtype_device`,
+        for the SEPARATE hand-copied replay inline in
+        `FullLRChromaReviveSPAN.forward` (kept independent from
+        `chroma_trunk_replay` deliberately, per the module docstring -- which
+        is exactly why it needed its own, separate fix and its own,
+        separate regression test)."""
+        torch.manual_seed(9)
+        wrapper = self._build()
+        wrapper.sr.core.mean = wrapper.sr.core.mean.double()
+        current = torch.rand(1, 3, 24, 32)
+        confidence = torch.zeros(1, 1, 24, 32)
+        with torch.no_grad():
+            output, _ = wrapper(current, current, confidence, None)
+        self.assertEqual(output.dtype, torch.float32)
+        self.assertEqual(wrapper.sr.core.mean.dtype, torch.float32)
+
     def test_wrapper_rejects_non_chroma_revive_backbone(self):
         with self.assertRaises(ValueError):
             R.FullLRChromaReviveSPAN(_tiny_model(8))
@@ -308,6 +348,78 @@ class FullLRChromaReviveSPANTests(unittest.TestCase):
         wrapper = self._build()
         wrapper.sr.model.requires_grad_(False)
         self.assertTrue(all(p.requires_grad for p in wrapper.sr.branch.parameters()))
+
+
+class LoadArmCheckpointTests(unittest.TestCase):
+    def test_accepts_real_chroma_revive_checkpoint_shape(self):
+        """Regression guard for a real bug caught only once a trained
+        checkpoint was loaded post-training: `load_arm_checkpoint` compared
+        the checkpoint's actual `channels` against
+        `experiment.args['backbone_channels']` -- an UNRELATED argparse
+        default (40, regardless of arm) that `build_backbone` never derives
+        'channels' from for ANY arm this function reconstructs (it bakes in
+        a literal instead -- see the function's own comment). This broke
+        loading for chroma_revive (channels=32 != default 40) and, it turns
+        out, for control_32/rgb32 too (same mismatch -- see
+        test_accepts_real_control32_checkpoint_shape below); only width_40/
+        rgb40 (channels=40) accidentally matched the unrelated default.
+        This reproduces the chroma_revive checkpoint shape (channels=32,
+        backbone_channels=40 left at its CLI default) without needing a
+        real trained weight file."""
+        import tempfile
+        model = _tiny_model(8, seed=2)
+        sr = R.ChromaReviveSPAN(model, branch_channels=8, branch_depth=3)
+        wrapper = R.FullLRChromaReviveSPAN(sr, state_channels=4)
+        with tempfile.NamedTemporaryFile(suffix='.pth', delete=False) as f:
+            torch.save({'model': wrapper.state_dict(), 'scale': 2, 'version': 1,
+                       'backbone': 'chroma_revive', 'channels': 8,
+                       'branch_channels': 8, 'branch_depth': 3, 'state_channels': 4,
+                       'experiment': {'args': {'backbone_channels': 40, 'luma_channels': 40}}},
+                       f.name)
+            path = f.name
+        try:
+            loaded, checkpoint = R.load_arm_checkpoint(path)
+        finally:
+            Path(path).unlink()
+        self.assertIsInstance(loaded, R.FullLRChromaReviveSPAN)
+
+    def test_accepts_real_control32_checkpoint_shape(self):
+        """The rgb32 sibling of the bug above: a real control_32 checkpoint
+        has channels=32 while experiment.args['backbone_channels'] defaults
+        to 40 (control_32 never reads that arg either -- it's a plain,
+        unmodified 32ch Unshuffled backbone). This is the exact shape that
+        made every trained control_32 checkpoint from this slice's run.ps1
+        fail to load until this function's channel check was generalized
+        (it had only been exercised, and only fixed, for chroma_revive
+        first -- this test closes the gap for the sibling arm)."""
+        import tempfile
+        from train_span import Unshuffled as _Unshuffled
+        from architectures.full_lr_feature_span import FullLRFeatureSPAN
+        sr = _Unshuffled(8, scale=2, frames=1, version=1)
+        wrapper = FullLRFeatureSPAN(sr, state_channels=4, skip_residual=False)
+        with tempfile.NamedTemporaryFile(suffix='.pth', delete=False) as f:
+            torch.save({'model': wrapper.state_dict(), 'scale': 2, 'version': 1,
+                       'backbone': 'rgb32', 'channels': 8, 'state_channels': 4,
+                       'experiment': {'args': {'backbone_channels': 40, 'luma_channels': 40}}},
+                       f.name)
+            path = f.name
+        try:
+            loaded, checkpoint = R.load_arm_checkpoint(path)
+        finally:
+            Path(path).unlink()
+        self.assertIsInstance(loaded, FullLRFeatureSPAN)
+
+    def test_rejects_nonpositive_channels(self):
+        import tempfile
+        with tempfile.NamedTemporaryFile(suffix='.pth', delete=False) as f:
+            torch.save({'model': {}, 'scale': 2, 'version': 1, 'backbone': 'chroma_revive',
+                       'channels': 0, 'experiment': {'args': {}}}, f.name)
+            path = f.name
+        try:
+            with self.assertRaises(ValueError):
+                R.load_arm_checkpoint(path)
+        finally:
+            Path(path).unlink()
 
 
 if __name__ == '__main__':
