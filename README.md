@@ -13,12 +13,12 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/braedonsaunders/lucid/releases"><img src="https://img.shields.io/badge/Mac_installer-release_pending-f5a623?style=for-the-badge&logo=apple&logoColor=white" alt="Mac installer — public release pending"></a>
+  <a href="https://github.com/braedonsaunders/lucid/releases/download/v1.0.0/Lucid-1.0.0-Apple-Silicon.dmg"><img src="https://img.shields.io/badge/Download_for_Mac-v1.0.0-f5a623?style=for-the-badge&logo=apple&logoColor=white" alt="Download Lucid 1.0.0 for Mac"></a>
 </p>
 
 <p align="center">
   Apple silicon · macOS 26+ · Chrome &amp; Edge<br>
-  <a href="https://github.com/braedonsaunders/lucid/releases">Release notes</a> ·
+  <a href="https://github.com/braedonsaunders/lucid/releases/tag/v1.0.0">Release notes</a> ·
   <a href="#get-started">Install guide</a> ·
   <a href="LICENSE">MIT licensed</a>
 </p>
@@ -42,7 +42,7 @@ Open a video. Let Lucid handle the picture.
 
 ### Get started
 
-**The Mac installer is built. Its public release is pending.** [Check Releases →](https://github.com/braedonsaunders/lucid/releases)
+**[Download the Mac installer →](https://github.com/braedonsaunders/lucid/releases/download/v1.0.0/Lucid-1.0.0-Apple-Silicon.dmg)**
 
 The DMG includes **Lucid.app** and the **Chrome/Edge browser companion**. You don’t need Xcode or a source checkout.
 
@@ -52,7 +52,7 @@ The DMG includes **Lucid.app** and the **Chrome/Edge browser companion**. You do
 
 Keep the companion folder after installation; your browser loads it from there. The companion isn’t in the browser extension stores yet.
 
-**First launch:** the current installer is development signed and **not yet notarized by Apple**, so macOS may block it on first open. See [Apple’s guidance for opening an app you trust](https://support.apple.com/en-us/102445). A notarized installer is still pending.
+**Signed for your Mac.** Lucid is Developer ID signed and notarized by Apple. Its notarization ticket is included in the app.
 
 ### What works today?
 
