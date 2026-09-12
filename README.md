@@ -13,12 +13,12 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/braedonsaunders/lucid/releases/download/v1.0.1/Lucid-1.0.1-Apple-Silicon.dmg"><img src="https://img.shields.io/badge/Download_for_Mac-v1.0.1-f5a623?style=for-the-badge&logo=apple&logoColor=white" alt="Download Lucid 1.0.1 for Mac"></a>
+  <a href="https://github.com/braedonsaunders/lucid/releases/download/v1.0.2/Lucid-1.0.2-Apple-Silicon.dmg"><img src="https://img.shields.io/badge/Download_for_Mac-v1.0.2-f5a623?style=for-the-badge&logo=apple&logoColor=white" alt="Download Lucid 1.0.2 for Mac"></a>
 </p>
 
 <p align="center">
   Apple silicon · macOS 26+ · Chrome &amp; Edge<br>
-  <a href="https://github.com/braedonsaunders/lucid/releases/tag/v1.0.1">Release notes</a> ·
+  <a href="https://github.com/braedonsaunders/lucid/releases/tag/v1.0.2">Release notes</a> ·
   <a href="#get-started">Install guide</a> ·
   <a href="LICENSE">MIT licensed</a>
 </p>
@@ -42,7 +42,7 @@ Open a video. Let Lucid handle the picture.
 
 ### Get started
 
-**[Download the Mac installer →](https://github.com/braedonsaunders/lucid/releases/download/v1.0.1/Lucid-1.0.1-Apple-Silicon.dmg)**
+**[Download the Mac installer →](https://github.com/braedonsaunders/lucid/releases/download/v1.0.2/Lucid-1.0.2-Apple-Silicon.dmg)**
 
 The DMG includes **Lucid.app** and the **Chrome/Edge browser companion**. You don’t need Xcode or a source checkout.
 
