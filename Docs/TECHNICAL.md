@@ -30,7 +30,7 @@ Lucid 1.0 uses a domain-trained Nano-derived network with 48 channels and six bl
 - **Native controls.** Clean, Subtle, Standard, and Strong picture presets,
   adjustments, companion setup, hold-to-compare, and Launch at login.
   Click Lucid’s aperture icon in the Mac menu bar for its dropdown controls.
-  Reopening Lucid reveals the same dropdown. Dismissing it keeps enhancement running.
+  Controls open only when the menu bar icon is clicked. Launching or reopening Lucid leaves them closed.
   Turning Lucid off stops frame capture and clears the enhanced surface.
 - **Presentation feedback.** Sequence numbers correlate input with browser draw
   acknowledgments. The panel reports presented frames/s and capture-to-canvas

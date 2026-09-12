@@ -77,8 +77,8 @@ Lucid 1.0 — browser video enhancement for Apple silicon, macOS 26 or later.
    Developer mode, choose Load unpacked, and select that copied folder.
 3. Reload your video tab and turn Lucid on in the menu bar.
 4. Click Lucid’s icon in the Mac menu bar and enable Launch at login in
-   the dropdown to start it when you sign in. Reopening Lucid opens the
-   same menu bar dropdown.
+   the dropdown to start it when you sign in. Controls open only when you
+   click Lucid’s menu bar icon.
 
 Supports enlarged SDR video from 144p through 720p when the model fits your
 Mac's frame budget. HDR, protected video, and 1080p sources are declined.

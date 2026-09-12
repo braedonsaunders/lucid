@@ -49,14 +49,35 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
         setup()
     }
 
-    private func setup() {
-        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+    /// Install only after AppKit finishes launching. A stable autosave name lets
+    /// macOS retain the user's placement; a new install starts near the right
+    /// edge rather than disappearing behind a crowded menu bar or camera notch.
+    func installStatusItem() {
+        if let statusItem { statusItem.isVisible = true; return }
+        UserDefaults.standard.register(defaults: ["NSStatusItem Preferred Position Lucid": 0])
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        item.autosaveName = "Lucid"
+        item.isVisible = true
         item.button?.image = NSImage(systemSymbolName: "camera.aperture", accessibilityDescription: "Lucid")
+        item.button?.image?.size = NSSize(width: 18, height: 18)
         item.button?.image?.isTemplate = true
         item.button?.target = self
         item.button?.action = #selector(statusItemClicked)
         item.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
         statusItem = item
+        refresh()
+        logStatusItem()
+        if AppCoordinator.debugLogging {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in self?.logStatusItem() }
+        }
+    }
+
+    private func logStatusItem() {
+        guard AppCoordinator.debugLogging, let item = statusItem else { return }
+        print("Lucid menu bar: visible=\(item.isVisible) length=\(item.length) button=\(String(describing: item.button?.frame)) window=\(String(describing: item.button?.window?.frame)) running=\(NSApp.isRunning) policy=\(NSApp.activationPolicy().rawValue) dropdown=\(popover?.isShown == true)")
+    }
+
+    private func setup() {
 
         panel.onEnabledChange = { [weak self] on in
             guard let self else { return }
@@ -124,7 +145,7 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
     }
 
     private func showPanel(from button: NSStatusBarButton) {
-        guard let popover else { return }
+        guard let popover, let anchor = button.window, anchor.frame.height > 0 else { return }
         syncPanel()
         // Deliberately does NOT activate the app. Lucid is used over full-screen
         // video, and activating pulls you out of that Space - the menu bar just
@@ -146,12 +167,6 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
         panel.connected = !appState.connectedBrowsers.isEmpty
         panel.enhancing = appState.isEnhancing
         panel.tuning = EnhancementSession.tuning
-    }
-
-    /// Reopening Lucid reveals the same dropdown as clicking its menu bar icon.
-    func showControls() {
-        guard let button = statusItem?.button, popover?.isShown != true else { return }
-        showPanel(from: button)
     }
 
     /// Builds a fresh copy of the menu. Called once for the menu bar and again
@@ -193,9 +208,6 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
         menu.addItem(quality)
 
         menu.addItem(.separator())
-        let controls = NSMenuItem(title: "Open Lucid Controls…", action: #selector(openControls), keyEquivalent: ",")
-        controls.target = self
-        menu.addItem(controls)
         let login = NSMenuItem(title: "Launch at Login", action: #selector(toggleLoginItem), keyEquivalent: "")
         login.target = self
         login.tag = Tag.loginItem.rawValue
@@ -245,6 +257,7 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
         }
         statusItem?.button?.appearsDisabled = !appState.enabled
         statusItem?.button?.image = NSImage(systemSymbolName: "camera.aperture", accessibilityDescription: "Lucid")
+        statusItem?.button?.image?.size = NSSize(width: 18, height: 18)
         statusItem?.button?.image?.isTemplate = true
         statusItem?.button?.toolTip = "Lucid — \(appState.statusLine)"
     }
@@ -296,11 +309,8 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
         onOpenTestPage?()
     }
 
-    @objc private func openControls() { showControls() }
-
     @objc private func toggleLoginItem() {
         panel.loginItem.setEnabled(!panel.loginItem.isEnabled)
-        if panel.loginItem.errorMessage != nil { showControls() }
         refresh()
     }
 

@@ -6,27 +6,19 @@
 import AppKit
 import SwiftUI
 
-/// Serves the same menu from the Dock icon that the menu bar shows.
+/// Launch and reopen only install the menu bar item. Controls require a click.
 @MainActor
 final class LucidAppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Login launches stay unobtrusive; a deliberate open reveals the app.
-        let event = NSAppleEventManager.shared().currentAppleEvent
-        let loginLaunch = event?.paramDescriptor(forKeyword: keyAEPropData)?
-            .enumCodeValue == keyAELaunchedAsLogInItem
-        guard !loginLaunch,
-              ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else { return }
-        AppCoordinator.shared.showControls()
+        guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else { return }
+        AppCoordinator.shared.prepareMenuBar()
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        AppCoordinator.shared.showControls()
+        AppCoordinator.shared.prepareMenuBar()
         return false
     }
 
-    func applicationDockMenu(_ sender: NSApplication) -> NSMenu? {
-        AppCoordinator.shared.dockMenu()
-    }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 }
 
@@ -112,13 +104,8 @@ struct LucidApp: App {
 
     var body: some Scene {
         Settings {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Lucid enhances browser video automatically.")
-                Text("Use Lucid’s controls to adjust the picture, pause enhancement, or launch at login.")
-                    .foregroundStyle(.secondary)
-                Button("Open Lucid Controls") { coordinator.showControls() }
-            }
-            .padding(24)
+            EmptyView()
         }
+        .commands { CommandGroup(replacing: .appSettings) {} }
     }
 }
