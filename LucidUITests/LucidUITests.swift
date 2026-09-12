@@ -5,16 +5,15 @@ final class LucidUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    func testManualLaunchRevealsControlsAndStartupOption() throws {
+    func testManualLaunchUsesMenuBarDropdownAndStartupOption() throws {
         let app = XCUIApplication()
         app.launch()
         defer { app.terminate() }
-        let window = app.windows["Lucid"]
-        XCTAssertTrue(window.waitForExistence(timeout: 10), "Opening Lucid should reveal its controls")
-        let startup = window.descendants(matching: .any).matching(identifier: "Launch at login").firstMatch
-        XCTAssertTrue(startup.exists, "Startup must be configurable in the visible controls")
+        let startup = app.descendants(matching: .any).matching(identifier: "Launch at login").firstMatch
+        XCTAssertTrue(startup.waitForExistence(timeout: 10), "Opening Lucid should reveal its menu bar dropdown")
+        XCTAssertFalse(app.windows["Lucid"].exists, "Lucid must not open a separate controls window")
         XCTAssertTrue(startup.isEnabled)
-        let screenshot = XCTAttachment(screenshot: window.screenshot())
+        let screenshot = XCTAttachment(screenshot: app.screenshot())
         screenshot.name = "Lucid startup controls"
         screenshot.lifetime = .keepAlways
         add(screenshot)

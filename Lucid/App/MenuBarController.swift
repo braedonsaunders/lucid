@@ -13,9 +13,8 @@ import Foundation
 import SwiftUI
 
 @MainActor
-final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate, NSWindowDelegate {
+final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
     private var statusItem: NSStatusItem?
-    private var controlsWindow: NSWindow?
     /// The menu bar item opens a panel rather than a menu. A menu dismisses
     /// itself the moment you choose anything, which makes it useless for
     /// adjusting a picture while you watch it.
@@ -149,28 +148,11 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate, NSWi
         panel.tuning = EnhancementSession.tuning
     }
 
-    /// Opening Lucid from Applications always reveals its controls, even when
-    /// a crowded or hidden menu bar leaves no visible anchor for the popover.
+    /// Reopening Lucid reveals the same dropdown as clicking its menu bar icon.
     func showControls() {
-        popover?.performClose(nil)
-        syncPanel()
-        if controlsWindow == nil {
-            let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 360, height: 610),
-                                  styleMask: [.titled, .closable, .miniaturizable],
-                                  backing: .buffered, defer: false)
-            window.title = "Lucid"
-            window.isReleasedWhenClosed = false
-            window.delegate = self
-            window.contentViewController = NSHostingController(rootView: ControlPanel(model: panel))
-            window.center()
-            controlsWindow = window
-        }
-        NSApp.activate(ignoringOtherApps: true)
-        controlsWindow?.deminiaturize(nil)
-        controlsWindow?.makeKeyAndOrderFront(nil)
+        guard let button = statusItem?.button, popover?.isShown != true else { return }
+        showPanel(from: button)
     }
-
-    func windowWillClose(_ notification: Notification) { panel.compare(false) }
 
     /// Builds a fresh copy of the menu. Called once for the menu bar and again
     /// each time the Dock asks for one.
@@ -253,7 +235,7 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate, NSWi
 
     func refresh() {
         for menu in menus { update(menu) }
-        if popover?.isShown == true || controlsWindow?.isVisible == true {
+        if popover?.isShown == true {
             panel.loginItem.refresh()
             panel.status = appState.statusLine
             panel.stats = appState.statsLine

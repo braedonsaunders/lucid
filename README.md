@@ -53,8 +53,8 @@ on your Mac.
   still copies data; this is not a zero-copy browser pipeline.
 - **Native controls.** Clean, Subtle, Standard, and Strong picture presets,
   adjustments, companion setup, hold-to-compare, and Launch at login.
-  Open Lucid from Applications to bring up its controls, or click its aperture
-  icon in the menu bar. Closing the controls keeps enhancement running.
+  Click Lucid’s aperture icon in the Mac menu bar for its dropdown controls.
+  Reopening Lucid reveals the same dropdown. Dismissing it keeps enhancement running.
   Turning Lucid off stops frame capture and clears the enhanced surface.
 - **Presentation feedback.** Sequence numbers correlate input with browser draw
   acknowledgments. The panel reports presented frames/s and capture-to-canvas
