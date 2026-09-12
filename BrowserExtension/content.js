@@ -846,13 +846,13 @@
       frames: typeof VideoFrame === 'function',
       unsupportedReason: sourceBlock(video),
       draws: drawing,
-      visible: true,
+      visible: true, focused: document.hasFocus(),
       screenX: window.screenX, screenY: window.screenY, outerWidth: window.outerWidth, outerHeight: window.outerHeight,
       innerWidth: window.innerWidth, innerHeight: window.innerHeight, dpr: window.devicePixelRatio,
       video: v, moving, hover, cutouts, ts: now
     };
     const key = JSON.stringify([message.title, message.screenX, message.screenY, message.outerWidth, message.outerHeight,
-      message.innerWidth, message.innerHeight, message.dpr, message.unsupportedReason, v, moving, hover, cutouts]);
+      message.innerWidth, message.innerHeight, message.dpr, message.focused, message.unsupportedReason, v, moving, hover, cutouts]);
     if (key !== lastKey || now - lastSent > HEARTBEAT_MS) { send(message); lastKey = key; lastSent = now; }
     requestAnimationFrame(tick);
   }

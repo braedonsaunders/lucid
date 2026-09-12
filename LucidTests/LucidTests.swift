@@ -97,6 +97,32 @@ struct SessionPolicyTests {
         #expect(AppCoordinator.isEnhanceable(yt) == true)
     }
 
+    @Test @MainActor func playingVideoTakesOverFromPausedWindow() {
+        var paused = report(session: "paused"); paused.video?.paused = true; paused.focused = true
+        let playing = report(session: "playing", rectW: 400, rectH: 225)
+        #expect(AppCoordinator.preferredReport([paused, playing], keeping: paused.session)?.session == playing.session)
+        var focused = report(session: "focused"); focused.focused = true
+        #expect(AppCoordinator.preferredReport([playing, focused], keeping: playing.session)?.session == focused.session)
+        focused.focused = false
+        #expect(AppCoordinator.preferredReport([playing, focused], keeping: playing.session)?.session == playing.session)
+    }
+
+    @Test @MainActor func waitingExplainsDetectedButUnsupportedVideo() {
+        #expect(AppCoordinator.waitingStatus([]) == "Waiting for browser video")
+        let hd = report(iw: 1920, ih: 1080)
+        #expect(AppCoordinator.waitingStatus([hd]) == "1080p source · choose 720p or lower to enhance")
+        var protected = report(); protected.unsupportedReason = "Protected video stays with the browser"
+        #expect(AppCoordinator.waitingStatus([protected]) == protected.unsupportedReason)
+        #expect(AppCoordinator.waitingStatus([report(dpr: 1)]) == "Video already fits its display resolution")
+    }
+
+    @Test @MainActor func processingWithoutRecentDrawNeverClaimsPresentation() {
+        #expect(!AppCoordinator.hasRecentPresentation(samples: 0, age: .milliseconds(1)))
+        #expect(!AppCoordinator.hasRecentPresentation(samples: 30, age: nil))
+        #expect(!AppCoordinator.hasRecentPresentation(samples: 30, age: .seconds(2)))
+        #expect(AppCoordinator.hasRecentPresentation(samples: 30, age: .milliseconds(100)))
+    }
+
     @Test func stageCountPicksNearestPowerOfTwo() {
         // 640-wide source in a 1280-physical box: exactly 2x, one pass.
         #expect(EnhancementSession.stageCount(for: report()) == 1)

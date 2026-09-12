@@ -20,7 +20,7 @@ async function surface() {
   }
   vm.runInNewContext(source, {
     location: {hash: '#own'}, document: {getElementById: () => canvas}, parent,
-    WebSocket: Socket, Uint8Array, ArrayBuffer, DataView, TextDecoder,
+    WebSocket: Socket, Uint8Array, ArrayBuffer, DataView, TextDecoder, URLSearchParams,
     lucidFetchToken: async () => 'test-token', lucidHello: () => 'test-hello',
     setTimeout: () => 0, setInterval: () => 0, requestAnimationFrame: () => 0,
     addEventListener: (name, callback) => { listeners[name] = callback; },

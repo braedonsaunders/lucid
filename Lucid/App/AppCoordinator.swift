@@ -84,7 +84,8 @@ final class AppCoordinator {
         let timer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
                 self?.sweepStaleReports()
-                if self?.session == nil { self?.broadcastStatus() }
+                self?.refreshPresentationState()
+                self?.broadcastStatus()
             }
         }
         RunLoop.main.add(timer, forMode: .common)
@@ -149,8 +150,9 @@ final class AppCoordinator {
                 let owner = AppCoordinator.shared
                 guard owner.session?.id == metrics.session else { return }
                 owner.presentation = metrics
-                owner.appState.statsLine = String(format: "%.0f fps presented · %.0f ms p95", metrics.framesPerSecond, metrics.p95Milliseconds)
-                owner.menuBar?.refresh()
+                owner.lastPresentationAt = .now
+                owner.refreshPresentationState()
+                owner.broadcastStatus()
             }
         }
 
@@ -186,6 +188,7 @@ final class AppCoordinator {
 
     private var lastStats = PipelineStats()
     private var presentation = PresentationMetrics()
+    private var lastPresentationAt: ContinuousClock.Instant?
 
     private var shooter: ComparisonShooter?
 
@@ -312,6 +315,9 @@ final class AppCoordinator {
     func prepareMenuBar() { menuBar?.installStatusItem() }
 
     private func broadcastStatus() {
+        refreshPresentationState()
+        let recent = Self.hasRecentPresentation(samples: presentation.samples,
+            age: lastPresentationAt.map { ContinuousClock.now - $0 })
         bridge?.broadcast(BridgeStatus(
             enabled: appState.enabled,
             activeSession: session?.id,
@@ -327,8 +333,8 @@ final class AppCoordinator {
             latency: latencySeconds,
             sourceFPS: lastStats.sourceFPS,
             outputFPS: lastStats.outputFPS,
-            presentedFPS: presentation.framesPerSecond,
-            presentationP95Milliseconds: presentation.p95Milliseconds,
+            presentedFPS: recent ? presentation.framesPerSecond : 0,
+            presentationP95Milliseconds: recent ? presentation.p95Milliseconds : 0,
             processingMilliseconds: lastStats.processingMilliseconds,
             tileCount: lastStats.tileCount,
             outputWidth: Int(lastStats.outputSize.width),
@@ -358,7 +364,8 @@ final class AppCoordinator {
         guard appState.enabled, !stopping else { return }
 
         if let session {
-            if let current = reports[session.id]?.report, Self.isEnhanceable(current, keeping: true) {
+            if let current = reports[session.id]?.report,
+               Self.preferredReport(reports.values.map(\.report), keeping: session.id)?.session == session.id {
                 sessionMissingSince = nil
                 session.update(report: current)
                 return
@@ -376,13 +383,14 @@ final class AppCoordinator {
                 print("   🔎 session dropped: no report for \(session.id.prefix(8))")
             }
             sessionMissingSince = nil
-            stopSession(reason: "Video ended")
+            stopSession(reason: "Switching video")
+            return // Resume selection after the old pipeline has finished stopping.
         }
 
-        let candidates = reports.values.map(\.report).filter { Self.isEnhanceable($0) }
-        guard let best = candidates.max(by: { area($0) < area($1) }) else {
-            if appState.statusLine != "Waiting for browser video" {
-                appState.statusLine = reports.values.compactMap { $0.report.unsupportedReason }.first ?? (reports.isEmpty ? "Waiting for browser video" : "Video not enhanceable")
+        guard let best = Self.preferredReport(reports.values.map(\.report)) else {
+            let next = Self.waitingStatus(reports.values.map(\.report))
+            if appState.statusLine != next {
+                appState.statusLine = next
                 menuBar?.refresh()
             }
             return
@@ -390,35 +398,77 @@ final class AppCoordinator {
         startSession(for: best)
     }
 
-    private func area(_ report: BrowserVideoReport) -> Double {
-        guard let video = report.video else { return 0 }
-        return video.rect.w * video.rect.h
+    /// Keep equally suitable sessions stable; a playing video takes over from a
+    /// paused tab, and the focused window wins between two playing videos.
+    static func preferredReport(_ reports: [BrowserVideoReport], keeping currentID: String? = nil) -> BrowserVideoReport? {
+        let eligible = reports.filter { isEnhanceable($0, keeping: $0.session == currentID) }
+        func priority(_ r: BrowserVideoReport) -> Int {
+            (r.video?.paused == false ? 2 : 0) + (r.focused == true ? 1 : 0)
+        }
+        return eligible.max { a, b in
+            if priority(a) != priority(b) { return priority(a) < priority(b) }
+            if a.session == currentID { return false }
+            if b.session == currentID { return true }
+            let aa = (a.video?.rect.w ?? 0) * (a.video?.rect.h ?? 0)
+            let ba = (b.video?.rect.w ?? 0) * (b.video?.rect.h ?? 0)
+            return aa == ba ? a.session < b.session : aa < ba
+        }
     }
 
-    /// Only playing, visible, sub-1080p video that is displayed larger than its
-    /// decoded size benefits from 2× reconstruction. Everything else is left alone.
+    static func waitingStatus(_ reports: [BrowserVideoReport]) -> String {
+        let visible = reports.filter { $0.type == .video && $0.visible }
+        let best = visible.sorted {
+            if ($0.focused == true) != ($1.focused == true) { return $0.focused == true }
+            if $0.video?.paused != $1.video?.paused { return $0.video?.paused == false }
+            return $0.session < $1.session
+        }.first
+        return best.flatMap { ineligibilityReason($0) } ?? "Waiting for browser video"
+    }
+
     static func isEnhanceable(_ report: BrowserVideoReport, keeping: Bool = false) -> Bool {
-        guard report.type == .video, report.visible, report.unsupportedReason == nil, let video = report.video else { return false }
-        guard !video.ended, !video.pip else { return false }
-        // The window Lucid works in, and the reasons for each end of it.
-        //
-        // The floor is low on purpose: 144p is the case that needs help most,
-        // and the old 320x180 floor rejected it outright. Below about 128 wide
-        // there is not enough left to reconstruct from.
-        //
-        // The ceiling is not a number chosen here. It is wherever the learned
-        // upscaler stops fitting a frame - see LearnedUpscaler.variants - and
-        // today that is 640x360. Above it Lucid does nothing rather than
-        // reaching for a weaker upscaler, because the weaker upscaler measured
-        // worse than leaving the frame alone. This is also the point of
-        // diminishing returns: the larger the source, the less there is to
-        // recover, which is why RTX Video Super Resolution has a window too.
-        guard video.iw >= 128, video.ih >= 72 else { return false }
-        guard LearnedUpscaler.supports(width: video.iw, height: video.ih) else { return false }
-        guard video.rect.w >= 200, video.rect.h >= 100 else { return false }
-        let physicalWidth = video.rect.w * report.dpr
-        // Hysteresis: start above 1.15×, but keep a running session down to 1.0×.
-        return physicalWidth > Double(video.iw) * (keeping ? 1.0 : 1.15)
+        ineligibilityReason(report, keeping: keeping) == nil
+    }
+
+    static func ineligibilityReason(_ report: BrowserVideoReport, keeping: Bool = false) -> String? {
+        guard report.type == .video, report.visible, let video = report.video else { return "Waiting for browser video" }
+        if let reason = report.unsupportedReason { return reason }
+        if video.ended { return "Video ended" }
+        if video.pip { return "Play video in the browser to enhance it" }
+        guard video.iw >= 128, video.ih >= 72 else { return "Waiting for video to load" }
+        // The shipping model ladder covers decoded video through 1280×720.
+        guard LearnedUpscaler.supports(width: video.iw, height: video.ih) else {
+            return "\(video.ih)p source · choose 720p or lower to enhance"
+        }
+        guard video.rect.w >= 200, video.rect.h >= 100 else { return "Enlarge the video player to enhance it" }
+        guard video.rect.w * report.dpr > Double(video.iw) * (keeping ? 1.0 : 1.15) else {
+            return "Video already fits its display resolution"
+        }
+        return nil
+    }
+
+    static func hasRecentPresentation(samples: Int, age: Duration?) -> Bool {
+        guard samples > 0, let age else { return false }
+        return age >= .zero && age < .seconds(2)
+    }
+
+    private func refreshPresentationState() {
+        guard let session, let report = reports[session.id]?.report, let video = report.video else { return }
+        let displayed = !session.pageRenders || Self.hasRecentPresentation(
+            samples: presentation.samples, age: lastPresentationAt.map { ContinuousClock.now - $0 })
+        appState.isEnhancing = displayed && !comparing
+        if comparing {
+            appState.statusLine = "Showing original video"
+        } else if displayed {
+            appState.statusLine = "Enhancing \(report.browser.capitalized) video \(video.iw)×\(video.ih) → 2×"
+        } else {
+            appState.statusLine = lastStats.outputFPS > 0
+                ? "Video processed · waiting for browser display"
+                : "Connecting to video player"
+        }
+        appState.statsLine = comparing ? "Showing original video" : displayed && session.pageRenders
+            ? String(format: "%.0f fps presented · %.0f ms p95", presentation.framesPerSecond, presentation.p95Milliseconds)
+            : String(format: "%.0f fps processed · %.1f ms", lastStats.outputFPS, lastStats.processingMilliseconds)
+        menuBar?.refresh()
     }
 
     private func startSession(for report: BrowserVideoReport) {
@@ -450,9 +500,8 @@ final class AppCoordinator {
             session.setComparing(comparing)
             frameRouter.install(session: session.id, source: session.decoded)
             print("   🎯 Session \(report.session.prefix(8)): \(report.browser) window [\(window.id)] video \(report.video!.iw)x\(report.video!.ih) at \(report.video!.rect)")
-            appState.isEnhancing = true
-            // The production Nano ladder reconstructs directly at 2×.
-            appState.statusLine = "Enhancing \(report.browser.capitalized) video \(report.video!.iw)×\(report.video!.ih) → 2×"
+            appState.isEnhancing = false
+            appState.statusLine = "Connecting to video player"
             appState.lastError = nil
             menuBar?.refresh()
             broadcastStatus()
@@ -480,6 +529,7 @@ final class AppCoordinator {
         menuBar?.refresh()
         lastStats = PipelineStats()
         presentation = PresentationMetrics()
+        lastPresentationAt = nil
         broadcastStatus()
         stopping = true
         Task { @MainActor [weak self] in
@@ -495,15 +545,12 @@ final class AppCoordinator {
     }
 
     private func updateStats(_ stats: PipelineStats) {
-        appState.statsLine = comparing ? "Showing original video" : presentation.samples > 0
-            ? String(format: "%.0f fps presented · %.0f ms p95", presentation.framesPerSecond, presentation.p95Milliseconds)
-            : String(format: "%.0f fps processed · %.1f ms", stats.outputFPS, stats.processingMilliseconds)
         if let error = stats.lastError { appState.lastError = error }
         if AppCoordinator.debugLogging {
             print("   📊 \(appState.statsLine)\(stats.lastError.map { " · ⚠️ \($0)" } ?? "")")
         }
         lastStats = stats
-        menuBar?.refresh()
+        refreshPresentationState()
         broadcastStatus()
     }
 

@@ -48,6 +48,7 @@ struct BrowserVideoReport: Codable, Sendable, Equatable {
     var session: String
     var title: String
     var url: String?
+    var focused: Bool? = nil
     var visible: Bool
     /// Browser window position/size in screen points (top-left origin).
     var screenX: Double

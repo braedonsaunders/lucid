@@ -23,7 +23,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y zsh
       - name: Browser transport and companion parity
         run: |
-          node --test Tools/stream-policy.test.js
+          node --test Tools/stream-policy.test.js Tools/frontier_eval/test_surface_capture.cjs
           python3 Tools/sync_safari.py --check
           python3 -m unittest discover -s Tools -p 'test_*.py'
       - name: Check ladder

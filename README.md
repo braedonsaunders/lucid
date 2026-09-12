@@ -50,6 +50,8 @@ The DMG includes **Lucid.app** and the **Chrome/Edge browser companion**. You do
 2. **Add the browser companion.** Copy the included `BrowserExtension` folder somewhere permanent. Open `chrome://extensions` or `edge://extensions`, enable **Developer mode**, select **Load unpacked**, and choose that folder.
 3. **Play a video.** Reload your video tab. Lucid starts enhancing supported video automatically. Use the menu bar dropdown to adjust the picture or turn on **Launch at login**.
 
+**Watching in Incognito?** Open the companion’s Details and enable **Allow in Incognito**, then reload your video. After updating the companion files, click its **Reload** button and refresh open video tabs.
+
 Keep the companion folder after installation; your browser loads it from there. The companion isn’t in the browser extension stores yet.
 
 **Signed for your Mac.** Lucid is Developer ID signed and notarized by Apple. Its notarization ticket is included in the app.
