@@ -36,6 +36,21 @@ Tools/release.sh 1.0.0 --local
 
 The `--local` option explicitly permits development signing and creates a `-local.dmg` plus checksum and JSON receipt. This build is not notarized. When sharing it, the download page must state that clearly; it must not be described as an Apple-notarized release. The script preserves existing release files rather than overwriting them.
 
+## Use an Apple account already signed into Xcode
+
+Xcode can use cloud-managed Developer ID signing without a local distribution certificate or a separate notarization password. The account holder must have accepted current Apple Developer agreements.
+
+1. Archive with `xcodebuild archive`, the `Release` configuration, `-allowProvisioningUpdates`, and `DEVELOPMENT_TEAM` set to your paid team ID.
+2. Run `xcodebuild -exportArchive` with an export-options plist containing `method = developer-id`, `destination = upload`, `signingStyle = automatic`, and your `teamID`. This submits to notarization, not the App Store.
+3. After Apple approves it, run `xcodebuild -exportNotarizedApp -archivePath <archive> -exportPath <output>` to export the app with its ticket attached.
+4. Package the approved app:
+
+```sh
+python3 Tools/package_notarized.py <output>/Lucid.app
+```
+
+The packager checks the Developer ID signature, stapled ticket, Gatekeeper assessment, and macOS distribution policy before creating a DMG with the app and companion. Its receipt distinguishes the notarized app from the DMG container, which this route does not separately sign or notarize. It never re-signs the approved app or strips its ticket.
+
 ## Verification
 
 ```sh
