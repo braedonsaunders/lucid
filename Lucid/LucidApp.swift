@@ -9,6 +9,21 @@ import SwiftUI
 /// Serves the same menu from the Dock icon that the menu bar shows.
 @MainActor
 final class LucidAppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // Login launches stay unobtrusive; a deliberate open reveals the app.
+        let event = NSAppleEventManager.shared().currentAppleEvent
+        let loginLaunch = event?.paramDescriptor(forKeyword: keyAEPropData)?
+            .enumCodeValue == keyAELaunchedAsLogInItem
+        guard !loginLaunch,
+              ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else { return }
+        AppCoordinator.shared.showControls()
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        AppCoordinator.shared.showControls()
+        return false
+    }
+
     func applicationDockMenu(_ sender: NSApplication) -> NSMenu? {
         AppCoordinator.shared.dockMenu()
     }
@@ -38,11 +53,11 @@ enum LucidMain {
             app.setActivationPolicy(.prohibited)
             let model = ControlPanelModel()
             model.enhancing = true; model.connected = true
-            model.status = "Browser video · 360p → 1440p"
+            model.status = "Browser video · 360p → 720p"
             model.stats = "Native enhancement · Apple silicon"
             app.appearance = NSAppearance(named: .darkAqua)
             let view = NSHostingView(rootView: ControlPanel(model: model).environment(\.colorScheme, .dark))
-            let size = NSSize(width: 360, height: 430)
+            let size = NSSize(width: 360, height: 610)
             let window = NSWindow(contentRect: NSRect(origin: NSPoint(x: -10000, y: -10000), size: size), styleMask: .borderless, backing: .buffered, defer: false)
             window.contentView = view
             view.frame = NSRect(origin: .zero, size: size)
@@ -99,8 +114,9 @@ struct LucidApp: App {
         Settings {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Lucid enhances browser video automatically.")
-                Text("There are no settings. Use the menu bar item to pause it.")
+                Text("Use Lucid’s controls to adjust the picture, pause enhancement, or launch at login.")
                     .foregroundStyle(.secondary)
+                Button("Open Lucid Controls") { coordinator.showControls() }
             }
             .padding(24)
         }

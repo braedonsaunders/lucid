@@ -13,6 +13,7 @@ import SwiftUI
 @MainActor
 @Observable
 final class ControlPanelModel {
+    let loginItem = LoginItemController()
     var enabled: Bool = true
     var strength: EnhancementSession.Tuning.Strength = .standard
     var tuning = EnhancementSession.tuning
@@ -63,6 +64,7 @@ struct ControlPanel: View {
                     activity
                     quality
                     compareControl
+                    startup
                     if !model.connected { connectionHelp }
                     section("Picture adjustments", isOpen: $showAdjustments) { adjustments }
                     if AppCoordinator.debugLogging { section("Developer controls", isOpen: $showStages) { stages } }
@@ -152,6 +154,27 @@ struct ControlPanel: View {
             Button("Open companion setup") {
                 if let url = Bundle.main.url(forResource: "CompanionSetup", withExtension: "html") { NSWorkspace.shared.open(url) }
             }.buttonStyle(.link).font(.system(size: 11))
+        }
+    }
+
+    private var startup: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Toggle("Launch at login", isOn: Binding(
+                get: { model.loginItem.isEnabled },
+                set: { model.loginItem.setEnabled($0) }
+            )).toggleStyle(.switch).font(.system(size: 12))
+            Text("Keeps Lucid ready in the menu bar when you sign in.")
+                .font(.system(size: 11)).foregroundStyle(.secondary)
+            if model.loginItem.requiresApproval {
+                Text("Allow Lucid in macOS Login Items to finish enabling startup.")
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
+                Button("Open Login Items…") { model.loginItem.showSettings() }
+                    .buttonStyle(.link).font(.system(size: 11))
+            }
+            if let error = model.loginItem.errorMessage {
+                Text(error).font(.system(size: 11)).foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 

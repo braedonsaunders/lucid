@@ -76,6 +76,8 @@ Lucid 1.0 — browser video enhancement for Apple silicon, macOS 26 or later.
    this disk image. Open chrome://extensions or edge://extensions, enable
    Developer mode, choose Load unpacked, and select that copied folder.
 3. Reload your video tab and turn Lucid on in the menu bar.
+4. Enable Launch at login in Lucid’s controls to start it when you sign in.
+   Open Lucid from Applications anytime to bring its controls back.
 
 Supports enlarged SDR video from 144p through 720p when the model fits your
 Mac's frame budget. HDR, protected video, and 1080p sources are declined.
@@ -95,11 +97,12 @@ fi
 hdiutil verify "$dmg"
 (cd "${dmg:h}" && shasum -a 256 "${dmg:t}") > "$dmg.sha256"
 python3 - "$dmg" "$app" "$version" "$mode" <<'PY'
-import hashlib,json,sys
+import hashlib,json,plistlib,sys
 from pathlib import Path
 image,app,version,mode=sys.argv[1:]
 p=Path(image)
-receipt={'version':version,'artifact':p.name,'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+info=plistlib.loads((Path(app)/'Contents/Info.plist').read_bytes())
+receipt={'version':version,'build':info['CFBundleVersion'],'artifact':p.name,'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
          'distribution':'local-development' if mode=='--local' else 'developer-id-notarized',
          'models':json.loads((Path(app)/'Contents/Resources/Models.json').read_text()),
          'compiled_models':json.loads((Path(app)/'Contents/Resources/ModelBuild.json').read_text())}

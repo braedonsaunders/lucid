@@ -13,8 +13,9 @@ import Foundation
 import SwiftUI
 
 @MainActor
-final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
+final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate, NSWindowDelegate {
     private var statusItem: NSStatusItem?
+    private var controlsWindow: NSWindow?
     /// The menu bar item opens a panel rather than a menu. A menu dismisses
     /// itself the moment you choose anything, which makes it useless for
     /// adjusting a picture while you watch it.
@@ -138,6 +139,7 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
     }
 
     private func syncPanel() {
+        panel.loginItem.refresh()
         panel.enabled = appState.enabled
         panel.strength = strength
         panel.status = appState.statusLine
@@ -146,6 +148,29 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
         panel.enhancing = appState.isEnhancing
         panel.tuning = EnhancementSession.tuning
     }
+
+    /// Opening Lucid from Applications always reveals its controls, even when
+    /// a crowded or hidden menu bar leaves no visible anchor for the popover.
+    func showControls() {
+        popover?.performClose(nil)
+        syncPanel()
+        if controlsWindow == nil {
+            let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 360, height: 610),
+                                  styleMask: [.titled, .closable, .miniaturizable],
+                                  backing: .buffered, defer: false)
+            window.title = "Lucid"
+            window.isReleasedWhenClosed = false
+            window.delegate = self
+            window.contentViewController = NSHostingController(rootView: ControlPanel(model: panel))
+            window.center()
+            controlsWindow = window
+        }
+        NSApp.activate(ignoringOtherApps: true)
+        controlsWindow?.deminiaturize(nil)
+        controlsWindow?.makeKeyAndOrderFront(nil)
+    }
+
+    func windowWillClose(_ notification: Notification) { panel.compare(false) }
 
     /// Builds a fresh copy of the menu. Called once for the menu bar and again
     /// each time the Dock asks for one.
@@ -186,6 +211,18 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
         menu.addItem(quality)
 
         menu.addItem(.separator())
+        let controls = NSMenuItem(title: "Open Lucid Controls…", action: #selector(openControls), keyEquivalent: ",")
+        controls.target = self
+        menu.addItem(controls)
+        let login = NSMenuItem(title: "Launch at Login", action: #selector(toggleLoginItem), keyEquivalent: "")
+        login.target = self
+        login.tag = Tag.loginItem.rawValue
+        menu.addItem(login)
+        let loginSettings = NSMenuItem(title: "Open macOS Login Items…", action: #selector(openLoginSettings), keyEquivalent: "")
+        loginSettings.target = self
+        menu.addItem(loginSettings)
+
+        menu.addItem(.separator())
         let lab = NSMenuItem(title: "Open Test Lab…", action: #selector(openTestPage), keyEquivalent: "t")
         lab.target = self
         menu.addItem(lab)
@@ -211,25 +248,29 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
     }
 
     private enum Tag: Int {
-        case status = 1, stats = 2, enable = 3, strengthBase = 4
+        case status = 1, stats = 2, enable = 3, strengthBase = 4, loginItem = 5
     }
 
     func refresh() {
         for menu in menus { update(menu) }
-        if popover?.isShown == true {
+        if popover?.isShown == true || controlsWindow?.isVisible == true {
+            panel.loginItem.refresh()
             panel.status = appState.statusLine
             panel.stats = appState.statsLine
             panel.connected = !appState.connectedBrowsers.isEmpty
-        panel.enhancing = appState.isEnhancing
+            panel.enhancing = appState.isEnhancing
             panel.enabled = appState.enabled
         }
         statusItem?.button?.appearsDisabled = !appState.enabled
-        let symbol = appState.isEnhancing ? "camera.aperture" : "circle.dotted"
-        statusItem?.button?.image = NSImage(systemSymbolName: symbol, accessibilityDescription: "Lucid")
+        statusItem?.button?.image = NSImage(systemSymbolName: "camera.aperture", accessibilityDescription: "Lucid")
         statusItem?.button?.image?.isTemplate = true
+        statusItem?.button?.toolTip = "Lucid — \(appState.statusLine)"
     }
 
     private func update(_ menu: NSMenu) {
+        panel.loginItem.refresh()
+        menu.item(withTag: Tag.loginItem.rawValue)?.state = panel.loginItem.requiresApproval
+            ? .mixed : panel.loginItem.isEnabled ? .on : .off
         menu.item(withTag: Tag.status.rawValue)?.title = appState.statusLine
         if let stats = menu.item(withTag: Tag.stats.rawValue) {
             stats.title = appState.statsLine
@@ -272,6 +313,16 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSPopoverDelegate {
     @objc private func openTestPage() {
         onOpenTestPage?()
     }
+
+    @objc private func openControls() { showControls() }
+
+    @objc private func toggleLoginItem() {
+        panel.loginItem.setEnabled(!panel.loginItem.isEnabled)
+        if panel.loginItem.errorMessage != nil { showControls() }
+        refresh()
+    }
+
+    @objc private func openLoginSettings() { panel.loginItem.showSettings() }
 
     @objc private func quit() {
         NSApplication.shared.terminate(nil)

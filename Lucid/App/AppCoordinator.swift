@@ -310,6 +310,7 @@ final class AppCoordinator {
 
     /// A fresh menu for the Dock; AppKit asks each time it is opened.
     func dockMenu() -> NSMenu? { menuBar?.makeMenu(retained: false) }
+    func showControls() { menuBar?.showControls() }
 
     private func broadcastStatus() {
         bridge?.broadcast(BridgeStatus(

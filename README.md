@@ -52,8 +52,10 @@ on your Mac.
   iframe receives NV12 directly over loopback WebSocket. Structured cloning
   still copies data; this is not a zero-copy browser pipeline.
 - **Native controls.** Clean, Subtle, Standard, and Strong picture presets,
-  adjustments, companion setup, and hold-to-compare. Turning Lucid off stops
-  frame capture and clears the enhanced surface.
+  adjustments, companion setup, hold-to-compare, and Launch at login.
+  Open Lucid from Applications to bring up its controls, or click its aperture
+  icon in the menu bar. Closing the controls keeps enhancement running.
+  Turning Lucid off stops frame capture and clears the enhanced surface.
 - **Presentation feedback.** Sequence numbers correlate input with browser draw
   acknowledgments. The panel reports presented frames/s and capture-to-canvas
   p95, separately from native processing time. This measures draw submission,
