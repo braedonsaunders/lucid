@@ -710,16 +710,27 @@ kernel void motion_blocks(texture2d<float, access::read> source [[texture(0)]],
     int2 limit = int2(source.get_width(), source.get_height()) - 1;
     int2 centre = min(int2(gid) * 8 + 4, limit);
     float stationaryError = 0.0f;
+    float spatialVariation = 0.0f;
     for (int py = -4; py <= 4; py += 2) {
         for (int px = -4; px <= 4; px += 2) {
             const uint2 at = uint2(clamp(centre + int2(px, py), int2(0), limit));
             stationaryError += abs(source.read(at).r - previous.read(at).r);
+            const float value = source.read(at).r;
+            spatialVariation += abs(value - source.read(uint2(min(int2(at) + int2(1, 0), limit))).r);
+            spatialVariation += abs(value - source.read(uint2(min(int2(at) + int2(0, 1), limit))).r);
         }
     }
     stationaryError /= 25.0f;
+    spatialVariation /= 50.0f;
     // Do not chase quantization noise across repeated textures. A stationary
     // match already within the codec-noise floor needs no displacement search.
-    if (policy == 0u && stationaryError <= 6.5f / 255.0f) {
+    // In a strongly textured block that barely changed, a small improvement
+    // from a displaced match can be an alias of the pattern plus codec noise.
+    // Keep that block stationary. Smooth low-contrast motion still searches:
+    // its spatial variation is below this threshold even when temporal error
+    // also lies within the noise floor.
+    if (stationaryError <= 6.5f / 255.0f &&
+        (policy == 0u || (policy == 2u && spatialVariation > 16.0f / 255.0f))) {
         field.write(float4(0, 0, 1, stationaryError), gid);
         return;
     }

@@ -110,7 +110,74 @@ final class LearnedUpscaler: @unchecked Sendable {
     /// A source with no rung under this budget is not enhanced at all. There
     /// is no second engine to fall back to: Apple's scalers measured worse
     /// than leaving the frame alone, so Lucid declines instead.
-    static let budgetMilliseconds = 33.0
+    static let budgetMilliseconds = budget(forFrameRate: 30)
+
+    /// The budget is a frame interval, not a constant. Writing it as one keeps
+    /// 24 fps film and 60 fps sources honest instead of judging both against
+    /// 30 fps, and leaves nothing to edit when a cadence changes.
+    static func budget(forFrameRate framesPerSecond: Double) -> Double {
+        guard framesPerSecond > 0 else { return .infinity }
+        return 1000.0 / framesPerSecond
+    }
+
+    /// Tests inject a calibration here; production leaves it nil and uses the
+    /// measured-once record on disk.
+    nonisolated(unsafe) static var calibrationOverride: DeviceCalibration?
+
+    /// Read once per process. The record is written at install time, so this is
+    /// a file read, never a measurement - a launch must never stall to time a model.
+    private static let storedCalibration = DeviceCalibration.stored(modelStem: shippingStem)
+
+    static var activeCalibration: DeviceCalibration? { calibrationOverride ?? storedCalibration }
+
+    /// What a rung costs *on this machine*.
+    ///
+    /// `variants[].milliseconds` are measurements from one M4 Pro. They remain
+    /// the bootstrap - the app has to choose a rung before it has ever timed
+    /// anything - but once a calibration exists it is the authority, because it
+    /// is the only number here that was measured on the machine it describes.
+    static func costMilliseconds(width: Int, height: Int) -> Double {
+        if let measured = activeCalibration?.milliseconds(width: width, height: height) {
+            return measured
+        }
+        return variants.first { $0.width == width && $0.height == height }?.milliseconds ?? .infinity
+    }
+
+    /// The sizes a calibration should time: exactly the rungs that can be
+    /// chosen, so every number the selector reads was measured rather than
+    /// inferred. Adding a rung adds a measurement, with nothing else to edit.
+    static var calibrationSizes: [(width: Int, height: Int)] {
+        variants.map { (width: $0.width, height: $0.height) }
+    }
+
+    /// Whole-call cost of one rung on this machine, measured the way
+    /// `variants[].milliseconds` was: a 420v frame in, an enhanced frame out,
+    /// colour conversions included. Timing the Core ML prediction alone would
+    /// produce a number that is not comparable to the table it replaces - the
+    /// conversions are 5.0 ms of the 10.7 ms at 640x360, which is the
+    /// difference between fitting a 33 ms budget and not.
+    static func timeWholeCall(width: Int, height: Int,
+                              warmup: Int = 3, samples: Int = 10) throws -> Double {
+        let upscaler = try LearnedUpscaler(width: width, height: height)
+        var created: CVPixelBuffer?
+        let attributes = [kCVPixelBufferIOSurfacePropertiesKey: [:] as CFDictionary] as CFDictionary
+        guard CVPixelBufferCreate(kCFAllocatorDefault, width, height,
+                                  kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+                                  attributes, &created) == kCVReturnSuccess,
+              let source = created else { throw Failure.pixelBuffer }
+        // Convolution cost does not depend on pixel values, so the buffer's
+        // contents are left as allocated rather than filled with a pattern that
+        // would imply they matter.
+        for _ in 0..<max(0, warmup) { _ = try upscaler.upscale(source) }
+        let count = max(1, samples)
+        var total = 0.0
+        for _ in 0..<count {
+            let start = CFAbsoluteTimeGetCurrent()
+            _ = try upscaler.upscale(source)
+            total += (CFAbsoluteTimeGetCurrent() - start) * 1000.0
+        }
+        return total / Double(count)
+    }
 
     /// Whether this size is inside the window Lucid works in. Deliberately a
     /// question about the table above and not about what is on disk: if a build
@@ -127,8 +194,16 @@ final class LearnedUpscaler: @unchecked Sendable {
     /// at least as large as the source in both dimensions. The area bound stops
     /// a small odd size from reaching for a model far bigger than it needs.
     static func variant(width: Int, height: Int) -> Variant? {
+        variant(width: width, height: height, budget: budgetMilliseconds)
+    }
+
+    /// `budget` is explicit here so a 24 fps or 60 fps source can be judged
+    /// against its own frame interval, and so tests can state one rather than
+    /// inherit whatever this machine happens to afford.
+    static func variant(width: Int, height: Int, budget: Double) -> Variant? {
         variants
-            .filter { $0.width >= width && $0.height >= height && $0.milliseconds <= budgetMilliseconds }
+            .filter { $0.width >= width && $0.height >= height }
+            .filter { costMilliseconds(width: $0.width, height: $0.height) <= budget }
             .filter { Double($0.width * $0.height) <= Double(max(width * height, 1)) * 1.5 }
             .min { $0.milliseconds < $1.milliseconds }
     }
@@ -163,7 +238,12 @@ final class LearnedUpscaler: @unchecked Sendable {
     /// 2026-09-07: promoted again to lucidbig2k_, the same recipe trained on the
     /// 756-sequence full-frame stream bank (raw checkpoint, no blend): native holdout
     /// +11.80% LPIPS / +16.04% DISTS vs SPAN, every source up, same cost.
-    static let shippingStem = "lucidbig2k_"
+    ///
+    /// Production 1.0.0: r120 domain-trained Nano ch48/b6, no BatchNorm.
+    /// Checkpoint 5514d2739d66; all seven shapes share the same learned weights.
+    /// Promoted after the owner's live browser review. See Models.json for
+    /// checkpoint identity and the measured gains and regressions.
+    static let shippingStem = "lucidnano_"
     /// The only family with validated tensor-output alternatives bundled.
     static let tensorFamilyStem = "SPAN_x4_ch32utc_"
     /// Set from the lab page to swap the reconstruction model without a

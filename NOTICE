@@ -3,47 +3,52 @@ Copyright (c) 2026 Braedon Saunders
 
 Lucid itself is licensed under the MIT License; see LICENSE.
 
-This file records third-party work that Lucid is built on and that carries its
-own licence terms. It exists mainly for one item — SPAN — because the model
-Lucid ships is a derivative of Apache-2.0 licensed code, and Apache-2.0 section
-4 asks that redistributions carry the licence and attribution with them.
+This file records third-party work used by Lucid and its development tools.
+The application includes the full notices in Resources/ThirdPartyNotices.txt.
+
+================================================================================
+NanoVSR — production reconstruction architecture
+================================================================================
+
+NanoVSR architecture adaptation
+Source: https://github.com/filippawlicki/nanovsr
+Lucid's production network adapts the RepVGG blocks and bilinear residual to
+single-frame, pixel-unshuffled, 2x reconstruction without BatchNorm. All shipped
+weights were trained by this project; no pretrained NanoVSR weights are used.
+
+MIT License
+
+Copyright (c) 2026 Filip Pawlicki, Marcel Kańduła, Marcin Pucek, Kamil Dobies
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 
 ================================================================================
-SPAN — Swift Parameter-free Attention Network for Efficient Super-Resolution
+SPAN — historical models and development tools
 ================================================================================
 
-    Licence:  Apache License, Version 2.0
-    Source:   https://github.com/hongyuanyu/SPAN
-    Paper:    Wan et al., "Swift Parameter-free Attention Network for Efficient
-              Super-Resolution", CVPR Workshops 2024
-
-Lucid's upscaler is derived from the SPAN architecture. It is not the published
-network and it does not use the published weights:
-
-  * The trunk is rearranged. A PixelUnshuffle(2) is placed before it so the 18
-    trunk convolutions run at quarter area and the reconstruction head does x8
-    instead of x4. See Tools/train_span.py, class `Unshuffled`.
-  * `img_range` is 1 and the RGB mean is zero, rather than the stock 255 scaling.
-  * The weights are trained from scratch by this project on a corpus of real
-    codec degradation (libx264 and libvpx-vp9 at 90 kbps to 1.5 Mbps, GOP 30 to
-    250), not on bicubic downsampling. No published SPAN checkpoint is used.
-
-The Core ML packages under Model/SPAN_x4_ch32u_*.mlpackage that ship inside
-Lucid.app are the output of that training, converted for the Neural Engine.
-Because they are produced by code derived from SPAN, they are covered by this
-attribution.
-
-A copy of the Apache License, Version 2.0 is available at:
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-The upstream SPAN checkout, when present, lives at Model/SPAN and carries its
-own LICENSE and LICENSE/ directory. It is not tracked in this repository and is
-not redistributed here; Tools/convert_span.py loads the architecture from it.
-That checkout also vendors licences for pytorch-image-models, SwinIR,
-stylegan2-pytorch and an NVIDIA source file, which apply to the parts of BasicSR
-those came from and not to anything Lucid ships.
+Source: https://github.com/hongyuanyu/SPAN
+License: Apache License, Version 2.0.
+The development code adapts the SPAN architecture for pixel-unshuffled codec
+restoration. Earlier releases used locally trained SPAN weights. Lucid 1.0.0
+ships the Nano-derived model described above. The SPAN license and attribution
+are retained in Lucid/Resources/ThirdPartyNotices.txt and Tools/architectures.
 
 
 ================================================================================

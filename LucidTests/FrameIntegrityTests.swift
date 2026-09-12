@@ -419,12 +419,38 @@ struct MetalFrameIntegrityTests {
         #expect(flickers[1] <= flickers[0] * 1.05 + 0.05)
         #expect(residuals[1] < 3.0) // raw input MSE is 9; require at least a 2/3 reduction.
     }
+    @Test func lowContrastTranslationStillUsesAlignedHistory() throws {
+        let device = try #require(MTLCreateSystemDefaultDevice())
+        var errors: [Double] = []
+        for motion in [false, true] {
+            var settings = DetailSettings.off
+            settings.stageTaa = true; settings.stageMotion = motion; settings.taaFeedback = 0.9
+            let enhancer = try DetailEnhancer(device: device, settings: settings)
+            let before = try nv12 { x, _ in UInt8(77 + x) }
+            let after = try nv12 { x, _ in UInt8(77 + max(0, x - 4)) }
+            _ = try enhancer.preprocess(before, timestamp: CMTime(value: 1, timescale: 30))
+            let result = lumaBytes(try enhancer.preprocess(after, timestamp: CMTime(value: 2, timescale: 30)))
+            let reference = lumaBytes(after)
+            var differences: [Double] = []
+            for y in 12..<52 { for x in 12..<52 {
+                differences.append(abs(result[y * 64 + x] - reference[y * 64 + x]))
+            } }
+            errors.append(differences.reduce(0, +) / Double(differences.count))
+        }
+        #expect(errors[1] < 0.5)
+        #expect(errors[1] < errors[0])
+    }
     @Test func everyBundledModelActuallyPredicts() throws {
         let configuration = MLModelConfiguration(); configuration.computeUnits = .cpuAndGPU
         for variant in LearnedUpscaler.variants {
             let name = "\(LearnedUpscaler.shippingStem)\(variant.width)x\(variant.height)"
             let url = try #require(Bundle.main.url(forResource: name, withExtension: "mlmodelc"))
             let model = try MLModel(contentsOf: url, configuration: configuration)
+            let manifestURL = try #require(Bundle.main.url(forResource: "Models", withExtension: "json"))
+            let manifest = try #require(JSONSerialization.jsonObject(with: Data(contentsOf: manifestURL)) as? [String: Any])
+            let checkpoint = try #require(manifest["checkpoint_sha256"] as? String)
+            let metadata = model.modelDescription.metadata[.creatorDefinedKey] as? [String: String]
+            #expect(metadata?["lucid.checkpoint_sha256"] == checkpoint)
             let key = try #require(model.modelDescription.inputDescriptionsByName.keys.first)
             var buffer: CVPixelBuffer?
             #expect(CVPixelBufferCreate(nil, variant.width, variant.height, kCVPixelFormatType_32BGRA, [kCVPixelBufferIOSurfacePropertiesKey: [:]] as CFDictionary, &buffer) == kCVReturnSuccess)
@@ -433,10 +459,8 @@ struct MetalFrameIntegrityTests {
             let output = try model.prediction(from: MLDictionaryFeatureProvider(dictionary: [key: MLFeatureValue(pixelBuffer: image)]))
             let outputKey = try #require(output.featureNames.first)
             let result = try #require(output.featureValue(for: outputKey)?.imageBufferValue)
-            // The shipping family is direct 2x; the previous family was 4x. Either
-            // is a valid reconstruction scale, but it must be one of the two.
             let scale = CVPixelBufferGetWidth(result) / variant.width
-            #expect(scale == 2 || scale == 4)
+            #expect(scale == 2)
             #expect(CVPixelBufferGetWidth(result) == variant.width * scale)
             #expect(CVPixelBufferGetHeight(result) == variant.height * scale)
             CVPixelBufferLockBaseAddress(result, .readOnly)
@@ -460,7 +484,7 @@ struct PresentationMetricTests {
         #expect(result?.p95Milliseconds == 40)
     }
     @Test @MainActor func shippedSettingsMatchTheBenchFile() throws {
-        let path = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("Tools/tuning.json")
+        let path = try #require(Bundle.main.url(forResource: "TuningDefaults", withExtension: "json"))
         let file = try JSONDecoder().decode(EnhancementSession.Tuning.self, from: Data(contentsOf: path))
         #expect(file.detailSettings() == EnhancementSession.Tuning().detailSettings())
     }

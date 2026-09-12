@@ -28,12 +28,11 @@ on your Mac.
 
 ## What ships
 
-- **2× learned reconstruction, one model.** `lucidbig2k_`: an unshuffled SPAN
-  trunk with a direct 2× head, fine-tuned on full-frame codec-context streams
-  from 21 sources with a reference target and an input-conditioned paired DINO
-  critic. Seven fixed input shapes cover 144p through 720p. There is no model
-  choice anywhere in the product; promotion is a deliberate edit of
-  `Lucid/Resources/Models.json` backed by a native delivery holdout.
+- **2× learned reconstruction, one model.** Lucid 1.0 ships a domain-trained
+  Nano-derived network with 48 channels and six blocks, trained by this project
+  on codec-degraded video. Seven fixed input shapes cover 144p through 720p.
+  The same model runs everywhere; device calibration selects the shapes your
+  Mac can sustain. All packages are verified against `Lucid/Resources/Models.json`.
 - **Grain-aware post-stages.** Debanding runs only on true quantisation
   plateaus (any neighbour more than about 1.3 levels away marks grain or
   texture and is left alone), followed by contrast-adaptive sharpening that
@@ -77,14 +76,17 @@ level.
 
 ## How it is measured
 
-Every candidate model or pipeline change goes through the Release app end to
-end on a fixed holdout: 960 frame pairs from eight sources, decoded from real
-H.264 and VP9 streams at 350 kbps and 1 Mbps, scored with LPIPS and DISTS
-against the reference frames. A change ships only if it improves the aggregate
-and no source gets worse. The current build scores +12.3% LPIPS and +16.1%
-DISTS against the previous 4× SPAN model with all eight sources improved, at
-about 40% lower graph cost. The receipts, including everything that was tried
-and rejected, are in `Benchmarks/frontier/`.
+The 1.0 model was selected after live browser review. On the fixed browser
+holdout (eight clips, three frames each), it improves LPIPS by 9.28% and DISTS
+by 12.02% against the previous Nano control. On a separate eight-frame lab
+holdout, those distances worsen by 2.37% and 4.46%. Results vary by content;
+this release does not claim that every source improves.
+
+The production checkpoint is
+`5514d2739d662c6dc92258618dbe807ac2ce95ca402a32f76839b0084f5968ba`.
+All seven converted shapes are checked for output dimensions, image range and
+numerical agreement with the trained PyTorch network. Native tests cover frame
+integrity and the shipped model, followed by live browser playback checks.
 
 ## Build and browser companion
 
@@ -114,10 +116,15 @@ python3 Tools/sync_safari.py
 python3 Tools/sync_safari.py --check
 ```
 
-`Tools/release.sh <version>` builds a signed disk image containing the app and
-Chrome/Edge companion. It uses configured signing identities and notarization
-credentials when available. A local development build is not a notarized public
-release.
+`Tools/release.sh 1.0.0` builds a Developer ID signed, notarized disk image with
+Lucid and the Chrome/Edge companion. It requires a Developer ID Application
+certificate and the `LUCID_NOTARY` keychain profile. The command verifies the
+app, notarization tickets, disk image and model checksums before finishing.
+`Tools/release.sh 1.0.0 --local` explicitly creates a development-signed package
+with a `-local` filename; that package is not notarized for public distribution.
+
+Copy the companion folder to a permanent location before loading it in Chrome
+or Edge; do not load it from a disk image that you will eject.
 
 ## Verification
 

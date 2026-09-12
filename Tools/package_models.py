@@ -78,6 +78,9 @@ def package(destination):
             prior.pop(stale.name[:-len('.mlmodelc')], None)
     # Only write the receipt once the complete ladder has compiled successfully.
     receipt_path.write_text(json.dumps({x['name']: prior[x['name']] for x in all_models(manifest)}, indent=2) + '\n')
+    # Keep canonical tuning beside the compiled models so native verification
+    # never needs to open the developer's Documents folder from the app process.
+    shutil.copyfile(ROOT / 'Tools/tuning.json', destination / 'TuningDefaults.json')
     print(f"Verified {len(all_models(manifest))} packaged SR models")
 
 

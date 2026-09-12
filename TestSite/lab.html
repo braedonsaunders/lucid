@@ -75,6 +75,7 @@
 </header>
 <main>
   <aside>
+    <div id="experimentNote" class="meta" hidden></div>
     <h2>Clip</h2>
     <div class="clips" id="clips"></div>
     <h2>Display width</h2>
@@ -102,7 +103,31 @@
   Clips: Big Buck Bunny and the Sintel trailer at low bitrates from 240p to 1080p60, plus a synthetic test pattern. Sizes are display widths in CSS px; on a Retina display 640 px shows a 360p clip at 1280 physical pixels, which is the 2× case the enhancer targets.
 </footer>
 <script>
+const experiment = new URLSearchParams(location.search).get('experiment');
+const r120Preview = experiment === 'r120';
+const R120_CLIPS = [
+  ['basketball', 'Basketball', 'webm'],
+  ['rts_gameplay', 'RTS gameplay', 'webm'],
+  ['toe_animation', 'Animation', 'mp4'],
+  ['drone_highway', 'Drone aerial', 'webm'],
+  ['cooking_closeup', 'Cooking close-up', 'mp4'],
+  ['concert_crowd', 'Concert crowd', 'webm'],
+  ['nasa_viz', 'NASA visualization', 'mp4'],
+  ['techtalk', 'Tech talk', 'mp4'],
+].map(([id, label, ext]) => ({
+  id: `r120-${id}`, group: 'r120 browser clips · 12 sec',
+  label: `${label} 640×360`,
+  src: `../.build/quality-breakthrough-r120-domain/lab-preview/clips/${id}.${ext}`,
+}));
+if (r120Preview) {
+  const note = document.getElementById('experimentNote');
+  note.hidden = false;
+  note.textContent = 'Lucid 1.0 production model · r120. Space toggles enhanced/original.';
+  document.querySelector('header h1').textContent = 'Video Enhancer Lab · r120';
+  document.title = 'Video Enhancer Lab · r120';
+}
 const CLIPS = [
+  ...(r120Preview ? R120_CLIPS : []),
   { id: 'bbb-360-3m',  group: 'Feature length (3 min)', label: 'Big Buck Bunny 640×360 · 450 kbps', src: 'bbb-360p-450k-3min.mp4' },
   { id: 'bbb-240-3m',  group: 'Feature length (3 min)', label: 'Big Buck Bunny 426×240 · 220 kbps', src: 'bbb-240p-220k-3min.mp4' },
   { id: 'bbb-480-3m',  group: 'Feature length (3 min)', label: 'Big Buck Bunny 854×480 · 800 kbps', src: 'bbb-480p-800k-3min.mp4' },
@@ -177,8 +202,9 @@ function updateMeta() {
 video.addEventListener('loadedmetadata', updateMeta);
 new ResizeObserver(updateMeta).observe(video);
 if (localStorage.getItem('lab.size')) sizeSel.value = localStorage.getItem('lab.size');
+if (r120Preview) sizeSel.value = '640';
 applySize();
-selectClip(localStorage.getItem('lab.clip') || 'bbb-360-3m');
+selectClip(r120Preview ? 'r120-basketball' : (localStorage.getItem('lab.clip') || 'bbb-360-3m'));
 
 // ---- app control channel ----------------------------------------------------
 const dot = document.getElementById('dot'), conn = document.getElementById('conn'), stats = document.getElementById('stats');
@@ -210,7 +236,8 @@ async function openControl() {
     appEnabled = m.enabled; enabledBox.checked = m.enabled;
     buildEngines(m);
     showTuning(m.tuning);
-    stats.innerHTML = `<b>${m.status}</b>` + (m.enhancing ? ` · ${m.sourceFPS.toFixed(0)} → ${m.outputFPS.toFixed(0)} fps · ${m.processingMilliseconds.toFixed(1)} ms · ${m.tileCount} tile${m.tileCount === 1 ? '' : 's'} · ${m.outputWidth}×${m.outputHeight}` : '') + (m.error ? ` · <span style="color:var(--bad)">${m.error}</span>` : '');
+    const statusLabel = r120Preview && m.enhancing ? 'Enhancing with r120' : m.status;
+    stats.innerHTML = `<b>${statusLabel}</b>` + (m.enhancing ? ` · ${m.sourceFPS.toFixed(0)} → ${m.outputFPS.toFixed(0)} fps · ${m.processingMilliseconds.toFixed(1)} ms · ${m.tileCount} tile${m.tileCount === 1 ? '' : 's'} · ${m.outputWidth}×${m.outputHeight}` : '') + (m.error ? ` · <span style="color:var(--bad)">${m.error}</span>` : '');
   };
 }
 function sendControl(obj) { if (control && control.readyState === 1) control.send(JSON.stringify({ type: 'control', ...obj })); }

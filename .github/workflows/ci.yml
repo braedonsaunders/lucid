@@ -40,7 +40,7 @@ jobs:
           mb=$((bytes / 1048576))
           echo "Model/ in the repo is ${mb} MB"
           test "$mb" -lt 32 || {
-            echo "::error::Model/ is ${mb} MB. Only the six shipping packages (~3 MB) belong in git."
+            echo "::error::Model/ is ${mb} MB. Only the seven shipping packages belong in git."
             exit 1
           }
 

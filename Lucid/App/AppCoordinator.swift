@@ -89,6 +89,37 @@ final class AppCoordinator {
         }
         RunLoop.main.add(timer, forMode: .common)
         sweepTimer = timer
+        calibrateDeviceIfNeeded()
+    }
+
+    /// Measure this machine's per-rung cost once, then never again.
+    ///
+    /// Without this the rung selector reads `LearnedUpscaler.variants` - seven
+    /// milliseconds measured on one M4 Pro - and applies them to every Mac, so
+    /// slower silicon picks rungs it cannot sustain and faster silicon leaves
+    /// budget unspent. The record is keyed on hardware, OS, build and model
+    /// family, so this runs on the first launch after an install or upgrade and
+    /// is a file read every launch after that: a few seconds once, never a
+    /// startup stall. It is deliberately not awaited - the bootstrap table is
+    /// what the app uses until the record lands, which is the same thing it
+    /// used before this existed.
+    private func calibrateDeviceIfNeeded() {
+        let environment = ProcessInfo.processInfo.environment
+        // Never under XCTest. Calibration runs the real model on the real GPU,
+        // so a test process that happens to touch this singleton would put
+        // seconds of GPU work alongside whatever it was actually measuring -
+        // which is exactly what happened the first time this shipped, and it
+        // failed a Metal frame-integrity test that passes on its own.
+        guard environment["XCTestConfigurationFilePath"] == nil,
+              environment["XCTestBundlePath"] == nil,
+              environment["XCTestSessionIdentifier"] == nil,
+              environment["LUCID_EPHEMERAL"] != "1",
+              environment["LUCID_MODEL_STEM"] == nil,
+              !CommandLine.arguments.contains("--pipeline-ms") else { return }
+        DeviceCalibration.calibrateIfNeeded(modelStem: LearnedUpscaler.shippingStem,
+                                            sizes: LearnedUpscaler.calibrationSizes) { width, height in
+            try LearnedUpscaler.timeWholeCall(width: width, height: height)
+        }
     }
 
     // MARK: - Bridge
@@ -420,9 +451,8 @@ final class AppCoordinator {
             frameRouter.install(session: session.id, source: session.decoded)
             print("   🎯 Session \(report.session.prefix(8)): \(report.browser) window [\(window.id)] video \(report.video!.iw)x\(report.video!.ih) at \(report.video!.rect)")
             appState.isEnhancing = true
-            // 4×, not 2×: the tiled 2×-per-pass scaler was replaced by SPAN and
-            // this is the line users actually read.
-            appState.statusLine = "Enhancing \(report.browser.capitalized) video \(report.video!.iw)×\(report.video!.ih) → 4×"
+            // The production Nano ladder reconstructs directly at 2×.
+            appState.statusLine = "Enhancing \(report.browser.capitalized) video \(report.video!.iw)×\(report.video!.ih) → 2×"
             appState.lastError = nil
             menuBar?.refresh()
             broadcastStatus()
@@ -591,7 +621,14 @@ final class EnhancementSession {
         // amplified invented texture and cost fine-band correlation; the model
         // trained on real codec degradation gives a clean enough base that a
         // little gain now recovers rather than exaggerates. 0.5 overshoots.
-        var fine: Float = 0.0
+        // 0.25 as of r116, measured on the promoted trunk across both
+        // registered clips with band CORRELATION exposed - the column
+        // sweep.py omits and the one that caught grain. At 0.25 both DISTS
+        // and correlation improve on crowdrun (0.2152->0.2048, 0.0954->0.0962)
+        // and on dinner (0.2021->0.1998, 0.0922->0.0953), so this recovers
+        // detail rather than inventing it. 0.50 is a further gain on dinner
+        // but costs correlation on crowdrun, so it is not taken.
+        var fine: Float = 0.25
         // The post-upscale deblock is flat to four decimals across its whole
         // range now and every non-zero value is very slightly worse, so it is
         // off: the model removes blocking itself.
@@ -619,9 +656,13 @@ final class EnhancementSession {
         /// 2 runs the scaler twice, 4 runs it once at its native 4x factor.
         var scalerFactor: Float = 2
         var micro: Float = 0.0
-        // Half the detail scale: measured against ground truth this halves
-        // coarse-band overshoot, which is what reads as halos.
-        var lobeScale: Float = 0.3
+        // 0.7 as of r116. The 0.3 value halved coarse-band overshoot for the
+        // previous trunk; against the promoted one, 0.7 improves DISTS *and*
+        // band correlation on both registered clips (crowdrun 0.2152->0.2109
+        // with fine 0.0954->0.0962; dinner 0.2021->0.2012 with fine
+        // 0.0922->0.0931). Gaining on both columns at once is the signature of
+        // real detail rather than added texture.
+        var lobeScale: Float = 0.7
         var mid: Float = 0.0
         var presharpen: Float = 0.0
         /// Lets the deblocker read the frame and set its own strength.
@@ -646,7 +687,17 @@ final class EnhancementSession {
         var cdefSecondary: Float = 2
         var debandThreshold: Float = 0.008
         var debandGuard: Float = 0.005
-        var grain: Float = 0.010
+        // 0.0 as of r115. Grain is synthetic noise added after the model, and
+        // it was never measured on its own: ablate.py bundles it with deband
+        // into one toggle and sweep.py does not list it at all. Measured
+        // independently against the promoted trunk, every step of grain buys
+        // DISTS/LPIPS/BRISQUE and costs band CORRELATION - 0.000 -> 0.020
+        // moves fine from 0.0894 to 0.0860 - which is the measurable form of
+        // "detail that is not in the source". The perceptual metrics reward it
+        // because they reward texture; the correlation column says it is
+        // invented, and the owner could see it. When those two disagree about
+        // added noise, the correlation column is the one to believe.
+        var grain: Float = 0.0
         // Frozen grain is the default. Animated phase never changes amplitude.
         var grainPhase: Float = 0.0
         var taaGamma: Float = 1.25

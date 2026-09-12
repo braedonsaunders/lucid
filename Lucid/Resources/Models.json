@@ -1,63 +1,72 @@
 {
   "schema": 1,
-  "family": "lucidbig2k",
-  "promoted": "2026-09-07: reference-target paired-critic, 2,000 steps on the 756-sequence full-frame stream bank, raw checkpoint; native holdout +11.80% LPIPS / +16.04% DISTS vs SPAN, all eight sources up; see Benchmarks/frontier/paired-ladder-protocol.md",
+  "family": "lucidnano",
+  "release": "1.0.0",
+  "checkpoint_sha256": "5514d2739d662c6dc92258618dbe807ac2ce95ca402a32f76839b0084f5968ba",
+  "promoted": "r120 domain-trained Nano ch48/b6, 2x, no BatchNorm. Promoted by owner after live browser review on 2026-09-12. Frozen 24-frame browser holdout: LPIPS 9.28% and DISTS 12.02% better than r114 control; 8-frame lab holdout regresses 2.37% and 4.46%. Promotion is an explicit visual preference decision, not a clean automated gate pass.",
   "models": [
     {
-      "name": "lucidbig2k_256x144",
+      "name": "lucidnano_256x144",
       "width": 256,
       "height": 144,
       "scale": 2,
-      "referenceMilliseconds": 2.24,
-      "sha256": "171ced862889128af433300fe3f98416b04579d55c33c609b05353d4926b516f"
+      "referenceMilliseconds": 1.62,
+      "sha256": "9a7aced695263c843116d37c68d812a7d7039afa16c963c0c11c8dfde8b6e72b",
+      "torchMeanAbsoluteError": 0.2501
     },
     {
-      "name": "lucidbig2k_320x180",
+      "name": "lucidnano_320x180",
       "width": 320,
       "height": 180,
       "scale": 2,
-      "referenceMilliseconds": 1.72,
-      "sha256": "713283b78be9291b43ce4480c4de4ec182a6ea6be0254d388d752c9f1a405a7f"
+      "referenceMilliseconds": 2.08,
+      "sha256": "fb9967c607513c5e8440bdfda520a3bdb7c124c14f9634dc4a24e7fcee28cb85",
+      "torchMeanAbsoluteError": 0.25
     },
     {
-      "name": "lucidbig2k_432x240",
+      "name": "lucidnano_432x240",
       "width": 432,
       "height": 240,
       "scale": 2,
-      "referenceMilliseconds": 2.99,
-      "sha256": "53b4dcdabc6d7896b37676fcc94b47acc456a545a985994746d499637f09b2ad"
+      "referenceMilliseconds": 6.46,
+      "sha256": "7171c5388b0ae28d08f747e28c90d20608e8b6b4363ab1606d1ae996a101ce4d",
+      "torchMeanAbsoluteError": 0.2502
     },
     {
-      "name": "lucidbig2k_480x270",
+      "name": "lucidnano_480x270",
       "width": 480,
       "height": 270,
       "scale": 2,
-      "referenceMilliseconds": 3.6,
-      "sha256": "90e41f6acb077e06d5f985cbf97a5ff1d87fe188875a7d4efde1b62243080536"
+      "referenceMilliseconds": 3.13,
+      "sha256": "985cc480a13254a8a299ba4aadfc687483a170092549b81a38a421b91d925bda",
+      "torchMeanAbsoluteError": 0.2501
     },
     {
-      "name": "lucidbig2k_640x360",
+      "name": "lucidnano_640x360",
       "width": 640,
       "height": 360,
       "scale": 2,
-      "referenceMilliseconds": 5.86,
-      "sha256": "f9113bb039844237e288070be7e0060ceeb630da7d7c17ae19edcdffd3541c30"
+      "referenceMilliseconds": 5.34,
+      "sha256": "98ecb90a8720cdea71cf7972a8c95f576853329823c7d879ba0ff26115df5e3a",
+      "torchMeanAbsoluteError": 0.2501
     },
     {
-      "name": "lucidbig2k_864x480",
+      "name": "lucidnano_864x480",
       "width": 864,
       "height": 480,
       "scale": 2,
-      "referenceMilliseconds": 9.9,
-      "sha256": "04e978515cf0ac2f11be807b1c18f40a3e800dcff52016f5a942c8217128a0d1"
+      "referenceMilliseconds": 8.78,
+      "sha256": "12bd67e28626f16b95e1e37a164869ccdaf644c02faf9115c8d0a5e95438967d",
+      "torchMeanAbsoluteError": 0.25
     },
     {
-      "name": "lucidbig2k_1280x720",
+      "name": "lucidnano_1280x720",
       "width": 1280,
       "height": 720,
       "scale": 2,
-      "referenceMilliseconds": 21.0,
-      "sha256": "e43abc53afc3d7ef3e7a4c825e7f1a4b576d88c57618e2a9cec971f3be676d4e"
+      "referenceMilliseconds": 18.54,
+      "sha256": "e82e38e189b7f09b10336f4c7609d30e4ae74fc7ada0771aa0a644883741c6b0",
+      "torchMeanAbsoluteError": 0.2499
     }
   ]
 }
