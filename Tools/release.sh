@@ -93,7 +93,7 @@ if [[ "$mode" != '--local' ]]; then
   xcrun stapler validate "$dmg"
 fi
 hdiutil verify "$dmg"
-shasum -a 256 "$dmg" > "$dmg.sha256"
+(cd "${dmg:h}" && shasum -a 256 "${dmg:t}") > "$dmg.sha256"
 python3 - "$dmg" "$app" "$version" "$mode" <<'PY'
 import hashlib,json,sys
 from pathlib import Path
